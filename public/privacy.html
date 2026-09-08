@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Payloat — Privacy Policy</title>
+<style>
+  :root { --ink:#181C14; --sub:#5b5f57; --line:#e7e6e1; --bg:#ffffff; --accent:#D9F268; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink);
+    font: 17px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 56px 22px 96px; }
+  h1 { font-size: 34px; letter-spacing:-0.5px; margin: 0 0 6px; }
+  .updated { color:var(--sub); font-size:15px; margin-bottom:36px; }
+  h2 { font-size: 21px; margin: 40px 0 10px; letter-spacing:-0.2px; }
+  h3 { font-size: 17px; margin: 22px 0 6px; }
+  p, li { color:#23271f; }
+  a { color:#3b5bdb; }
+  ul { padding-left: 22px; }
+  li { margin: 5px 0; }
+  .note { background:#f7f7f4; border:1px solid var(--line); border-radius:14px; padding:16px 18px; margin:18px 0; font-size:15px; color:var(--sub); }
+  .accent { background: linear-gradient(180deg,#f9ffd6,#f2fbc0); border:1px solid #e4f09a; border-radius:14px; padding:16px 18px; margin:18px 0; }
+  hr { border:0; border-top:1px solid var(--line); margin:44px 0; }
+  code { background:#f2f2ef; padding:1px 6px; border-radius:6px; font-size:14px; }
+  footer { color:var(--sub); font-size:14px; margin-top:40px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Privacy Policy</h1>
+  <p class="updated">Payloat &middot; Last updated: July 18, 2026</p>
+
+  <p>Payloat ("Payloat," "we," "us") is a personal-finance app that helps you track
+  your purchases, subscriptions, refunds, returns, and upcoming charges. This
+  Privacy Policy explains what information we collect, how we use it, who we share
+  it with, and the choices you have. It applies to the Payloat mobile app and
+  related services (the "Service"), operated by Payloat.</p>
+
+  <p>We built Payloat around a simple principle: <strong>your financial data is used
+  only to power features you see in the app. We never sell it and never use it for
+  advertising.</strong></p>
+
+  <h2>1. Information we collect</h2>
+
+  <h3>Account information</h3>
+  <p>When you sign in with Google, we receive your name, email address, and Google
+  account identifier to create and secure your account. Authentication is handled
+  by Google and by our backend provider (Supabase).</p>
+
+  <h3>Purchase emails (Gmail) — only if you connect Gmail</h3>
+  <p>If you choose to connect your Google account with read access to Gmail
+  (<code>gmail.readonly</code>), Payloat scans only purchase-related messages
+  (order confirmations, receipts, invoices, subscription and BNPL notices) to
+  extract structured details: merchant, amount, dates, category, and
+  return/refund/renewal information. We store only these extracted fields — we do
+  not retain the raw content of your emails. Your Google authorization token is
+  stored securely on our servers and is never placed on your device.</p>
+  <div class="accent">
+    <strong>Google API disclosure.</strong> Payloat's use and transfer of
+    information received from Google APIs to any other app will adhere to the
+    <a href="https://developers.google.com/terms/api-services-user-data-policy">Google
+    API Services User Data Policy</a>, including the Limited Use requirements. We do
+    not use Gmail data for advertising, do not sell it, do not transfer it except as
+    needed to provide or improve user-facing features (or for security, legal, or
+    with your consent), and do not allow humans to read it except with your
+    affirmative consent, for security/abuse purposes, or where required by law.
+  </div>
+
+  <h3>Bank and card transactions (Plaid) — only if you connect a bank</h3>
+  <p>If you link a financial account, we use <a href="https://plaid.com/">Plaid Inc.</a>
+  to connect to your bank or card issuer and retrieve transaction history (merchant,
+  amount, date, and category). You authorize this connection through Plaid's own
+  secure flow; your bank login credentials are handled by Plaid and are never seen
+  or stored by Payloat. The long-lived access token Plaid issues is stored only on
+  our servers, never on your device. Plaid's handling of your information is
+  governed by the <a href="https://plaid.com/legal/#end-user-privacy-policy">Plaid
+  End User Privacy Policy</a>.</p>
+
+  <h3>Apple Wallet transactions (FinanceKit) — on your device</h3>
+  <p>If you enable Apple Wallet sync, Payloat reads eligible card transactions from
+  the Wallet app <strong>entirely on your device</strong>, with your permission,
+  using Apple's FinanceKit. This data is processed locally to display your
+  transactions and detect subscriptions; it is <strong>never transmitted to our
+  servers or to any third party</strong>, and it is stored in an encrypted,
+  app-private location on your device.</p>
+
+  <h3>Information you enter</h3>
+  <p>Purchases, notes, and profile details (such as your name) that you add manually.</p>
+
+  <h3>Limited technical information</h3>
+  <p>Basic diagnostic and reliability information needed to operate the app (for
+  example, error logs). We do not use third-party advertising or cross-app tracking
+  SDKs.</p>
+
+  <h2>2. How we use your information</h2>
+  <ul>
+    <li>To provide the core features: showing purchases, subscriptions, spending,
+      return windows, refunds, and upcoming charges.</li>
+    <li>To detect recurring subscriptions and surface money at risk.</li>
+    <li>To authenticate you and keep your account secure.</li>
+    <li>To operate, maintain, debug, and improve the Service.</li>
+    <li>To comply with legal obligations.</li>
+  </ul>
+  <p>We do <strong>not</strong> sell your personal information, and we do
+  <strong>not</strong> use your financial or email data for advertising or to build
+  advertising profiles.</p>
+
+  <h3>Automated processing to extract details</h3>
+  <p>To turn a receipt or transaction into structured data (merchant, amount, kind),
+  we use automated parsing. Where this involves a third-party AI/model provider, we
+  send only the minimum content needed for extraction, under agreements that prohibit
+  using your data to train their models and, where available, provide zero data
+  retention. This applies to email content processing only; Apple Wallet data is
+  never sent off your device.</p>
+
+  <h2>3. How we share information</h2>
+  <p>We share information only with service providers that help us run the Service,
+  and only as needed to provide it:</p>
+  <ul>
+    <li><strong>Supabase</strong> — database, authentication, and backend hosting
+      (data stored encrypted at rest).</li>
+    <li><strong>Google</strong> — sign-in and, if connected, Gmail access.</li>
+    <li><strong>Plaid</strong> — if you link a bank/card.</li>
+    <li><strong>Brandfetch</strong> — to display merchant brand logos; we send only a
+      merchant's website domain, never your amounts, dates, or account details.</li>
+    <li>An <strong>AI/model provider</strong>, if used, for the email parsing
+      described above.</li>
+  </ul>
+  <p>We may also disclose information to comply with the law or a valid legal
+  request, to protect rights and safety, or in connection with a merger or
+  acquisition (with notice to you). We never sell your personal information.</p>
+
+  <h2>4. Data storage and security</h2>
+  <ul>
+    <li>Data in transit is encrypted with TLS 1.2 or higher.</li>
+    <li>Data at rest on our servers is encrypted (AES-256 via Supabase).</li>
+    <li>On-device data is protected by iOS Data Protection (encrypted at rest).</li>
+    <li>Sensitive credentials (your Google and Plaid access tokens) are stored
+      server-side only and are not readable by the app or other users; access is
+      restricted by row-level security and least-privilege controls.</li>
+    <li>No method of storage or transmission is 100% secure, but we work to protect
+      your information using industry-standard safeguards.</li>
+  </ul>
+
+  <h2>5. Data retention and deletion</h2>
+  <p>We keep your information for as long as your account is active or as needed to
+  provide the Service. You can:</p>
+  <ul>
+    <li>Disconnect Gmail or a linked bank at any time from the app or your Google
+      account settings, which stops further data collection from that source.</li>
+    <li>Request deletion of your account and associated data by emailing
+      hello@payloat.com. When you delete your account, we delete your
+      stored purchases, connection tokens, and profile data; related records are
+      removed automatically (cascading deletion), subject to limited retention where
+      required by law.</li>
+  </ul>
+
+  <h2>6. Your rights and choices</h2>
+  <p>Depending on where you live (including under GDPR and the CCPA/CPRA), you may
+  have the right to access, correct, delete, or port your personal information, to
+  withdraw consent, and to object to certain processing. To exercise any of these,
+  contact us at hello@payloat.com. We will not discriminate against
+  you for exercising your rights.</p>
+
+  <h2>7. Children's privacy</h2>
+  <p>Payloat is not directed to children under 13 (or the minimum age required in
+  your jurisdiction), and we do not knowingly collect their information. If you
+  believe a child has provided us information, contact us and we will delete it.</p>
+
+  <h2>8. International users</h2>
+  <p>We operate the Service from, and store data in, the United States. If you access
+  Payloat from outside the U.S., you understand your information may be processed in
+  the U.S., where data-protection laws may differ from those in your country.</p>
+
+  <h2>9. Changes to this policy</h2>
+  <p>We may update this policy from time to time. We will post the new version here
+  with an updated date and, for material changes, provide additional notice within
+  the app.</p>
+
+  <h2>10. Contact us</h2>
+  <p>Questions or requests: hello@payloat.com<br>
+  Payloat, governed by the laws of the United States.</p>
+
+  <hr>
+  <footer>© 2026 Payloat. All rights reserved.</footer>
+</div>
+</body>
+</html>

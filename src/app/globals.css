@@ -1,0 +1,77 @@
+@import "tailwindcss";
+
+/* ---- Payloat brand tokens (matched to the iOS app) ---- */
+:root {
+  /* iOS type: SF Pro on Apple devices, graceful fallbacks elsewhere.
+     Defined as a real :root property so it resolves everywhere. */
+  --font-ios: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+    "SF Pro Text", "Helvetica Neue", "Segoe UI", Roboto, Arial, sans-serif;
+
+  /* Page canvas: white nudged 5% toward #EEEEEE (≈ #FEFEFE) */
+  --background: color-mix(in srgb, #eeeeee 5%, #ffffff);
+  --foreground: #0a0a0a;
+
+  --ink: #0a0a0a;          /* near-black text, matches logo fill */
+  --sub: #706e68;          /* muted text */
+  --pine: #181c14;         /* CTA / dark surface */
+  --lime: #d9f268;         /* accent */
+  --mist: #eeeeee;         /* light gray surface */
+  --card: #f1f0ee;         /* card surface */
+
+  /* Nav docker surface: full #EEEEEE gray */
+  --dock: #eeeeee;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-ink: var(--ink);
+  --color-sub: var(--sub);
+  --color-pine: var(--pine);
+  --color-lime: var(--lime);
+  --color-mist: var(--mist);
+  --color-card: var(--card);
+  --color-dock: var(--dock);
+  --font-sans: var(--font-ios);
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-family: var(--font-ios);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-ios);
+}
+
+/* Belt and suspenders: form controls don't always inherit type */
+button,
+input,
+select,
+textarea {
+  font-family: var(--font-ios);
+}
+
+canvas {
+  display: block;
+}
+
+/* Scrollable areas that hide their scrollbar (app-like feel) */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Apple Wallet-style numerals, matching the iOS app's Font.numeral():
+   SF Pro Rounded with fixed-width digits. ui-rounded resolves to SF
+   Rounded on Apple platforms; elsewhere it falls back to the SF stack. */
+.font-numeral {
+  font-family: ui-rounded, "SF Pro Rounded", var(--font-ios);
+  font-variant-numeric: tabular-nums;
+}
