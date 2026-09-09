@@ -38,7 +38,7 @@ const NOTIFS = [
   {
     name: "Stripe",
     logo: "/logos/stripe.svg",
-    amount: "$61.22",
+    amount: "$600.00",
     note: "Platform fees, monthly",
     pos: "right-[9%] top-[16%]",
     at: 0.26,
@@ -46,7 +46,7 @@ const NOTIFS = [
   {
     name: "Vercel",
     logo: "/logos/vercel.svg",
-    amount: "$150.00",
+    amount: "$350.00",
     note: "Hosting, Ops agent",
     pos: "left-[4%] top-[38%]",
     at: 0.4,
@@ -54,7 +54,7 @@ const NOTIFS = [
   {
     name: "Claude",
     logo: "/logos/claude.svg",
-    amount: "$89.40",
+    amount: "$4,000.00",
     note: "Renews tomorrow",
     pos: "right-[3%] top-[28%]",
     at: 0.54,
@@ -62,7 +62,7 @@ const NOTIFS = [
   {
     name: "AWS",
     logo: "/logos/aws.svg",
-    amount: "$1,204.16",
+    amount: "$850.00",
     note: "Storage, Ops agent",
     pos: "left-[8%] top-[66%]",
     at: 0.68,
@@ -70,8 +70,8 @@ const NOTIFS = [
   {
     name: "Brex",
     logo: "/logos/brex.svg",
-    amount: "$528.60",
-    note: "3 charges matched",
+    amount: "$12,480.00",
+    note: "14 charges matched",
     pos: "right-[11%] top-[76%]",
     at: 0.82,
   },
