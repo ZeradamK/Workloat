@@ -2,28 +2,24 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { AnimatePresence, animate, motion, useInView, useReducedMotion } from "motion/react";
+import { AnimatePresence, animate, motion, useInView, useMotionValueEvent, useReducedMotion, useScroll, useSpring, useTransform } from "motion/react";
 import PhoneMock, { screenWidth as phoneScreenWidth } from "./PhoneMock";
 
 /**
- * Slack act (Ramp investment-account hero anatomy, Mobbin ref
- * sites/sections/03c51e3d): bold headline over a device, two floating
- * notification bars in the goal act's exact anatomy. The page stays white;
- * the device screen wears the brand blue gradient (public/slack-gradient.jpg,
- * 3840x2160) as its wallpaper and the Slack window floats on it in Slack's
- * dark theme (Mobbin refs screens/49abc402, screens/c92cb6cf for the channel
- * anatomy: rail, sidebar, active row, message rows, toolbar composer).
+ * Slack act. A #eeeeee rounded stage, inset from the viewport edges, pinned
+ * over 300vh on desktop. The headline sits at the top; below it a Studio
+ * Display (CSS: thin black bezel, silver back, arm and base) shows the
+ * Slack desktop app in dark mode on the brand gradient wallpaper. Three
+ * scenes, driven by scroll the way the goal act inks its words: the act
+ * opens on a tight crop of the display and its stand and drifts slowly,
+ * then ZIPS to the small front-on view, then ZIPS to the angled final view
+ * with the floor line and the two notification bars. Below 900px the act
+ * is not pinned: headline, the iPhone running Slack for iOS, the bars.
  *
- * The conversation is a timed sequence that plays when the device scrolls
- * into view and loops: Zeradam's question types into the composer, sends,
- * Payloat shows typing dots, answers, the Origin-style forecast card
- * (Mobbin ref sites/sections/1fde4e1c) arrives and draws itself: solid
- * line through today, dashed projection, markers, counting numbers, then
- * the notes and buttons. Reduced motion shows the finished state.
- *
- * Devices: MacBook Pro from 900px (tilted, design 1440x900, scaled by a
- * ResizeObserver), iPhone below (PhoneMock at natural size, with the home
- * indicator and the padding it needs).
+ * The conversation on screen is a timed sequence (types, sends, typing
+ * dots, answer, the Origin-style forecast card draws itself, notes,
+ * buttons) that plays when the device is in view and loops. Reduced motion
+ * shows the finished state and the final scene.
  */
 
 const EASE = [0.25, 0.6, 0.2, 1] as const;
@@ -35,52 +31,127 @@ const up = {
   transition: { duration: 0.55, ease: EASE },
 } as const;
 
-const DESIGN = { w: 1440, h: 900 };
+/* the Studio Display panel is 16:9; the desktop lays out at 1600x900 */
+const DESIGN = { w: 1600, h: 900 };
+
+/* the three points of view of the rig (display + stand), from the refs */
+const SCENES = [
+  /* 1: tight crop, the display's lower-left and the stand fill the frame */
+  { scale: 2.4, x: "51%", y: "-58%", rotateY: 0, rotateX: 0 },
+  /* 2: the whole monitor, small and front-on */
+  { scale: 0.9, x: "0%", y: "0%", rotateY: 0, rotateX: 0 },
+  /* 3: angled, larger, on the floor */
+  { scale: 0.98, x: "0%", y: "7%", rotateY: -24, rotateX: 2 },
+] as const;
+
+const ZIP = { type: "spring", stiffness: 260, damping: 30, mass: 0.9 } as const;
 
 export default function SlackSection() {
   return (
-    <section className="mx-auto max-w-[1200px] px-6 pb-[clamp(140px,18vw,300px)] pt-[clamp(40px,5vw,96px)]">
-      <motion.div {...up} className="flex flex-col items-center text-center">
-        <h2 className="max-w-[760px] text-[clamp(32px,4.2vw,60px)] font-bold leading-[1.06] tracking-[-2px] text-ink">
-          Ask @Payloat what
-          <br />
-          your agents spent.
-        </h2>
-        <p className="mt-4 max-w-[520px] text-[16px] leading-[1.5] text-sub">
-          Anyone in your workspace can ask. Managers, finance, the owner.
-          Payloat answers with the number, the graph, and what needs a look,
-          right where the question was asked.
-        </p>
-      </motion.div>
+    <>
+      <DesktopAct />
+      <PhoneAct />
+    </>
+  );
+}
 
-      {/* ---- MacBook Pro, 900px and up ---- */}
-      <motion.div
-        {...up}
-        transition={{ ...up.transition, delay: 0.1 }}
-        className="relative mx-auto mt-14 hidden w-full max-w-[1100px] min-[900px]:block"
-      >
-        <div className="pt-[2%]" style={{ perspective: 2400, perspectiveOrigin: "50% 35%" }}>
-          <div
-            className="relative mx-auto w-[90%]"
-            style={{ transform: "rotateY(14deg) rotateX(4deg)", transformStyle: "preserve-3d" }}
+/* ---------- desktop: the pinned three-scene act ---------- */
+
+function DesktopAct() {
+  const ref = useRef<HTMLDivElement>(null);
+  const reduced = useReducedMotion() ?? false;
+  const [stage, setStage] = useState(0);
+  const [override, setOverride] = useState<number | null>(null);
+
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
+  const t = useSpring(scrollYProgress, { stiffness: 120, damping: 26, mass: 0.3 });
+  useMotionValueEvent(t, "change", (v) => setStage(v < 0.3 ? 0 : v < 0.62 ? 1 : 2));
+
+  /* dev: ?slackScene=0|1|2 pins a scene for review */
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search).get("slackScene");
+    if (q !== null) setOverride(Math.min(2, Math.max(0, Number(q))));
+  }, []);
+
+  /* scene 1 drifts slowly while it holds, before the first zip */
+  const driftScale = useTransform(t, [0, 0.3], [1.06, 1]);
+  const driftY = useTransform(t, [0, 0.3], ["2%", "0%"]);
+
+  const scene = reduced ? 2 : (override ?? stage);
+  const target = SCENES[scene];
+
+  return (
+    <div ref={ref} className="relative hidden h-[300vh] min-[900px]:block">
+      <div className="sticky top-0 h-screen px-[100px] py-4">
+        <div className="relative flex h-full flex-col overflow-hidden rounded-[30px] bg-[#eeeeee]">
+          {/* headline */}
+          <motion.h2
+            {...up}
+            className="z-10 px-6 pt-[clamp(28px,4vh,56px)] text-center text-[clamp(32px,4.2vw,60px)] font-bold leading-[1.06] tracking-[-2px] text-ink"
           >
-            <MacBook />
+            Ask @Payloat what
+            <br />
+            your agents spent.
+          </motion.h2>
+
+          {/* the stage */}
+          <div className="relative mt-4 min-h-0 flex-1 overflow-hidden" style={{ perspective: scene === 2 ? 2600 : "none", perspectiveOrigin: "50% 45%", clipPath: "inset(0)" }}>
+            {/* floor: the final scene sits on it */}
+            <motion.div
+              initial={false}
+              animate={{ opacity: scene === 2 ? 1 : 0 }}
+              transition={{ duration: 0.5 }}
+              className="pointer-events-none absolute inset-x-0 bottom-0 h-[34%]"
+              style={{ background: "linear-gradient(180deg,#e2e2e4 0%,#e9e9eb 12%,#ededef 100%)", borderTop: "1px solid rgba(0,0,0,0.10)" }}
+            />
+            {/* the rig: display + stand, centered, then posed per scene */}
+            <motion.div
+              initial={false}
+              animate={target}
+              transition={reduced ? { duration: 0 } : ZIP}
+              className="absolute left-1/2 top-[8%] w-[62%] -translate-x-1/2"
+              style={{ transformOrigin: "50% 60%" }}
+            >
+              <motion.div style={scene === 0 && !reduced ? { scale: driftScale, y: driftY } : undefined}>
+                <StudioDisplay />
+              </motion.div>
+            </motion.div>
+
+            {/* the two bars arrive with the final scene */}
+            <AnimatePresence>
+              {scene === 2 && (
+                <>
+                  <motion.div key="b1" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 12 }} transition={{ duration: 0.45, ease: EASE, delay: 0.25 }} className="absolute left-[6%] top-[52%] z-10 w-[340px]">
+                    <Bar1 />
+                  </motion.div>
+                  <motion.div key="b2" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 12 }} transition={{ duration: 0.45, ease: EASE, delay: 0.4 }} className="absolute bottom-[14%] right-[6%] z-10 w-[340px]">
+                    <Bar2 />
+                  </motion.div>
+                </>
+              )}
+            </AnimatePresence>
           </div>
         </div>
-        <Bar1 className="absolute -left-2 top-[42%] z-10 w-[340px]" delay={0.35} />
-        <Bar2 className="absolute bottom-[18%] right-2 z-10 w-[340px]" delay={0.5} />
-      </motion.div>
+      </div>
+    </div>
+  );
+}
 
-      {/* ---- iPhone, below 900px ---- */}
-      <motion.div
-        {...up}
-        transition={{ ...up.transition, delay: 0.1 }}
-        className="mx-auto mt-10 w-full max-w-[380px] min-[900px]:hidden"
-      >
+/* ---------- phone: not pinned ---------- */
+
+function PhoneAct() {
+  return (
+    <section className="mx-4 rounded-[30px] bg-[#eeeeee] px-5 pb-16 pt-12 min-[900px]:hidden">
+      <motion.h2 {...up} className="text-center text-[clamp(32px,9vw,44px)] font-bold leading-[1.06] tracking-[-1.5px] text-ink">
+        Ask @Payloat what
+        <br />
+        your agents spent.
+      </motion.h2>
+      <motion.div {...up} transition={{ ...up.transition, delay: 0.1 }} className="mx-auto mt-10 w-full max-w-[380px]">
         <Phone />
         <div className="mt-6 flex flex-col gap-2.5">
-          <Bar1 delay={0.2} />
-          <Bar2 delay={0.3} />
+          <Bar1 />
+          <Bar2 />
         </div>
       </motion.div>
     </section>
@@ -89,31 +160,10 @@ export default function SlackSection() {
 
 /* ---------- the two callouts, in the goal act's notification-bar anatomy ---------- */
 
-function NotifBar({
-  className = "",
-  delay,
-  icon,
-  name,
-  note,
-  amount,
-}: {
-  className?: string;
-  delay: number;
-  icon: React.ReactNode;
-  name: string;
-  note: string;
-  amount: string;
-}) {
+function NotifBar({ icon, name, note, amount }: { icon: React.ReactNode; name: string; note: string; amount: string }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-60px" }}
-      transition={{ duration: 0.55, ease: EASE, delay }}
-      className={`flex items-center gap-3 rounded-[18px] py-[6px] pl-[6px] pr-2.5 shadow-[0_18px_50px_rgba(0,0,0,0.12)] ${className}`}
-      style={{ backgroundColor: "#eeeeee" }}
-    >
-      <span className="flex h-[43px] w-[43px] shrink-0 items-center justify-center rounded-[11px] bg-white">
+    <div className="flex items-center gap-3 rounded-[18px] bg-white py-[6px] pl-[6px] pr-2.5 shadow-[0_18px_50px_rgba(0,0,0,0.12)]">
+      <span className="flex h-[43px] w-[43px] shrink-0 items-center justify-center rounded-[11px]" style={{ backgroundColor: "#eeeeee" }}>
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
           {icon}
         </svg>
@@ -126,73 +176,49 @@ function NotifBar({
       <svg width="11" height="11" viewBox="0 0 16 16" fill="none" aria-hidden className="shrink-0 text-sub">
         <path d="m5.5 3 5 5-5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
-    </motion.div>
+    </div>
   );
 }
 
-function Bar1({ className, delay }: { className?: string; delay: number }) {
-  return (
-    <NotifBar
-      className={className}
-      delay={delay}
-      icon={<path d="M4 20V10M10 20V4M16 20v-8M22 20H2" />}
-      name="This month"
-      note="The graph and what to look at"
-      amount="$27,900"
-    />
-  );
+function Bar1() {
+  return <NotifBar icon={<path d="M4 20V10M10 20V4M16 20v-8M22 20H2" />} name="This month" note="Graph and what to look at" amount="$27,900" />;
 }
 
-function Bar2({ className, delay }: { className?: string; delay: number }) {
-  return (
-    <NotifBar
-      className={className}
-      delay={delay}
-      icon={<path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z" />}
-      name="Every charge"
-      note="Answered in seconds"
-      amount="4 agents"
-    />
-  );
+function Bar2() {
+  return <NotifBar icon={<path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z" />} name="Every charge" note="Answered in seconds" amount="4 agents" />;
 }
 
 /* ---------- devices ---------- */
 
-/* MacBook Pro: the whole lid in the same black as the notch, gradient
-   screen, then the aluminum deck with its center lip. */
-function MacBook() {
+/* Studio Display: thin black bezel around a 16:9 panel, a silver back
+   edge peeking out on the right and bottom, then the arm and flat base
+   (proportions from the refs: arm about a quarter of the display's width,
+   a fifth of its height; base a bit wider and thin). */
+function StudioDisplay() {
   return (
-    <div className="relative" style={{ transformStyle: "preserve-3d" }}>
-      <div
-        className="relative rounded-[16px] bg-[#0e0e10] p-[10px] pb-[12px]"
-        style={{ boxShadow: "0 60px 120px rgba(20,40,120,0.30), 0 24px 48px rgba(0,0,0,0.18)" }}
-      >
-        <div className="relative aspect-[1440/900] w-full overflow-hidden rounded-[8px] bg-[#0a1fd2]">
+    <div className="relative">
+      {/* back shell edge */}
+      <div className="absolute inset-0 translate-x-[7px] translate-y-[5px]" style={{ background: "linear-gradient(90deg,#c4c4c9 0%,#adadb2 100%)" }} />
+      {/* bezel + panel */}
+      <div className="relative bg-[#0a0a0b] p-[1.3%]" style={{ boxShadow: "0 40px 90px rgba(0,0,0,0.22)" }}>
+        <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#0a1fd2]">
           <Wallpaper />
           <ScaledScreen>
             <Desktop />
           </ScaledScreen>
-          <div className="absolute left-1/2 top-0 h-[14px] w-[120px] -translate-x-1/2 rounded-b-[8px] bg-[#0e0e10]" />
           <Sheen />
         </div>
       </div>
-      <div
-        className="relative mx-auto h-[16px] w-[106%] -translate-x-[3%] rounded-b-[12px]"
-        style={{
-          background: "linear-gradient(180deg,#ececee 0%,#c8c8cc 55%,#8f8f95 100%)",
-          boxShadow: "0 18px 40px rgba(0,0,0,0.18)",
-        }}
-      >
-        <div className="absolute left-1/2 top-0 h-[6px] w-[110px] -translate-x-1/2 rounded-b-[6px]" style={{ background: "linear-gradient(180deg,#b5b5ba,#d9d9dc)" }} />
-      </div>
+      {/* arm */}
+      <div className="mx-auto aspect-[25/11.5] w-[25%]" style={{ background: "linear-gradient(90deg,#e6e6e8 0%,#cfcfd3 45%,#b3b3b8 100%)", clipPath: "polygon(0 0,100% 0,97% 100%,3% 100%)" }} />
+      {/* base */}
+      <div className="mx-auto aspect-[27/1.6] w-[27%] rounded-[6px]" style={{ background: "linear-gradient(180deg,#e9e9eb,#b8b8bd)", boxShadow: "0 10px 30px rgba(0,0,0,0.18)" }} />
     </div>
   );
 }
 
 /* iPhone: the site's PhoneMock in pure black to match the island. Slack for
-   iOS fills the screen in dark mode (Mobbin ref screens/b684c99d: status bar,
-   back + channel title bar, day label, message rows, composer pill, Home /
-   DMs / Activity tab bar, home indicator). */
+   iOS fills the screen in dark mode (Mobbin ref screens/b684c99d). */
 function Phone() {
   const ref = useRef<HTMLDivElement>(null);
   const [w, setW] = useState(340);
@@ -211,14 +237,14 @@ function Phone() {
         <div className="absolute inset-0" style={{ width: phoneScreenWidth(w) }}>
           <SlackPhone active={inView} />
         </div>
-        <div className="absolute bottom-[9px] left-1/2 h-[5px] w-[134px] -translate-x-1/2 rounded-full bg-white/90" />
+        <div className="absolute bottom-[9px] left-1/2 h-[5px] w-[134px] -translate-x-1/2 rounded-full bg-black/85" />
       </PhoneMock>
     </div>
   );
 }
 
 function Wallpaper() {
-  return <Image src="/slack-gradient.jpg" alt="" fill sizes="(min-width: 900px) 1000px, 100vw" className="object-cover" />;
+  return <Image src="/slack-gradient.jpg" alt="" fill quality={92} sizes="(min-width: 900px) 2400px, 100vw" className="object-cover" />;
 }
 
 function Sheen() {
@@ -246,10 +272,7 @@ function ScaledScreen({ children }: { children: React.ReactNode }) {
   }, []);
   return (
     <div ref={ref} className="absolute inset-0">
-      <div
-        className="absolute left-0 top-0 origin-top-left"
-        style={{ width: DESIGN.w, height: DESIGN.h, transform: `scale(${scale})`, opacity: scale ? 1 : 0 }}
-      >
+      <div className="absolute left-0 top-0 origin-top-left" style={{ width: DESIGN.w, height: DESIGN.h, transform: `scale(${scale})`, opacity: scale ? 1 : 0 }}>
         {children}
       </div>
     </div>
@@ -259,7 +282,7 @@ function ScaledScreen({ children }: { children: React.ReactNode }) {
 /* A macOS desktop: menu bar, the Slack window floating on the wallpaper. */
 function Desktop() {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { amount: 0.35 });
+  const inView = useInView(ref, { amount: 0.2 });
   return (
     <div ref={ref} className="relative h-full w-full">
       <div className="absolute inset-x-0 top-0 flex h-[26px] items-center justify-between px-4 text-[12px] font-medium text-white/90" style={{ backgroundColor: "rgba(0,0,0,0.22)" }}>
@@ -277,7 +300,7 @@ function Desktop() {
           <span>9:41 AM</span>
         </span>
       </div>
-      <div className="absolute overflow-hidden rounded-[12px] shadow-[0_30px_80px_rgba(0,0,0,0.45)]" style={{ top: 54, left: 44, right: 44, bottom: 40 }}>
+      <div className="absolute overflow-hidden rounded-[12px] shadow-[0_30px_80px_rgba(0,0,0,0.45)]" style={{ top: 54, left: 70, right: 70, bottom: 44 }}>
         <SlackWindow layout="desktop" active={inView} />
       </div>
     </div>
@@ -287,6 +310,7 @@ function Desktop() {
 /* ---------- the conversation sequence ---------- */
 
 const QUESTION = "@Payloat how much have our agents spent this month?";
+const QUESTION_DM = "How much have our agents spent this month?";
 const TYPE_MS = 28;
 
 /* 0 typing · 1 sent · 2 Payloat typing · 3 answer text · 4 card + line
@@ -430,12 +454,12 @@ function SlackWindow({ layout, active }: { layout: Layout; active: boolean }) {
               <SideRow label="Drafts & sent" icon="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7Z" />
               <SideHead>Channels</SideHead>
               {CHANNELS.map((c) => (
-                <SideRow key={c} label={c} hash active={c === "agents"} />
+                <SideRow key={c} label={c} hash />
               ))}
               <SideHead>Direct messages</SideHead>
+              <SideRow label="Payloat" avatar="/payloat-app-icon-v2.png" active />
               <SideRow label="Zeradam" avatar="/zeradam.jpg" you />
               <SideRow label="Maya Chen" initial="M" />
-              <SideRow label="Payloat" avatar="/payloat-app-icon-v2.png" />
               <SideHead>Apps</SideHead>
               <SideRow label="Payloat" avatar="/payloat-app-icon-v2.png" />
             </div>
@@ -445,23 +469,24 @@ function SlackWindow({ layout, active }: { layout: Layout; active: boolean }) {
         {/* channel pane */}
         <div className="flex min-w-0 flex-1 flex-col" style={{ backgroundColor: PANE }}>
           <div className="flex h-[48px] shrink-0 items-center justify-between px-4" style={{ borderBottom: `1px solid ${LINE}` }}>
-            <span className="flex items-center gap-1 text-[15px] font-bold">
-              # agents
+            <span className="flex items-center gap-2.5 text-[15px] font-bold">
+              <span className="relative">
+                <Image src="/payloat-app-icon-v2.png" alt="" width={24} height={24} className="h-[24px] w-[24px] rounded-[6px]" />
+                <span className="absolute -bottom-0.5 -right-0.5 h-[9px] w-[9px] rounded-full border-2 border-[#1a1d21] bg-[#2bac76]" />
+              </span>
+              Payloat
+              <span className="text-[12px] font-normal" style={{ color: MUTED }}>Chief Financial Agent</span>
               <Glyph d="M6 9l6 6 6-6" size={11} />
             </span>
             {!phone && (
               <div className="flex items-center gap-2 text-[12px]" style={{ color: MUTED }}>
-                <span className="flex items-center gap-1.5 rounded-[6px] px-2 py-1" style={{ border: `1px solid ${LINE}` }}>
-                  <span className="flex -space-x-1.5">
-                    <Image src="/zeradam.jpg" alt="" width={18} height={18} className="h-[18px] w-[18px] rounded-[4px] border border-[#1a1d21] object-cover" />
-                    <span className="h-[18px] w-[18px] rounded-[4px] border border-[#1a1d21] bg-[#bcd1f7]" />
-                    <span className="h-[18px] w-[18px] rounded-[4px] border border-[#1a1d21] bg-[#f5c6a5]" />
-                  </span>
-                  12
-                </span>
                 <span className="flex items-center gap-1 rounded-[6px] px-2 py-1" style={{ border: `1px solid ${LINE}` }}>
                   <Glyph d="M3 18v-6a9 9 0 0 1 18 0v6M3 18h4v-5H3m14 5h4v-5h-4" size={12} />
                   Huddle
+                </span>
+                <span className="flex items-center gap-1 rounded-[6px] px-2 py-1" style={{ border: `1px solid ${LINE}` }}>
+                  <Glyph d="M4 4h16v12H8l-4 4V4Z" size={12} />
+                  Canvas
                 </span>
               </div>
             )}
@@ -586,7 +611,7 @@ function SlackWindow({ layout, active }: { layout: Layout; active: boolean }) {
                     {!reduced && <span className="ml-px inline-block h-[14px] w-[2px] translate-y-[2px] animate-pulse bg-white" />}
                   </>
                 ) : (
-                  "Message #agents"
+                  "Message Payloat"
                 )}
               </p>
               <div className="flex items-center justify-between px-2.5 pb-2" style={{ color: MUTED }}>
@@ -660,58 +685,83 @@ function SideRow({
   );
 }
 
-/* ---------- Slack for iOS, dark mode, full screen ---------- */
+/* ---------- Slack for iOS, light mode, a DM with Payloat ----------
+   Mobbin ref screens/a38aa405: status bar; back, avatar with presence dot,
+   name; canvas + headphones; the profile block (big avatar, name, title);
+   the "very beginning of your direct message history" line; day labels
+   with NEW on the right; message rows; "is typing…" strip; composer pill;
+   Home / DMs / Activity tab bar with DMs active; home indicator. */
 
-const IOS_BG = "#1a1d21";
+const IOS_BG = "#ffffff";
+const IOS_INK = "#1d1c1d";
+const IOS_MUTED = "#616061";
+const IOS_LINE = "rgba(29,28,29,0.13)";
+const IOS_BLUE = "#1264a3";
 
 function SlackPhone({ active }: { active: boolean }) {
   const reduced = useReducedMotion() ?? false;
   const { stage, typed } = useConversation(active, reduced);
-  const typing = QUESTION.slice(0, typed);
+  const typing = QUESTION_DM.slice(0, Math.min(typed, QUESTION_DM.length));
   return (
-    <div className="flex h-full w-full flex-col" style={{ fontFamily: "var(--font-ios)", color: TEXT, backgroundColor: IOS_BG }}>
+    <div className="flex h-full w-full flex-col" style={{ fontFamily: "var(--font-ios)", color: IOS_INK, backgroundColor: IOS_BG }}>
       {/* status bar around the island */}
       <div className="flex h-[54px] shrink-0 items-end justify-between px-7 pb-2">
         <span className="text-[16px] font-semibold tracking-[-0.2px] tabular-nums">9:41</span>
         <span className="flex items-center gap-1.5">
           <svg width="17" height="11" viewBox="0 0 19 12" aria-hidden>
-            <rect x="0" y="7.5" width="3.4" height="4.5" rx="1" fill="#fff" />
-            <rect x="5" y="5" width="3.4" height="7" rx="1" fill="#fff" />
-            <rect x="10" y="2.5" width="3.4" height="9.5" rx="1" fill="#fff" />
-            <rect x="15" y="0" width="3.4" height="12" rx="1" fill="#fff" />
+            <rect x="0" y="7.5" width="3.4" height="4.5" rx="1" fill={IOS_INK} />
+            <rect x="5" y="5" width="3.4" height="7" rx="1" fill={IOS_INK} />
+            <rect x="10" y="2.5" width="3.4" height="9.5" rx="1" fill={IOS_INK} />
+            <rect x="15" y="0" width="3.4" height="12" rx="1" fill={IOS_INK} />
           </svg>
-          <svg width="16" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.4" strokeLinecap="round" aria-hidden>
+          <svg width="16" height="12" viewBox="0 0 24 24" fill="none" stroke={IOS_INK} strokeWidth="2.4" strokeLinecap="round" aria-hidden>
             <path d="M2 8.5a15 15 0 0 1 20 0M5.5 12a10 10 0 0 1 13 0M9 15.5a5 5 0 0 1 6 0M12 19h.01" />
           </svg>
           <svg width="25" height="12" viewBox="0 0 28 13" aria-hidden>
-            <rect x="0.5" y="0.5" width="24" height="12" rx="3.8" fill="none" stroke="#fff" strokeOpacity="0.4" />
-            <rect x="2" y="2" width="21" height="9" rx="2.4" fill="#fff" />
-            <path d="M26.2 4.5v4a2.2 2.2 0 0 0 0-4Z" fill="#fff" fillOpacity="0.5" />
+            <rect x="0.5" y="0.5" width="24" height="12" rx="3.8" fill="none" stroke={IOS_INK} strokeOpacity="0.4" />
+            <rect x="2" y="2" width="21" height="9" rx="2.4" fill={IOS_INK} />
+            <path d="M26.2 4.5v4a2.2 2.2 0 0 0 0-4Z" fill={IOS_INK} fillOpacity="0.5" />
           </svg>
         </span>
       </div>
 
-      {/* channel bar */}
-      <div className="flex h-[50px] shrink-0 items-center justify-between px-4">
+      {/* DM bar */}
+      <div className="flex h-[48px] shrink-0 items-center justify-between px-4">
         <span className="flex items-center gap-3">
           <Glyph d="M15 6l-6 6 6 6" size={18} />
-          <span className="leading-tight">
-            <span className="block text-[17px] font-bold">#agents</span>
-            <span className="block text-[12px]" style={{ color: MUTED }}>12 members, 2 pins</span>
+          <span className="relative">
+            <Image src="/payloat-app-icon-v2.png" alt="Payloat" width={30} height={30} className="h-[30px] w-[30px] rounded-[7px]" />
+            <span className="absolute -bottom-0.5 -right-0.5 h-[10px] w-[10px] rounded-full border-2 border-white bg-[#2bac76]" />
           </span>
+          <span className="text-[17px] font-bold">Payloat</span>
         </span>
-        <span className="flex items-center gap-4" style={{ color: TEXT }}>
+        <span className="flex items-center gap-4">
           <Glyph d="M4 4h16v12H8l-4 4V4Z" size={20} />
-          <span className="flex items-center gap-1 rounded-full px-2 py-0.5 text-[12px]" style={{ backgroundColor: "rgba(255,255,255,0.12)" }}>
-            <Glyph d="M3 18v-6a9 9 0 0 1 18 0v6M3 18h4v-5H3m14 5h4v-5h-4" size={14} />
-            1
-          </span>
+          <Glyph d="M3 18v-6a9 9 0 0 1 18 0v6M3 18h4v-5H3m14 5h4v-5h-4" size={20} />
         </span>
       </div>
 
       {/* conversation */}
-      <div className="flex min-h-0 flex-1 flex-col justify-end overflow-hidden px-4 pb-2">
-        <p className="mb-2 text-[15px] font-bold">Today</p>
+      <div className="flex min-h-0 flex-1 flex-col justify-end overflow-hidden px-4">
+        {/* profile block */}
+        <Image src="/payloat-app-icon-v2.png" alt="Payloat" width={64} height={64} className="h-[64px] w-[64px] rounded-[14px]" />
+        <p className="mt-3 text-[22px] font-bold leading-tight">Payloat</p>
+        <p className="text-[15px]" style={{ color: IOS_MUTED }}>Chief Financial Agent</p>
+        <p className="mt-3 text-[15px] leading-[1.4]" style={{ color: IOS_MUTED }}>
+          This is the very beginning of your direct message history with <span style={{ color: IOS_BLUE }}>@Payloat</span>. Only the two of you are in this conversation.
+        </p>
+
+        <div className="mt-4 flex items-center justify-between">
+          <span className="text-[15px] font-bold">Today</span>
+          <AnimatePresence initial={false}>
+            {stage >= 1 && (
+              <motion.span key="new" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-[11px] font-bold text-[#e01e5a]">
+                NEW
+              </motion.span>
+            )}
+          </AnimatePresence>
+        </div>
+        <div className="mb-2 h-px w-full" style={{ backgroundColor: IOS_LINE }} />
 
         <AnimatePresence initial={false}>
           {stage >= 1 && (
@@ -720,26 +770,10 @@ function SlackPhone({ active }: { active: boolean }) {
               <div className="min-w-0">
                 <p className="text-[15px] leading-[1.2]">
                   <span className="font-bold">Zeradam</span>
-                  <span className="ml-2 text-[12px]" style={{ color: MUTED }}>9:41</span>
+                  <span className="ml-2 text-[12px]" style={{ color: IOS_MUTED }}>9:41</span>
                 </p>
-                <p className="mt-0.5 text-[15px] leading-[1.35]">
-                  <Mention />
-                  {QUESTION.slice("@Payloat".length)}
-                </p>
+                <p className="mt-0.5 text-[15px] leading-[1.35]">{QUESTION_DM}</p>
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <AnimatePresence initial={false}>
-          {stage === 2 && (
-            <motion.div key="dots" {...rowIn} exit={{ opacity: 0, transition: { duration: 0.15 } }} className="mt-3 flex items-center gap-2.5">
-              <Image src="/payloat-app-icon-v2.png" alt="Payloat" width={36} height={36} className="h-[36px] w-[36px] shrink-0 rounded-[8px]" />
-              <span className="flex items-center gap-1 rounded-[10px] px-3 py-2.5" style={{ backgroundColor: "rgba(255,255,255,0.08)" }}>
-                {[0, 1, 2].map((i) => (
-                  <motion.span key={i} className="h-[7px] w-[7px] rounded-full" style={{ backgroundColor: MUTED }} animate={{ y: [0, -4, 0], opacity: [0.5, 1, 0.5] }} transition={{ duration: 0.9, repeat: Infinity, delay: i * 0.15, ease: "easeInOut" }} />
-                ))}
-              </span>
             </motion.div>
           )}
         </AnimatePresence>
@@ -751,8 +785,7 @@ function SlackPhone({ active }: { active: boolean }) {
               <div className="min-w-0 flex-1">
                 <p className="text-[15px] leading-[1.2]">
                   <span className="font-bold">Payloat</span>
-                  <span className="ml-1.5 rounded-[3px] px-1 py-px text-[9px] font-semibold uppercase tracking-[0.04em]" style={{ backgroundColor: "rgba(255,255,255,0.12)", color: MUTED }}>App</span>
-                  <span className="ml-2 text-[12px]" style={{ color: MUTED }}>9:41</span>
+                  <span className="ml-2 text-[12px]" style={{ color: IOS_MUTED }}>9:41</span>
                 </p>
                 <p className="mt-0.5 text-[15px] leading-[1.35]">
                   September so far across <span className="font-semibold">4 agents</span>. Two things to look at.
@@ -768,7 +801,7 @@ function SlackPhone({ active }: { active: boolean }) {
                   {stage >= 7 && (
                     <motion.div key="btns" {...rowIn} className="mt-2.5 flex flex-wrap items-center gap-2">
                       {["Open in Payloat", "By agent"].map((b, i) => (
-                        <motion.span key={b} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3, ease: EASE, delay: i * 0.08 }} className={`rounded-[8px] px-3.5 py-2 text-[13px] font-semibold ${i === 0 ? "bg-[#007a5a] text-white" : ""}`} style={i === 0 ? undefined : { border: "1px solid rgba(255,255,255,0.3)", color: TEXT }}>
+                        <motion.span key={b} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3, ease: EASE, delay: i * 0.08 }} className={`rounded-[8px] px-3.5 py-2 text-[13px] font-semibold ${i === 0 ? "bg-[#007a5a] text-white" : ""}`} style={i === 0 ? undefined : { border: `1px solid ${IOS_LINE}`, color: IOS_INK }}>
                           {b}
                         </motion.span>
                       ))}
@@ -781,34 +814,38 @@ function SlackPhone({ active }: { active: boolean }) {
         </AnimatePresence>
       </div>
 
+      {/* "is typing" strip, the ref's anatomy */}
+      <div className="h-[26px] shrink-0 px-3">
+        <AnimatePresence initial={false}>
+          {stage === 2 && (
+            <motion.div key="typing" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }} className="flex h-[26px] items-center gap-2 rounded-t-[10px] px-3 text-[12px]" style={{ backgroundColor: "#f4f4f4", color: IOS_MUTED }}>
+              <Image src="/payloat-app-icon-v2.png" alt="" width={16} height={16} className="h-[16px] w-[16px] rounded-[4px]" />
+              <span className="font-semibold" style={{ color: IOS_INK }}>Payloat</span> is typing…
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
       {/* composer pill */}
-      <div className="shrink-0 px-3 pt-1">
-        <div className="flex h-[46px] items-center gap-3 rounded-full pl-2 pr-3" style={{ backgroundColor: "#26292e", border: "1px solid rgba(255,255,255,0.10)" }}>
-          <span className="flex h-[30px] w-[30px] items-center justify-center rounded-full" style={{ backgroundColor: "rgba(255,255,255,0.10)" }}>
+      <div className="shrink-0 px-3">
+        <div className="flex h-[46px] items-center gap-3 rounded-full pl-2 pr-3" style={{ border: `1px solid ${IOS_LINE}`, boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}>
+          <span className="flex h-[30px] w-[30px] items-center justify-center rounded-full" style={{ backgroundColor: "#f0f0f0" }}>
             <Glyph d="M12 5v14M5 12h14" size={14} />
           </span>
-          <p className="min-w-0 flex-1 truncate text-[15px]" style={{ color: stage === 0 && typed > 0 ? TEXT : MUTED }}>
+          <p className="min-w-0 flex-1 truncate text-[15px]" style={{ color: stage === 0 && typed > 0 ? IOS_INK : IOS_MUTED }}>
             {stage === 0 && typed > 0 ? (
               <>
-                {typing.startsWith("@Payloat") ? (
-                  <>
-                    <Mention />
-                    {typing.slice("@Payloat".length)}
-                  </>
-                ) : (
-                  typing
-                )}
-                {!reduced && <span className="ml-px inline-block h-[15px] w-[2px] translate-y-[3px] animate-pulse bg-white" />}
+                {typing}
+                {!reduced && <span className="ml-px inline-block h-[15px] w-[2px] translate-y-[3px] animate-pulse" style={{ backgroundColor: IOS_INK }} />}
               </>
             ) : (
-              "Message #agents"
+              "Message Payloat"
             )}
           </p>
           <motion.span
-            animate={{ backgroundColor: stage === 0 && typed > 0 ? "#007a5a" : "rgba(255,255,255,0)", scale: stage === 1 ? [1, 0.85, 1] : 1 }}
+            animate={{ backgroundColor: stage === 0 && typed > 0 ? "#007a5a" : "rgba(255,255,255,0)", color: stage === 0 && typed > 0 ? "#ffffff" : IOS_INK, scale: stage === 1 ? [1, 0.85, 1] : 1 }}
             transition={{ duration: 0.3 }}
             className="flex h-[30px] w-[30px] items-center justify-center rounded-full"
-            style={{ color: TEXT }}
           >
             {stage === 0 && typed > 0 ? <Glyph d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7Z" size={14} /> : <Glyph d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Zm6-3a6 6 0 0 1-12 0M12 18v3" size={16} />}
           </motion.span>
@@ -818,13 +855,13 @@ function SlackPhone({ active }: { active: boolean }) {
       {/* tab bar + room for the home indicator */}
       <div className="flex shrink-0 items-start justify-around px-6 pb-[30px] pt-2.5">
         {[
-          ["Home", "M4 11 12 4l8 7v9H4z", true],
-          ["DMs", "M20 12.5a7.5 7.5 0 0 1-11 6.6L4 20l1-4.6a7.5 7.5 0 1 1 15-2.9Z", false],
+          ["Home", "M4 11 12 4l8 7v9H4z", false],
+          ["DMs", "M20 12.5a7.5 7.5 0 0 1-11 6.6L4 20l1-4.6a7.5 7.5 0 1 1 15-2.9Z", true],
           ["Activity", "M15 17H9m8-3V11a5 5 0 0 0-10 0v3l-2 3h14l-2-3Z", false],
         ].map(([label, d, on]) => (
-          <span key={String(label)} className="relative flex flex-col items-center gap-1 text-[10px] font-medium" style={{ color: on ? TEXT : MUTED }}>
+          <span key={String(label)} className="relative flex flex-col items-center gap-1 text-[10px] font-medium" style={{ color: on ? IOS_INK : IOS_MUTED }}>
             <Glyph d={String(d)} size={22} />
-            <span className="absolute -right-1 top-0 h-[7px] w-[7px] rounded-full bg-[#e01e5a]" />
+            <span className="absolute -right-1 top-0 h-[7px] w-[7px] rounded-full bg-[#611f69]" />
             {String(label)}
           </span>
         ))}
@@ -917,12 +954,12 @@ function SpendCard({ layout, stage, reduced }: { layout: Layout; stage: Stage; r
             <p className="font-numeral text-[22px] font-semibold leading-tight tracking-[-0.8px] tabular-nums">{fmt(spent)}</p>
           </div>
           <motion.div initial={false} animate={{ opacity: projIn ? 1 : 0.35 }} transition={{ duration: 0.4 }}>
-            <p className="text-[11px] text-white/75">Projected by Sep 30</p>
+            <p className="text-[11px] text-white/75">{phone ? "Projected Sep 30" : "Projected by Sep 30"}</p>
             <p className="font-numeral flex items-center gap-1.5 text-[22px] font-semibold leading-tight tracking-[-0.8px] tabular-nums">
               {fmt(proj)}
               <Glyph d="M7 17 17 7M9 7h8v8" size={14} />
             </p>
-            <p className="font-numeral text-[11px] text-white/75">+$18,710 (204%) · 4 agents</p>
+            <p className="font-numeral text-[11px] text-white/75">{phone ? "+$18,710 (204%)" : "+$18,710 (204%) · 4 agents"}</p>
           </motion.div>
         </div>
 
