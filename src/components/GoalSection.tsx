@@ -30,7 +30,7 @@ const NOTIFS = [
   {
     name: "OpenAI",
     logo: "/logos/openai.svg",
-    amount: "$412.80",
+    amount: "$2,500.00",
     note: "API usage this month",
     pos: "left-[11%] top-[19%]",
     at: 0.16,
