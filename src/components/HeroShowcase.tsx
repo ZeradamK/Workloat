@@ -119,9 +119,9 @@ export default function HeroShowcase() {
           style={{ opacity: textAO, pointerEvents: textAPE }}
         >
           <h1 className="w-max text-[clamp(22px,3.2vw,52px)] font-normal leading-[0.95] tracking-[-1.5px] text-ink">
-            Have better insights
+            See every dollar
             <br />
-            on your expenses
+            your agents spend
           </h1>
         </motion.div>
 
@@ -131,9 +131,9 @@ export default function HeroShowcase() {
           style={{ opacity: textBO, pointerEvents: textBPE }}
         >
           <h2 className="w-max text-[clamp(22px,3.2vw,52px)] font-normal leading-[0.95] tracking-[-1.5px] text-ink">
-            Know what renews
+            Know what was bought
             <br />
-            before it charges
+            and what it was for
           </h2>
         </motion.div>
 
@@ -143,8 +143,8 @@ export default function HeroShowcase() {
           style={{ opacity: textAO, pointerEvents: textAPE }}
         >
           <p className="w-[85%] max-w-[300px] text-pretty text-[17px] leading-[1.2] text-ink">
-            All your subscriptions, purchases, online retail receipts managed
-            in one place
+            Every purchase, subscription, order, and receipt your agents
+            record, in one ledger
           </p>
         </motion.div>
 
@@ -155,9 +155,9 @@ export default function HeroShowcase() {
         >
           <div className="flex w-[85%] max-w-[300px] flex-col items-start gap-5">
             <p className="text-pretty text-[17px] leading-[1.2] text-ink">
-              Your purchases and subscriptions tracked in one view. Payloat
-              totals what you spend each month and flags every renewal before
-              it charges you.
+              Every agent purchase in one view. Payloat Ledger totals what
+              each agent spent this month, shows the task it was given, and
+              flags anything over its cap.
             </p>
             <Link
               href="/purchases"
@@ -283,9 +283,9 @@ function MobileHero() {
         {...up}
         className="text-center text-[clamp(30px,9vw,40px)] font-normal leading-[1.0] tracking-[-1.5px] text-ink"
       >
-        Have better insights
+        See every dollar
         <br />
-        on your expenses
+        your agents spend
       </motion.h1>
       <motion.div {...up} className="mx-auto mt-9 w-full max-w-[340px]">
         <WalletStack open />
@@ -303,8 +303,8 @@ function MobileHero() {
         {...up}
         className="mx-auto mt-9 max-w-[300px] text-center text-[17px] leading-[1.25] text-ink"
       >
-        All your subscriptions, purchases, online retail receipts managed in
-        one place
+        Every purchase, subscription, order, and receipt your agents record,
+        in one ledger
       </motion.p>
       <motion.div {...up} className="mx-auto mt-9 w-full max-w-[340px]">
         <TotalSpending />
@@ -318,9 +318,9 @@ function MobileHero() {
         {...up}
         className="text-center text-[clamp(30px,9vw,40px)] font-normal leading-[1.0] tracking-[-1.5px] text-ink"
       >
-        Know what renews
+        Know what was bought
         <br />
-        before it charges
+        and what it was for
       </motion.h2>
       <motion.div
         {...up}
@@ -344,9 +344,9 @@ function MobileHero() {
         className="mx-auto mt-9 flex max-w-[300px] flex-col items-center gap-5"
       >
         <p className="text-center text-[17px] leading-[1.25] text-ink">
-          Your purchases and subscriptions tracked in one view. Payloat totals
-          what you spend each month and flags every renewal before it charges
-          you.
+          Every agent purchase in one view. Payloat Ledger totals what each
+          agent spent this month, shows the task it was given, and flags
+          anything over its cap.
         </p>
         <Link
           href="/purchases"
@@ -511,7 +511,7 @@ function WalletStack({ open }: { open: boolean }) {
 function CardExpenses() {
   return (
     <div className="flex flex-1 flex-col rounded-[18px] bg-mist p-3">
-      <span className="text-[11px] font-medium text-sub">Card Expenses</span>
+      <span className="text-[11px] font-medium text-sub">Agent spend</span>
       <span className="font-numeral mt-1 text-[21px] font-semibold tracking-[-0.5px] text-ink">
         {money(1240.6)}
       </span>
@@ -522,7 +522,7 @@ function CardExpenses() {
 function PaymentDue() {
   return (
     <div className="flex w-full flex-col rounded-[18px] bg-mist p-3">
-      <span className="text-[11px] font-medium text-sub">Payment due</span>
+      <span className="text-[11px] font-medium text-sub">Renewing soon</span>
       <span className="font-numeral mt-1 text-[21px] font-semibold tracking-[-0.5px] text-ink">
         $120
       </span>
@@ -541,7 +541,7 @@ function PaymentDue() {
         type="button"
         className="mt-auto h-9 w-full rounded-full bg-white text-[12px] font-semibold text-ink"
       >
-        Pay Early
+        See plans
       </button>
     </div>
   );
@@ -580,7 +580,7 @@ function TotalSpending() {
     <div className="rounded-[18px] p-3" style={{ backgroundColor: "#0a0a0a" }}>
       <div className="flex items-center justify-between">
         <span className="text-[11px] font-medium text-white/60">
-          Total spending
+          Total agent spend
         </span>
         <span className="flex items-center gap-1 rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold text-ink">
           Jul 2026

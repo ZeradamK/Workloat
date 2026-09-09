@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Contact — Payloat",
   description:
-    "Reach Payloat: support, business sales, press, and help.",
+    "Reach Payloat Ledger: support, sales, press, and help.",
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {

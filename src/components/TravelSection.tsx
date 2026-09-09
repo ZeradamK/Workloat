@@ -19,11 +19,11 @@ import {
 const EASE = [0.25, 0.6, 0.2, 1] as const;
 
 const TRAVEL_SLIDES = [
-  { src: "/travel/t1.jpg", place: "Mountain trip", note: "Day total", amount: "$86.00" },
-  { src: "/travel/t2.jpg", place: "Barcelona", note: "Budget left", amount: "$412.00" },
-  { src: "/travel/t3.jpg", place: "Rome", note: "Spent today", amount: "$95.00" },
+  { src: "/travel/t1.jpg", place: "Mountain trip", note: "Booked by Travel agent", amount: "$86.00" },
+  { src: "/travel/t2.jpg", place: "Barcelona", note: "Cap left", amount: "$412.00" },
+  { src: "/travel/t3.jpg", place: "Rome", note: "Spent today, under cap", amount: "$95.00" },
   { src: "/travel/t4.jpg", place: "New York", note: "Trip so far", amount: "$1,240.00" },
-  { src: "/travel/t5.jpg", place: "Paris", note: "Museum tickets", amount: "$60.00" },
+  { src: "/travel/t5.jpg", place: "Paris", note: "Receipt matched", amount: "$60.00" },
   { src: "/travel/t6.jpg", place: "Paris", note: "Trip total", amount: "$2,150.00" },
 ];
 
@@ -38,9 +38,9 @@ export default function TravelSection() {
           transition={{ duration: 0.55, ease: EASE }}
           className="text-center text-[clamp(34px,3.8vw,56px)] font-medium leading-[1.1] tracking-[-1.5px] text-ink min-[900px]:text-right"
         >
-          Travel anywhere.
+          Agents book travel.
           <br />
-          Budget everything.
+          You see every dollar.
         </motion.h2>
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -54,8 +54,8 @@ export default function TravelSection() {
           </Parallax>
         </motion.div>
         <p className="max-w-[250px] text-[17px] leading-[1.5] text-ink max-[899px]:mx-auto max-[899px]:text-center">
-          Payloat tracks your trip spending as it happens, so the budget makes
-          it home with you.
+          When an agent books a trip, Payloat Ledger records the task, the
+          cap, and every charge, so the budget makes it home with you.
         </p>
       </div>
     </section>

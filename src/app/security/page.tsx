@@ -32,15 +32,15 @@ const up = {
 const PROTECTIONS = [
   {
     title: "Renewals flagged automatically",
-    copy: "Every subscription renewal is surfaced a day before it charges you, so nothing renews quietly.",
+    copy: "Every subscription an agent holds is surfaced before it renews, so nothing charges quietly.",
   },
   {
-    title: "Every purchase, monitored",
-    copy: "Receipts, returns, refunds, and BNPL installments are tracked from the moment they land.",
+    title: "Every agent purchase, recorded",
+    copy: "Intents, checkouts, receipts, and status changes are appended to a ledger no one can quietly edit.",
   },
   {
     title: "Warned when something goes wrong",
-    copy: "If a return deadline and a charge are about to collide, Payloat warns you before the money slips.",
+    copy: "If an agent spends past its cap or a receipt does not match, Payloat Ledger flags it before the month closes.",
   },
 ];
 
@@ -137,9 +137,9 @@ export default function SecurityPage() {
                   </svg>
                 </div>
                 <div className="mt-5 border-t border-black/10 pt-5">
-                  <p className="text-[18px] font-semibold text-ink">Refunds</p>
+                  <p className="text-[18px] font-semibold text-ink">Agent keys</p>
                   <p className="mt-1.5 text-[13px] leading-snug text-sub">
-                    View your active refund requests or see your refund history
+                    Pause an agent, rotate its key, or see everything it recorded
                   </p>
                 </div>
               </div>
@@ -230,9 +230,9 @@ export default function SecurityPage() {
             {...up}
             className="text-[clamp(30px,3.8vw,54px)] font-medium leading-[1.08] tracking-[-1.5px] text-ink"
           >
-            Every silent charge,
+            Every silent purchase,
             <br />
-            caught before it lands
+            seen before the statement
           </motion.h2>
           <motion.div
             {...up}
@@ -267,7 +267,7 @@ export default function SecurityPage() {
                 Encryption
               </p>
               <p className="mt-3 max-w-[380px] text-[clamp(20px,2vw,27px)] font-medium leading-[1.3] tracking-[-0.5px] text-white">
-                Your purchase data encrypted for your privacy
+                Your agents&apos; purchase data encrypted for your privacy
               </p>
               <div className="mt-auto flex items-end gap-4 pb-2">
                 <AsteriskGlyph />
@@ -286,7 +286,7 @@ export default function SecurityPage() {
                 Privacy
               </p>
               <p className="mt-3 max-w-[380px] text-[clamp(20px,2vw,27px)] font-medium leading-[1.3] tracking-[-0.5px] text-ink">
-                Your data belongs to you and is never sold to anyone
+                Your data belongs to your company and is never sold to anyone
               </p>
               <div className="mt-auto flex justify-center pb-6">
                 <svg
@@ -375,20 +375,20 @@ const EXPLORE: {
   border?: boolean;
 }[] = [
   {
-    title: "See everything Payloat watches",
+    title: "See everything Payloat Ledger sees",
     cta: "Explore the product",
     href: "/product",
     image: "/explore-product-v2.jpg",
     border: true,
   },
   {
-    title: "Purchases, from checkout to refund",
-    cta: "See purchase tracking",
+    title: "Agent purchases, from intent to receipt",
+    cta: "See agent purchases",
     href: "/purchases",
     image: "/explore-purchases.jpg",
   },
   {
-    title: "Be first when Payloat ships",
+    title: "Be first when Payloat Ledger opens",
     cta: "Sign up",
     href: "/signup",
     image: "/explore-signup.jpg",

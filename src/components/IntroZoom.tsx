@@ -120,9 +120,9 @@ export default function IntroZoom() {
             style={{ x: h1X, opacity: h1O, color: TINT_10 }}
             className="w-max text-[clamp(22px,3.2vw,52px)] font-semibold leading-[1.0] tracking-[-0.02em]"
           >
-            Have better insights
+            See every dollar
             <br />
-            on your expenses
+            your agents spend
           </motion.h1>
         </div>
 
@@ -133,8 +133,8 @@ export default function IntroZoom() {
             style={{ x: pX, opacity: pO }}
             className="w-[85%] max-w-[300px] text-pretty text-[17px] leading-[1.3] text-white"
           >
-            All your subscriptions, purchases, online retail receipts managed
-            in one place
+            Every purchase, subscription, order, and receipt your agents
+            record, in one ledger
           </motion.p>
         </div>
 

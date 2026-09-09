@@ -71,7 +71,7 @@ export default function ContactPage() {
               Support
             </h2>
             <p className="mt-2 max-w-[380px] text-[15px] leading-[1.5] text-sub">
-              Questions about the app, your purchases, or your data. A person
+              Questions about the ledger, your agents, or your data. A person
               reads every message.
             </p>
             <div className="mt-auto flex flex-wrap gap-2.5 pt-8">
@@ -113,11 +113,11 @@ export default function ContactPage() {
               </svg>
             </span>
             <h2 className="mt-6 text-[clamp(22px,2.2vw,28px)] font-medium tracking-[-0.5px] text-white">
-              Business sales
+              Sales
             </h2>
             <p className="mt-2 max-w-[380px] text-[15px] leading-[1.5] text-white/60">
-              Payroll and finance tracking for small teams, on the Business
-              plan.
+              Payloat Ledger for companies with many agents, many locations,
+              or both.
             </p>
             <div className="mt-auto pt-8">
               <a
@@ -192,7 +192,7 @@ const SECONDARY = [
   {
     id: "press",
     title: "Press",
-    copy: "Writing about Payloat? We are happy to talk.",
+    copy: "Writing about Payloat Ledger? We are happy to talk.",
     cta: "Email press",
     href: "mailto:hello@payloat.com?subject=Press",
     external: true,
@@ -208,7 +208,7 @@ const SECONDARY = [
   {
     id: "updates",
     title: "Launch updates",
-    copy: "Be first to know when Payloat ships on iOS.",
+    copy: "Be first to know when Payloat Ledger opens.",
     cta: "Sign up",
     href: "/signup",
     external: false,

@@ -107,10 +107,10 @@ export default function HomeScreenMock({
           {/* action chips — HomeView.swift spec */}
           <div className="mt-3 flex gap-[10px]">
             <span className="whitespace-nowrap rounded-full bg-pine px-4 py-3 text-[15px] font-semibold leading-none text-white">
-              Add purchase
+              Record purchase
             </span>
             <span className="whitespace-nowrap rounded-full bg-mist px-4 py-3 text-[15px] font-semibold leading-none text-ink">
-              Scan receipt
+              Match receipt
             </span>
             <span className="whitespace-nowrap rounded-full bg-mist px-4 py-3 text-[15px] font-semibold leading-none text-ink">
               Activity

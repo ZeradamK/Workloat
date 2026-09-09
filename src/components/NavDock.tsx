@@ -46,9 +46,9 @@ const PANEL_DIMS: Record<PanelKey, { w: number; h: number }> = {
 };
 
 const PRODUCT_ITEMS = [
-  "Returns tracking",
-  "Refund watch",
-  "Collision alerts",
+  "Agent purchases",
+  "Receipt matching",
+  "Cap alerts",
   "Subscriptions",
   "Security",
   "Privacy and data",
@@ -59,22 +59,22 @@ const productHref = (item: string) =>
   `/product#${item.toLowerCase().replace(/ /g, "-")}`;
 
 const SOLUTION_ITEMS = [
-  "For online shoppers",
-  "For BNPL users",
-  "For serial returners",
-  "For subscription cutters",
+  "For restaurants",
+  "For agent builders",
+  "For finance teams",
+  "For growing companies",
 ];
 
 const PRICING_ITEMS = [
-  { title: "Personal", price: "$4.99/mo" },
-  { title: "Pro", price: "$7.99/mo" },
-  { title: "Premium", price: "$12.99/mo" },
-  { title: "Business", price: "$49.99/mo" },
+  { title: "Starter", price: "$0/mo" },
+  { title: "Team", price: "$49/mo" },
+  { title: "Business", price: "$149/mo" },
+  { title: "Enterprise", price: "Custom" },
 ];
 
 const CONTACT_ITEMS = [
   { title: "Support", detail: "hello@payloat.com", href: "/contact#support" },
-  { title: "Business sales", detail: "", href: "/contact#sales" },
+  { title: "Sales", detail: "", href: "/contact#sales" },
   { title: "Press", detail: "", href: "/contact#press" },
   { title: "Help center", detail: "", href: "/#faq" },
 ];
@@ -399,7 +399,7 @@ export default function NavDock({
             href="/signup"
             className="flex h-11 items-center rounded-full bg-[#0a0a0a] px-5 text-[13px] font-semibold tracking-[-0.5px] text-white transition-transform hover:scale-[1.03] active:scale-[0.97]"
           >
-            Subscribe
+            Get started
           </Link>
         </motion.div>
         )}
@@ -607,7 +607,7 @@ export default function NavDock({
                         color: "var(--nav-bg)",
                       }}
                     >
-                      Subscribe
+                      Get started
                     </Link>
                   </div>
                 </motion.div>

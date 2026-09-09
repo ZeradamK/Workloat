@@ -46,7 +46,7 @@ const ROSTER = [
 const ROSTER_TOTAL = ROSTER.reduce((s, r) => s + r.amount, 0);
 
 const P2_TEXT =
-  "Add your real cards and watch every swipe land in Payloat as it happens.";
+  "Connect the cards your agents spend on and watch every charge match its ledger entry.";
 const P2_WORDS = P2_TEXT.split(" ");
 
 const SPRING = { type: "spring", stiffness: 260, damping: 28 } as const;
@@ -132,8 +132,8 @@ export default function SubscriptionSection() {
               Subscriptions
             </p>
             <p className="mt-4 w-[380px] max-w-none text-[26px] font-medium leading-[1.3] tracking-[-0.5px] text-ink">
-              Every subscription counted, totaled and watched from the moment
-              it first charges you.
+              Every subscription an agent holds, counted, totaled and watched
+              from its first charge.
             </p>
           </motion.div>
           <motion.div
@@ -145,7 +145,7 @@ export default function SubscriptionSection() {
               href="#"
               className="mt-8 inline-flex h-11 items-center rounded-full border border-solid border-black bg-white px-5 text-[13px] font-semibold tracking-[-0.5px] text-ink transition-transform hover:scale-[1.03] active:scale-[0.97]"
             >
-              See your subscriptions
+              See agent subscriptions
             </a>
           </motion.div>
         </div>
@@ -208,7 +208,7 @@ export default function SubscriptionSection() {
                     className="flex items-baseline justify-between px-1.5 pb-2.5"
                   >
                     <span className="text-[16px] font-semibold text-ink">
-                      Your subscriptions
+                      Agent subscriptions
                     </span>
                     <span className="font-numeral text-[15px] font-semibold text-sub">
                       {money(ROSTER_TOTAL)}/mo
@@ -359,7 +359,7 @@ export default function SubscriptionSection() {
             transition={{ duration: 0.4 }}
             className="text-[10px] font-medium uppercase tracking-[0.08em] text-sub"
           >
-            The Payloat card
+            Card feeds
           </motion.p>
           {/* word-by-word ink reveal, goal-section style */}
           <p className="mt-4 max-w-[440px] text-[26px] font-medium leading-[1.3] tracking-[-0.5px]">

@@ -38,9 +38,9 @@ export default function PurchasesPage() {
           transition={{ duration: 0.55, ease: EASE }}
           className="text-[clamp(38px,6.2vw,84px)] font-medium leading-[1.04] tracking-[-3px] text-ink"
         >
-          Every purchase accounted for,
+          Every agent purchase accounted for,
           <br />
-          from checkout to refund
+          from intent to receipt
         </motion.h1>
 
         {/* the hero media: the Purchase Tracker, huge */}
@@ -59,9 +59,9 @@ export default function PurchasesPage() {
           transition={{ duration: 0.55, ease: EASE, delay: 0.2 }}
           className="mt-6 max-w-[620px] text-[14px] leading-[1.55] text-sub"
         >
-          From the moment a receipt lands to the day money comes back, every
-          purchase is tracked in one place. Numbers shown are illustrative
-          until the app ships.
+          From the moment an agent is given a task to the day the receipt
+          matches, every purchase is tracked in one place. Numbers shown are
+          illustrative until the ledger ships.
         </motion.p>
 
         {/* ---- four-benefit card (Cash App anatomy: bordered surface,
@@ -96,7 +96,7 @@ export default function PurchasesPage() {
             transition={{ duration: 0.55, ease: EASE }}
             className="text-[clamp(28px,3.4vw,48px)] font-medium leading-[1.1] tracking-[-1.5px] text-ink"
           >
-            How Payloat keeps purchases covered
+            How Payloat Ledger keeps agent spend covered
           </motion.h2>
 
           <div className="mt-8 grid gap-5 min-[900px]:grid-cols-[2fr_1fr_1fr]">
@@ -113,16 +113,16 @@ export default function PurchasesPage() {
                 style={{ backgroundColor: "#eeeeee" }}
               >
                 <span className="absolute left-[8%] top-[16%] -rotate-[38deg] rounded-full bg-[#dcdcda] px-8 py-4 text-[clamp(16px,1.6vw,22px)] font-medium text-ink">
-                  Receipt parsing
+                  Receipt matching
                 </span>
                 <span className="absolute left-[38%] top-[24%] -rotate-[32deg] rounded-full bg-[#d6f251] px-8 py-4 text-[clamp(16px,1.6vw,22px)] font-medium text-ink">
-                  Charge alerts
+                  Cap alerts
                 </span>
                 <span className="absolute left-[12%] top-[52%] -rotate-[14deg] rounded-full bg-[#0a0a0a] px-8 py-4 text-[clamp(16px,1.6vw,22px)] font-medium text-white">
-                  Return tracking
+                  Order tracking
                 </span>
                 <span className="absolute left-[42%] top-[68%] -rotate-[6deg] rounded-full bg-[#dcdcda] px-8 py-4 text-[clamp(16px,1.6vw,22px)] font-medium text-ink">
-                  Refund watch
+                  Subscription watch
                 </span>
                 <span className="absolute right-[12%] top-[12%] flex h-[76px] w-[76px] items-center justify-center rounded-full bg-[#0a0a0a]">
                   <svg width="30" height="30" viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -137,11 +137,12 @@ export default function PurchasesPage() {
                 </span>
               </div>
               <h3 className="mt-6 text-[clamp(22px,2.2vw,30px)] font-medium tracking-[-0.5px] text-ink">
-                What Payloat does
+                What Payloat Ledger does
               </h3>
               <p className="mt-3 max-w-[440px] text-[15px] leading-[1.5] text-sub">
-                We read receipts, count down return windows, and flag every
-                charge before it hits, so nothing slips away quietly.
+                We record what agents buy, match the receipts, and flag
+                anything over its cap or past its date, so nothing slips away
+                quietly.
               </p>
               <Link
                 href="/product"
@@ -179,7 +180,7 @@ export default function PurchasesPage() {
                   </span>
                 </div>
                 <span className="mt-7 text-[22px] font-medium text-white">
-                  Lock card
+                  Pause agent
                 </span>
                 <span className="absolute bottom-5 right-5 flex h-11 w-11 items-center justify-center rounded-full bg-[#eeeeee]">
                   <PlusIcon />
@@ -248,7 +249,7 @@ const BENEFITS = [
         />
       </svg>
     ),
-    text: "Every receipt parsed into a tracked purchase",
+    text: "Every agent purchase recorded with its task and cap",
   },
   {
     icon: (
@@ -257,7 +258,7 @@ const BENEFITS = [
         <path d="M10 36 34 8" strokeLinecap="round" />
       </svg>
     ),
-    text: "Zero silent charges, every renewal flagged a day early",
+    text: "Zero silent renewals, every subscription an agent holds flagged early",
   },
   {
     icon: (
@@ -266,7 +267,7 @@ const BENEFITS = [
         <path d="M22 13v9l6.5 4" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     ),
-    text: "Return windows counted down to the deadline",
+    text: "Orders and trips tracked to their expected date",
   },
   {
     icon: (

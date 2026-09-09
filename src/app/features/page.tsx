@@ -53,7 +53,7 @@ export default function FeaturesPage() {
           transition={{ duration: 0.5, ease: EASE }}
           className="text-[15px] text-sub"
         >
-          Payloat Features
+          Payloat Ledger Features
         </motion.p>
 
         <div className="mt-4 grid gap-8 min-[900px]:grid-cols-[3fr_2fr] min-[900px]:gap-16">
@@ -64,7 +64,7 @@ export default function FeaturesPage() {
               transition={{ duration: 0.55, ease: EASE, delay: 0.05 }}
               className="text-[clamp(34px,4.2vw,58px)] font-medium leading-[1.08] tracking-[-2px] text-ink"
             >
-              Track, request, and recover,
+              Record, match, and summarize,
               <br />
               all in one place
             </motion.h1>
@@ -87,8 +87,8 @@ export default function FeaturesPage() {
             transition={{ duration: 0.55, ease: EASE, delay: 0.1 }}
             className="max-w-[440px] text-[17px] leading-[1.5] text-ink min-[900px]:mt-2"
           >
-            Payloat reads your receipts, follows your refunds, and turns every
-            purchase into insight you can act on.
+            Payloat Ledger records what your agents buy, matches every
+            receipt, and turns agent spend into a summary you can act on.
           </motion.p>
         </div>
 
@@ -107,16 +107,16 @@ export default function FeaturesPage() {
             />
             <div className="relative flex w-[min(380px,84%)] -translate-y-6 flex-col gap-3">
               <span className="self-end rounded-full border border-solid border-white/70 px-5 py-3 text-[15px] text-white">
-                Can I get a refund?
+                What did Procurement buy this week?
               </span>
               <span className="max-w-[300px] self-start rounded-[22px] bg-white px-5 py-3 text-[15px] leading-snug text-ink">
-                Sure. Can you share your order number please?
+                Four orders, $891.34 total. One went over its cap.
               </span>
               <span className="self-end rounded-full border border-solid border-white/70 px-5 py-3 text-[15px] text-white">
-                It&apos;s PL4543490
+                Which one?
               </span>
               <span className="max-w-[300px] self-start rounded-[22px] bg-white px-5 py-3 text-[15px] leading-snug text-ink">
-                Thank you. I have started the refund request.
+                WebstaurantStore, $96.50 against an $80 cap. Receipt matched.
               </span>
               <span className="flex w-fit items-center gap-2.5 self-start rounded-full bg-white py-2 pl-2 pr-5 text-[15px] font-medium text-ink">
                 <Image
@@ -126,14 +126,14 @@ export default function FeaturesPage() {
                   height={26}
                   className="h-[26px] w-[26px] rounded-[7px]"
                 />
-                Refund landed
+                Summary ready
               </span>
             </div>
             <div className="absolute bottom-7 left-7 right-7">
-              <p className="text-[15px] text-white/70">Refund requests</p>
+              <p className="text-[15px] text-white/70">Agent summaries</p>
               <p className="mt-1 max-w-[460px] text-[16px] leading-[1.4] text-white">
-                Payloat follows a refund from the first ask to the day the
-                money lands back on your card.
+                Ask about any agent and get the purchases, receipts, and issues
+                behind the number.
               </p>
             </div>
           </motion.div>
@@ -147,7 +147,7 @@ export default function FeaturesPage() {
           >
             <div className="rounded-[20px] bg-white p-6">
               <p className="text-[15px] font-semibold text-ink">
-                Spend overview
+                Agent spend overview
               </p>
               <p className="font-numeral mt-1 text-[26px] font-bold tracking-[-0.5px] text-ink">
                 $2,350
@@ -161,8 +161,8 @@ export default function FeaturesPage() {
             <div className="mt-auto">
               <p className="text-[15px] text-sub">Insights</p>
               <p className="mt-1 max-w-[400px] text-[16px] leading-[1.4] text-ink">
-                Measure your month at a glance, spending, renewals, and money
-                on its way back.
+                Measure the month at a glance: spend by agent, renewals ahead,
+                and receipts still missing.
               </p>
             </div>
           </motion.div>
@@ -191,33 +191,33 @@ const STACK_FEATURES: {
   dark?: boolean;
 }[] = [
   {
-    title: "Every purchase in one inbox",
-    desc: "Receipts, orders, and charges flow into a single tracked list the moment they land.",
+    title: "Every agent purchase in one ledger",
+    desc: "Intents, checkouts, and receipts flow into a single tracked list the moment an agent records them.",
     bg: "#a44ede",
     image: "/features-stack1.jpg",
   },
   {
-    title: "Returns never expire quietly",
-    desc: "Every return window is counted down, with a warning before the last day.",
+    title: "Orders never go late quietly",
+    desc: "Every order and trip carries its expected date, with a flag the day it passes.",
     bg: "#0a0a0a",
     image: "/features-stack2.jpg",
     dark: true,
   },
   {
     title: "Renewals seen coming",
-    desc: "Subscriptions are flagged a day before they charge, so nothing renews unnoticed.",
+    desc: "Subscriptions your agents hold are flagged before they charge, so nothing renews unnoticed.",
     bg: "#f0efed",
     image: "/features-stack3.jpg",
   },
   {
-    title: "Refunds followed home",
-    desc: "A refund is tracked from the first request to the day it lands back on your card.",
+    title: "Receipts matched to the cent",
+    desc: "Every receipt is checked against what the agent recorded, and the gaps are flagged.",
     bg: "#6aa5c8",
     image: "/features-stack4.jpg",
   },
   {
-    title: "BNPL under control",
-    desc: "Installments lined up in one view, so the next hit never surprises you.",
+    title: "Caps under control",
+    desc: "Every task carries a cap, so an agent that overspends is caught in the ledger, not on the statement.",
     bg: "#7a1230",
     image: "/features-stack5.jpg",
     dark: true,
@@ -251,11 +251,11 @@ function EverydayStack() {
       >
         <div className="sticky top-0 flex h-screen flex-col justify-center">
           <h2 className="text-center text-[clamp(30px,3.8vw,54px)] font-medium leading-[1.1] tracking-[-1.5px] text-ink">
-            Your everyday money inbox
+            Your agents&apos; spending, in one ledger
           </h2>
           <p className="mx-auto mt-4 max-w-[520px] text-center text-[16px] leading-[1.5] text-sub">
-            Payments, renewals, returns, and refunds, all watched in one
-            place.
+            Purchases, subscriptions, orders, and receipts, all recorded in
+            one place.
           </p>
 
           <div className="mx-auto mt-10 grid w-full max-w-[1040px] grid-cols-2 items-center gap-16 px-6">
@@ -306,10 +306,10 @@ function EverydayStack() {
       {/* mobile: the same story as a stacked list */}
       <div className="mt-[clamp(96px,11vw,176px)] min-[900px]:hidden">
         <h2 className="text-center text-[clamp(30px,8vw,40px)] font-medium leading-[1.1] tracking-[-1.5px] text-ink">
-          Your everyday money inbox
+          Your agents&apos; spending, in one ledger
         </h2>
         <p className="mx-auto mt-4 max-w-[420px] text-center text-[16px] leading-[1.5] text-sub">
-          Payments, renewals, returns, and refunds, all watched in one place.
+          Purchases, subscriptions, orders, and receipts, all recorded in one place.
         </p>
         <div className="mt-10 flex flex-col gap-10">
           {STACK_FEATURES.map((sf) => (

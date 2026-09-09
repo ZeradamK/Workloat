@@ -47,26 +47,26 @@ const RETURN_TABS: Tab[] = [
   {
     logo: "/logos/zara.webp",
     name: "Zara",
-    note: "Return window closes Friday",
+    note: "Staff aprons, by Procurement",
     amount: "$84.00",
     details: [
-      ["Ordered", "Jul 12"],
-      ["Delivered", "Jul 19"],
-      ["Window closes", "Friday"],
+      ["Task", "Replace 4 aprons"],
+      ["Cap", "$100"],
+      ["Receipt", "Matched"],
     ],
-    pill: { label: "3 days left", tone: "ink" },
+    pill: { label: "Under cap", tone: "ink" },
   },
   {
     logo: "/logos/nike.webp",
     name: "Nike",
-    note: "Return window closes Aug 2",
+    note: "Kitchen shoes, by Procurement",
     amount: "$129.00",
     details: [
-      ["Ordered", "Jul 18"],
-      ["Delivered", "Jul 22"],
-      ["Window closes", "Aug 2"],
+      ["Task", "Two pairs, non-slip"],
+      ["Cap", "$120"],
+      ["Receipt", "Matched"],
     ],
-    pill: { label: "11 days left", tone: "ink" },
+    pill: { label: "Over cap by $9", tone: "ink" },
   },
 ];
 
@@ -74,51 +74,51 @@ const REFUND_TABS: Tab[] = [
   {
     logo: "/logos/adobe.webp",
     name: "Adobe",
-    note: "Refund requested Jul 14",
+    note: "Receipt matched Jul 14",
     amount: "$49.99",
     details: [
-      ["Requested", "Jul 14"],
-      ["Approved", "Jul 16"],
+      ["Recorded", "$49.99"],
+      ["Receipt", "$49.99"],
     ],
-    pill: { label: "Refund landed", tone: "green" },
+    pill: { label: "Matched", tone: "green" },
   },
   {
     logo: "/logos/apple.webp",
     name: "Apple Store",
-    note: "Refund requested Jul 20",
+    note: "Receipt still missing",
     amount: "$129.00",
     details: [
-      ["Requested", "Jul 20"],
+      ["Recorded", "Jul 20"],
       ["Expected by", "Aug 1"],
     ],
-    pill: { label: "Being tracked", tone: "ink" },
+    pill: { label: "No receipt yet", tone: "ink" },
   },
 ];
 
 const ROWS: Row[] = [
   {
-    slug: "returns-tracking",
-    copy: "Every return window, counted down. Payloat pulls return deadlines from your order and receipt emails, so money you could get back never expires quietly.",
+    slug: "agent-purchases",
+    copy: "Every agent purchase, recorded with the task behind it. Payloat Ledger keeps the merchant, the amount, the cap the agent was given, and what it was asked to do, so no purchase is a mystery.",
     bg: "#eeeeee",
     visual: <ClickTabs tabs={RETURN_TABS} />,
   },
   {
-    slug: "refund-watch",
-    copy: "A refund that never lands is money lost. Payloat follows every refund you are owed until it actually hits your card.",
+    slug: "receipt-matching",
+    copy: "A receipt that never matches is money lost. Payloat Ledger checks every receipt against what the agent recorded and flags the ones that are missing or wrong.",
     bg: "#eeeeee",
     visual: <ClickTabs tabs={REFUND_TABS} />,
   },
   {
-    slug: "collision-alerts",
-    copy: "The moment a charge and a return deadline land on the same day, Payloat warns you before the money slips.",
+    slug: "cap-alerts",
+    copy: "The moment an agent spends past the cap it was given, Payloat Ledger flags it, before the month closes.",
     bg: "#eeeeee",
-    cta: { label: "Get Payloat", href: "/signup" },
+    cta: { label: "Get Payloat Ledger", href: "/signup" },
     visual: (
       <div className="w-full max-w-[360px] space-y-2.5">
         <Bar
           logo="/logos/netflix.webp"
           name="Netflix"
-          note="Charged on Friday"
+          note="Lounge screen plan, Friday"
           amount="$15.49"
         />
         <div className="flex items-center gap-3 rounded-[18px] bg-[#0a0a0a] py-[6px] pl-[6px] pr-2.5">
@@ -127,10 +127,10 @@ const ROWS: Row[] = [
           </span>
           <span className="min-w-0 flex-1">
             <span className="block text-[16px] font-semibold text-white">
-              Collision alert
+              Cap alert
             </span>
             <span className="block text-[13px] leading-snug text-white/60">
-              A return closes the same Friday
+              Procurement went $16.50 over its cap
             </span>
           </span>
         </div>
@@ -139,20 +139,20 @@ const ROWS: Row[] = [
   },
   {
     slug: "subscriptions",
-    copy: "Every renewal, seen a day before it charges. Cancel or keep, but always on purpose.",
+    copy: "Every subscription an agent holds, seen before it renews. Keep or drop, but always on purpose.",
     bg: "#eeeeee",
     visual: (
       <div className="w-full max-w-[360px] space-y-2.5">
         <Bar
           logo="/logos/spotify.webp"
           name="Spotify"
-          note="Renews tomorrow"
+          note="In-store music, renews tomorrow"
           amount="$11.99"
         />
         <Bar
           logo="/logos/doordash.webp"
           name="DoorDash"
-          note="Being charged tomorrow"
+          note="Delivery plan renews tomorrow"
           amount="$9.99"
         />
       </div>
@@ -160,7 +160,7 @@ const ROWS: Row[] = [
   },
   {
     slug: "security",
-    copy: "Locked to your account and encrypted end to end. Payloat reads your purchases, and it never moves your money.",
+    copy: "Locked to your organization and encrypted end to end. Payloat Ledger reads what agents record, and it never moves your money.",
     bg: "#0a0a0a",
     cta: { label: "Learn about security", href: "/security" },
     visual: (
@@ -183,13 +183,13 @@ const ROWS: Row[] = [
             </svg>
           </span>
         </div>
-        <span className="text-[16px] font-medium text-white">Lock card</span>
+        <span className="text-[16px] font-medium text-white">Pause agent</span>
       </div>
     ),
   },
   {
     slug: "privacy-and-data",
-    copy: "Your data belongs to you. It is never sold, and you can disconnect your email or cards at any time.",
+    copy: "Your data belongs to your company. It is never sold, and you can revoke any agent key at any time.",
     bg: "#eeeeee",
     visual: (
       <svg
@@ -249,9 +249,9 @@ export default function ProductPage() {
           transition={{ duration: 0.55, ease: EASE }}
           className="text-[clamp(48px,7.5vw,96px)] font-medium leading-[1.02] tracking-[-3px] text-ink"
         >
-          Everything Payloat
+          Everything Payloat Ledger
           <br />
-          watches after you pay
+          sees after an agent pays
         </motion.h1>
 
         {/* hero canvas: the glowing card render, corner paragraph on top */}
@@ -279,8 +279,8 @@ export default function ProductPage() {
             />
           </Parallax>
           <p className="relative max-w-[460px] text-[clamp(20px,2vw,26px)] leading-[1.35] tracking-[-0.5px] text-white">
-            Returns, refunds, installments, and renewals, tracked from your
-            real purchases and warned about before money slips away.
+            Purchases, subscriptions, orders, and travel, recorded by your
+            agents and checked before the receipts land.
           </p>
         </motion.div>
 
@@ -289,13 +289,13 @@ export default function ProductPage() {
             canvases */}
         <div className="mt-[clamp(96px,11vw,176px)]">
           <h2 className="text-center text-[clamp(34px,4.5vw,64px)] font-medium leading-[1.05] tracking-[-2px] text-ink">
-            In your inbox or
+            From the agent or
             <br />
-            on your card. It works.
+            from the card. It works.
           </h2>
           <p className="mx-auto mt-4 max-w-[440px] text-center text-[15px] leading-[1.5] text-sub">
-            Payloat catches charges from receipt emails and synced cards,
-            wherever they land.
+            Payloat Ledger takes what agents record and what cards charge,
+            and lines them up.
           </p>
 
           <div className="mt-12 grid gap-5 min-[900px]:grid-cols-2">
@@ -312,7 +312,7 @@ export default function ProductPage() {
                 <Bar
                   logo="/logos/spotify.webp"
                   name="Spotify"
-                  note="Renews tomorrow"
+                  note="In-store music, renews tomorrow"
                   amount="$11.99"
                 />
                 <div className="absolute -bottom-10 right-3 flex items-center gap-1.5">
@@ -326,7 +326,7 @@ export default function ProductPage() {
                     />
                   </svg>
                   <span className="rounded-full bg-[#0a0a0a] px-3 py-1.5 text-[12px] font-semibold text-white">
-                    Reminder set
+                    Recorded
                   </span>
                 </div>
               </div>

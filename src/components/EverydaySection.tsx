@@ -26,13 +26,13 @@ export default function EverydaySection() {
         {...up}
         className="text-center text-[clamp(30px,3.8vw,54px)] font-medium leading-[1.1] tracking-[-1.5px] text-ink"
       >
-        Your everyday money inbox
+        Your agents&apos; spending, in one ledger
       </motion.h2>
       <motion.p
         {...up}
         className="mx-auto mt-4 max-w-[520px] text-center text-[16px] leading-[1.5] text-sub"
       >
-        Payments, renewals, returns, and refunds, all watched in one place.
+        Purchases, subscriptions, orders, and receipts, all recorded in one place.
       </motion.p>
 
       <div className="mt-12 flex flex-col items-center gap-5 min-[900px]:flex-row min-[900px]:justify-center">
@@ -43,7 +43,7 @@ export default function EverydaySection() {
         >
           <Image
             src="/features-stack2.jpg"
-            alt="A return window counted down"
+            alt="An agent order tracked to delivery"
             fill
             sizes="(min-width: 900px) 590px, 100vw"
             className="object-cover"
@@ -57,7 +57,7 @@ export default function EverydaySection() {
         >
           <Image
             src="/features-stack4.jpg"
-            alt="A refund landing back in the jar"
+            alt="A receipt matched to its purchase"
             fill
             sizes="(min-width: 900px) 590px, 100vw"
             className="object-cover"
@@ -70,7 +70,7 @@ export default function EverydaySection() {
           href="/features#everyday"
           className="inline-flex h-11 items-center rounded-full border border-solid border-black bg-white px-5 text-[13px] font-semibold tracking-[-0.5px] text-ink transition-transform hover:scale-[1.03] active:scale-[0.97]"
         >
-          Explore the money inbox
+          Explore the ledger
         </Link>
       </motion.div>
     </section>

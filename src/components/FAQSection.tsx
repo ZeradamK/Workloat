@@ -11,24 +11,24 @@ import { AnimatePresence, motion } from "motion/react";
 
 const ITEMS = [
   {
-    q: "What does Payloat track?",
-    a: "Payloat watches everything that happens after checkout. Returns and their deadlines, refunds you are owed, subscriptions and their renewals, BNPL installments and the charges landing on your cards. It all lives in one timeline so nothing slips.",
+    q: "What does Payloat Ledger record?",
+    a: "Everything your agents buy. Each purchase arrives with the task the agent was given, the cap it had, the merchant, the amount, and the receipt when it lands. Subscriptions carry their next charge date, orders and trips carry their expected date. It all lives in one ledger so nothing an agent did is a mystery.",
   },
   {
-    q: "How does Payloat see my purchases?",
-    a: "You choose what to connect. Link Gmail and Payloat reads purchase emails like receipts and renewal notices. Add your cards through Apple Wallet or your bank and charges appear as they happen. You can disconnect either at any time.",
+    q: "How do purchases get into the ledger?",
+    a: "Your agents write them. Each agent gets its own key and records an intent before it buys, the checkout when it pays, and the receipt when it arrives. Card feeds from Ramp, Brex, Mercury, and your bank are planned, so what was charged can be matched against what was recorded.",
   },
   {
     q: "Do you sell my data?",
-    a: "No. Your data is used for one thing, showing you your own dashboard. We never sell it or share it with advertisers.",
+    a: "No. Your data is used for one thing, showing your company what its agents did. We never sell it or share it with advertisers.",
   },
   {
-    q: "What does Payloat cost?",
-    a: "Payloat is free while in beta. Planned pricing is Personal at $4.99 a month, Pro at $7.99 with AI parsing and active refund requests, Premium at $12.99, and Business at $49.99 for small teams.",
+    q: "What does Payloat Ledger cost?",
+    a: "Payloat Ledger is free while in beta. Pricing will be per organization, with a free tier for a handful of agents and paid plans as your agents and their volume grow.",
   },
   {
     q: "When can I get it?",
-    a: "Payloat is in development, iOS first. The Download button will go live with the first release wave.",
+    a: "Payloat Ledger is in development. The web app and the agent API open first. Sign up and you will be the first to know.",
   },
 ];
 

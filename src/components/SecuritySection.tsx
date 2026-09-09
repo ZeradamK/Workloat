@@ -17,7 +17,7 @@ export default function SecuritySection() {
         {/* ---- Left: heading ---- */}
         <div className="col-span-12 min-[900px]:col-span-3">
           <h2 className="text-[clamp(26px,2.6vw,36px)] font-medium leading-[1.15] tracking-[-1px] text-ink">
-            Money tracking
+            Agent spend tracking
             <br />
             built for security
           </h2>
@@ -40,7 +40,7 @@ export default function SecuritySection() {
               <SpikeClock size={250} />
             </div>
             <p className="mt-4 text-[20px] font-medium leading-snug tracking-[-0.5px] text-ink">
-              24/7 fraud monitoring
+              24/7 ledger monitoring
             </p>
           </div>
 
@@ -65,17 +65,17 @@ export default function SecuritySection() {
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="block text-[16px] font-semibold leading-tight text-ink">
-                      New payment activity
+                      New agent purchase
                     </span>
                     <span className="block text-[13px] leading-snug text-sub">
-                      You spent $350 at Apple
+                      Procurement spent $350 at Apple
                     </span>
                   </span>
                 </div>
               </div>
             </div>
             <p className="mt-4 text-[20px] font-medium leading-snug tracking-[-0.5px] text-ink">
-              Real-time transaction alerts
+              Real-time purchase alerts
             </p>
           </div>
 
@@ -101,11 +101,11 @@ export default function SecuritySection() {
                 </span>
               </div>
               <p className="text-[20px] font-medium tracking-[-0.5px] text-ink">
-                Lock card
+                Pause agent
               </p>
             </div>
             <p className="mt-4 text-[20px] font-medium leading-snug tracking-[-0.5px] text-ink">
-              Card lock and security lock
+              Pause any agent, revoke any key
             </p>
           </div>
         </div>

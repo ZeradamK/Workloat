@@ -30,16 +30,16 @@ export default function PayrollSection() {
         <div className="grid gap-8 min-[900px]:grid-cols-2">
           <div>
             <h2 className="text-[clamp(30px,3.4vw,48px)] font-medium leading-[1.1] tracking-[-1.5px] text-white">
-              Run payroll in one
+              Every agent&apos;s spend
               <br />
-              platform, globally
+              in one ledger, company wide
             </h2>
           </div>
           <div className="flex items-start min-[900px]:justify-end">
             <p className="max-w-[420px] text-[17px] leading-[1.5] text-white/75 min-[900px]:mt-2">
-              Pay every worker type on time. Accurate, compliant payroll for
-              small businesses with unified visibility and the flexibility to
-              run it yourself or let Payloat handle it.
+              Procurement, software seats, travel, supplies. Every agent that
+              spends for the company writes to the same ledger, so the owner
+              sees one picture and each agent can check its own work.
             </p>
           </div>
         </div>
@@ -54,7 +54,7 @@ export default function PayrollSection() {
               <PeopleIcon />
             </span>
             <span className="text-[16px] font-semibold text-ink">
-              Employees
+              Procurement
             </span>
             <Chevron />
             <AvatarCluster faces={EMPLOYEE_AVATARS} count="+98" />
@@ -66,7 +66,7 @@ export default function PayrollSection() {
               <GlobeIcon />
             </span>
             <span className="text-[16px] font-semibold text-ink">
-              Contractors
+              Software &amp; seats
             </span>
             <Chevron />
             <AvatarCluster faces={CONTRACTOR_AVATARS} count="+46" />
@@ -76,7 +76,7 @@ export default function PayrollSection() {
           <div className="relative rounded-[18px] bg-white px-5 py-4 min-[640px]:absolute min-[640px]:right-[13%] min-[640px]:top-[52%]">
             <div className="flex items-center justify-between gap-8">
               <span className="text-[10px] font-semibold uppercase tracking-[0.08em] text-ink">
-                Payroll complete
+                This month, all agents
               </span>
               <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#1e9e56]">
                 <svg

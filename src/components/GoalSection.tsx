@@ -20,7 +20,7 @@ import {
  */
 
 const HEADLINE =
-  "Subscriptions renew quietly every month. Payloat warns you a day before any charge hits.";
+  "Agents buy quietly all day. Payloat Ledger shows you every purchase, with the task behind it, before the receipt lands.";
 const WORDS = HEADLINE.split(" ");
 /* words ink over this progress window */
 const WORDS_FROM = 0.06;
@@ -31,7 +31,7 @@ const NOTIFS = [
     name: "DoorDash",
     logo: "/logos/doordash.webp",
     amount: "$9.99",
-    note: "Being charged tomorrow",
+    note: "Delivery plan renews tomorrow",
     pos: "left-[11%] top-[19%]",
     at: 0.16,
   },
@@ -39,7 +39,7 @@ const NOTIFS = [
     name: "Spotify",
     logo: "/logos/spotify.webp",
     amount: "$11.99",
-    note: "Renews tomorrow",
+    note: "In-store music, renews tomorrow",
     pos: "right-[9%] top-[25%]",
     at: 0.36,
   },
@@ -47,7 +47,7 @@ const NOTIFS = [
     name: "Netflix",
     logo: "/logos/netflix.webp",
     amount: "$15.49",
-    note: "Charged on Friday",
+    note: "Lounge screen plan, Friday",
     pos: "left-[8%] top-[64%]",
     at: 0.56,
   },
@@ -55,7 +55,7 @@ const NOTIFS = [
     name: "Adobe",
     logo: "/logos/adobe.webp",
     amount: "$49.99",
-    note: "Renews in 2 days",
+    note: "3 design seats, renews in 2 days",
     pos: "right-[11%] top-[76%]",
     at: 0.76,
   },

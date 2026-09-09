@@ -30,21 +30,21 @@ const BARS = [
     name: "DoorDash",
     logo: "/logos/doordash.webp",
     amount: "$9.99",
-    note: "Being charged tomorrow",
+    note: "Delivery plan renews tomorrow",
     pos: "left-[14%] top-[26%]",
   },
   {
     name: "Spotify",
     logo: "/logos/spotify.webp",
     amount: "$11.99",
-    note: "Renews tomorrow",
+    note: "In-store music, renews tomorrow",
     pos: "right-[10%] top-[42%]",
   },
   {
     name: "Netflix",
     logo: "/logos/netflix.webp",
     amount: "$15.49",
-    note: "Charged on Friday",
+    note: "Lounge screen plan, Friday",
     pos: "left-[20%] top-[58%]",
   },
 ];
@@ -52,7 +52,7 @@ const BARS = [
 const CAPTIONS: Record<Step, [string, string] | null> = {
   email: null,
   password: null,
-  name: ["Your purchases, refunds, and renewals in one place.", "Tracked by Payloat"],
+  name: ["Your agents' purchases, receipts, and renewals in one place.", "Recorded in Payloat Ledger"],
 };
 
 export default function SignupPage() {

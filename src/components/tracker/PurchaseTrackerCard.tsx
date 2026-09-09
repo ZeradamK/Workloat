@@ -94,7 +94,7 @@ export default function PurchaseTrackerCard({
             animate={{ x: 0, opacity: 1 }}
             transition={ENTRANCE}
           >
-            Purchase
+            Agent
           </motion.span>
           <motion.span
             className="block"
