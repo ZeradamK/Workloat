@@ -10,7 +10,7 @@ import {
 } from "motion/react";
 
 /**
- * The goal section (pinned, 250vh). The headline renders complete but
+ * The goal section (pinned, 360vh). The headline renders complete but
  * faded #EEEEEE; scrolling inks each word to black in sequence (100ms
  * fill per word) while subscription charge-notice notifications pop in
  * one by one around it, top-left first. The notification anatomy follows
@@ -32,24 +32,40 @@ const NOTIFS = [
     logo: "/logos/openai.svg",
     amount: "$2,500.00",
     note: "API usage this month",
-    pos: "left-[11%] top-[19%]",
-    at: 0.16,
+    pos: "left-[11%] top-[12%]",
+    at: 0.12,
+  },
+  {
+    name: "Stripe",
+    logo: "/logos/stripe.svg",
+    amount: "$61.22",
+    note: "Platform fees, monthly",
+    pos: "right-[9%] top-[16%]",
+    at: 0.26,
+  },
+  {
+    name: "Vercel",
+    logo: "/logos/vercel.svg",
+    amount: "$150.00",
+    note: "Hosting, Ops agent",
+    pos: "left-[4%] top-[38%]",
+    at: 0.4,
   },
   {
     name: "Claude",
     logo: "/logos/claude.svg",
     amount: "$89.40",
     note: "Renews tomorrow",
-    pos: "right-[9%] top-[25%]",
-    at: 0.36,
+    pos: "right-[3%] top-[28%]",
+    at: 0.54,
   },
   {
     name: "AWS",
     logo: "/logos/aws.svg",
     amount: "$1,204.16",
-    note: "Hosting, Ops agent",
-    pos: "left-[8%] top-[64%]",
-    at: 0.56,
+    note: "Storage, Ops agent",
+    pos: "left-[8%] top-[66%]",
+    at: 0.68,
   },
   {
     name: "Brex",
@@ -57,7 +73,7 @@ const NOTIFS = [
     amount: "$528.60",
     note: "3 charges matched",
     pos: "right-[11%] top-[76%]",
-    at: 0.76,
+    at: 0.82,
   },
 ] as const;
 
@@ -87,7 +103,7 @@ export default function GoalSection() {
   });
 
   return (
-    <div ref={ref} className="relative h-[250vh]">
+    <div ref={ref} className="relative h-[360vh]">
       <div className="sticky top-0 flex h-screen items-center justify-center overflow-hidden bg-background">
         {/* the headline: every word fades from #EEEEEE to ink in turn */}
         <div className="relative">
