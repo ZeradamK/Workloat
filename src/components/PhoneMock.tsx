@@ -20,6 +20,7 @@ export const screenWidth = (width: number) => (408 / 430) * width;
 export default function PhoneMock({
   width,
   frame = "titanium",
+  frameColor,
   screenBg = "var(--background)",
   children,
 }: {
@@ -27,6 +28,8 @@ export default function PhoneMock({
   /** "titanium" = the full metallic band; "black" = dark titanium #1E1E1E
       edges (side keys keep their metallic finish either way). */
   frame?: "titanium" | "black";
+  /** Override the band color entirely (e.g. "#000" to match the island). */
+  frameColor?: string;
   /** Screen background color. */
   screenBg?: string;
   children?: React.ReactNode;
@@ -44,9 +47,11 @@ export default function PhoneMock({
         height: phoneHeight(width),
         borderRadius: px(74),
         padding: px(4),
-        background: black
-          ? "#1e1e1e"
-          : "linear-gradient(145deg,#E8E8EA 0%,#9FA0A4 12%,#5B5C60 30%,#3E3F43 50%,#5B5C60 70%,#B9BABD 90%,#7E7F83 100%)",
+        background:
+          frameColor ??
+          (black
+            ? "#1e1e1e"
+            : "linear-gradient(145deg,#E8E8EA 0%,#9FA0A4 12%,#5B5C60 30%,#3E3F43 50%,#5B5C60 70%,#B9BABD 90%,#7E7F83 100%)"),
       }}
     >
       {/* chamfer ring */}
