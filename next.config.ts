@@ -1,15 +1,14 @@
 import type { NextConfig } from "next";
 
-/* While building (NEXT_PUBLIC_DEV_BYPASS_AUTH=1 in .env.local), the app
-   opens on the ledger home and the auth screens are out of the way. The
-   flag is never committed, so a deploy keeps the marketing home and signup. */
+/* While building (NEXT_PUBLIC_DEV_BYPASS_AUTH=1 in .env.local), the auth
+   screens are out of the way: /signup lands on the ledger, which opens with
+   no sign-in. / stays the landing page. The flag is never committed. */
 const DEV_BYPASS = process.env.NEXT_PUBLIC_DEV_BYPASS_AUTH === "1";
 
 const nextConfig: NextConfig = {
   async redirects() {
     if (!DEV_BYPASS) return [];
     return [
-      { source: "/", destination: "/web-app", permanent: false },
       { source: "/signup", destination: "/web-app", permanent: false },
     ];
   },
