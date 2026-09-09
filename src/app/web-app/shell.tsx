@@ -266,6 +266,22 @@ type WebAppState = {
   beginSignOut: () => void;
 };
 
+/* ---------- dev bypass (building only, until we ship) ----------
+   NEXT_PUBLIC_DEV_BYPASS_AUTH=1 in .env.local skips the sign-in gate and
+   opens the sample preview so every page renders without a Supabase
+   session. Real reads still run and come back empty under RLS. Never set
+   this in a deployed environment. */
+const DEV_BYPASS = process.env.NEXT_PUBLIC_DEV_BYPASS_AUTH === "1";
+const DEV_USER = {
+  id: "00000000-0000-0000-0000-000000000000",
+  email: "builder@payloat.local",
+  created_at: "2026-09-08T00:00:00.000Z",
+  user_metadata: { full_name: "Builder" },
+  app_metadata: {},
+  aud: "authenticated",
+  role: "authenticated",
+} as unknown as User;
+
 const Ctx = createContext<WebAppState | null>(null);
 
 export function useWebApp(): WebAppState {
@@ -283,10 +299,14 @@ export default function WebAppShell({ children }: { children: React.ReactNode })
   const [purchases, setPurchases] = useState<Purchase[]>([]);
   const [events, setEvents] = useState<LedgerEvent[]>([]);
   const [firstName, setFirstName] = useState<string | null>(null);
-  const [preview, setPreview] = useState(false);
+  const [preview, setPreview] = useState(DEV_BYPASS);
   const signingOut = useRef(false);
 
   useEffect(() => {
+    if (DEV_BYPASS) {
+      setUser(DEV_USER);
+      return;
+    }
     let mounted = true;
     supabase.auth.getSession().then(({ data }) => {
       if (mounted) setUser(data.session?.user ?? null);
@@ -301,6 +321,7 @@ export default function WebAppShell({ children }: { children: React.ReactNode })
   }, []);
 
   useEffect(() => {
+    if (DEV_BYPASS) return;
     if (user === null && !signingOut.current) router.replace("/signup");
   }, [user, router]);
 
