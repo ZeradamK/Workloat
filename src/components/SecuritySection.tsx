@@ -15,7 +15,7 @@ export default function SecuritySection() {
     <section className="mx-auto max-w-[1200px] px-6 pb-[clamp(56px,7vw,120px)] pt-[clamp(40px,5vw,96px)]">
       <div className="grid grid-cols-12 gap-6">
         {/* ---- Left: heading ---- */}
-        <div className="col-span-12 min-[900px]:col-span-3">
+        <div className="col-span-12 min-[1100px]:col-span-3">
           <h2 className="text-[clamp(26px,2.6vw,36px)] font-medium leading-[1.15] tracking-[-1px] text-ink">
             Agent spend tracking
             <br />
@@ -30,7 +30,7 @@ export default function SecuritySection() {
         </div>
 
         {/* ---- Right: the three cards ---- */}
-        <div className="col-span-12 grid gap-6 min-[700px]:grid-cols-[1fr_calc(33.333%+50px)_1fr] min-[900px]:col-span-9">
+        <div className="col-span-12 grid gap-6 min-[700px]:grid-cols-[minmax(0,1fr)_calc(33.333%+50px)_minmax(0,1fr)] min-[1100px]:col-span-9">
           {/* black: the live clock */}
           <div>
             <div

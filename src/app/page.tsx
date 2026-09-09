@@ -3,6 +3,7 @@ import HeroShowcase from "@/components/HeroShowcase";
 import GoalSection from "@/components/GoalSection";
 import MarketsSection from "@/components/MarketsSection";
 import SecuritySection from "@/components/SecuritySection";
+import SlackSection from "@/components/SlackSection";
 import TravelSection from "@/components/TravelSection";
 import EverydaySection from "@/components/EverydaySection";
 import PayrollSection from "@/components/PayrollSection";
@@ -22,6 +23,9 @@ export default function Home() {
       {/* Pinned goal act: word-by-word headline fill + charge-notice
           notifications; releases once everything is solid. */}
       <GoalSection />
+
+      {/* Slack act: tilted monitor, @Payloat answers a spend question */}
+      <SlackSection />
 
       {/* Travel act: cycling photo card + trip spend bars */}
       <TravelSection />

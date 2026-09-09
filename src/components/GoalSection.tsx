@@ -37,7 +37,7 @@ const NOTIFS = [
   },
   {
     name: "Stripe",
-    logo: "/logos/stripe.svg",
+    logo: "/logos/stripe.png",
     amount: "$600.00",
     note: "Platform fees, monthly",
     pos: "right-[9%] top-[16%]",
