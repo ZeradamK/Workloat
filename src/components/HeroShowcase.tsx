@@ -161,7 +161,7 @@ export default function HeroShowcase() {
             </p>
             <Link
               href="/purchases"
-              className="group flex h-11 items-center gap-1.5 rounded-full bg-[#0a0a0a] px-5 text-[13px] font-semibold tracking-[-0.5px] text-white transition-transform hover:scale-[1.03] active:scale-[0.97]"
+              className="group flex h-11 items-center gap-1.5 rounded-full bg-[#eeeeee] px-5 text-[13px] font-semibold tracking-[-0.5px] text-ink transition-transform hover:scale-[1.03] active:scale-[0.97]"
             >
               Learn more
               <svg
@@ -216,7 +216,7 @@ export default function HeroShowcase() {
             >
               <PurchaseTrackerCard
                 countUp={trackerLive}
-                tone="dark"
+                tone="light"
                 href="/purchases"
                 purchases={42}
                 spend={2350}
@@ -329,7 +329,7 @@ function MobileHero() {
       >
         <PurchaseTrackerCard
           countUp={trackerLive}
-          tone="dark"
+          tone="light"
           href="/purchases"
           purchases={42}
           spend={2350}
@@ -350,7 +350,7 @@ function MobileHero() {
         </p>
         <Link
           href="/purchases"
-          className="group flex h-11 items-center gap-1.5 rounded-full bg-[#0a0a0a] px-5 text-[13px] font-semibold tracking-[-0.5px] text-white transition-transform hover:scale-[1.03] active:scale-[0.97]"
+          className="group flex h-11 items-center gap-1.5 rounded-full bg-[#eeeeee] px-5 text-[13px] font-semibold tracking-[-0.5px] text-ink transition-transform hover:scale-[1.03] active:scale-[0.97]"
         >
           Learn more
           <svg
