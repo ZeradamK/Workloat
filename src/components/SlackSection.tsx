@@ -363,14 +363,52 @@ function ScaledScreen({ children }: { children: React.ReactNode }) {
   );
 }
 
-/* A macOS desktop with Slack in full screen: no menu bar, the app fills
-   the panel. The title bar extends up beside the notch (the notch is drawn
-   over it by the frame), so the search field sits just below it. */
-const NOTCH_H = Math.round(DESIGN.h * 0.029);
+/* A macOS desktop with Slack in full screen below the menu bar. The bar
+   is the section's gray with black text and icons, as tall as the notch
+   (the frame draws the notch over its middle). */
+const MENU_H = Math.round(DESIGN.h * 0.029);
+const APPLE = "M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701";
 function Desktop({ stage, typed }: { stage: Stage; typed: number }) {
   return (
     <div className="relative h-full w-full" style={{ backgroundColor: "#ffffff" }}>
-      <div className="absolute overflow-hidden" style={{ top: NOTCH_H, left: 0, right: 0, bottom: 0 }}>
+      <div className="absolute inset-x-0 top-0 flex items-center justify-between px-3 text-[11px] font-medium text-[#0a0a0a]" style={{ height: MENU_H, backgroundColor: "#eeeeee" }}>
+        <span className="flex items-center gap-[14px]">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+            <path d={APPLE} />
+          </svg>
+          <span className="font-bold">Slack</span>
+          <span>File</span>
+          <span>Edit</span>
+          <span>View</span>
+          <span>Window</span>
+          <span>Help</span>
+        </span>
+        <span className="flex items-center gap-[10px]">
+          {/* battery */}
+          <span className="flex items-center gap-[2px]">
+            <span className="flex h-[10px] w-[20px] items-center rounded-[3px] border border-[#0a0a0a]/70 p-[1.5px]">
+              <span className="h-full w-[85%] rounded-[1.5px] bg-[#0a0a0a]" />
+            </span>
+            <span className="h-[4px] w-[1.5px] rounded-r-[1px] bg-[#0a0a0a]/70" />
+          </span>
+          {/* wifi */}
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden>
+            <path d="M2 8.82a15 15 0 0 1 20 0" />
+            <path d="M5 12.86a10 10 0 0 1 14 0" />
+            <path d="M8.5 16.43a5 5 0 0 1 7 0" />
+            <path d="M12 20h.01" />
+          </svg>
+          {/* control center */}
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
+            <path d="M4 7h16M4 17h16" />
+            <circle cx="9" cy="7" r="2.6" fill="currentColor" />
+            <circle cx="15" cy="17" r="2.6" fill="currentColor" />
+          </svg>
+          <span className="ml-1">Tue Sep 9</span>
+          <span>9:41 AM</span>
+        </span>
+      </div>
+      <div className="absolute overflow-hidden" style={{ top: MENU_H, left: 0, right: 0, bottom: 0 }}>
         <SlackWindow layout="desktop" stage={stage} typed={typed} />
       </div>
     </div>
@@ -551,7 +589,6 @@ function SlackWindow({ layout, stage, typed }: { layout: Layout; stage: Stage; t
               <SideHead>Direct messages</SideHead>
               <SideRow label="Payloat" avatar="/payloat-app-icon-v2.png" active />
               <SideRow label="Zeradam" avatar="/zeradam.jpg" you />
-              <SideRow label="Maya Chen" initial="M" />
               <SideHead>Apps</SideHead>
               <SideRow label="Payloat" avatar="/payloat-app-icon-v2.png" />
             </div>
