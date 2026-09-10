@@ -1208,7 +1208,7 @@ function SpendCard({ layout, stage, reduced }: { layout: Layout; stage: Stage; r
   return (
     <motion.div
       className="relative mt-2.5 w-full max-w-[720px] overflow-hidden rounded-[12px] text-[#0a0a0a]"
-      style={{ border: "1px solid rgba(0,0,0,0.08)", backgroundColor: "#eeeeee" }}
+      style={{ backgroundColor: "#eeeeee" }}
       initial={false}
       animate={{ clipPath: cardIn || reduced ? "inset(0 0% 0 0 round 12px)" : "inset(0 100% 0 0 round 12px)" }}
       transition={{ duration: 0.8, ease: EASE }}
