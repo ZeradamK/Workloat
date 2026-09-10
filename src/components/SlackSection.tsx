@@ -1187,13 +1187,12 @@ function SpendCard({ layout, stage, reduced }: { layout: Layout; stage: Stage; r
 
   return (
     <motion.div
-      className="relative mt-2.5 w-full max-w-[720px] overflow-hidden rounded-[12px] text-white"
-      style={{ border: "1px solid rgba(255,255,255,0.14)" }}
+      className="relative mt-2.5 w-full max-w-[720px] overflow-hidden rounded-[12px] text-[#0a0a0a]"
+      style={{ border: "1px solid rgba(0,0,0,0.08)", backgroundColor: "#eeeeee" }}
       initial={false}
       animate={{ clipPath: cardIn || reduced ? "inset(0 0% 0 0 round 12px)" : "inset(0 100% 0 0 round 12px)" }}
       transition={{ duration: 0.8, ease: EASE }}
     >
-      <Image src="/slack-gradient.jpg" alt="" fill sizes="720px" className="object-cover" />
       <div className="relative p-4">
         <motion.div
           initial={false}
@@ -1202,32 +1201,32 @@ function SpendCard({ layout, stage, reduced }: { layout: Layout; stage: Stage; r
           className={`flex items-start justify-between ${phone ? "pr-1" : "pr-[50px]"}`}
         >
           <div>
-            <p className="text-[11px] text-white/75">Spent so far · September</p>
+            <p className="text-[11px] text-[#0a0a0a]/65">Spent so far · September</p>
             <p className="font-numeral text-[22px] font-semibold leading-tight tracking-[-0.8px] tabular-nums">{fmt(spent)}</p>
           </div>
           <motion.div initial={false} animate={{ opacity: projIn ? 1 : 0.35 }} transition={{ duration: 0.4 }}>
-            <p className="text-[11px] text-white/75">{phone ? "Projected Sep 30" : "Projected by Sep 30"}</p>
+            <p className="text-[11px] text-[#0a0a0a]/65">{phone ? "Projected Sep 30" : "Projected by Sep 30"}</p>
             <p className="font-numeral flex items-center gap-1.5 text-[22px] font-semibold leading-tight tracking-[-0.8px] tabular-nums">
               {fmt(proj)}
               <Glyph d="M7 17 17 7M9 7h8v8" size={14} />
             </p>
-            <p className="font-numeral text-[11px] text-white/75">{phone ? "+$18,710 (204%)" : "+$18,710 (204%) · 17 agents"}</p>
+            <p className="font-numeral text-[11px] text-[#0a0a0a]/65">{phone ? "+$18,710 (204%)" : "+$18,710 (204%) · 17 agents"}</p>
           </motion.div>
         </motion.div>
 
         <motion.svg viewBox={`0 0 ${W} ${H}`} className="mt-1 block h-auto w-full" aria-hidden initial={false} animate={{ opacity: cardIn ? 1 : 0 }} transition={{ duration: 0.5, delay: cardIn ? 0.9 : 0 }}>
           {[0, 0.25, 0.5, 0.75, 1].map((f) => (
-            <line key={f} x1={padL} x2={padL + plotW} y1={y(f * MAX)} y2={y(f * MAX)} stroke="rgba(255,255,255,0.14)" strokeDasharray="2 4" />
+            <line key={f} x1={padL} x2={padL + plotW} y1={y(f * MAX)} y2={y(f * MAX)} stroke="rgba(0,0,0,0.14)" strokeDasharray="2 4" />
           ))}
           {[5, 10, 15, 20, 25].map((d) => (
-            <line key={d} x1={x(d)} x2={x(d)} y1={padT} y2={padT + plotH} stroke="rgba(255,255,255,0.09)" strokeDasharray="2 4" />
+            <line key={d} x1={x(d)} x2={x(d)} y1={padT} y2={padT + plotH} stroke="rgba(0,0,0,0.08)" strokeDasharray="2 4" />
           ))}
           {/* so far: line draws, area fades under it */}
-          <motion.polygon points={area} fill="rgba(255,255,255,0.28)" initial={false} animate={{ opacity: lineIn ? 1 : 0 }} transition={{ duration: 0.6, delay: lineIn ? 0.6 : 0 }} />
-          <motion.path d={solidD} fill="none" stroke="#ffffff" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" initial={false} animate={{ pathLength: lineIn ? 1 : 0, opacity: lineIn ? 1 : 0 }} transition={{ pathLength: { duration: 1.2, ease: "easeInOut" }, opacity: { duration: 0.1 } }} />
+          <motion.polygon points={area} fill="rgba(0,0,0,0.10)" initial={false} animate={{ opacity: lineIn ? 1 : 0 }} transition={{ duration: 0.6, delay: lineIn ? 0.6 : 0 }} />
+          <motion.path d={solidD} fill="none" stroke="#0a0a0a" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" initial={false} animate={{ pathLength: lineIn ? 1 : 0, opacity: lineIn ? 1 : 0 }} transition={{ pathLength: { duration: 1.2, ease: "easeInOut" }, opacity: { duration: 0.1 } }} />
           <motion.g initial={false} animate={{ opacity: lineIn ? 1 : 0 }} transition={{ duration: 0.3, delay: lineIn ? 1.1 : 0 }}>
-            <line x1={todayX} x2={todayX} y1={padT - 4} y2={padT + plotH} stroke="#ffffff" strokeWidth="1.5" />
-            <circle cx={todayX} cy={padT - 4} r="3" fill="#ffffff" />
+            <line x1={todayX} x2={todayX} y1={padT - 4} y2={padT + plotH} stroke="#0a0a0a" strokeWidth="1.5" />
+            <circle cx={todayX} cy={padT - 4} r="3" fill="#0a0a0a" />
           </motion.g>
           {/* projection reveals left to right through a clip */}
           <defs>
@@ -1235,26 +1234,26 @@ function SpendCard({ layout, stage, reduced }: { layout: Layout; stage: Stage; r
               <motion.rect x={todayX} y={0} height={H} initial={false} animate={{ width: projIn ? W - todayX : 0 }} transition={{ duration: 1.0, ease: "easeInOut" }} />
             </clipPath>
           </defs>
-          <path d={dashedD} fill="none" stroke="#ffffff" strokeWidth="2" strokeDasharray="5 5" strokeLinejoin="round" strokeLinecap="round" clipPath={`url(#proj-${layout})`} />
+          <path d={dashedD} fill="none" stroke="#0a0a0a" strokeWidth="2" strokeDasharray="5 5" strokeLinejoin="round" strokeLinecap="round" clipPath={`url(#proj-${layout})`} />
           {markers.map((m) => {
             const mx = x(m.day);
             const my = m.day < SO_FAR.length ? y(SO_FAR[m.day]) : y(PROJECTED[m.day - (SO_FAR.length - 1)]);
             const show = m.day < SO_FAR.length ? lineIn : projIn;
             return (
               <motion.g key={m.day} initial={false} animate={{ opacity: show ? 1 : 0, scale: show ? 1 : 0.6 }} transition={{ duration: 0.35, ease: EASE, delay: show ? m.delay + 0.5 : 0 }} style={{ transformOrigin: `${mx}px ${my}px` }}>
-                <line x1={mx} x2={mx} y1={my} y2={padT + plotH} stroke="#ffffff" strokeWidth="1.5" />
-                <circle cx={mx} cy={my} r="13" fill="#ffffff" />
-                <path d={m.d} transform={`translate(${mx - 7} ${my - 7}) scale(0.58)`} fill="none" stroke="#0a1fd2" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <line x1={mx} x2={mx} y1={my} y2={padT + plotH} stroke="#0a0a0a" strokeWidth="1.5" />
+                <circle cx={mx} cy={my} r="13" fill="#0a0a0a" />
+                <path d={m.d} transform={`translate(${mx - 7} ${my - 7}) scale(0.58)`} fill="none" stroke="#eeeeee" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </motion.g>
             );
           })}
           {yTicks.map((k) => (
-            <text key={k} x={W - padR + 12} y={y(k) + 4} fill="rgba(255,255,255,0.8)" fontSize="10" fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace" letterSpacing="1">
+            <text key={k} x={W - padR + 12} y={y(k) + 4} fill="rgba(10,10,10,0.75)" fontSize="10" fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace" letterSpacing="1">
               ${k}K
             </text>
           ))}
           {xTicks.map(([d, l, a]) => (
-            <text key={l} x={x(d)} y={H - 8} textAnchor={a} fill="rgba(255,255,255,0.8)" fontSize="10" fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace" letterSpacing="1.5">
+            <text key={l} x={x(d)} y={H - 8} textAnchor={a} fill="rgba(10,10,10,0.75)" fontSize="10" fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace" letterSpacing="1.5">
               {l}
             </text>
           ))}
