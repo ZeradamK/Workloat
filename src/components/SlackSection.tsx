@@ -288,7 +288,7 @@ function Bar1() {
 }
 
 function Bar2() {
-  return <NotifBar icon={<path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z" />} name="Every charge" note="Answered in seconds" amount="4 agents" />;
+  return <NotifBar icon={<path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z" />} name="Every charge" note="Answered in seconds" amount="17 agents" />;
 }
 
 /* ---------- devices ---------- */
@@ -762,7 +762,7 @@ function SlackWindow({ layout, stage, typed }: { layout: Layout; stage: Stage; t
                       <span className="ml-2 text-[11px]" style={{ color: MUTED }}>9:41 AM</span>
                     </p>
                     <p className="mt-0.5 text-[14px] leading-[1.4]">
-                      September so far across <span className="font-semibold">4 agents</span>.
+                      September so far across <span className="font-semibold">17 agents</span>.
                     </p>
                     <AnimatePresence initial={false}>
                       {stage >= 4 && (
@@ -774,7 +774,7 @@ function SlackWindow({ layout, stage, typed }: { layout: Layout; stage: Stage; t
                     <AnimatePresence initial={false}>
                       {stage >= 7 && (
                         <motion.p key="notes" {...rowIn} className="mt-2.5 text-[14px] leading-[1.45]">
-                          By agent: Procurement $4,120, Software &amp; seats $2,860, Ops $1,450, Travel $760. Two things to look at: Procurement went $16.50 over its cap at WebstaurantStore, and one Instacart receipt is still missing, 3 days old.
+                          By team: Procurement $4,120, Software &amp; seats $2,860, Ops $1,450, Travel $760. Two things to look at: Procurement went $16.50 over its cap at WebstaurantStore, and one Instacart receipt is still missing, 3 days old.
                         </motion.p>
                       )}
                     </AnimatePresence>
@@ -1020,7 +1020,7 @@ function SlackPhone({ active }: { active: boolean }) {
                   <span className="ml-2 text-[12px]" style={{ color: IOS_MUTED }}>9:41</span>
                 </p>
                 <p className="mt-0.5 text-[15px] leading-[1.35]">
-                  September so far across <span className="font-semibold">4 agents</span>.
+                  September so far across <span className="font-semibold">17 agents</span>.
                 </p>
                 <AnimatePresence initial={false}>
                   {stage >= 4 && (
@@ -1211,7 +1211,7 @@ function SpendCard({ layout, stage, reduced }: { layout: Layout; stage: Stage; r
               {fmt(proj)}
               <Glyph d="M7 17 17 7M9 7h8v8" size={14} />
             </p>
-            <p className="font-numeral text-[11px] text-white/75">{phone ? "+$18,710 (204%)" : "+$18,710 (204%) · 4 agents"}</p>
+            <p className="font-numeral text-[11px] text-white/75">{phone ? "+$18,710 (204%)" : "+$18,710 (204%) · 17 agents"}</p>
           </motion.div>
         </motion.div>
 
