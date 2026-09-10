@@ -71,6 +71,14 @@ function scenes(fit: number, open: Open) {
 
 const ZIP = { type: "spring", stiffness: 260, damping: 30, mass: 0.9 } as const;
 
+/* the notification bars' entrance and exit: a springy bump in, a quick
+   drop out, both bars on the same clock */
+const BAR_POP = {
+  initial: { opacity: 0, y: 28, scale: 0.9 },
+  animate: { opacity: 1, y: 0, scale: 1, transition: { type: "spring", stiffness: 420, damping: 22, mass: 0.8, delay: 0.3 } },
+  exit: { opacity: 0, y: 16, scale: 0.94, transition: { duration: 0.28, ease: EASE } },
+} as const;
+
 export default function SlackSection() {
   return (
     <>
@@ -153,6 +161,21 @@ function DesktopAct() {
   }, []);
 
   const scene = reduced ? 2 : (override ?? sceneFor(convo.stage));
+
+  /* the two bars pop in together with the final scene, hold 3 seconds,
+     and leave together (they stay put when motion is reduced or a scene
+     is pinned for review) */
+  const [bars, setBars] = useState(false);
+  useEffect(() => {
+    if (scene !== 2) {
+      setBars(false);
+      return;
+    }
+    setBars(true);
+    if (reduced || override !== null) return;
+    const t = window.setTimeout(() => setBars(false), 3000 + 350);
+    return () => window.clearTimeout(t);
+  }, [scene, reduced, override]);
   const target = scenes(fit, open)[scene];
 
   return (
@@ -201,14 +224,14 @@ function DesktopAct() {
             style={{ background: "linear-gradient(180deg,#eeeeee 0%,rgba(238,238,238,0.85) 30%,rgba(238,238,238,0) 100%)" }}
           />
 
-          {/* the two bars arrive with the final scene */}
+          {/* the two bars: one bump in, a 3 second hold, one bump out */}
           <AnimatePresence>
-            {scene === 2 && (
+            {bars && (
               <>
-                <motion.div key="b1" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 12 }} transition={{ duration: 0.45, ease: EASE, delay: 0.25 }} className="absolute left-[6%] top-[52%] z-10 w-[340px]">
+                <motion.div key="b1" {...BAR_POP} className="absolute left-[6%] top-[52%] z-10 w-[340px]">
                   <Bar1 />
                 </motion.div>
-                <motion.div key="b2" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 12 }} transition={{ duration: 0.45, ease: EASE, delay: 0.4 }} className="absolute bottom-[14%] right-[6%] z-10 w-[340px]">
+                <motion.div key="b2" {...BAR_POP} className="absolute bottom-[14%] right-[6%] z-10 w-[340px]">
                   <Bar2 />
                 </motion.div>
               </>
