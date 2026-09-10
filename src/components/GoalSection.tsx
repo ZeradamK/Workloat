@@ -32,7 +32,6 @@ const NOTIFS = [
     logo: "/logos/openai.svg",
     amount: "$2,500.00",
     note: "API usage this month",
-    pos: "left-[calc(50%-790px)] top-[12%]",
     at: 0.12,
   },
   {
@@ -40,7 +39,6 @@ const NOTIFS = [
     logo: "/logos/stripe.png",
     amount: "$600.00",
     note: "Platform fees, monthly",
-    pos: "right-[calc(50%-776px)] top-[16%]",
     at: 0.26,
   },
   {
@@ -48,7 +46,6 @@ const NOTIFS = [
     logo: "/logos/vercel.svg",
     amount: "$350.00",
     note: "Hosting, Ops agent",
-    pos: "left-[calc(50%-800px)] top-[38%]",
     at: 0.4,
   },
   {
@@ -56,7 +53,6 @@ const NOTIFS = [
     logo: "/logos/claude.svg",
     amount: "$4,000.00",
     note: "Renews tomorrow",
-    pos: "right-[calc(50%-800px)] top-[28%]",
     at: 0.54,
   },
   {
@@ -64,7 +60,6 @@ const NOTIFS = [
     logo: "/logos/aws.svg",
     amount: "$850.00",
     note: "Storage, Ops agent",
-    pos: "left-[calc(50%-770px)] top-[66%]",
     at: 0.68,
   },
   {
@@ -72,7 +67,6 @@ const NOTIFS = [
     logo: "/logos/brex.svg",
     amount: "$12,480.00",
     note: "14 charges matched",
-    pos: "right-[calc(50%-786px)] top-[76%]",
     at: 0.82,
   },
 ] as const;
@@ -107,10 +101,11 @@ export default function GoalSection() {
       <div className="sticky top-0 flex h-screen items-center justify-center overflow-hidden bg-background">
         {/* the headline: every word fades from #EEEEEE to ink in turn */}
         <div className="relative">
-        {/* below 1600px: one notice at a time, at least 80px ABOVE the
-            headline; each new charge slides up in while the previous fades
-            out */}
-        <div className="absolute inset-x-0 bottom-[calc(100%+80px)] z-0 mx-auto h-[55px] w-[min(320px,calc(100vw-48px))] min-[1600px]:hidden">
+        {/* one notice at a time, at least 80px ABOVE the headline; each new
+            charge slides up in while the previous fades out. Above 1400px
+            the bar grows to 1.2x, easing between the two sizes with a
+            little overshoot as the viewport crosses the line */}
+        <div className="absolute inset-x-0 bottom-[calc(100%+80px)] z-0 mx-auto h-[55px] w-[min(320px,calc(100vw-48px))] origin-bottom transition-[scale] duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] min-[1400px]:scale-[1.2]">
           {NOTIFS.map((n, i) => {
             const arrived = i < stage;
             const passed = i < stage - 1;
@@ -150,29 +145,6 @@ export default function GoalSection() {
           })}
         </h2>
         </div>
-
-        {/* 1600px and up: the notices scattered in the gutters beside the
-            headline's 860px box (never over it), appearing top-left first */}
-        {NOTIFS.map((n, i) => (
-          <div
-            key={n.name}
-            className={`absolute hidden min-[1600px]:block ${n.pos}`}
-          >
-            <motion.div
-              initial={false}
-              animate={
-                i < stage
-                  ? { opacity: 1, scale: 1, y: 0 }
-                  : { opacity: 0, scale: 0.92, y: 14 }
-              }
-              transition={{ type: "spring", stiffness: 320, damping: 26 }}
-              className="flex w-[320px] items-center gap-3 rounded-[18px] py-[6px] pl-[6px] pr-2.5"
-              style={{ backgroundColor: "#eeeeee" }}
-            >
-              <NotifInner n={n} />
-            </motion.div>
-          </div>
-        ))}
       </div>
     </div>
   );
