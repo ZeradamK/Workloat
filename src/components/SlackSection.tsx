@@ -32,8 +32,9 @@ const up = {
   transition: { duration: 0.55, ease: EASE },
 } as const;
 
-/* the Studio Display panel is 16:9; the desktop lays out at 1600x900 */
-const DESIGN = { w: 1600, h: 900 };
+/* the screen's layout size. 1600x900 scaled by 1.3 (bigger type and
+   images), at the panel's own aspect (1204x769) so it fills the screen */
+const DESIGN = { w: 1600 / 1.3, h: (1600 / 1.3) * (769 / 1204) };
 
 /* public/macbook.webp: the supplied MacBook Pro mock (2000x1500, background
    cut to transparency). Measured from its pixels: screen (397,312) to
@@ -362,7 +363,7 @@ function ScaledScreen({ children }: { children: React.ReactNode }) {
   );
 }
 
-/* A macOS desktop: menu bar, the Slack window floating on the wallpaper. */
+/* A macOS desktop: menu bar, the Slack app full screen below it. */
 function Desktop({ stage, typed }: { stage: Stage; typed: number }) {
   return (
     <div className="relative h-full w-full">
@@ -381,7 +382,7 @@ function Desktop({ stage, typed }: { stage: Stage; typed: number }) {
           <span>9:41 AM</span>
         </span>
       </div>
-      <div className="absolute overflow-hidden rounded-[12px] shadow-[0_24px_70px_rgba(0,0,0,0.16),0_0_0_1px_rgba(0,0,0,0.06)]" style={{ top: 54, left: 70, right: 70, bottom: 44 }}>
+      <div className="absolute overflow-hidden" style={{ top: 26, left: 0, right: 0, bottom: 0 }}>
         <SlackWindow layout="desktop" stage={stage} typed={typed} />
       </div>
     </div>
