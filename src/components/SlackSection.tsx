@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { AnimatePresence, animate, motion, useInView, useReducedMotion } from "motion/react";
+import { animate, AnimatePresence, motion, useInView, useMotionValueEvent, useReducedMotion, useScroll } from "motion/react";
+import { slackDark } from "./introProgress";
 import PhoneMock, { screenWidth as phoneScreenWidth } from "./PhoneMock";
 
 /**
@@ -11,9 +12,9 @@ import PhoneMock, { screenWidth as phoneScreenWidth } from "./PhoneMock";
  * below it a Studio Display (CSS: thin black bezel, silver back, arm and
  * base) shows the Slack desktop app in dark mode on the brand gradient
  * wallpaper. Three scenes cycle on their own timer while the act is in
- * view: a tight crop of the display and its stand that drifts slowly, a
- * ZIP to the small front-on view, a ZIP to the angled final view with the
- * floor line and the two notification bars, then back to the crop. Below
+ * view: a still crop of the screen's lower-left and the deck, a ZIP to the
+ * full front-on view, then the final scene (same pose, the floor line and
+ * the two notification bars), then back to the crop. Below
  * 900px: headline, the iPhone running Slack for iOS, the bars.
  *
  * The conversation on screen is a timed sequence (types, sends, typing
@@ -45,17 +46,25 @@ const FRAME = {
   lidWidth: (1622 - 377) / 2000,
 };
 
-/* the three points of view of the rig (display + stand), from the refs.
-   `fit` is the scale at which the display spans the stage with 100px of
-   room left and right, or fills the stage height, whichever is smaller. */
-function scenes(fit: number) {
+/* the opening pose, measured from the stage: the lid alone, 50px from
+   each side of the gray box, the screen's bottom edge flush with the
+   box's bottom (so the bottom bezel and the deck are out of the frame). The desktop is the
+   box's own gray, so only the Slack window and the menu bar read. `y` is
+   a share of the rig's height; `cropped` when the screen's top runs out
+   under the headline. */
+type Open = { scale: number; y: string; cropped: boolean };
+
+/* the three poses of the rig. `fit` is the scale at which the lid spans the
+   stage with 100px of room left and right, or fills the stage height,
+   whichever is smaller. */
+function scenes(fit: number, open: Open) {
   return [
-    /* 1: the crop, the screen's lower-left and the deck in the frame */
-    { scale: fit * 1.6, x: "20%", y: "-30%", rotateY: 0, rotateX: 0 },
+    /* 1: the screen, flush with the box's bottom, the desktop the box's gray */
+    { scale: open.scale, x: "0%", y: open.y, rotateY: 0, rotateX: 0 },
     /* 2: the whole laptop, front-on */
     { scale: fit, x: "0%", y: "0%", rotateY: 0, rotateX: 0 },
-    /* 3: angled */
-    { scale: fit * 1.02, x: "0%", y: "1%", rotateY: -24, rotateX: 2 },
+    /* 3: the same pose, the bars arrive */
+    { scale: fit, x: "0%", y: "0%", rotateY: 0, rotateX: 0 },
   ] as const;
 }
 
@@ -93,19 +102,42 @@ function DesktopAct() {
   const convo = useConversation(inView, reduced);
   const [override, setOverride] = useState<number | null>(null);
   const [fit, setFit] = useState(1);
+  const [open, setOpen] = useState<Open>({ scale: 1, y: "0%", cropped: false });
 
-  /* measure the stage: the display should span it minus 100px each side,
-     unless the height runs out first */
+  /* the nav goes dark while the gray box is under it (the dock sits in
+     the top ~70px of the viewport) */
+  const { scrollYProgress: underNav } = useScroll({ target: ref, offset: ["start 70px", "end 70px"] });
+  const darkOn = useRef(false);
+  useMotionValueEvent(underNav, "change", (v) => {
+    const target = v > 0 && v < 1;
+    if (target !== darkOn.current) {
+      darkOn.current = target;
+      animate(slackDark, target ? 1 : 0, { duration: 0.18, ease: "easeOut" });
+    }
+  });
+
+  /* measure the stage: the lid should span it minus 100px each side,
+     unless the height runs out first; and the opening pose, see Open */
   useEffect(() => {
     const el = stageRef.current;
     if (!el) return;
     const measure = () => {
       const stageW = el.clientWidth;
       const stageH = el.clientHeight;
-      const rigW = stageH * RIG_H * FRAME.aspect;
+      const rigH = stageH * RIG_H;
+      const rigW = rigH * FRAME.aspect;
       const lidW = rigW * FRAME.lidWidth;
       /* the lid spans the stage minus 100px each side when it can */
       setFit(Math.max(0.5, Math.min(1, (stageW - 200) / lidW)));
+
+      const scale = (stageW - 100) / lidW;
+      const rigTop = ((1 - RIG_H) / 2) * stageH;
+      const originY = rigTop + FRAME.screenCenterY * rigH;
+      /* where a point of the rig (a share of its height) lands after the scale */
+      const after = (rigFrac: number) => originY + (rigTop + rigFrac * rigH - originY) * scale;
+      const ty = stageH + 3 - after(FRAME.screen.top + FRAME.screen.height);
+      const cropped = after(FRAME.screen.top) + ty < 0;
+      setOpen({ scale, y: `${(ty / rigH) * 100}%`, cropped });
     };
     measure();
     const ro = new ResizeObserver(measure);
@@ -120,7 +152,7 @@ function DesktopAct() {
   }, []);
 
   const scene = reduced ? 2 : (override ?? sceneFor(convo.stage));
-  const target = scenes(fit)[scene];
+  const target = scenes(fit, open)[scene];
 
   return (
     <section ref={ref} className="hidden px-[100px] py-4 min-[900px]:block">
@@ -139,7 +171,7 @@ function DesktopAct() {
         </motion.h2>
 
         {/* the stage, its own box well below the headline */}
-        <div ref={stageRef} className="relative mt-10 min-h-0 flex-1 overflow-hidden" style={{ perspective: scene === 2 ? 2600 : "none", perspectiveOrigin: "50% 45%", clipPath: "inset(0)" }}>
+        <div ref={stageRef} className="relative mt-10 min-h-0 flex-1 overflow-hidden" style={{ clipPath: "inset(0)" }}>
           {/* floor: the final scene sits on it */}
           <motion.div
             initial={false}
@@ -156,16 +188,17 @@ function DesktopAct() {
             className="absolute left-1/2 -translate-x-1/2"
             style={{ top: `${(1 - RIG_H) * 50}%`, height: `${RIG_H * 100}%`, aspectRatio: String(FRAME.aspect), transformOrigin: `50% ${FACE_CENTER}%` }}
           >
-            {/* the opening crop drifts slowly while it holds */}
-            <motion.div
-              className="h-full w-full"
-              initial={false}
-              animate={scene === 0 && !reduced ? { scale: [1.06, 1], y: ["2%", "0%"] } : { scale: 1, y: "0%" }}
-              transition={scene === 0 ? { duration: 7, ease: "linear" } : { duration: 0.4 }}
-            >
-              <StudioDisplay stage={convo.stage} typed={convo.typed} />
-            </motion.div>
+            <StudioDisplay stage={convo.stage} typed={convo.typed} />
           </motion.div>
+
+          {/* the window's top dissolves into the section while cropped */}
+          <motion.div
+            initial={false}
+            animate={{ opacity: scene === 0 && open.cropped ? 1 : 0 }}
+            transition={{ duration: 0.35 }}
+            className="pointer-events-none absolute inset-x-0 top-0 z-10 h-[22%]"
+            style={{ background: "linear-gradient(180deg,#eeeeee 0%,rgba(238,238,238,0.85) 30%,rgba(238,238,238,0) 100%)" }}
+          />
 
           {/* the two bars arrive with the final scene */}
           <AnimatePresence>
@@ -240,11 +273,14 @@ function Bar2() {
    and the notch drawn back on top. */
 function StudioDisplay({ stage, typed }: { stage: Stage; typed: number }) {
   return (
-    <div className="relative h-full w-full">
+    <div className="relative h-full w-full" style={{ containerType: "size" }}>
       <Image src="/macbook.webp" alt="" fill priority unoptimized className="object-contain" />
+      {/* the screen: the MacBook's panel has rounded top corners, so the
+          content box does too (radius sized from the rig's width) */}
       <div
-        className="absolute overflow-hidden bg-[#0a1fd2]"
+        className="absolute overflow-hidden bg-[#eeeeee]"
         style={{
+          borderRadius: "0.9cqw 0.9cqw 0 0",
           left: `${FRAME.screen.left * 100}%`,
           top: `${FRAME.screen.top * 100}%`,
           width: `${FRAME.screen.width * 100}%`,
@@ -288,8 +324,10 @@ function Phone() {
   );
 }
 
+/* the desktop is the section's own gray, so the opening pose reads as the
+   Slack window sitting in the section until the laptop appears around it */
 function Wallpaper() {
-  return <Image src="/slack-gradient.jpg" alt="" fill quality={92} sizes="(min-width: 900px) 2400px, 100vw" className="object-cover" />;
+  return <div className="absolute inset-0 bg-[#eeeeee]" />;
 }
 
 function Sheen() {
@@ -328,7 +366,7 @@ function ScaledScreen({ children }: { children: React.ReactNode }) {
 function Desktop({ stage, typed }: { stage: Stage; typed: number }) {
   return (
     <div className="relative h-full w-full">
-      <div className="absolute inset-x-0 top-0 flex h-[26px] items-center justify-between px-4 text-[12px] font-medium text-white/90" style={{ backgroundColor: "rgba(0,0,0,0.22)" }}>
+      <div className="absolute inset-x-0 top-0 flex h-[26px] items-center justify-between px-4 text-[12px] font-medium text-[#1d1c1d]/85" style={{ backgroundColor: "rgba(255,255,255,0.45)" }}>
         <span className="flex items-center gap-4">
           <span></span>
           <span className="font-bold">Slack</span>
@@ -343,7 +381,7 @@ function Desktop({ stage, typed }: { stage: Stage; typed: number }) {
           <span>9:41 AM</span>
         </span>
       </div>
-      <div className="absolute overflow-hidden rounded-[12px] shadow-[0_30px_80px_rgba(0,0,0,0.45)]" style={{ top: 54, left: 70, right: 70, bottom: 44 }}>
+      <div className="absolute overflow-hidden rounded-[12px] shadow-[0_24px_70px_rgba(0,0,0,0.16),0_0_0_1px_rgba(0,0,0,0.06)]" style={{ top: 54, left: 70, right: 70, bottom: 44 }}>
         <SlackWindow layout="desktop" stage={stage} typed={typed} />
       </div>
     </div>

@@ -38,3 +38,10 @@ export const marketsLight = motionValue(0);
  * canvas, flipping the surface to #EEEEEE so it stays visible.
  */
 export const productLight = motionValue(0);
+
+/**
+ * Slack-act overlap (0/1, zipped in ~180ms). SlackSection writes it while
+ * its #EEEEEE box sits under the dock, so the surface goes dark instead
+ * of blending into the box.
+ */
+export const slackDark = motionValue(0);

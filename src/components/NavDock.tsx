@@ -15,6 +15,7 @@ import {
   introT,
   marketsLight,
   productLight,
+  slackDark,
   splitsDark,
 } from "./introProgress";
 
@@ -175,7 +176,8 @@ export default function NavDock({
     if (forceDark) return productLight.get();
     const base = Math.min(Math.max((heroT.get() - 0.4) / 0.25, 0), 1);
     const darkOverride = splitsDark.get() * (1 - marketsLight.get());
-    return base * (1 - darkOverride);
+    /* the Slack act's gray box: dark while it is under the dock */
+    return base * (1 - darkOverride) * (1 - slackDark.get());
   });
   const dockBg = useTransform(lightAmt, [0, 1], ["#0a0a0a", "#eeeeee"]);
   const navFg = useTransform(lightAmt, [0, 1], ["#ffffff", "#0a0a0a"]);
