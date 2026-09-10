@@ -34,15 +34,25 @@ const up = {
 /* the Studio Display panel is 16:9; the desktop lays out at 1600x900 */
 const DESIGN = { w: 1600, h: 900 };
 
-/* the three points of view of the rig (display + stand), from the refs */
-const SCENES = [
-  /* 1: tight crop, the display's lower-left and the stand fill the frame */
-  { scale: 2.4, x: "51%", y: "-58%", rotateY: 0, rotateX: 0 },
-  /* 2: the whole monitor, small and front-on */
-  { scale: 0.9, x: "0%", y: "0%", rotateY: 0, rotateX: 0 },
-  /* 3: angled, larger, on the floor */
-  { scale: 0.98, x: "0%", y: "7%", rotateY: -24, rotateX: 2 },
-] as const;
+/* public/studio-display.webp: Apple's Studio Display frame (tilt stand,
+   light), 5520x4316 with a transparent background. From its SVG source the
+   display face is 5354x3114 at (83,83) and the screen is 5120x2880 at
+   (200,200). Fractions of the canvas: */
+const FRAME = { aspect: 5520 / 4316, screen: { left: 200 / 5520, top: 200 / 4316, width: 5120 / 5520, height: 2880 / 4316 }, faceHeight: 3197 / 4316 };
+
+/* the three points of view of the rig (display + stand), from the refs.
+   `fit` is the scale at which the display spans the stage with 100px of
+   room left and right, or fills the stage height, whichever is smaller. */
+function scenes(fit: number) {
+  return [
+    /* 1: tight crop, the display's lower-left and the stand fill the frame */
+    { scale: fit * 2.4, x: "41%", y: "-68%", rotateY: 0, rotateX: 0 },
+    /* 2: the whole display, front-on, close */
+    { scale: fit, x: "0%", y: "0%", rotateY: 0, rotateX: 0 },
+    /* 3: angled, on the floor, close */
+    { scale: fit * 1.02, x: "0%", y: "2%", rotateY: -24, rotateX: 2 },
+  ] as const;
+}
 
 const ZIP = { type: "spring", stiffness: 260, damping: 30, mass: 0.9 } as const;
 
@@ -61,15 +71,42 @@ export default function SlackSection() {
    types, sends, and Payloat answers in text; the zip to the front-on view
    lands with the graph; the angled view once the answer is complete. */
 function sceneFor(stage: Stage): number {
-  return stage < 4 ? 0 : stage < 7 ? 1 : 2;
+  return stage < 4 ? 0 : stage < 8 ? 1 : 2;
 }
+
+/* the rig's natural height as a share of the stage: the display face fills
+   the stage height at scale 1 (so the close scenes rasterize crisp) and the
+   stand hangs below, clipped. FACE_CENTER is the scale origin. */
+const RIG_H = 1.32;
+const FACE_CENTER = (FRAME.faceHeight / 2) * 100;
 
 function DesktopAct() {
   const ref = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion() ?? false;
   const inView = useInView(ref, { amount: 0.4 });
   const convo = useConversation(inView, reduced);
   const [override, setOverride] = useState<number | null>(null);
+  const [fit, setFit] = useState(1);
+
+  /* measure the stage: the display should span it minus 100px each side,
+     unless the height runs out first */
+  useEffect(() => {
+    const el = stageRef.current;
+    if (!el) return;
+    const measure = () => {
+      const stageW = el.clientWidth;
+      const stageH = el.clientHeight;
+      const rigW = stageH * RIG_H * FRAME.aspect;
+      const faceW = rigW * (5354 / 5520);
+      /* the face spans the stage minus 100px each side when it can */
+      setFit(Math.max(0.5, Math.min(1, (stageW - 200) / faceW)));
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   /* dev: ?slackScene=0|1|2 pins a scene for review */
   useEffect(() => {
@@ -78,7 +115,7 @@ function DesktopAct() {
   }, []);
 
   const scene = reduced ? 2 : (override ?? sceneFor(convo.stage));
-  const target = SCENES[scene];
+  const target = scenes(fit)[scene];
 
   return (
     <section ref={ref} className="hidden px-[100px] py-4 min-[900px]:block">
@@ -97,7 +134,7 @@ function DesktopAct() {
         </motion.h2>
 
         {/* the stage, its own box well below the headline */}
-        <div className="relative mt-10 min-h-0 flex-1 overflow-hidden" style={{ perspective: scene === 2 ? 2600 : "none", perspectiveOrigin: "50% 45%", clipPath: "inset(0)" }}>
+        <div ref={stageRef} className="relative mt-10 min-h-0 flex-1 overflow-hidden" style={{ perspective: scene === 2 ? 2600 : "none", perspectiveOrigin: "50% 45%", clipPath: "inset(0)" }}>
           {/* floor: the final scene sits on it */}
           <motion.div
             initial={false}
@@ -111,11 +148,12 @@ function DesktopAct() {
             initial={false}
             animate={target}
             transition={reduced ? { duration: 0 } : ZIP}
-            className="absolute left-1/2 top-[9%] -translate-x-1/2"
-            style={{ height: "76%", aspectRatio: "1.44", transformOrigin: "50% 60%" }}
+            className="absolute left-1/2 -translate-x-1/2"
+            style={{ top: `calc(50% - ${RIG_H * FRAME.faceHeight * 50}%)`, height: `${RIG_H * 100}%`, aspectRatio: String(FRAME.aspect), transformOrigin: `50% ${FACE_CENTER}%` }}
           >
             {/* the opening crop drifts slowly while it holds */}
             <motion.div
+              className="h-full w-full"
               initial={false}
               animate={scene === 0 && !reduced ? { scale: [1.06, 1], y: ["2%", "0%"] } : { scale: 1, y: "0%" }}
               transition={scene === 0 ? { duration: 7, ease: "linear" } : { duration: 0.4 }}
@@ -192,29 +230,27 @@ function Bar2() {
 
 /* ---------- devices ---------- */
 
-/* Studio Display: thin black bezel around a 16:9 panel, a silver back
-   edge peeking out on the right and bottom, then the arm and flat base
-   (proportions from the refs: arm about a quarter of the display's width,
-   a fifth of its height; base a bit wider and thin). */
+/* Studio Display: Apple's frame (public/studio-display.webp) with the
+   gradient wallpaper and the Slack desktop laid into its screen rectangle. */
 function StudioDisplay({ stage, typed }: { stage: Stage; typed: number }) {
   return (
-    <div className="relative">
-      {/* back shell edge */}
-      <div className="absolute inset-0 translate-x-[7px] translate-y-[5px]" style={{ background: "linear-gradient(90deg,#c4c4c9 0%,#adadb2 100%)" }} />
-      {/* bezel + panel */}
-      <div className="relative bg-[#0a0a0b] p-[1.3%]" style={{ boxShadow: "0 40px 90px rgba(0,0,0,0.22)" }}>
-        <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#0a1fd2]">
-          <Wallpaper />
-          <ScaledScreen>
-            <Desktop stage={stage} typed={typed} />
-          </ScaledScreen>
-          <Sheen />
-        </div>
+    <div className="relative h-full w-full">
+      <Image src="/studio-display.webp" alt="" fill priority unoptimized className="object-contain" />
+      <div
+        className="absolute overflow-hidden bg-[#0a1fd2]"
+        style={{
+          left: `${FRAME.screen.left * 100}%`,
+          top: `${FRAME.screen.top * 100}%`,
+          width: `${FRAME.screen.width * 100}%`,
+          height: `${FRAME.screen.height * 100}%`,
+        }}
+      >
+        <Wallpaper />
+        <ScaledScreen>
+          <Desktop stage={stage} typed={typed} />
+        </ScaledScreen>
+        <Sheen />
       </div>
-      {/* arm */}
-      <div className="mx-auto aspect-[25/11.5] w-[25%]" style={{ background: "linear-gradient(90deg,#e6e6e8 0%,#cfcfd3 45%,#b3b3b8 100%)", clipPath: "polygon(0 0,100% 0,97% 100%,3% 100%)" }} />
-      {/* base */}
-      <div className="mx-auto aspect-[27/1.6] w-[27%] rounded-[6px]" style={{ background: "linear-gradient(180deg,#e9e9eb,#b8b8bd)", boxShadow: "0 10px 30px rgba(0,0,0,0.18)" }} />
     </div>
   );
 }
@@ -228,7 +264,7 @@ type PhoneScreen = "lock" | "tap" | "slack";
 
 const LOCK_HOLD = 3600; /* notifications land, then the tap */
 const TAP_HOLD = 380;
-const SLACK_HOLD = 20500; /* the conversation plus its settle, under the hook's own loop */
+const SLACK_HOLD = 24500; /* the conversation plus its settle, under the hook's own loop */
 
 function Phone() {
   const ref = useRef<HTMLDivElement>(null);
@@ -443,16 +479,17 @@ function typingSchedule(text: string): number[] {
 }
 const SCHEDULE = typingSchedule(QUESTION);
 
-/* 0 typing · 1 sent · 2 Payloat typing · 3 answer text · 4 card + line
-   · 5 projection + markers · 6 notes · 7 buttons (finished) */
-type Stage = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
+/* 0 typing · 1 sent · 2 Payloat typing · 3 answer text · 4 the card fills
+   in and the amounts appear · 5 the line draws · 6 projection + markers
+   · 7 notes · 8 buttons (finished) */
+type Stage = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
 function useConversation(active: boolean, reduced: boolean) {
-  const [stage, setStage] = useState<Stage>(reduced ? 7 : 0);
+  const [stage, setStage] = useState<Stage>(reduced ? 8 : 0);
   const [typed, setTyped] = useState(reduced ? QUESTION.length : 0);
   useEffect(() => {
     if (reduced) {
-      setStage(7);
+      setStage(8);
       setTyped(QUESTION.length);
       return;
     }
@@ -473,11 +510,12 @@ function useConversation(active: boolean, reduced: boolean) {
       at(sent, () => setStage(1));
       at(sent + 700, () => setStage(2)); /* Payloat is typing */
       at(sent + 2600, () => setStage(3)); /* the text reply lands */
-      at(sent + 3900, () => setStage(4)); /* the graph: the scene zips out to show it */
-      at(sent + 5600, () => setStage(5));
-      at(sent + 6900, () => setStage(6));
-      at(sent + 7500, () => setStage(7)); /* complete: the angled view */
-      at(sent + 15500, run);
+      at(sent + 3900, () => setStage(4)); /* the card fills in: the scene zips out to show it */
+      at(sent + 5800, () => setStage(5)); /* the line draws */
+      at(sent + 7600, () => setStage(6)); /* the projection, the markers */
+      at(sent + 9600, () => setStage(7)); /* the notes */
+      at(sent + 10800, () => setStage(8)); /* complete: the angled view */
+      at(sent + 19500, run);
     };
     run();
     return () => {
@@ -681,7 +719,7 @@ function SlackWindow({ layout, stage, typed }: { layout: Layout; stage: Stage; t
                       <span className="ml-2 text-[11px]" style={{ color: MUTED }}>9:41 AM</span>
                     </p>
                     <p className="mt-0.5 text-[14px] leading-[1.4]">
-                      September so far across <span className="font-semibold">4 agents</span>. Two things to look at, under the chart.
+                      September so far across <span className="font-semibold">4 agents</span>.
                     </p>
                     <AnimatePresence initial={false}>
                       {stage >= 4 && (
@@ -692,6 +730,13 @@ function SlackWindow({ layout, stage, typed }: { layout: Layout; stage: Stage; t
                     </AnimatePresence>
                     <AnimatePresence initial={false}>
                       {stage >= 7 && (
+                        <motion.p key="notes" {...rowIn} className="mt-2.5 text-[14px] leading-[1.45]">
+                          By agent: Procurement $4,120, Software &amp; seats $2,860, Ops $1,450, Travel $760. Two things to look at: Procurement went $16.50 over its cap at WebstaurantStore, and one Instacart receipt is still missing, 3 days old.
+                        </motion.p>
+                      )}
+                    </AnimatePresence>
+                    <AnimatePresence initial={false}>
+                      {stage >= 8 && (
                         <motion.div key="btns" {...rowIn} className="mt-2.5 flex flex-wrap items-center gap-2">
                           {["Open in Payloat", "By agent", "Receipts"].map((b, i) => (
                             <motion.span
@@ -917,7 +962,7 @@ function SlackPhone({ active }: { active: boolean }) {
                   <span className="ml-2 text-[12px]" style={{ color: IOS_MUTED }}>9:41</span>
                 </p>
                 <p className="mt-0.5 text-[15px] leading-[1.35]">
-                  September so far across <span className="font-semibold">4 agents</span>. Two things to look at.
+                  September so far across <span className="font-semibold">4 agents</span>.
                 </p>
                 <AnimatePresence initial={false}>
                   {stage >= 4 && (
@@ -928,6 +973,13 @@ function SlackPhone({ active }: { active: boolean }) {
                 </AnimatePresence>
                 <AnimatePresence initial={false}>
                   {stage >= 7 && (
+                    <motion.p key="notes" {...rowIn} className="mt-2.5 text-[15px] leading-[1.45]">
+                      Two things to look at: Procurement went $16.50 over its cap at WebstaurantStore, and one Instacart receipt is still missing, 3 days old.
+                    </motion.p>
+                  )}
+                </AnimatePresence>
+                <AnimatePresence initial={false}>
+                  {stage >= 8 && (
                     <motion.div key="btns" {...rowIn} className="mt-2.5 flex flex-wrap items-center gap-2">
                       {["Open in Payloat", "By agent"].map((b, i) => (
                         <motion.span key={b} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3, ease: EASE, delay: i * 0.08 }} className={`rounded-[8px] px-3.5 py-2 text-[13px] font-semibold ${i === 0 ? "bg-[#007a5a] text-white" : ""}`} style={i === 0 ? undefined : { border: `1px solid ${IOS_LINE}`, color: IOS_INK }}>
@@ -1044,10 +1096,10 @@ function SpendCard({ layout, stage, reduced }: { layout: Layout; stage: Stage; r
   const todayX = x(SO_FAR.length - 1);
   const area = `${x(0)},${y(0)} ${SO_FAR.map((v, i) => `${x(i)},${y(v)}`).join(" ")} ${todayX},${y(0)}`;
 
-  const lineIn = stage >= 4;
-  const projIn = stage >= 5;
-  const notesIn = stage >= 6;
-  const spent = useCountUp(SPENT, lineIn, reduced, 1.3);
+  const cardIn = stage >= 4;
+  const lineIn = stage >= 5;
+  const projIn = stage >= 6;
+  const spent = useCountUp(SPENT, cardIn, reduced, 1.4);
   const proj = useCountUp(PROJECTED_TOTAL, projIn, reduced, 1.1);
 
   const markers = [
@@ -1074,10 +1126,21 @@ function SpendCard({ layout, stage, reduced }: { layout: Layout; stage: Stage; r
   const fmt = (n: number) => `$${n.toLocaleString("en-US")}`;
 
   return (
-    <div className="relative mt-2.5 w-full max-w-[720px] overflow-hidden rounded-[12px] text-white" style={{ border: "1px solid rgba(255,255,255,0.14)" }}>
+    <motion.div
+      className="relative mt-2.5 w-full max-w-[720px] overflow-hidden rounded-[12px] text-white"
+      style={{ border: "1px solid rgba(255,255,255,0.14)" }}
+      initial={false}
+      animate={{ clipPath: cardIn || reduced ? "inset(0 0% 0 0 round 12px)" : "inset(0 100% 0 0 round 12px)" }}
+      transition={{ duration: 0.8, ease: EASE }}
+    >
       <Image src="/slack-gradient.jpg" alt="" fill sizes="720px" className="object-cover" />
       <div className="relative p-4">
-        <div className={`flex items-start justify-between ${phone ? "pr-1" : "pr-[50px]"}`}>
+        <motion.div
+          initial={false}
+          animate={{ opacity: cardIn ? 1 : 0, y: cardIn ? 0 : 8 }}
+          transition={{ duration: 0.5, ease: EASE, delay: cardIn ? 0.6 : 0 }}
+          className={`flex items-start justify-between ${phone ? "pr-1" : "pr-[50px]"}`}
+        >
           <div>
             <p className="text-[11px] text-white/75">Spent so far · September</p>
             <p className="font-numeral text-[22px] font-semibold leading-tight tracking-[-0.8px] tabular-nums">{fmt(spent)}</p>
@@ -1090,9 +1153,9 @@ function SpendCard({ layout, stage, reduced }: { layout: Layout; stage: Stage; r
             </p>
             <p className="font-numeral text-[11px] text-white/75">{phone ? "+$18,710 (204%)" : "+$18,710 (204%) · 4 agents"}</p>
           </motion.div>
-        </div>
+        </motion.div>
 
-        <svg viewBox={`0 0 ${W} ${H}`} className="mt-1 block h-auto w-full" aria-hidden>
+        <motion.svg viewBox={`0 0 ${W} ${H}`} className="mt-1 block h-auto w-full" aria-hidden initial={false} animate={{ opacity: cardIn ? 1 : 0 }} transition={{ duration: 0.5, delay: cardIn ? 0.9 : 0 }}>
           {[0, 0.25, 0.5, 0.75, 1].map((f) => (
             <line key={f} x1={padL} x2={padL + plotW} y1={y(f * MAX)} y2={y(f * MAX)} stroke="rgba(255,255,255,0.14)" strokeDasharray="2 4" />
           ))}
@@ -1135,42 +1198,10 @@ function SpendCard({ layout, stage, reduced }: { layout: Layout; stage: Stage; r
               {l}
             </text>
           ))}
-        </svg>
+        </motion.svg>
 
-        <motion.div
-          initial={false}
-          animate={{ opacity: notesIn ? 1 : 0, y: notesIn ? 0 : 8 }}
-          transition={{ duration: 0.4, ease: EASE }}
-          className={`mt-1.5 grid gap-3 border-t border-white/20 pt-2.5 ${phone ? "" : "grid-cols-[1fr_1.15fr] gap-5"}`}
-        >
-          {!phone && (
-            <div className="flex flex-col gap-1 text-[12px]">
-              {[
-                ["Procurement", "$4,120"],
-                ["Software & seats", "$2,860"],
-                ["Ops", "$1,450"],
-                ["Travel", "$760"],
-              ].map(([n, v]) => (
-                <div key={n} className="flex items-center justify-between">
-                  <span className="text-white/85">{n}</span>
-                  <span className="font-numeral font-semibold">{v}</span>
-                </div>
-              ))}
-            </div>
-          )}
-          <div className="flex flex-col gap-1.5 text-[12px] leading-[1.35]">
-            <p className="flex items-start gap-2">
-              <span className="mt-[5px] h-[6px] w-[6px] shrink-0 rounded-full bg-[#ffb4a2]" />
-              Procurement went $16.50 over its cap at WebstaurantStore.
-            </p>
-            <p className="flex items-start gap-2">
-              <span className="mt-[5px] h-[6px] w-[6px] shrink-0 rounded-full bg-[#d6f251]" />
-              One Instacart receipt is still missing, 3 days old.
-            </p>
-          </div>
-        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
