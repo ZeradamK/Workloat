@@ -597,38 +597,89 @@ function SlackWindow({ layout, stage, typed }: { layout: Layout; stage: Stage; t
 
         {/* channel pane */}
         <div className="flex min-w-0 flex-1 flex-col" style={{ backgroundColor: PANE }}>
-          <div className="flex h-[48px] shrink-0 items-center justify-between px-4" style={{ borderBottom: `1px solid ${LINE}` }}>
-            <span className="flex items-center gap-2.5 text-[15px] font-bold">
-              <span className="relative">
-                <Image src="/payloat-app-icon-v2.png" alt="" width={24} height={24} className="h-[24px] w-[24px] rounded-[6px]" />
-                <span className="absolute -bottom-0.5 -right-0.5 h-[9px] w-[9px] rounded-full border-2 border-white bg-[#2bac76]" />
-              </span>
-              Payloat
-              <span className="text-[12px] font-normal" style={{ color: MUTED }}>Chief Financial Agent</span>
-              <Glyph d="M6 9l6 6 6-6" size={11} />
-            </span>
-            {!phone && (
-              <div className="flex items-center gap-2 text-[12px]" style={{ color: MUTED }}>
-                <span className="flex items-center gap-1 rounded-[6px] px-2 py-1" style={{ border: `1px solid ${LINE}` }}>
-                  <Glyph d="M3 18v-6a9 9 0 0 1 18 0v6M3 18h4v-5H3m14 5h4v-5h-4" size={12} />
-                  Huddle
+          {/* DM header: star, avatar with presence, name; huddle, bell,
+              search, more; then the Messages / Add canvas tabs */}
+          <div className="shrink-0 px-4 pt-2" style={{ borderBottom: `1px solid ${LINE}` }}>
+            <div className="flex h-[40px] items-center justify-between">
+              <span className="flex items-center gap-2.5 text-[16px] font-bold">
+                <span className="flex h-[26px] w-[26px] items-center justify-center rounded-[6px]" style={{ border: `1px solid ${LINE}`, color: MUTED }}>
+                  <Glyph d="M12 3l2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3 6.4 20.2l1.1-6.2L3 9.6l6.2-.9L12 3Z" size={14} />
                 </span>
-                <span className="flex items-center gap-1 rounded-[6px] px-2 py-1" style={{ border: `1px solid ${LINE}` }}>
-                  <Glyph d="M4 4h16v12H8l-4 4V4Z" size={12} />
-                  Canvas
+                <span className="relative">
+                  <Image src="/payloat-app-icon-v2.png" alt="" width={24} height={24} className="h-[24px] w-[24px] rounded-[6px]" />
+                  <span className="absolute -bottom-0.5 -right-0.5 h-[9px] w-[9px] rounded-full border-2 border-white bg-[#2bac76]" />
+                </span>
+                Payloat
+              </span>
+              <div className="flex items-center gap-2" style={{ color: MUTED }}>
+                <span className="flex h-[28px] items-center rounded-[6px]" style={{ border: `1px solid ${LINE}` }}>
+                  <span className="flex h-full items-center px-2" style={{ borderRight: `1px solid ${LINE}` }}>
+                    <Glyph d="M3 18v-6a9 9 0 0 1 18 0v6M3 18h4v-5H3m14 5h4v-5h-4" size={15} />
+                  </span>
+                  <span className="flex h-full items-center px-1.5">
+                    <Glyph d="M6 9l6 6 6-6" size={11} />
+                  </span>
+                </span>
+                <span className="flex h-[28px] w-[28px] items-center justify-center rounded-full" style={{ border: `1px solid ${LINE}` }}>
+                  <Glyph d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15L6 16ZM10 21h4" size={15} />
+                </span>
+                <span className="flex h-[28px] w-[28px] items-center justify-center rounded-full" style={{ border: `1px solid ${LINE}` }}>
+                  <Glyph d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14ZM20 20l-3.5-3.5" size={15} />
+                </span>
+                <span className="flex h-[28px] w-[24px] items-center justify-center">
+                  <Glyph d="M12 5h.01M12 12h.01M12 19h.01" size={16} />
                 </span>
               </div>
-            )}
+            </div>
+            <div className="mt-1 flex items-end gap-1 text-[13px]" style={{ color: MUTED }}>
+              <span className="flex items-center gap-1.5 border-b-2 px-2 pb-2 font-bold" style={{ color: TEXT, borderColor: TEXT }}>
+                <span className="h-[12px] w-[12px] rounded-full" style={{ backgroundColor: TEXT }} />
+                Messages
+              </span>
+              <span className="flex items-center gap-1.5 px-2 pb-2">
+                <Glyph d="M6 4h9l4 4v12H6V4Zm9 0v4h4" size={13} />
+                Add canvas
+              </span>
+              <span className="relative px-2 pb-2 text-[16px] leading-none">
+                +
+                <span className="absolute right-0 top-0 h-[6px] w-[6px] rounded-full bg-[#1264a3]" />
+              </span>
+            </div>
           </div>
 
           <div className={`flex min-h-0 flex-1 flex-col justify-end overflow-hidden ${phone ? "px-3 pb-3" : "px-5 pb-4"}`}>
-            <div className="mb-3 flex items-center gap-3">
-              <span className="h-px flex-1" style={{ backgroundColor: LINE }} />
-              <span className="rounded-full px-3 py-1 text-[12px] font-semibold" style={{ border: `1px solid ${LINE}` }}>
-                Today
+            {/* the DM's intro: Slack's "this conversation is just between" block */}
+            <div className="mb-4">
+              <div className="flex items-end gap-4">
+                <Image src="/payloat-app-icon-v2.png" alt="Payloat" width={96} height={96} className="h-[96px] w-[96px] rounded-[10px]" />
+                <div className="pb-1">
+                  <p className="flex items-center gap-2 text-[18px] font-bold leading-[1.2]">
+                    Payloat
+                    <span className="h-[9px] w-[9px] rounded-full bg-[#2bac76]" />
+                  </p>
+                  <p className="mt-0.5 text-[13px]" style={{ color: MUTED }}>Chief Financial Agent</p>
+                </div>
+              </div>
+              <p className="mt-3 text-[14px] leading-[1.45]">
+                This conversation is just between <Mention /> and you. Check out their profile to learn more about them.
+              </p>
+              <span className="mt-3 inline-block rounded-[6px] px-3 py-1.5 text-[13px] font-bold" style={{ border: `1px solid rgba(29,28,29,0.3)` }}>
+                View Profile
               </span>
-              <span className="h-px flex-1" style={{ backgroundColor: LINE }} />
             </div>
+
+            {/* the day divider arrives with the first message */}
+            <AnimatePresence initial={false}>
+              {stage >= 1 && (
+                <motion.div key="day" {...rowIn} className="mb-3 flex items-center gap-3">
+                  <span className="h-px flex-1" style={{ backgroundColor: LINE }} />
+                  <span className="rounded-full px-3 py-1 text-[12px] font-semibold" style={{ border: `1px solid ${LINE}` }}>
+                    Today
+                  </span>
+                  <span className="h-px flex-1" style={{ backgroundColor: LINE }} />
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Zeradam's message, once sent */}
             <AnimatePresence initial={false}>
