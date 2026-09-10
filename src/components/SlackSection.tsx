@@ -2,19 +2,19 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { AnimatePresence, animate, motion, useInView, useMotionValueEvent, useReducedMotion, useScroll, useSpring, useTransform } from "motion/react";
+import { AnimatePresence, animate, motion, useInView, useReducedMotion } from "motion/react";
 import PhoneMock, { screenWidth as phoneScreenWidth } from "./PhoneMock";
 
 /**
- * Slack act. A #eeeeee rounded stage, inset from the viewport edges, pinned
- * over 300vh on desktop. The headline sits at the top; below it a Studio
- * Display (CSS: thin black bezel, silver back, arm and base) shows the
- * Slack desktop app in dark mode on the brand gradient wallpaper. Three
- * scenes, driven by scroll the way the goal act inks its words: the act
- * opens on a tight crop of the display and its stand and drifts slowly,
- * then ZIPS to the small front-on view, then ZIPS to the angled final view
- * with the floor line and the two notification bars. Below 900px the act
- * is not pinned: headline, the iPhone running Slack for iOS, the bars.
+ * Slack act. A #eeeeee rounded stage, inset 100px from the viewport edges,
+ * capped at the viewport height minus 300px. The headline sits at the top;
+ * below it a Studio Display (CSS: thin black bezel, silver back, arm and
+ * base) shows the Slack desktop app in dark mode on the brand gradient
+ * wallpaper. Three scenes cycle on their own timer while the act is in
+ * view: a tight crop of the display and its stand that drifts slowly, a
+ * ZIP to the small front-on view, a ZIP to the angled final view with the
+ * floor line and the two notification bars, then back to the crop. Below
+ * 900px: headline, the iPhone running Slack for iOS, the bars.
  *
  * The conversation on screen is a timed sequence (types, sends, typing
  * dots, answer, the Origin-style forecast card draws itself, notes,
@@ -57,15 +57,19 @@ export default function SlackSection() {
 
 /* ---------- desktop: the pinned three-scene act ---------- */
 
+/* The scenes follow the conversation: the close-up holds while Zeradam
+   types, sends, and Payloat answers in text; the zip to the front-on view
+   lands with the graph; the angled view once the answer is complete. */
+function sceneFor(stage: Stage): number {
+  return stage < 4 ? 0 : stage < 7 ? 1 : 2;
+}
+
 function DesktopAct() {
   const ref = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion() ?? false;
-  const [stage, setStage] = useState(0);
+  const inView = useInView(ref, { amount: 0.4 });
+  const convo = useConversation(inView, reduced);
   const [override, setOverride] = useState<number | null>(null);
-
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
-  const t = useSpring(scrollYProgress, { stiffness: 120, damping: 26, mass: 0.3 });
-  useMotionValueEvent(t, "change", (v) => setStage(v < 0.3 ? 0 : v < 0.62 ? 1 : 2));
 
   /* dev: ?slackScene=0|1|2 pins a scene for review */
   useEffect(() => {
@@ -73,67 +77,69 @@ function DesktopAct() {
     if (q !== null) setOverride(Math.min(2, Math.max(0, Number(q))));
   }, []);
 
-  /* scene 1 drifts slowly while it holds, before the first zip */
-  const driftScale = useTransform(t, [0, 0.3], [1.06, 1]);
-  const driftY = useTransform(t, [0, 0.3], ["2%", "0%"]);
-
-  const scene = reduced ? 2 : (override ?? stage);
+  const scene = reduced ? 2 : (override ?? sceneFor(convo.stage));
   const target = SCENES[scene];
 
   return (
-    <div ref={ref} className="relative hidden h-[300vh] min-[900px]:block">
-      <div className="sticky top-0 h-screen px-[100px] py-4">
-        <div className="relative flex h-full flex-col overflow-hidden rounded-[30px] bg-[#eeeeee]">
-          {/* headline */}
-          <motion.h2
-            {...up}
-            className="z-10 px-6 pt-[clamp(28px,4vh,56px)] text-center text-[clamp(32px,4.2vw,60px)] font-bold leading-[1.06] tracking-[-2px] text-ink"
+    <section ref={ref} className="hidden px-[100px] py-4 min-[900px]:block">
+      <div
+        className="relative flex flex-col overflow-hidden rounded-[30px] bg-[#eeeeee]"
+        style={{ height: "clamp(640px, calc(100vh - 300px), 920px)" }}
+      >
+        {/* headline */}
+        <motion.h2
+          {...up}
+          className="z-10 px-6 pt-[clamp(28px,4vh,56px)] text-center text-[clamp(32px,4.2vw,60px)] font-bold leading-[1.06] tracking-[-2px] text-ink"
+        >
+          Ask @Payloat what
+          <br />
+          your agents spent.
+        </motion.h2>
+
+        {/* the stage, its own box well below the headline */}
+        <div className="relative mt-10 min-h-0 flex-1 overflow-hidden" style={{ perspective: scene === 2 ? 2600 : "none", perspectiveOrigin: "50% 45%", clipPath: "inset(0)" }}>
+          {/* floor: the final scene sits on it */}
+          <motion.div
+            initial={false}
+            animate={{ opacity: scene === 2 ? 1 : 0 }}
+            transition={{ duration: 0.5 }}
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-[34%]"
+            style={{ background: "linear-gradient(180deg,#e2e2e4 0%,#e9e9eb 12%,#ededef 100%)", borderTop: "1px solid rgba(0,0,0,0.10)" }}
+          />
+          {/* the rig: display + stand, centered, then posed per scene */}
+          <motion.div
+            initial={false}
+            animate={target}
+            transition={reduced ? { duration: 0 } : ZIP}
+            className="absolute left-1/2 top-[9%] -translate-x-1/2"
+            style={{ height: "76%", aspectRatio: "1.44", transformOrigin: "50% 60%" }}
           >
-            Ask @Payloat what
-            <br />
-            your agents spent.
-          </motion.h2>
-
-          {/* the stage */}
-          <div className="relative mt-4 min-h-0 flex-1 overflow-hidden" style={{ perspective: scene === 2 ? 2600 : "none", perspectiveOrigin: "50% 45%", clipPath: "inset(0)" }}>
-            {/* floor: the final scene sits on it */}
+            {/* the opening crop drifts slowly while it holds */}
             <motion.div
               initial={false}
-              animate={{ opacity: scene === 2 ? 1 : 0 }}
-              transition={{ duration: 0.5 }}
-              className="pointer-events-none absolute inset-x-0 bottom-0 h-[34%]"
-              style={{ background: "linear-gradient(180deg,#e2e2e4 0%,#e9e9eb 12%,#ededef 100%)", borderTop: "1px solid rgba(0,0,0,0.10)" }}
-            />
-            {/* the rig: display + stand, centered, then posed per scene */}
-            <motion.div
-              initial={false}
-              animate={target}
-              transition={reduced ? { duration: 0 } : ZIP}
-              className="absolute left-1/2 top-[8%] w-[62%] -translate-x-1/2"
-              style={{ transformOrigin: "50% 60%" }}
+              animate={scene === 0 && !reduced ? { scale: [1.06, 1], y: ["2%", "0%"] } : { scale: 1, y: "0%" }}
+              transition={scene === 0 ? { duration: 7, ease: "linear" } : { duration: 0.4 }}
             >
-              <motion.div style={scene === 0 && !reduced ? { scale: driftScale, y: driftY } : undefined}>
-                <StudioDisplay />
-              </motion.div>
+              <StudioDisplay stage={convo.stage} typed={convo.typed} />
             </motion.div>
+          </motion.div>
 
-            {/* the two bars arrive with the final scene */}
-            <AnimatePresence>
-              {scene === 2 && (
-                <>
-                  <motion.div key="b1" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 12 }} transition={{ duration: 0.45, ease: EASE, delay: 0.25 }} className="absolute left-[6%] top-[52%] z-10 w-[340px]">
-                    <Bar1 />
-                  </motion.div>
-                  <motion.div key="b2" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 12 }} transition={{ duration: 0.45, ease: EASE, delay: 0.4 }} className="absolute bottom-[14%] right-[6%] z-10 w-[340px]">
-                    <Bar2 />
-                  </motion.div>
-                </>
-              )}
-            </AnimatePresence>
-          </div>
+          {/* the two bars arrive with the final scene */}
+          <AnimatePresence>
+            {scene === 2 && (
+              <>
+                <motion.div key="b1" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 12 }} transition={{ duration: 0.45, ease: EASE, delay: 0.25 }} className="absolute left-[6%] top-[52%] z-10 w-[340px]">
+                  <Bar1 />
+                </motion.div>
+                <motion.div key="b2" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 12 }} transition={{ duration: 0.45, ease: EASE, delay: 0.4 }} className="absolute bottom-[14%] right-[6%] z-10 w-[340px]">
+                  <Bar2 />
+                </motion.div>
+              </>
+            )}
+          </AnimatePresence>
         </div>
       </div>
-    </div>
+    </section>
   );
 }
 
@@ -194,7 +200,7 @@ function Bar2() {
    edge peeking out on the right and bottom, then the arm and flat base
    (proportions from the refs: arm about a quarter of the display's width,
    a fifth of its height; base a bit wider and thin). */
-function StudioDisplay() {
+function StudioDisplay({ stage, typed }: { stage: Stage; typed: number }) {
   return (
     <div className="relative">
       {/* back shell edge */}
@@ -204,7 +210,7 @@ function StudioDisplay() {
         <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#0a1fd2]">
           <Wallpaper />
           <ScaledScreen>
-            <Desktop />
+            <Desktop stage={stage} typed={typed} />
           </ScaledScreen>
           <Sheen />
         </div>
@@ -280,11 +286,9 @@ function ScaledScreen({ children }: { children: React.ReactNode }) {
 }
 
 /* A macOS desktop: menu bar, the Slack window floating on the wallpaper. */
-function Desktop() {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { amount: 0.2 });
+function Desktop({ stage, typed }: { stage: Stage; typed: number }) {
   return (
-    <div ref={ref} className="relative h-full w-full">
+    <div className="relative h-full w-full">
       <div className="absolute inset-x-0 top-0 flex h-[26px] items-center justify-between px-4 text-[12px] font-medium text-white/90" style={{ backgroundColor: "rgba(0,0,0,0.22)" }}>
         <span className="flex items-center gap-4">
           <span></span>
@@ -301,7 +305,7 @@ function Desktop() {
         </span>
       </div>
       <div className="absolute overflow-hidden rounded-[12px] shadow-[0_30px_80px_rgba(0,0,0,0.45)]" style={{ top: 54, left: 70, right: 70, bottom: 44 }}>
-        <SlackWindow layout="desktop" active={inView} />
+        <SlackWindow layout="desktop" stage={stage} typed={typed} />
       </div>
     </div>
   );
@@ -311,7 +315,28 @@ function Desktop() {
 
 const QUESTION = "@Payloat how much have our agents spent this month?";
 const QUESTION_DM = "How much have our agents spent this month?";
-const TYPE_MS = 28;
+
+/* a person typing: uneven keystrokes, a longer pause after each phrase */
+function typingSchedule(text: string): number[] {
+  const pauseAfter = new Set<number>();
+  for (const phrase of ["@Payloat", " how much have", " our agents spent"]) {
+    const i = text.indexOf(phrase);
+    if (i >= 0) pauseAfter.add(i + phrase.length);
+  }
+  const times: number[] = [];
+  let t = 0;
+  let seed = 7;
+  for (let i = 1; i <= text.length; i++) {
+    seed = (seed * 9301 + 49297) % 233280;
+    const jitter = seed / 233280; /* 0..1, deterministic */
+    t += 38 + Math.round(jitter * 70); /* 38..108ms per key */
+    if (text[i - 1] === " ") t += 40;
+    if (pauseAfter.has(i)) t += 230; /* the pause between phrases */
+    times.push(t);
+  }
+  return times;
+}
+const SCHEDULE = typingSchedule(QUESTION);
 
 /* 0 typing · 1 sent · 2 Payloat typing · 3 answer text · 4 card + line
    · 5 projection + markers · 6 notes · 7 buttons (finished) */
@@ -338,16 +363,16 @@ function useConversation(active: boolean, reduced: boolean) {
     const run = () => {
       setStage(0);
       setTyped(0);
-      for (let i = 1; i <= QUESTION.length; i++) at(400 + i * TYPE_MS, () => setTyped(i));
-      const sent = 400 + QUESTION.length * TYPE_MS + 550;
+      SCHEDULE.forEach((ms, i) => at(700 + ms, () => setTyped(i + 1)));
+      const sent = 700 + SCHEDULE[SCHEDULE.length - 1] + 650;
       at(sent, () => setStage(1));
-      at(sent + 500, () => setStage(2));
-      at(sent + 1700, () => setStage(3));
-      at(sent + 2200, () => setStage(4));
-      at(sent + 3700, () => setStage(5));
-      at(sent + 4900, () => setStage(6));
-      at(sent + 5400, () => setStage(7));
-      at(sent + 12500, run);
+      at(sent + 700, () => setStage(2)); /* Payloat is typing */
+      at(sent + 2600, () => setStage(3)); /* the text reply lands */
+      at(sent + 3900, () => setStage(4)); /* the graph: the scene zips out to show it */
+      at(sent + 5600, () => setStage(5));
+      at(sent + 6900, () => setStage(6));
+      at(sent + 7500, () => setStage(7)); /* complete: the angled view */
+      at(sent + 15500, run);
     };
     run();
     return () => {
@@ -360,14 +385,14 @@ function useConversation(active: boolean, reduced: boolean) {
 
 /* ---------- the Slack window, dark theme ---------- */
 
-const TOP = "#121417";
-const RAIL = "#0f1113";
-const SIDE = "#19171d";
-const PANE = "#1a1d21";
-const TEXT = "#e8e9ea";
-const MUTED = "#9d9fa3";
-const LINE = "rgba(255,255,255,0.10)";
-const ACTIVE = "#1164a3";
+const TOP = "#ffffff";
+const RAIL = "#ffffff";
+const SIDE = "#eeeeee";
+const PANE = "#ffffff";
+const TEXT = "#1d1c1d";
+const MUTED = "#616061";
+const LINE = "rgba(29,28,29,0.13)";
+const ACTIVE = "#1264a3";
 
 const CHANNELS = ["general", "finance", "agents", "ops", "kitchen"];
 
@@ -379,16 +404,15 @@ const rowIn = {
   transition: { duration: 0.35, ease: EASE },
 } as const;
 
-function SlackWindow({ layout, active }: { layout: Layout; active: boolean }) {
+function SlackWindow({ layout, stage, typed }: { layout: Layout; stage: Stage; typed: number }) {
   const phone = layout === "phone";
   const reduced = useReducedMotion() ?? false;
-  const { stage, typed } = useConversation(active, reduced);
   const typing = QUESTION.slice(0, typed);
 
   return (
     <div className="flex h-full w-full flex-col" style={{ fontFamily: "var(--font-ios)", color: TEXT, backgroundColor: PANE }}>
       {/* title bar: traffic lights + search */}
-      <div className="flex h-[40px] shrink-0 items-center px-3" style={{ backgroundColor: TOP }}>
+      <div className="flex h-[40px] shrink-0 items-center px-3" style={{ backgroundColor: TOP, borderBottom: `1px solid ${LINE}` }}>
         {!phone && (
           <span className="mr-4 flex items-center gap-2">
             <span className="h-[12px] w-[12px] rounded-full bg-[#ff5f57]" />
@@ -403,19 +427,19 @@ function SlackWindow({ layout, active }: { layout: Layout; active: boolean }) {
             <Glyph d="M12 7v5l3 2M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z" />
           </span>
         )}
-        <div className="flex h-[26px] flex-1 items-center gap-2 rounded-[6px] px-3 text-[12px]" style={{ backgroundColor: "rgba(255,255,255,0.10)", color: MUTED, maxWidth: phone ? undefined : 520 }}>
+        <div className="flex h-[26px] flex-1 items-center gap-2 rounded-[6px] px-3 text-[12px]" style={{ backgroundColor: "rgba(0,0,0,0.06)", color: MUTED, maxWidth: phone ? undefined : 520 }}>
           <Glyph d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14ZM20 20l-3.5-3.5" size={12} />
           Search Payloat
         </div>
         {!phone && (
-          <span className="ml-auto flex h-[22px] w-[22px] items-center justify-center rounded-full text-[11px]" style={{ backgroundColor: "rgba(255,255,255,0.10)", color: MUTED }}>?</span>
+          <span className="ml-auto flex h-[22px] w-[22px] items-center justify-center rounded-full text-[11px]" style={{ backgroundColor: "rgba(0,0,0,0.06)", color: MUTED }}>?</span>
         )}
       </div>
 
       <div className="flex min-h-0 flex-1">
         {/* rail */}
         {!phone && (
-          <div className="flex w-[68px] shrink-0 flex-col items-center gap-4 pt-4" style={{ backgroundColor: RAIL }}>
+          <div className="flex w-[68px] shrink-0 flex-col items-center gap-4 pt-4" style={{ backgroundColor: RAIL, borderRight: `1px solid ${LINE}` }}>
             <span className="flex h-[36px] w-[36px] items-center justify-center rounded-[9px] bg-white">
               <Image src="/payloat-app-icon-v2.png" alt="Payloat" width={36} height={36} className="h-[36px] w-[36px] rounded-[9px]" />
             </span>
@@ -427,7 +451,7 @@ function SlackWindow({ layout, active }: { layout: Layout; active: boolean }) {
               ["More", "M5 12h.01M12 12h.01M19 12h.01"],
             ].map(([label, d], i) => (
               <span key={label} className="flex flex-col items-center gap-1 text-[10px]" style={{ color: i === 0 ? TEXT : MUTED }}>
-                <span className={`flex h-[30px] w-[30px] items-center justify-center rounded-[8px] ${i === 0 ? "bg-white/15" : ""}`}>
+                <span className={`flex h-[30px] w-[30px] items-center justify-center rounded-[8px] ${i === 0 ? "bg-black/[0.08]" : ""}`}>
                   <Glyph d={d} size={16} />
                 </span>
                 {label}
@@ -445,7 +469,7 @@ function SlackWindow({ layout, active }: { layout: Layout; active: boolean }) {
                 Payloat
                 <Glyph d="M6 9l6 6 6-6" size={11} />
               </span>
-              <span className="flex h-[26px] w-[26px] items-center justify-center rounded-full bg-white text-[#19171d]">
+              <span className="flex h-[26px] w-[26px] items-center justify-center rounded-full bg-[#1d1c1d] text-white">
                 <Glyph d="M12 20h9M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4L16.5 3.5Z" size={13} />
               </span>
             </div>
@@ -472,7 +496,7 @@ function SlackWindow({ layout, active }: { layout: Layout; active: boolean }) {
             <span className="flex items-center gap-2.5 text-[15px] font-bold">
               <span className="relative">
                 <Image src="/payloat-app-icon-v2.png" alt="" width={24} height={24} className="h-[24px] w-[24px] rounded-[6px]" />
-                <span className="absolute -bottom-0.5 -right-0.5 h-[9px] w-[9px] rounded-full border-2 border-[#1a1d21] bg-[#2bac76]" />
+                <span className="absolute -bottom-0.5 -right-0.5 h-[9px] w-[9px] rounded-full border-2 border-white bg-[#2bac76]" />
               </span>
               Payloat
               <span className="text-[12px] font-normal" style={{ color: MUTED }}>Chief Financial Agent</span>
@@ -525,7 +549,7 @@ function SlackWindow({ layout, active }: { layout: Layout; active: boolean }) {
               {stage === 2 && (
                 <motion.div key="dots" {...rowIn} exit={{ opacity: 0, transition: { duration: 0.15 } }} className="mt-3 flex items-center gap-3">
                   <Image src="/payloat-app-icon-v2.png" alt="Payloat" width={36} height={36} className="h-[36px] w-[36px] shrink-0 rounded-[8px]" />
-                  <span className="flex items-center gap-1 rounded-[10px] px-3 py-2.5" style={{ backgroundColor: "rgba(255,255,255,0.08)" }}>
+                  <span className="flex items-center gap-1 rounded-[10px] px-3 py-2.5" style={{ backgroundColor: "#f4f4f4" }}>
                     {[0, 1, 2].map((i) => (
                       <motion.span
                         key={i}
@@ -548,7 +572,7 @@ function SlackWindow({ layout, active }: { layout: Layout; active: boolean }) {
                   <div className="min-w-0 flex-1">
                     <p className="text-[14px] leading-[1.2]">
                       <span className="font-bold">Payloat</span>
-                      <span className="ml-1.5 rounded-[3px] px-1 py-px text-[9px] font-semibold uppercase tracking-[0.04em]" style={{ backgroundColor: "rgba(255,255,255,0.12)", color: MUTED }}>App</span>
+                      <span className="ml-1.5 rounded-[3px] px-1 py-px text-[9px] font-semibold uppercase tracking-[0.04em]" style={{ backgroundColor: "rgba(0,0,0,0.08)", color: MUTED }}>App</span>
                       <span className="ml-2 text-[11px]" style={{ color: MUTED }}>9:41 AM</span>
                     </p>
                     <p className="mt-0.5 text-[14px] leading-[1.4]">
@@ -571,7 +595,7 @@ function SlackWindow({ layout, active }: { layout: Layout; active: boolean }) {
                               animate={{ opacity: 1, scale: 1 }}
                               transition={{ duration: 0.3, ease: EASE, delay: i * 0.08 }}
                               className={`rounded-[6px] px-3 py-1.5 text-[12px] font-semibold ${i === 0 ? "bg-[#007a5a] text-white" : ""}`}
-                              style={i === 0 ? undefined : { border: "1px solid rgba(255,255,255,0.3)", color: TEXT }}
+                              style={i === 0 ? undefined : { border: `1px solid ${LINE}`, color: TEXT }}
                             >
                               {b}
                             </motion.span>
@@ -585,7 +609,7 @@ function SlackWindow({ layout, active }: { layout: Layout; active: boolean }) {
             </AnimatePresence>
 
             {/* composer: the question types here, then sends */}
-            <div className="mt-4 rounded-[8px]" style={{ border: "1px solid rgba(255,255,255,0.28)", backgroundColor: "#222529" }}>
+            <div className="mt-4 rounded-[8px]" style={{ border: "1px solid rgba(29,28,29,0.3)", backgroundColor: "#ffffff" }}>
               {!phone && (
                 <div className="flex items-center gap-3 px-3 py-1.5" style={{ color: MUTED, borderBottom: `1px solid ${LINE}` }}>
                   <span className="text-[13px] font-bold">B</span>
@@ -608,7 +632,7 @@ function SlackWindow({ layout, active }: { layout: Layout; active: boolean }) {
                     ) : (
                       typing
                     )}
-                    {!reduced && <span className="ml-px inline-block h-[14px] w-[2px] translate-y-[2px] animate-pulse bg-white" />}
+                    {!reduced && <span className="ml-px inline-block h-[14px] w-[2px] translate-y-[2px] animate-pulse bg-[#1d1c1d]" />}
                   </>
                 ) : (
                   "Message Payloat"
@@ -616,7 +640,7 @@ function SlackWindow({ layout, active }: { layout: Layout; active: boolean }) {
               </p>
               <div className="flex items-center justify-between px-2.5 pb-2" style={{ color: MUTED }}>
                 <div className="flex items-center gap-3">
-                  <span className="flex h-[22px] w-[22px] items-center justify-center rounded-full" style={{ backgroundColor: "rgba(255,255,255,0.10)" }}>
+                  <span className="flex h-[22px] w-[22px] items-center justify-center rounded-full" style={{ backgroundColor: "rgba(0,0,0,0.06)" }}>
                     <Glyph d="M12 5v14M5 12h14" size={12} />
                   </span>
                   <span className="text-[12px] font-semibold">Aa</span>
@@ -624,9 +648,9 @@ function SlackWindow({ layout, active }: { layout: Layout; active: boolean }) {
                   <Glyph d="M12 12m-3 0a3 3 0 1 0 6 0 3 3 0 1 0-6 0M15 12v1.5a2.5 2.5 0 0 0 5 0V12a8 8 0 1 0-3 6.2" size={13} />
                 </div>
                 <motion.span
-                  animate={{ backgroundColor: stage === 0 && typed > 0 ? "#007a5a" : "rgba(255,255,255,0.10)", scale: stage === 1 ? [1, 0.85, 1] : 1 }}
+                  animate={{ backgroundColor: stage === 0 && typed > 0 ? "#007a5a" : "rgba(0,0,0,0.06)", color: stage === 0 && typed > 0 ? "#ffffff" : MUTED, scale: stage === 1 ? [1, 0.85, 1] : 1 }}
                   transition={{ duration: 0.3 }}
-                  className="flex h-[24px] w-[30px] items-center justify-center rounded-[4px] text-white"
+                  className="flex h-[24px] w-[30px] items-center justify-center rounded-[4px]"
                 >
                   <Glyph d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7Z" size={12} />
                 </motion.span>
@@ -641,7 +665,7 @@ function SlackWindow({ layout, active }: { layout: Layout; active: boolean }) {
 
 function Mention() {
   return (
-    <span className="rounded-[3px] px-1 py-px font-medium text-[#1d9bd1]" style={{ backgroundColor: "rgba(29,155,209,0.18)" }}>
+    <span className="rounded-[3px] px-1 py-px font-medium text-[#1264a3]" style={{ backgroundColor: "rgba(29,155,209,0.12)" }}>
       @Payloat
     </span>
   );
@@ -674,7 +698,7 @@ function SideRow({
   you?: boolean;
 }) {
   return (
-    <div className="flex items-center gap-2 rounded-[6px] px-2 py-[5px]" style={{ backgroundColor: active ? ACTIVE : undefined, color: active ? "#ffffff" : "rgba(232,233,234,0.85)" }}>
+    <div className="flex items-center gap-2 rounded-[6px] px-2 py-[5px]" style={{ backgroundColor: active ? ACTIVE : undefined, color: active ? "#ffffff" : TEXT }}>
       {hash && <span className="w-[10px] text-[14px] opacity-70">#</span>}
       {icon && <Glyph d={icon} size={14} />}
       {avatar && <Image src={avatar} alt="" width={20} height={20} className="h-[20px] w-[20px] rounded-[4px] object-cover" />}
