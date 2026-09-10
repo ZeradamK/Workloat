@@ -180,7 +180,7 @@ function DesktopAct() {
   const target = scenes(fit, open)[scene];
 
   return (
-    <section ref={ref} className="hidden px-[100px] py-4 min-[900px]:block">
+    <section ref={ref} className="hidden px-[100px] pb-[clamp(120px,30vw,300px)] pt-4 min-[900px]:block">
       <div
         className="relative flex flex-col overflow-hidden rounded-[30px] bg-[#eeeeee]"
         style={{ height: "clamp(840px, calc(100vh - 100px), 1120px)" }}
@@ -248,7 +248,7 @@ function DesktopAct() {
 
 function PhoneAct() {
   return (
-    <section className="mx-4 rounded-[30px] bg-[#0a0a0a] px-5 pb-16 pt-12 min-[900px]:hidden">
+    <section className="mx-4 mb-[clamp(120px,30vw,300px)] rounded-[30px] bg-[#0a0a0a] px-5 pb-16 pt-12 min-[900px]:hidden">
       <motion.h2 {...up} className="text-center text-[clamp(32px,9vw,44px)] font-bold leading-[1.06] tracking-[-1.5px] text-white">
         Ask @Payloat what
         <br />
