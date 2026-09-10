@@ -255,17 +255,8 @@ function StudioDisplay({ stage, typed }: { stage: Stage; typed: number }) {
   );
 }
 
-/* iPhone (titanium PhoneMock, sized to its column). The story: the lock
-   screen with Payloat's notifications sliding in over the brand wallpaper,
-   a tap on the first one, then Slack for iOS opens on the DM with Payloat
-   and the conversation runs. Loops. Reduced motion opens on Slack. */
-
-type PhoneScreen = "lock" | "tap" | "slack";
-
-const LOCK_HOLD = 3600; /* notifications land, then the tap */
-const TAP_HOLD = 380;
-const SLACK_HOLD = 24500; /* the conversation plus its settle, under the hook's own loop */
-
+/* iPhone (titanium PhoneMock, sized to its column): Slack for iOS opens
+   on the DM with Payloat and the conversation runs while in view. */
 function Phone() {
   const ref = useRef<HTMLDivElement>(null);
   const [w, setW] = useState(340);
@@ -278,114 +269,14 @@ function Phone() {
     return () => ro.disconnect();
   }, []);
   const inView = useInView(ref, { amount: 0.35 });
-  const reduced = useReducedMotion() ?? false;
-  const [screen, setScreen] = useState<PhoneScreen>(reduced ? "slack" : "lock");
-
-  useEffect(() => {
-    if (reduced) {
-      setScreen("slack");
-      return;
-    }
-    if (!inView) return;
-    let cancelled = false;
-    const timers: number[] = [];
-    const at = (ms: number, fn: () => void) =>
-      timers.push(
-        window.setTimeout(() => {
-          if (!cancelled) fn();
-        }, ms),
-      );
-    const run = () => {
-      setScreen("lock");
-      at(LOCK_HOLD, () => setScreen("tap"));
-      at(LOCK_HOLD + TAP_HOLD, () => setScreen("slack"));
-      at(LOCK_HOLD + TAP_HOLD + SLACK_HOLD, run);
-    };
-    run();
-    return () => {
-      cancelled = true;
-      timers.forEach((t) => window.clearTimeout(t));
-    };
-  }, [inView, reduced]);
-
-  const onSlack = screen === "slack";
-
   return (
     <div ref={ref} className="w-full">
-      <PhoneMock width={w} frame="titanium" screenBg="#0a1fd2">
-        <Wallpaper />
+      <PhoneMock width={w} frame="titanium" screenBg={IOS_BG}>
         <div className="absolute inset-0" style={{ width: phoneScreenWidth(w) }}>
-          <AnimatePresence initial={false}>
-            {!onSlack && (
-              <motion.div key="lock" className="absolute inset-0" initial={{ opacity: 1 }} exit={{ opacity: 0, scale: 1.06, transition: { duration: 0.35, ease: EASE } }}>
-                <LockScreen tapped={screen === "tap"} />
-              </motion.div>
-            )}
-          </AnimatePresence>
-          <AnimatePresence initial={false}>
-            {onSlack && (
-              <motion.div key="slack" className="absolute inset-0" initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.45, ease: EASE }}>
-                <SlackPhone active={onSlack && inView} />
-              </motion.div>
-            )}
-          </AnimatePresence>
+          <SlackPhone active={inView} />
         </div>
-        <div className="absolute bottom-[9px] left-1/2 h-[5px] w-[134px] -translate-x-1/2 rounded-full" style={{ backgroundColor: onSlack ? "rgba(0,0,0,0.85)" : "rgba(255,255,255,0.9)" }} />
+        <div className="absolute bottom-[9px] left-1/2 h-[5px] w-[134px] -translate-x-1/2 rounded-full bg-black/85" />
       </PhoneMock>
-    </div>
-  );
-}
-
-/* the iOS lock screen: time and date, Payloat's notifications sliding in
-   one by one over the wallpaper, flashlight and camera at the bottom */
-const NOTIFS = [
-  { title: "Payloat", when: "now", body: "September is at $9,190 so far across 4 agents. Two things to look at." },
-  { title: "Payloat", when: "2m ago", body: "Procurement went $16.50 over its cap at WebstaurantStore." },
-  { title: "Payloat", when: "9m ago", body: "One Instacart receipt is still missing, 3 days old." },
-];
-
-function LockScreen({ tapped }: { tapped: boolean }) {
-  return (
-    <div className="flex h-full w-full flex-col text-white" style={{ fontFamily: "var(--font-ios)" }}>
-      <div className="mt-[64px] flex flex-col items-center">
-        <svg width="14" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-          <rect x="4.5" y="10.5" width="15" height="10" rx="3" />
-          <path d="M8 10.5V7.8a4 4 0 0 1 8 0v2.7" />
-        </svg>
-        <p className="mt-2 text-[17px] font-medium">Tuesday, September 9</p>
-        <p className="font-numeral -mt-1 text-[84px] font-light leading-none tracking-[-2px]">9:41</p>
-      </div>
-
-      <div className="mt-6 flex flex-col gap-2 px-3">
-        {NOTIFS.map((n, i) => (
-          <motion.div
-            key={n.body}
-            initial={{ opacity: 0, y: -18, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: tapped && i === 0 ? 0.97 : 1, backgroundColor: tapped && i === 0 ? "rgba(255,255,255,0.55)" : "rgba(255,255,255,0.32)" }}
-            transition={{ duration: 0.45, ease: EASE, delay: 0.5 + i * 0.55 }}
-            className="flex items-start gap-3 rounded-[20px] p-3"
-            style={{ backdropFilter: "blur(18px)", WebkitBackdropFilter: "blur(18px)" }}
-          >
-            <Image src="/payloat-app-icon-v2.png" alt="Payloat" width={38} height={38} className="h-[38px] w-[38px] shrink-0 rounded-[9px]" />
-            <span className="min-w-0 flex-1">
-              <span className="flex items-baseline justify-between">
-                <span className="text-[15px] font-semibold">{n.title}</span>
-                <span className="text-[12px] text-white/80">{n.when}</span>
-              </span>
-              <span className="block text-[15px] leading-[1.3]">{n.body}</span>
-            </span>
-          </motion.div>
-        ))}
-      </div>
-
-      <div className="mt-auto mb-[44px] flex items-center justify-between px-9">
-        <span className="flex h-[50px] w-[50px] items-center justify-center rounded-full" style={{ backgroundColor: "rgba(0,0,0,0.35)", backdropFilter: "blur(12px)" }}>
-          <Glyph d="M8 3h8l1 5v2l-3 3v8H10v-8L7 10V8l1-5Z" size={20} />
-        </span>
-        <span className="flex h-[50px] w-[50px] items-center justify-center rounded-full" style={{ backgroundColor: "rgba(0,0,0,0.35)", backdropFilter: "blur(12px)" }}>
-          <Glyph d="M4 8h3l2-3h6l2 3h3v11H4V8Zm8 9a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" size={20} />
-        </span>
-      </div>
     </div>
   );
 }
