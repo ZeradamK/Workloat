@@ -48,9 +48,10 @@ const FRAME = {
   lidWidth: (1622 - 377) / 2000,
 };
 
-/* the opening pose, measured from the stage: the lid alone, 50px from
-   each side of the gray box, the screen's bottom edge flush with the
-   box's bottom (so the bottom bezel and the deck are out of the frame). The desktop is the
+/* the opening pose, measured from the stage: the lid alone, sized to
+   50px from each side of the gray box then zoomed out by a fifth, the
+   screen's bottom edge flush with the box's bottom (so the bottom bezel
+   and the deck are out of the frame). The desktop is the
    box's own gray, so only the Slack window and the menu bar read. `y` is
    a share of the rig's height; `cropped` when the screen's top runs out
    under the headline. */
@@ -140,7 +141,8 @@ function DesktopAct() {
       /* the lid spans the stage minus 100px each side when it can */
       setFit(Math.max(0.5, Math.min(1, (stageW - 200) / lidW)));
 
-      const scale = (stageW - 100) / lidW;
+      /* the lid at 50px from each side, then zoomed out by a fifth */
+      const scale = ((stageW - 100) / lidW) * 0.8;
       const rigTop = ((1 - RIG_H) / 2) * stageH;
       const originY = rigTop + FRAME.screenCenterY * rigH;
       /* where a point of the rig (a share of its height) lands after the scale */
