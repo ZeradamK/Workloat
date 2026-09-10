@@ -5,6 +5,7 @@ import Image from "next/image";
 import { animate, AnimatePresence, motion, useInView, useMotionValueEvent, useReducedMotion, useScroll } from "motion/react";
 import { slackDark } from "./introProgress";
 import PhoneMock, { screenWidth as phoneScreenWidth } from "./PhoneMock";
+import { SlackIcon, type SlackIconName } from "./slackIcons";
 
 /**
  * Slack act. A #eeeeee rounded stage, inset 100px from the viewport edges,
@@ -551,13 +552,13 @@ function SlackWindow({ layout, stage, typed }: { layout: Layout; stage: Stage; t
         )}
         {!phone && (
           <span className="mr-6 flex items-center gap-2" style={{ color: MUTED }}>
-            <Glyph d="M15 6l-6 6 6 6" />
-            <Glyph d="M9 6l6 6-6 6" />
-            <Glyph d="M12 7v5l3 2M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z" />
+            <SlackIcon name="chevron-medium-left" size={15} bold />
+            <SlackIcon name="chevron-medium-right" size={15} bold />
+            <SlackIcon name="history" size={15} bold />
           </span>
         )}
         <div className="flex h-[26px] flex-1 items-center gap-2 rounded-[6px] px-3 text-[12px]" style={{ backgroundColor: "rgba(0,0,0,0.06)", color: MUTED, maxWidth: phone ? undefined : 520 }}>
-          <Glyph d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14ZM20 20l-3.5-3.5" size={12} />
+          <SlackIcon name="search-small" size={13} bold />
           Search Payloat
         </div>
         {!phone && (
@@ -572,16 +573,18 @@ function SlackWindow({ layout, stage, typed }: { layout: Layout; stage: Stage; t
             <span className="flex h-[36px] w-[36px] items-center justify-center rounded-[9px] bg-white">
               <Image src="/payloat-app-icon-v2.png" alt="Payloat" width={36} height={36} className="h-[36px] w-[36px] rounded-[9px]" />
             </span>
-            {[
-              ["Home", "M4 11 12 4l8 7v9H4z"],
-              ["DMs", "M20 12.5a7.5 7.5 0 0 1-11 6.6L4 20l1-4.6a7.5 7.5 0 1 1 15-2.9Z"],
-              ["Activity", "M15 17H9m8-3V11a5 5 0 0 0-10 0v3l-2 3h14l-2-3Z"],
-              ["Later", "M6 4h12v16l-6-4-6 4z"],
-              ["More", "M5 12h.01M12 12h.01M19 12h.01"],
-            ].map(([label, d], i) => (
+            {(
+              [
+                ["Home", "home-filled"],
+                ["DMs", "dm"],
+                ["Activity", "bell-o"],
+                ["Later", "bookmark"],
+                ["More", "ellipsis"],
+              ] as [string, SlackIconName][]
+            ).map(([label, name], i) => (
               <span key={label} className="flex flex-col items-center gap-1 text-[10px]" style={{ color: i === 0 ? TEXT : MUTED }}>
                 <span className={`flex h-[30px] w-[30px] items-center justify-center rounded-[8px] ${i === 0 ? "bg-black/[0.08]" : ""}`}>
-                  <Glyph d={d} size={16} />
+                  <SlackIcon name={name} size={19} bold />
                 </span>
                 {label}
               </span>
@@ -596,15 +599,15 @@ function SlackWindow({ layout, stage, typed }: { layout: Layout; stage: Stage; t
             <div className="flex h-[48px] items-center justify-between px-4" style={{ borderBottom: `1px solid ${LINE}` }}>
               <span className="flex items-center gap-1.5 text-[15px] font-bold">
                 Payloat
-                <Glyph d="M6 9l6 6 6-6" size={11} />
+                <SlackIcon name="chevron-down" size={12} bold />
               </span>
               <span className="flex h-[26px] w-[26px] items-center justify-center rounded-full bg-[#1d1c1d] text-white">
-                <Glyph d="M12 20h9M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4L16.5 3.5Z" size={13} />
+                <SlackIcon name="compose-dm" size={15} bold />
               </span>
             </div>
             <div className="px-3 pt-3 text-[14px]">
-              <SideRow label="Threads" icon="M20 12.5a7.5 7.5 0 0 1-11 6.6L4 20l1-4.6a7.5 7.5 0 1 1 15-2.9Z" />
-              <SideRow label="Drafts & sent" icon="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7Z" />
+              <SideRow label="Threads" icon="comment-alt" />
+              <SideRow label="Drafts & sent" icon="paper-plane" />
               <SideHead>Channels</SideHead>
               {CHANNELS.map((c) => (
                 <SideRow key={c} label={c} hash />
@@ -626,7 +629,7 @@ function SlackWindow({ layout, stage, typed }: { layout: Layout; stage: Stage; t
             <div className="flex h-[40px] items-center justify-between">
               <span className="flex items-center gap-2.5 text-[16px] font-bold">
                 <span className="flex h-[26px] w-[26px] items-center justify-center rounded-[6px]" style={{ border: `1px solid ${LINE}`, color: MUTED }}>
-                  <Glyph d="M12 3l2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3 6.4 20.2l1.1-6.2L3 9.6l6.2-.9L12 3Z" size={14} />
+                  <SlackIcon name="star-o" size={15} bold />
                 </span>
                 <span className="relative">
                   <Image src="/payloat-app-icon-v2.png" alt="" width={24} height={24} className="h-[24px] w-[24px] rounded-[6px]" />
@@ -637,30 +640,30 @@ function SlackWindow({ layout, stage, typed }: { layout: Layout; stage: Stage; t
               <div className="flex items-center gap-2" style={{ color: MUTED }}>
                 <span className="flex h-[28px] items-center rounded-[6px]" style={{ border: `1px solid ${LINE}` }}>
                   <span className="flex h-full items-center px-2" style={{ borderRight: `1px solid ${LINE}` }}>
-                    <Glyph d="M3 18v-6a9 9 0 0 1 18 0v6M3 18h4v-5H3m14 5h4v-5h-4" size={15} />
+                    <SlackIcon name="headphones" size={17} bold />
                   </span>
                   <span className="flex h-full items-center px-1.5">
-                    <Glyph d="M6 9l6 6 6-6" size={11} />
+                    <SlackIcon name="chevron-down" size={11} bold />
                   </span>
                 </span>
                 <span className="flex h-[28px] w-[28px] items-center justify-center rounded-full" style={{ border: `1px solid ${LINE}` }}>
-                  <Glyph d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15L6 16ZM10 21h4" size={15} />
+                  <SlackIcon name="bell-o" size={17} bold />
                 </span>
                 <span className="flex h-[28px] w-[28px] items-center justify-center rounded-full" style={{ border: `1px solid ${LINE}` }}>
-                  <Glyph d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14ZM20 20l-3.5-3.5" size={15} />
+                  <SlackIcon name="search" size={17} bold />
                 </span>
                 <span className="flex h-[28px] w-[24px] items-center justify-center">
-                  <Glyph d="M12 5h.01M12 12h.01M12 19h.01" size={16} />
+                  <SlackIcon name="vertical-ellipsis" size={17} bold />
                 </span>
               </div>
             </div>
             <div className="mt-1 flex items-end gap-1 text-[13px]" style={{ color: MUTED }}>
               <span className="flex items-center gap-1.5 border-b-2 px-2 pb-2 font-bold" style={{ color: TEXT, borderColor: TEXT }}>
-                <span className="h-[12px] w-[12px] rounded-full" style={{ backgroundColor: TEXT }} />
+                <SlackIcon name="comment" size={14} />
                 Messages
               </span>
               <span className="flex items-center gap-1.5 px-2 pb-2">
-                <Glyph d="M6 4h9l4 4v12H6V4Zm9 0v4h4" size={13} />
+                <SlackIcon name="file-text-post" size={14} bold />
                 Add canvas
               </span>
               <span className="relative px-2 pb-2 text-[16px] leading-none">
@@ -798,13 +801,19 @@ function SlackWindow({ layout, stage, typed }: { layout: Layout; stage: Stage; t
             <div className="mt-4 rounded-[8px]" style={{ border: "1px solid rgba(29,28,29,0.3)", backgroundColor: "#ffffff" }}>
               {!phone && (
                 <div className="flex items-center gap-3 px-3 py-1.5" style={{ color: MUTED, borderBottom: `1px solid ${LINE}` }}>
-                  <span className="text-[13px] font-bold">B</span>
-                  <span className="text-[13px] italic">I</span>
-                  <span className="text-[13px] line-through">S</span>
+                  <SlackIcon name="bold" size={15} bold />
+                  <SlackIcon name="italic" size={15} bold />
+                  <SlackIcon name="strikethrough" size={15} bold />
                   <span className="h-3 w-px" style={{ backgroundColor: LINE }} />
-                  <Glyph d="M10 13a5 5 0 0 0 7 0l2-2a5 5 0 0 0-7-7l-1 1M14 11a5 5 0 0 0-7 0l-2 2a5 5 0 0 0 7 7l1-1" size={12} />
-                  <Glyph d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" size={12} />
-                  <Glyph d="M16 18l6-6-6-6M8 6l-6 6 6 6" size={12} />
+                  <SlackIcon name="link" size={15} bold />
+                  <span className="h-3 w-px" style={{ backgroundColor: LINE }} />
+                  <SlackIcon name="numbered-list" size={15} bold />
+                  <SlackIcon name="bullet-list" size={15} bold />
+                  <span className="h-3 w-px" style={{ backgroundColor: LINE }} />
+                  <SlackIcon name="quote" size={15} bold />
+                  <span className="h-3 w-px" style={{ backgroundColor: LINE }} />
+                  <SlackIcon name="code" size={15} bold />
+                  <SlackIcon name="codeblock" size={15} bold />
                 </div>
               )}
               <p className="min-h-[36px] px-3 py-2 text-[14px]" style={{ color: stage === 0 && typed > 0 ? TEXT : MUTED }}>
@@ -827,18 +836,23 @@ function SlackWindow({ layout, stage, typed }: { layout: Layout; stage: Stage; t
               <div className="flex items-center justify-between px-2.5 pb-2" style={{ color: MUTED }}>
                 <div className="flex items-center gap-3">
                   <span className="flex h-[22px] w-[22px] items-center justify-center rounded-full" style={{ backgroundColor: "rgba(0,0,0,0.06)" }}>
-                    <Glyph d="M12 5v14M5 12h14" size={12} />
+                    <SlackIcon name="plus" size={13} bold />
                   </span>
-                  <span className="text-[12px] font-semibold">Aa</span>
-                  <Glyph d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18ZM8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01" size={13} />
-                  <Glyph d="M12 12m-3 0a3 3 0 1 0 6 0 3 3 0 1 0-6 0M15 12v1.5a2.5 2.5 0 0 0 5 0V12a8 8 0 1 0-3 6.2" size={13} />
+                  <SlackIcon name="text" size={16} bold />
+                  <SlackIcon name="smile-o" size={15} bold />
+                  <SlackIcon name="mentions" size={15} bold />
+                  <span className="h-3 w-px" style={{ backgroundColor: LINE }} />
+                  <SlackIcon name="video-camera" size={15} bold />
+                  <SlackIcon name="microphone" size={15} bold />
+                  <span className="h-3 w-px" style={{ backgroundColor: LINE }} />
+                  <SlackIcon name="bolt" size={15} bold />
                 </div>
                 <motion.span
                   animate={{ backgroundColor: stage === 0 && typed > 0 ? "#007a5a" : "rgba(0,0,0,0.06)", color: stage === 0 && typed > 0 ? "#ffffff" : MUTED, scale: stage === 1 ? [1, 0.85, 1] : 1 }}
                   transition={{ duration: 0.3 }}
                   className="flex h-[24px] w-[30px] items-center justify-center rounded-[4px]"
                 >
-                  <Glyph d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7Z" size={12} />
+                  <SlackIcon name="paperplane-filled" size={14} />
                 </motion.span>
               </div>
             </div>
@@ -860,7 +874,7 @@ function Mention() {
 function SideHead({ children }: { children: React.ReactNode }) {
   return (
     <p className="mt-3 flex items-center gap-1 px-2 pb-1 text-[13px]" style={{ color: MUTED }}>
-      <Glyph d="M6 9l6 6 6-6" size={10} />
+      <SlackIcon name="caret-down" size={10} />
       {children}
     </p>
   );
@@ -880,13 +894,13 @@ function SideRow({
   active?: boolean;
   avatar?: string;
   initial?: string;
-  icon?: string;
+  icon?: SlackIconName;
   you?: boolean;
 }) {
   return (
     <div className="flex items-center gap-2 rounded-[6px] px-2 py-[5px]" style={{ backgroundColor: active ? ACTIVE : undefined, color: active ? "#ffffff" : TEXT }}>
-      {hash && <span className="w-[10px] text-[14px] opacity-70">#</span>}
-      {icon && <Glyph d={icon} size={14} />}
+      {hash && <SlackIcon name="hash-medium-bold" size={13} className="opacity-70" />}
+      {icon && <SlackIcon name={icon} size={15} bold />}
       {avatar && <Image src={avatar} alt="" width={20} height={20} className="h-[20px] w-[20px] rounded-[4px] object-cover" />}
       {initial && <span className="flex h-[20px] w-[20px] items-center justify-center rounded-[4px] bg-[#bcd1f7] text-[10px] font-semibold text-[#1d1c1d]">{initial}</span>}
       <span className="truncate">{label}</span>
@@ -938,7 +952,7 @@ function SlackPhone({ active }: { active: boolean }) {
       {/* DM bar */}
       <div className="flex h-[48px] shrink-0 items-center justify-between px-4">
         <span className="flex items-center gap-3">
-          <Glyph d="M15 6l-6 6 6 6" size={18} />
+          <SlackIcon name="chevron-large-left" size={20} bold />
           <span className="relative">
             <Image src="/payloat-app-icon-v2.png" alt="Payloat" width={30} height={30} className="h-[30px] w-[30px] rounded-[7px]" />
             <span className="absolute -bottom-0.5 -right-0.5 h-[10px] w-[10px] rounded-full border-2 border-white bg-[#2bac76]" />
@@ -946,8 +960,8 @@ function SlackPhone({ active }: { active: boolean }) {
           <span className="text-[17px] font-bold">Payloat</span>
         </span>
         <span className="flex items-center gap-4">
-          <Glyph d="M4 4h16v12H8l-4 4V4Z" size={20} />
-          <Glyph d="M3 18v-6a9 9 0 0 1 18 0v6M3 18h4v-5H3m14 5h4v-5h-4" size={20} />
+          <SlackIcon name="file-text-post" size={22} bold />
+          <SlackIcon name="headphones" size={22} bold />
         </span>
       </div>
 
@@ -1047,7 +1061,7 @@ function SlackPhone({ active }: { active: boolean }) {
       <div className="shrink-0 px-3">
         <div className="flex h-[46px] items-center gap-3 rounded-full pl-2 pr-3" style={{ border: `1px solid ${IOS_LINE}`, boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}>
           <span className="flex h-[30px] w-[30px] items-center justify-center rounded-full" style={{ backgroundColor: "#f0f0f0" }}>
-            <Glyph d="M12 5v14M5 12h14" size={14} />
+            <SlackIcon name="plus" size={15} bold />
           </span>
           <p className="min-w-0 flex-1 truncate text-[15px]" style={{ color: stage === 0 && typed > 0 ? IOS_INK : IOS_MUTED }}>
             {stage === 0 && typed > 0 ? (
@@ -1064,20 +1078,22 @@ function SlackPhone({ active }: { active: boolean }) {
             transition={{ duration: 0.3 }}
             className="flex h-[30px] w-[30px] items-center justify-center rounded-full"
           >
-            {stage === 0 && typed > 0 ? <Glyph d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7Z" size={14} /> : <Glyph d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Zm6-3a6 6 0 0 1-12 0M12 18v3" size={16} />}
+            {stage === 0 && typed > 0 ? <SlackIcon name="paperplane-filled" size={16} /> : <SlackIcon name="microphone" size={18} bold />}
           </motion.span>
         </div>
       </div>
 
       {/* tab bar + room for the home indicator */}
       <div className="flex shrink-0 items-start justify-around px-6 pb-[30px] pt-2.5">
-        {[
-          ["Home", "M4 11 12 4l8 7v9H4z", false],
-          ["DMs", "M20 12.5a7.5 7.5 0 0 1-11 6.6L4 20l1-4.6a7.5 7.5 0 1 1 15-2.9Z", true],
-          ["Activity", "M15 17H9m8-3V11a5 5 0 0 0-10 0v3l-2 3h14l-2-3Z", false],
-        ].map(([label, d, on]) => (
-          <span key={String(label)} className="relative flex flex-col items-center gap-1 text-[10px] font-medium" style={{ color: on ? IOS_INK : IOS_MUTED }}>
-            <Glyph d={String(d)} size={22} />
+        {(
+          [
+            ["Home", "home", false],
+            ["DMs", "dm-filled", true],
+            ["Activity", "bell-o", false],
+          ] as [string, SlackIconName, boolean][]
+        ).map(([label, name, on]) => (
+          <span key={label} className="relative flex flex-col items-center gap-1 text-[10px] font-medium" style={{ color: on ? IOS_INK : IOS_MUTED }}>
+            <SlackIcon name={name} size={24} bold />
             <span className="absolute -right-1 top-0 h-[7px] w-[7px] rounded-full bg-[#611f69]" />
             {String(label)}
           </span>
