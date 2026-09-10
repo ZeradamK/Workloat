@@ -605,9 +605,13 @@ function SlackWindow({ layout, stage, typed }: { layout: Layout; stage: Stage; t
                 <SlackIcon name="compose-dm" size={15} bold />
               </span>
             </div>
-            <div className="px-3 pt-3 text-[14px]">
+            {/* rows sit 8px from the sidebar's left edge, 16px type, tight */}
+            <div className="pt-2 text-[16px]">
               <SideRow label="Threads" icon="comment-alt" />
+              <SideRow label="Huddles" icon="headphones" />
               <SideRow label="Drafts & sent" icon="paper-plane" />
+              <SideRow label="Directories" icon="team-directory" />
+              <div className="h-[14px]" />
               <SideHead>Channels</SideHead>
               {CHANNELS.map((c) => (
                 <SideRow key={c} label={c} hash />
@@ -873,7 +877,7 @@ function Mention() {
 
 function SideHead({ children }: { children: React.ReactNode }) {
   return (
-    <p className="mt-3 flex items-center gap-1 px-2 pb-1 text-[13px]" style={{ color: MUTED }}>
+    <p className="mt-2 flex items-center gap-1 px-[8px] pb-[2px] text-[15px]" style={{ color: MUTED }}>
       <SlackIcon name="caret-down" size={10} />
       {children}
     </p>
@@ -898,9 +902,13 @@ function SideRow({
   you?: boolean;
 }) {
   return (
-    <div className="flex items-center gap-2 rounded-[6px] px-2 py-[5px]" style={{ backgroundColor: active ? ACTIVE : undefined, color: active ? "#ffffff" : TEXT }}>
-      {hash && <SlackIcon name="hash-medium-bold" size={13} className="opacity-70" />}
-      {icon && <SlackIcon name={icon} size={15} bold />}
+    <div className="mx-[4px] flex h-[28px] items-center gap-2 rounded-[6px] px-[4px]" style={{ backgroundColor: active ? ACTIVE : undefined, color: active ? "#ffffff" : TEXT }}>
+      {hash && (
+        <span className="flex h-[20px] w-[20px] items-center justify-center rounded-[4px]" style={{ backgroundColor: active ? "rgba(255,255,255,0.18)" : "rgba(29,28,29,0.08)" }}>
+          <SlackIcon name="hash-medium-bold" size={13} />
+        </span>
+      )}
+      {icon && <SlackIcon name={icon} size={17} bold />}
       {avatar && <Image src={avatar} alt="" width={20} height={20} className="h-[20px] w-[20px] rounded-[4px] object-cover" />}
       {initial && <span className="flex h-[20px] w-[20px] items-center justify-center rounded-[4px] bg-[#bcd1f7] text-[10px] font-semibold text-[#1d1c1d]">{initial}</span>}
       <span className="truncate">{label}</span>
