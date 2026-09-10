@@ -363,26 +363,14 @@ function ScaledScreen({ children }: { children: React.ReactNode }) {
   );
 }
 
-/* A macOS desktop: menu bar, the Slack app full screen below it. */
+/* A macOS desktop with Slack in full screen: no menu bar, the app fills
+   the panel. The title bar extends up beside the notch (the notch is drawn
+   over it by the frame), so the search field sits just below it. */
+const NOTCH_H = Math.round(DESIGN.h * 0.029);
 function Desktop({ stage, typed }: { stage: Stage; typed: number }) {
   return (
-    <div className="relative h-full w-full">
-      <div className="absolute inset-x-0 top-0 flex h-[26px] items-center justify-between px-4 text-[12px] font-medium text-[#1d1c1d]/85" style={{ backgroundColor: "rgba(255,255,255,0.45)" }}>
-        <span className="flex items-center gap-4">
-          <span></span>
-          <span className="font-bold">Slack</span>
-          <span>File</span>
-          <span>Edit</span>
-          <span>View</span>
-          <span>Window</span>
-          <span>Help</span>
-        </span>
-        <span className="flex items-center gap-3">
-          <span>Tue Sep 9</span>
-          <span>9:41 AM</span>
-        </span>
-      </div>
-      <div className="absolute overflow-hidden" style={{ top: 26, left: 0, right: 0, bottom: 0 }}>
+    <div className="relative h-full w-full" style={{ backgroundColor: "#ffffff" }}>
+      <div className="absolute overflow-hidden" style={{ top: NOTCH_H, left: 0, right: 0, bottom: 0 }}>
         <SlackWindow layout="desktop" stage={stage} typed={typed} />
       </div>
     </div>
