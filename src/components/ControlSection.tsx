@@ -2,12 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, useInView, useReducedMotion } from "motion/react";
+import ShaderBackground from "./ShaderBackground";
 
 /**
- * Founder pitch: control who spends with agents. A gray box (the Slack
- * act's language: #eeeeee, 30px radius, 100px from the viewport edges)
- * with the headline and copy at the top and a white screen rising from
- * the bottom, cropped by the box. The screen is the Payloat web app's
+ * Founder pitch: control who spends with agents. A rounded box (30px
+ * radius, 100px from the viewport edges) riding the ShaderGradient
+ * animation, white type at the top and a white screen rising from the
+ * bottom, cropped by the box. The screen is the Payloat web app's
  * spend controls page, laid out at a design size and scaled to fit:
  * a stat row, spend over time, caps by team with the default policy
  * band, and the "who can spend" table. Anatomy borrowed from the
@@ -54,23 +55,24 @@ export default function ControlSection() {
   const reduced = useReducedMotion() ?? false;
   return (
     <section className="px-4 pb-[clamp(96px,10vw,160px)] pt-4 min-[900px]:px-[100px]">
-      <div className="relative overflow-hidden rounded-[30px] bg-[#eeeeee] px-6 pt-[clamp(40px,5vw,72px)] min-[900px]:px-12">
+      <div className="relative overflow-hidden rounded-[30px] px-6 pt-[clamp(40px,5vw,72px)] min-[900px]:px-12" style={{ backgroundColor: "#0a0a0a" }}>
+        <ShaderBackground />
         {/* the pitch */}
-        <div className="grid gap-6 min-[900px]:grid-cols-[1.1fr_1fr] min-[900px]:gap-12">
+        <div className="relative grid gap-6 min-[900px]:grid-cols-[1.1fr_1fr] min-[900px]:gap-12">
           <div>
-            <motion.p {...up} className="text-[13px] font-semibold uppercase tracking-[0.08em] text-sub">
+            <motion.p {...up} className="text-[13px] font-semibold uppercase tracking-[0.08em] text-white/70">
               For founders
             </motion.p>
             <motion.h2
               {...up}
-              className="mt-3 text-[clamp(32px,4.2vw,60px)] font-bold leading-[1.06] tracking-[-2px] text-ink"
+              className="mt-3 text-[clamp(32px,4.2vw,60px)] font-bold leading-[1.06] tracking-[-2px] text-white"
             >
               Control who spends
               <br />
               with agents.
             </motion.h2>
           </div>
-          <motion.p {...up} className="max-w-[460px] text-[17px] leading-[1.5] text-sub min-[900px]:mt-3">
+          <motion.p {...up} className="max-w-[460px] text-[17px] leading-[1.5] text-white/80 min-[900px]:mt-3">
             Give each agent its own key and a cap. Every purchase, from every agent, lands in one
             interface. You see the whole company&apos;s agent spend in one place, and nothing gets
             bought without a record.
@@ -85,7 +87,7 @@ export default function ControlSection() {
           className="relative mx-auto mt-[clamp(32px,4vw,56px)] w-full max-w-[1180px] overflow-hidden rounded-t-[18px] bg-white"
           style={{
             height: "clamp(320px, 44vw, 600px)",
-            boxShadow: "0 -1px 0 rgba(10,10,10,0.06), 0 24px 80px rgba(10,10,10,0.10)",
+            boxShadow: "0 -1px 0 rgba(255,255,255,0.12), 0 24px 80px rgba(0,0,0,0.35)",
           }}
         >
           <ScaledScreen>
