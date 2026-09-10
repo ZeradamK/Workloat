@@ -5,7 +5,7 @@ import MarketsSection from "@/components/MarketsSection";
 import SecuritySection from "@/components/SecuritySection";
 import SlackSection from "@/components/SlackSection";
 import EverydaySection from "@/components/EverydaySection";
-import PayrollSection from "@/components/PayrollSection";
+import ControlSection from "@/components/ControlSection";
 import FAQSection from "@/components/FAQSection";
 import FooterSection from "@/components/FooterSection";
 
@@ -29,8 +29,8 @@ export default function Home() {
       {/* Markets closer: shader card + white $0 on black */}
       <MarketsSection />
 
-      {/* Payloat Payroll for small businesses */}
-      <PayrollSection />
+      {/* Founder pitch: control who spends with agents, the spend controls screen */}
+      <ControlSection />
 
       {/* Security trio: live clock, alert toasts, lock toggle */}
       <SecuritySection />
