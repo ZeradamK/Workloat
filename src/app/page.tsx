@@ -4,7 +4,6 @@ import GoalSection from "@/components/GoalSection";
 import MarketsSection from "@/components/MarketsSection";
 import SecuritySection from "@/components/SecuritySection";
 import SlackSection from "@/components/SlackSection";
-import EverydaySection from "@/components/EverydaySection";
 import ControlSection from "@/components/ControlSection";
 import FAQSection from "@/components/FAQSection";
 import FooterSection from "@/components/FooterSection";
@@ -34,9 +33,6 @@ export default function Home() {
 
       {/* Security trio: live clock, alert toasts, lock toggle */}
       <SecuritySection />
-
-      {/* Everyday money inbox teaser, deep-links into the features act */}
-      <EverydaySection />
 
       {/* FAQ accordion */}
       <FAQSection />
