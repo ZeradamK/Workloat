@@ -32,7 +32,7 @@ const NOTIFS = [
     logo: "/logos/openai.svg",
     amount: "$2,500.00",
     note: "API usage this month",
-    pos: "left-[11%] top-[12%]",
+    pos: "left-[calc(50%-790px)] top-[12%]",
     at: 0.12,
   },
   {
@@ -40,7 +40,7 @@ const NOTIFS = [
     logo: "/logos/stripe.png",
     amount: "$600.00",
     note: "Platform fees, monthly",
-    pos: "right-[9%] top-[16%]",
+    pos: "right-[calc(50%-776px)] top-[16%]",
     at: 0.26,
   },
   {
@@ -48,7 +48,7 @@ const NOTIFS = [
     logo: "/logos/vercel.svg",
     amount: "$350.00",
     note: "Hosting, Ops agent",
-    pos: "left-[4%] top-[38%]",
+    pos: "left-[calc(50%-800px)] top-[38%]",
     at: 0.4,
   },
   {
@@ -56,7 +56,7 @@ const NOTIFS = [
     logo: "/logos/claude.svg",
     amount: "$4,000.00",
     note: "Renews tomorrow",
-    pos: "right-[3%] top-[28%]",
+    pos: "right-[calc(50%-800px)] top-[28%]",
     at: 0.54,
   },
   {
@@ -64,7 +64,7 @@ const NOTIFS = [
     logo: "/logos/aws.svg",
     amount: "$850.00",
     note: "Storage, Ops agent",
-    pos: "left-[8%] top-[66%]",
+    pos: "left-[calc(50%-770px)] top-[66%]",
     at: 0.68,
   },
   {
@@ -72,7 +72,7 @@ const NOTIFS = [
     logo: "/logos/brex.svg",
     amount: "$12,480.00",
     note: "14 charges matched",
-    pos: "right-[11%] top-[76%]",
+    pos: "right-[calc(50%-786px)] top-[76%]",
     at: 0.82,
   },
 ] as const;
@@ -107,9 +107,10 @@ export default function GoalSection() {
       <div className="sticky top-0 flex h-screen items-center justify-center overflow-hidden bg-background">
         {/* the headline: every word fades from #EEEEEE to ink in turn */}
         <div className="relative">
-        {/* mobile: one notice at a time, at least 80px ABOVE the headline;
-            each new charge slides up in while the previous fades out */}
-        <div className="absolute inset-x-0 bottom-[calc(100%+80px)] z-0 mx-auto h-[55px] w-[min(320px,calc(100vw-48px))] min-[800px]:hidden">
+        {/* below 1600px: one notice at a time, at least 80px ABOVE the
+            headline; each new charge slides up in while the previous fades
+            out */}
+        <div className="absolute inset-x-0 bottom-[calc(100%+80px)] z-0 mx-auto h-[55px] w-[min(320px,calc(100vw-48px))] min-[1600px]:hidden">
           {NOTIFS.map((n, i) => {
             const arrived = i < stage;
             const passed = i < stage - 1;
@@ -150,12 +151,12 @@ export default function GoalSection() {
         </h2>
         </div>
 
-        {/* desktop: charge-notice notifications scattered around the
-            headline, appearing top-left first */}
+        {/* 1600px and up: the notices scattered in the gutters beside the
+            headline's 860px box (never over it), appearing top-left first */}
         {NOTIFS.map((n, i) => (
           <div
             key={n.name}
-            className={`absolute hidden min-[800px]:block ${n.pos}`}
+            className={`absolute hidden min-[1600px]:block ${n.pos}`}
           >
             <motion.div
               initial={false}
