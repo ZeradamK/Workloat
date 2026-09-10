@@ -34,23 +34,28 @@ const up = {
 /* the Studio Display panel is 16:9; the desktop lays out at 1600x900 */
 const DESIGN = { w: 1600, h: 900 };
 
-/* public/studio-display.webp: Apple's Studio Display frame (tilt stand,
-   light), 5520x4316 with a transparent background. From its SVG source the
-   display face is 5354x3114 at (83,83) and the screen is 5120x2880 at
-   (200,200). Fractions of the canvas: */
-const FRAME = { aspect: 5520 / 4316, screen: { left: 200 / 5520, top: 200 / 4316, width: 5120 / 5520, height: 2880 / 4316 }, faceHeight: 3197 / 4316 };
+/* public/macbook.webp: the supplied MacBook Pro mock (2000x1500, background
+   cut to transparency). Measured from its pixels: screen (397,312) to
+   (1601,1081); lid 377..1622 wide, to y=1121; deck to y=1184. Fractions of
+   the canvas: */
+const FRAME = {
+  aspect: 2000 / 1500,
+  screen: { left: 397 / 2000, top: 312 / 1500, width: 1204 / 2000, height: 769 / 1500 },
+  screenCenterY: (312 + 1081) / 2 / 1500,
+  lidWidth: (1622 - 377) / 2000,
+};
 
 /* the three points of view of the rig (display + stand), from the refs.
    `fit` is the scale at which the display spans the stage with 100px of
    room left and right, or fills the stage height, whichever is smaller. */
 function scenes(fit: number) {
   return [
-    /* 1: tight crop, the display's lower-left and the stand fill the frame */
-    { scale: fit * 2.4, x: "41%", y: "-68%", rotateY: 0, rotateX: 0 },
-    /* 2: the whole display, front-on, close */
+    /* 1: the crop, the screen's lower-left and the deck in the frame */
+    { scale: fit * 1.6, x: "20%", y: "-30%", rotateY: 0, rotateX: 0 },
+    /* 2: the whole laptop, front-on */
     { scale: fit, x: "0%", y: "0%", rotateY: 0, rotateX: 0 },
-    /* 3: angled, on the floor, close */
-    { scale: fit * 1.02, x: "0%", y: "2%", rotateY: -24, rotateX: 2 },
+    /* 3: angled */
+    { scale: fit * 1.02, x: "0%", y: "1%", rotateY: -24, rotateX: 2 },
   ] as const;
 }
 
@@ -77,8 +82,8 @@ function sceneFor(stage: Stage): number {
 /* the rig's natural height as a share of the stage: the display face fills
    the stage height at scale 1 (so the close scenes rasterize crisp) and the
    stand hangs below, clipped. FACE_CENTER is the scale origin. */
-const RIG_H = 1.32;
-const FACE_CENTER = (FRAME.faceHeight / 2) * 100;
+const RIG_H = 1.55;
+const FACE_CENTER = FRAME.screenCenterY * 100;
 
 function DesktopAct() {
   const ref = useRef<HTMLDivElement>(null);
@@ -98,9 +103,9 @@ function DesktopAct() {
       const stageW = el.clientWidth;
       const stageH = el.clientHeight;
       const rigW = stageH * RIG_H * FRAME.aspect;
-      const faceW = rigW * (5354 / 5520);
-      /* the face spans the stage minus 100px each side when it can */
-      setFit(Math.max(0.5, Math.min(1, (stageW - 200) / faceW)));
+      const lidW = rigW * FRAME.lidWidth;
+      /* the lid spans the stage minus 100px each side when it can */
+      setFit(Math.max(0.5, Math.min(1, (stageW - 200) / lidW)));
     };
     measure();
     const ro = new ResizeObserver(measure);
@@ -121,7 +126,7 @@ function DesktopAct() {
     <section ref={ref} className="hidden px-[100px] py-4 min-[900px]:block">
       <div
         className="relative flex flex-col overflow-hidden rounded-[30px] bg-[#eeeeee]"
-        style={{ height: "clamp(640px, calc(100vh - 300px), 920px)" }}
+        style={{ height: "clamp(840px, calc(100vh - 100px), 1120px)" }}
       >
         {/* headline */}
         <motion.h2
@@ -140,7 +145,7 @@ function DesktopAct() {
             initial={false}
             animate={{ opacity: scene === 2 ? 1 : 0 }}
             transition={{ duration: 0.5 }}
-            className="pointer-events-none absolute inset-x-0 bottom-0 h-[34%]"
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-[9%]"
             style={{ background: "linear-gradient(180deg,#e2e2e4 0%,#e9e9eb 12%,#ededef 100%)", borderTop: "1px solid rgba(0,0,0,0.10)" }}
           />
           {/* the rig: display + stand, centered, then posed per scene */}
@@ -149,7 +154,7 @@ function DesktopAct() {
             animate={target}
             transition={reduced ? { duration: 0 } : ZIP}
             className="absolute left-1/2 -translate-x-1/2"
-            style={{ top: `calc(50% - ${RIG_H * FRAME.faceHeight * 50}%)`, height: `${RIG_H * 100}%`, aspectRatio: String(FRAME.aspect), transformOrigin: `50% ${FACE_CENTER}%` }}
+            style={{ top: `${(1 - RIG_H) * 50}%`, height: `${RIG_H * 100}%`, aspectRatio: String(FRAME.aspect), transformOrigin: `50% ${FACE_CENTER}%` }}
           >
             {/* the opening crop drifts slowly while it holds */}
             <motion.div
@@ -230,12 +235,13 @@ function Bar2() {
 
 /* ---------- devices ---------- */
 
-/* Studio Display: Apple's frame (public/studio-display.webp) with the
-   gradient wallpaper and the Slack desktop laid into its screen rectangle. */
+/* The MacBook: the supplied mock (public/macbook.webp) with the gradient
+   wallpaper and the Slack desktop laid into its measured screen rectangle,
+   and the notch drawn back on top. */
 function StudioDisplay({ stage, typed }: { stage: Stage; typed: number }) {
   return (
     <div className="relative h-full w-full">
-      <Image src="/studio-display.webp" alt="" fill priority unoptimized className="object-contain" />
+      <Image src="/macbook.webp" alt="" fill priority unoptimized className="object-contain" />
       <div
         className="absolute overflow-hidden bg-[#0a1fd2]"
         style={{
@@ -250,6 +256,7 @@ function StudioDisplay({ stage, typed }: { stage: Stage; typed: number }) {
           <Desktop stage={stage} typed={typed} />
         </ScaledScreen>
         <Sheen />
+        <div className="absolute left-1/2 top-0 h-[2.9%] w-[10.5%] -translate-x-1/2 rounded-b-[7px] bg-[#0b0b0c]" />
       </div>
     </div>
   );
