@@ -4,7 +4,7 @@ import GoalSection from "@/components/GoalSection";
 import MarketsSection from "@/components/MarketsSection";
 import SecuritySection from "@/components/SecuritySection";
 import SlackSection from "@/components/SlackSection";
-import ControlSection from "@/components/ControlSection";
+import SpendMixSection from "@/components/SpendMixSection";
 import FAQSection from "@/components/FAQSection";
 import FooterSection from "@/components/FooterSection";
 
@@ -28,8 +28,8 @@ export default function Home() {
       {/* Markets closer: shader card + white $0 on black */}
       <MarketsSection />
 
-      {/* Founder pitch: control who spends with agents, the spend controls screen */}
-      <ControlSection />
+      {/* Spend mix: banks and agents in one place, three bars filling in */}
+      <SpendMixSection />
 
       {/* Security trio: live clock, alert toasts, lock toggle */}
       <SecuritySection />
