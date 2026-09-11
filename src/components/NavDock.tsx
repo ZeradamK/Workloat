@@ -46,10 +46,10 @@ const PANEL_DIMS: Record<PanelKey, { w: number; h: number }> = {
   Contact: { w: 380, h: 286 },
 };
 
-/** Product sub-items: the ledger page, then the product page's anchored
+/** Product sub-items: the agent page, then the product page's anchored
     cards (purchases and receipts, caps and subscriptions), then security. */
 const PRODUCT_ITEMS = [
-  { label: "The ledger", href: "/ledger" },
+  { label: "Meet Payloat", href: "/agent" },
   { label: "Purchases & receipts", href: "/product#agent-purchases" },
   { label: "Caps & subscriptions", href: "/product#cap-alerts" },
   { label: "Security & privacy", href: "/security" },
