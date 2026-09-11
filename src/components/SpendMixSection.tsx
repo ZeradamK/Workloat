@@ -9,7 +9,7 @@ import { animate, motion, useInView, useReducedMotion } from "motion/react";
  * left, three columns on the right separated by hairlines, an icon
  * cluster at the top of each, a bar rising from the bottom with its share
  * inside, a label beneath. The two smaller bars are gray, the big one is
- * the brand blue. All three start filling together; the small one is done
+ * black. All three start filling together; the small one is done
  * in under a second, the middle one in under two, the big one lands at
  * three seconds. Under the copy, the banks and cards the ledger reads from.
  */
@@ -99,7 +99,7 @@ export default function SpendMixSection() {
                   className={`absolute inset-x-0 bottom-0 flex items-end overflow-hidden rounded-[18px] px-4 pb-4 ${bar.big ? "text-white" : "text-[#b4b4b4]"}`}
                   style={{
                     background: bar.big
-                      ? "linear-gradient(180deg,#1a35f0 0%,#0a1fd2 55%,#07168f 100%)"
+                      ? "linear-gradient(180deg,#1c1c1c 0%,#0a0a0a 100%)"
                       : "#eeeeee",
                   }}
                   initial={false}
