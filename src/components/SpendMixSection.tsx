@@ -62,10 +62,10 @@ export default function SpendMixSection() {
               {BANKS.map((b, i) => (
                 <span
                   key={b.name}
-                  className="flex h-[43px] w-[43px] items-center justify-center overflow-hidden rounded-[11px] border border-black/10 bg-white"
-                  style={{ marginLeft: i === 0 ? 0 : -6, zIndex: i }}
+                  className="flex h-[56px] w-[56px] items-center justify-center overflow-hidden rounded-[14px] border border-black/10 bg-white"
+                  style={{ marginLeft: i === 0 ? 0 : -8, zIndex: i }}
                 >
-                  <Image src={b.src} alt={b.name} width={27} height={27} className="h-[27px] w-[27px] rounded-[5px] object-contain" unoptimized />
+                  <Image src={b.src} alt={b.name} width={35} height={35} className="h-[35px] w-[35px] rounded-[7px] object-contain" unoptimized />
                 </span>
               ))}
             </div>
@@ -85,10 +85,10 @@ export default function SpendMixSection() {
                 {bar.icons.map((src, j) => (
                   <span
                     key={src}
-                    className="flex h-[43px] w-[43px] items-center justify-center rounded-[11px] border border-black/10 bg-white"
-                    style={{ marginLeft: j === 0 ? 0 : -12, zIndex: j }}
+                    className="flex h-[56px] w-[56px] items-center justify-center rounded-[14px] border border-black/10 bg-white"
+                    style={{ marginLeft: j === 0 ? 0 : -16, zIndex: j }}
                   >
-                    <Image src={src} alt="" width={27} height={27} className="h-[27px] w-[27px] rounded-[5px] object-contain" />
+                    <Image src={src} alt="" width={35} height={35} className="h-[35px] w-[35px] rounded-[7px] object-contain" />
                   </span>
                 ))}
               </div>
