@@ -182,7 +182,7 @@ function DesktopAct() {
   const target = scenes(fit, open)[scene];
 
   return (
-    <section id="slack" ref={ref} className="hidden px-[100px] pb-[clamp(120px,30vw,300px)] pt-4 min-[900px]:block">
+    <section ref={ref} className="hidden px-[100px] pb-[clamp(120px,30vw,300px)] pt-4 min-[900px]:block">
       <div
         className="relative flex flex-col overflow-hidden rounded-[30px] bg-[#eeeeee]"
         style={{ height: "clamp(840px, calc(100vh - 100px), 1120px)" }}
