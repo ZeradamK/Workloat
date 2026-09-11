@@ -112,7 +112,7 @@ export default function SpendMixSection() {
                 </motion.div>
               </div>
 
-              <p className={`mt-4 text-[14px] ${bar.big ? "font-semibold text-ink" : "text-sub"}`}>{bar.label}</p>
+              <p className="mt-4 text-[14px] text-sub">{bar.label}</p>
             </div>
           ))}
         </div>
