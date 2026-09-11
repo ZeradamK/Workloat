@@ -40,30 +40,25 @@ const RADIUS = 24;
 type PanelKey = "Product" | "Features" | "Pricing" | "Contact";
 
 const PANEL_DIMS: Record<PanelKey, { w: number; h: number }> = {
-  Product: { w: 356, h: 366 },
-  Features: { w: 400, h: 286 },
+  Product: { w: 356, h: 286 },
+  Features: { w: 400, h: 246 },
   Pricing: { w: 380, h: 286 },
   Contact: { w: 380, h: 286 },
 };
 
+/** Product sub-items: the ledger page, then the product page's anchored
+    cards (purchases and receipts, caps and subscriptions), then security. */
 const PRODUCT_ITEMS = [
-  "Agent purchases",
-  "Receipt matching",
-  "Cap alerts",
-  "Subscriptions",
-  "Security",
-  "Privacy and data",
+  { label: "The ledger", href: "/ledger" },
+  { label: "Purchases & receipts", href: "/product#agent-purchases" },
+  { label: "Caps & subscriptions", href: "/product#cap-alerts" },
+  { label: "Security & privacy", href: "/security" },
 ];
-
-/** Product sub-items land on their anchored card on the product page. */
-const productHref = (item: string) =>
-  `/product#${item.toLowerCase().replace(/ /g, "-")}`;
 
 const SOLUTION_ITEMS = [
   "For restaurants",
   "For agent builders",
   "For finance teams",
-  "For growing companies",
 ];
 
 const PRICING_ITEMS = [
@@ -530,13 +525,13 @@ export default function NavDock({
                             <ul className="pb-3 pl-3">
                               {item === "Product" &&
                                 PRODUCT_ITEMS.map((f) => (
-                                  <li key={f}>
+                                  <li key={f.label}>
                                     <Link
-                                      href={productHref(f)}
+                                      href={f.href}
                                       onClick={() => setMenuOpen(false)}
                                       className="block py-1 text-[15px] [color:var(--nav-fg)] opacity-80 transition-opacity hover:opacity-100"
                                     >
-                                      {f}
+                                      {f.label}
                                     </Link>
                                   </li>
                                 ))}
@@ -640,9 +635,9 @@ function ProductPanel() {
       <PanelLabel>Product</PanelLabel>
       <ul className="mt-2">
         {PRODUCT_ITEMS.map((f) => (
-          <li key={f}>
-            <Link href={productHref(f)} className={bigLink}>
-              {f}
+          <li key={f.label}>
+            <Link href={f.href} className={bigLink}>
+              {f.label}
             </Link>
           </li>
         ))}

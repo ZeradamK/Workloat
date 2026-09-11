@@ -1,0 +1,376 @@
+"use client";
+
+import Image from "next/image";
+import Link from "next/link";
+import { motion } from "motion/react";
+import NavDock from "@/components/NavDock";
+import FooterSection from "@/components/FooterSection";
+import SpendMixSection from "@/components/SpendMixSection";
+
+/**
+ * The ledger page: "Every bank, every agent, one place." A draft with more
+ * sections than it needs so they can be cut or reworked. In order:
+ *
+ *  1. Hero, headline and two calls to action (Monarch "sync all your bank
+ *     accounts in one place" anatomy, copy only).
+ *  2. The spend mix, the home page's three-bar section, reused as is.
+ *  3. Connected banks, a tile grid (Wise "choose from these banks").
+ *  4. How it fills in, three steps beside a curl call (Notion and
+ *     Customer.io developer sections).
+ *  5. Team and agents side by side, a ledger table with copy and three
+ *     checks (Mews ledger-report section).
+ *  6. What every row carries, a checklist card (Midday "ready for
+ *     accounting" section).
+ *  7. Three benefits in columns (Duna and Current).
+ *  8. Closing call to action, black box.
+ */
+
+const EASE = [0.25, 0.6, 0.2, 1] as const;
+
+const up = {
+  initial: { opacity: 0, y: 40 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, margin: "-80px" },
+  transition: { duration: 0.55, ease: EASE },
+} as const;
+
+const BANKS = [
+  { name: "Chase", src: "/logos/banks/chase.jpg" },
+  { name: "Wells Fargo", src: "/logos/banks/wellsfargo.png" },
+  { name: "Citi", src: "/logos/banks/citi.png" },
+  { name: "Mercury", src: "/logos/banks/mercury.png" },
+  { name: "Brex", src: "/logos/brex.svg" },
+  { name: "Stripe", src: "/logos/stripe.png" },
+] as const;
+
+const STEPS = [
+  {
+    n: "1",
+    title: "Connect the banks and cards",
+    body: "Chase, Mercury, Brex, and the rest, through Teller or Plaid. The ledger reads every charge as it lands.",
+  },
+  {
+    n: "2",
+    title: "Give each agent a key",
+    body: "One key per agent, with a cap. The agent posts an intent before it buys, a checkout when it pays, and the receipt after.",
+  },
+  {
+    n: "3",
+    title: "Read one ledger",
+    body: "Bank charges and agent purchases match up on their own. What did not match is the short list you look at.",
+  },
+] as const;
+
+/* sample rows, labeled as such on the table; per company in the product */
+const ROWS = [
+  { when: "Today, 9:12", who: "Procurement agent", kind: "agent", merchant: "WebstaurantStore", task: "Restock deli paper", amount: "$216.50", status: "Over cap", tone: "amber" },
+  { when: "Today, 8:40", who: "Maya C.", kind: "team", merchant: "Instacart", task: "Card ••4412", amount: "$142.10", status: "Receipt missing", tone: "amber" },
+  { when: "Yesterday", who: "Software agent", kind: "agent", merchant: "OpenAI", task: "API usage, September", amount: "$2,500.00", status: "Matched", tone: "green" },
+  { when: "Yesterday", who: "Travel agent", kind: "agent", merchant: "United", task: "Austin, 2 nights", amount: "$486.00", status: "Matched", tone: "green" },
+  { when: "Sep 8", who: "Dani R.", kind: "team", merchant: "Sysco", task: "Card ••0917", amount: "$1,204.16", status: "Matched", tone: "green" },
+  { when: "Sep 8", who: "Ops agent", kind: "agent", merchant: "Vercel", task: "Hosting, Pro seats", amount: "$350.00", status: "Matched", tone: "green" },
+] as const;
+
+const CARRIES = [
+  "The task the agent was given, in the agent's own words",
+  "The cap it was allowed, and how much of it this purchase used",
+  "The receipt, matched to the bank charge or flagged when it is missing",
+  "The status: intended, paid, delivered, renewed, or refunded",
+  "Every event in a hash-chained log, so nothing is rewritten after the fact",
+] as const;
+
+const BENEFITS = [
+  {
+    title: "One picture for the owner",
+    body: "Team cards and agent keys land in the same ledger, so the month reads as one number with the story behind it.",
+  },
+  {
+    title: "Agents check their own work",
+    body: "An agent can read its own purchases, receipts, and status before its next buy. Fewer repeats, fewer surprises.",
+  },
+  {
+    title: "Nothing bought without a record",
+    body: "Every purchase carries its task, cap, and receipt from the moment it is intended. The record exists before the charge does.",
+  },
+] as const;
+
+const CURL = `curl -X POST https://api.payloat.com/ledger/record \\
+  -H "Authorization: Bearer pl_live_7f2a…" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "type": "intent",
+    "merchant": "WebstaurantStore",
+    "task": "Restock deli paper",
+    "amount": 216.50,
+    "cap": 200.00
+  }'`;
+
+export default function LedgerPage() {
+  return (
+    <main className="bg-white">
+      <NavDock forceDark />
+
+      {/* 1. hero */}
+      <section className="mx-auto max-w-[1200px] px-6 pt-[170px] pb-[clamp(40px,5vw,72px)]">
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: EASE }}
+          className="text-[15px] text-sub"
+        >
+          The ledger
+        </motion.p>
+        <motion.h1
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.55, ease: EASE, delay: 0.05 }}
+          className="mt-4 max-w-[820px] text-[clamp(38px,5vw,72px)] font-bold leading-[1.04] tracking-[-2.5px] text-ink"
+          style={{ textWrap: "balance" }}
+        >
+          Every bank, every agent, one place.
+        </motion.h1>
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.55, ease: EASE, delay: 0.12 }}
+          className="mt-6 max-w-[560px] text-[clamp(17px,1.4vw,20px)] leading-[1.5] text-sub"
+        >
+          Your banks&apos; books and your agents&apos; spending history sit side by side, with the
+          team&apos;s own spend alongside them. One place shows where every dollar went and which
+          agent sent it.
+        </motion.p>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.55, ease: EASE, delay: 0.18 }}
+          className="mt-8 flex flex-wrap items-center gap-3"
+        >
+          <Link
+            href="/signup"
+            className="inline-flex h-12 items-center rounded-full bg-[#0a0a0a] px-6 text-[14px] font-semibold tracking-[-0.3px] text-white transition-transform hover:scale-[1.03] active:scale-[0.97]"
+          >
+            Get started
+          </Link>
+          <Link
+            href="/contact#sales"
+            className="inline-flex h-12 items-center rounded-full border border-solid border-black bg-white px-6 text-[14px] font-semibold tracking-[-0.3px] text-ink transition-transform hover:scale-[1.03] active:scale-[0.97]"
+          >
+            Talk to us
+          </Link>
+        </motion.div>
+      </section>
+
+      {/* 2. the spend mix, the home page's section with its own headline here */}
+      <SpendMixSection
+        title="Where the month went, by team."
+        body="Agent charges grouped the way you would ask about them: the tools they run on, the cards and fees they touch, and the AI they burn. Every bar opens to the purchases behind it."
+      />
+
+      {/* 3. connected banks */}
+      <section className="mx-auto max-w-[1200px] px-6 py-[clamp(56px,7vw,112px)]">
+        <motion.p {...up} className="text-center text-[15px] text-sub">
+          Reads from the banks and cards you already use
+        </motion.p>
+        <motion.div {...up} className="mx-auto mt-8 grid max-w-[900px] grid-cols-2 gap-3 min-[640px]:grid-cols-3">
+          {BANKS.map((b) => (
+            <div key={b.name} className="flex h-[96px] items-center justify-center gap-3 rounded-[16px] border border-black/10 bg-white">
+              <span className="flex h-[43px] w-[43px] items-center justify-center rounded-[11px] border border-black/10 bg-white">
+                <Image src={b.src} alt="" width={27} height={27} className="h-[27px] w-[27px] rounded-[5px] object-contain" unoptimized />
+              </span>
+              <span className="text-[15px] font-semibold text-ink">{b.name}</span>
+            </div>
+          ))}
+        </motion.div>
+        <motion.p {...up} className="mt-6 text-center text-[13px] text-sub">
+          Any US bank through Teller or Plaid. Cards from Brex, Ramp, and Mercury by statement.
+        </motion.p>
+      </section>
+
+      {/* 4. how it fills in */}
+      <section className="mx-auto max-w-[1200px] px-6 py-[clamp(56px,7vw,112px)]">
+        <div className="grid gap-12 min-[900px]:grid-cols-[1fr_1.1fr] min-[900px]:items-center min-[900px]:gap-16">
+          <div>
+            <motion.h2 {...up} className="text-[clamp(30px,3.4vw,46px)] font-bold leading-[1.1] tracking-[-1.5px] text-ink">
+              How the ledger fills in.
+            </motion.h2>
+            <ol className="mt-8 flex flex-col gap-6">
+              {STEPS.map((s) => (
+                <motion.li key={s.n} {...up} className="flex gap-4">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#eeeeee] text-[13px] font-semibold text-ink">
+                    {s.n}
+                  </span>
+                  <span>
+                    <p className="text-[17px] font-semibold text-ink">{s.title}</p>
+                    <p className="mt-1 max-w-[420px] text-[15px] leading-[1.5] text-sub">{s.body}</p>
+                  </span>
+                </motion.li>
+              ))}
+            </ol>
+          </div>
+          <motion.div {...up} className="overflow-hidden rounded-[20px] bg-[#0a0a0a] text-white">
+            <div className="flex items-center gap-2 px-5 py-3" style={{ borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
+              <span className="h-[10px] w-[10px] rounded-full bg-white/20" />
+              <span className="h-[10px] w-[10px] rounded-full bg-white/20" />
+              <span className="h-[10px] w-[10px] rounded-full bg-white/20" />
+              <span className="ml-2 text-[12px] text-white/50">One POST per event: intent, checkout, receipt, status, note</span>
+            </div>
+            <pre className="overflow-x-auto px-5 py-5 text-[13px] leading-[1.6] text-white/85" style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace" }}>
+              {CURL}
+            </pre>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* 5. team and agents side by side */}
+      <section className="mx-auto max-w-[1200px] px-6 py-[clamp(56px,7vw,112px)]">
+        <div className="rounded-[30px] bg-[#0a0a0a] p-6 text-white min-[900px]:p-12">
+          {/* the pitch on top, the table full width beneath it */}
+          <div className="grid gap-8 min-[900px]:grid-cols-[1fr_1.1fr] min-[900px]:items-start min-[900px]:gap-14">
+            <div>
+              <motion.h2 {...up} className="text-[clamp(28px,3vw,40px)] font-bold leading-[1.1] tracking-[-1.2px]">
+                Team and agents, side by side.
+              </motion.h2>
+            </div>
+            <div>
+              <motion.ul {...up} className="mt-6 flex flex-col gap-3 text-[15px] leading-[1.5] text-white/80">
+                {[
+                  "A card swipe by a person and a purchase by an agent sit in the same rows.",
+                  "Agent rows carry the task and the cap. Team rows carry the card and the receipt.",
+                  "Anything over cap or missing a receipt rises to the top of the month.",
+                ].map((t) => (
+                  <li key={t} className="flex gap-3">
+                    <span className="mt-[3px] flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full border border-white/40">
+                      <svg width="9" height="9" viewBox="0 0 24 24" fill="none" aria-hidden>
+                        <path d="m5 12.5 4.5 4.5L19 7.5" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </span>
+                    {t}
+                  </li>
+                ))}
+              </motion.ul>
+              <motion.div {...up} className="mt-8">
+                <Link
+                  href="/product#agent-purchases"
+                  className="inline-flex h-11 items-center rounded-full bg-white px-5 text-[13px] font-semibold tracking-[-0.3px] text-ink transition-transform hover:scale-[1.03] active:scale-[0.97]"
+                >
+                  See a purchase up close
+                </Link>
+              </motion.div>
+            </div>
+          </div>
+          <div className="mt-10">
+            <motion.div {...up} className="overflow-x-auto rounded-[16px] bg-white text-ink">
+              <div className="flex items-center justify-between px-5 py-4" style={{ borderBottom: "1px solid rgba(10,10,10,0.08)" }}>
+                <p className="text-[14px] font-semibold">September · Sample data</p>
+                <p className="text-[12px] text-sub">Team and agents</p>
+              </div>
+              <table className="w-full min-w-[560px] border-collapse text-left text-[12px]">
+                <thead>
+                  <tr className="text-[11px] text-sub">
+                    {["When", "By", "Merchant", "Task or card", "Amount", "Status"].map((h) => (
+                      <th key={h} className="px-3 py-2 font-medium first:pl-5 last:pr-5" style={{ borderBottom: "1px solid rgba(10,10,10,0.08)" }}>
+                        {h}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {ROWS.map((r, i) => (
+                    <tr key={i} style={{ borderBottom: "1px solid rgba(10,10,10,0.06)" }}>
+                      <td className="whitespace-nowrap py-3 pl-5 pr-3 text-sub">{r.when}</td>
+                      <td className="whitespace-nowrap px-3 py-3">
+                        <span className="flex items-center gap-2 font-semibold">
+                          <span
+                            className="flex h-[22px] w-[22px] items-center justify-center rounded-[6px] text-[10px] font-bold"
+                            style={{ backgroundColor: r.kind === "agent" ? "#0a0a0a" : "#eeeeee", color: r.kind === "agent" ? "#ffffff" : "#0a0a0a" }}
+                          >
+                            {r.kind === "agent" ? "A" : r.who[0]}
+                          </span>
+                          {r.who}
+                        </span>
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-3">{r.merchant}</td>
+                      <td className="px-3 py-3 text-sub">{r.task}</td>
+                      <td className="font-numeral whitespace-nowrap px-3 py-3 tabular-nums">{r.amount}</td>
+                      <td className="whitespace-nowrap py-3 pl-3 pr-5">
+                        <span
+                          className="inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-semibold"
+                          style={{ border: "1px solid rgba(10,10,10,0.1)", color: r.tone === "green" ? "#1e9e56" : "#c77d00" }}
+                        >
+                          <span className="h-[6px] w-[6px] rounded-full" style={{ backgroundColor: r.tone === "green" ? "#1e9e56" : "#c77d00" }} />
+                          {r.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* 6. what every row carries */}
+      <section className="mx-auto max-w-[1200px] px-6 py-[clamp(56px,7vw,112px)]">
+        <div className="mx-auto max-w-[720px] text-center">
+          <motion.h2 {...up} className="text-[clamp(28px,3vw,40px)] font-bold leading-[1.1] tracking-[-1.2px] text-ink">
+            What every row carries.
+          </motion.h2>
+          <motion.p {...up} className="mt-4 text-[16px] leading-[1.5] text-sub">
+            A bank feed tells you what was paid. The ledger also keeps why, by whom, and whether it was allowed.
+          </motion.p>
+        </div>
+        <motion.ul {...up} className="mx-auto mt-8 flex max-w-[720px] flex-col gap-3 rounded-[20px] bg-[#eeeeee] p-6 text-[15px] leading-[1.5] text-ink min-[640px]:p-8">
+          {CARRIES.map((c) => (
+            <li key={c} className="flex gap-3">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden className="mt-[3px] shrink-0">
+                <path d="m5 12.5 4.5 4.5L19 7.5" stroke="#0a0a0a" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              {c}
+            </li>
+          ))}
+        </motion.ul>
+      </section>
+
+      {/* 7. three benefits */}
+      <section className="mx-auto max-w-[1200px] px-6 py-[clamp(56px,7vw,112px)]">
+        <div className="grid gap-10 min-[800px]:grid-cols-3 min-[800px]:gap-8">
+          {BENEFITS.map((b) => (
+            <motion.div key={b.title} {...up} className="border-t border-black/15 pt-5">
+              <p className="text-[18px] font-semibold text-ink">{b.title}</p>
+              <p className="mt-2 text-[15px] leading-[1.5] text-sub">{b.body}</p>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* 8. closing call to action */}
+      <section className="mx-auto max-w-[1200px] px-6 pb-[clamp(72px,9vw,140px)] pt-4">
+        <motion.div {...up} className="rounded-[30px] bg-[#0a0a0a] px-8 py-14 text-center text-white min-[900px]:py-20">
+          <h2 className="mx-auto max-w-[720px] text-[clamp(30px,3.6vw,50px)] font-bold leading-[1.08] tracking-[-1.5px]" style={{ textWrap: "balance" }}>
+            See your agents&apos; spend in one place.
+          </h2>
+          <p className="mx-auto mt-4 max-w-[480px] text-[16px] leading-[1.5] text-white/75">
+            Connect a bank, give one agent a key, and read the first row this week.
+          </p>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+            <Link
+              href="/signup"
+              className="inline-flex h-12 items-center rounded-full bg-white px-6 text-[14px] font-semibold tracking-[-0.3px] text-ink transition-transform hover:scale-[1.03] active:scale-[0.97]"
+            >
+              Get started
+            </Link>
+            <Link
+              href="/contact#sales"
+              className="inline-flex h-12 items-center rounded-full border border-white/30 px-6 text-[14px] font-semibold tracking-[-0.3px] text-white transition-transform hover:scale-[1.03] active:scale-[0.97]"
+            >
+              Talk to us
+            </Link>
+          </div>
+        </motion.div>
+      </section>
+
+      <FooterSection />
+    </main>
+  );
+}

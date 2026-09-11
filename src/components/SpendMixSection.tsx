@@ -38,7 +38,14 @@ const BANKS = [
   { name: "Brex", src: "/logos/brex.svg" },
 ] as const;
 
-export default function SpendMixSection() {
+export default function SpendMixSection({
+  title = "Every bank, every agent, one place.",
+  body = "Your banks' books and your agents' spending history sit side by side, with the team's own spend alongside them. One place shows where every dollar went and which agent sent it.",
+}: {
+  /** the headline and paragraph, overridable where the section is reused */
+  title?: string;
+  body?: string;
+}) {
   const chartRef = useRef<HTMLDivElement>(null);
   const inView = useInView(chartRef, { once: true, amount: 0.5 });
   const reduced = useReducedMotion() ?? false;
@@ -50,12 +57,10 @@ export default function SpendMixSection() {
         {/* the copy */}
         <div>
           <motion.h2 {...up} className="max-w-[440px] text-[clamp(32px,3.8vw,52px)] font-bold leading-[1.08] tracking-[-1.5px] text-ink" style={{ textWrap: "balance" }}>
-            Every bank, every agent, one place.
+            {title}
           </motion.h2>
           <motion.p {...up} className="mt-5 max-w-[420px] text-[16px] leading-[1.55] text-sub">
-            Your banks&apos; books and your agents&apos; spending history sit side by side, with the
-            team&apos;s own spend alongside them. One place shows where every dollar went and which
-            agent sent it.
+            {body}
           </motion.p>
           <motion.div {...up} className="mt-8">
             <div className="flex items-center">
