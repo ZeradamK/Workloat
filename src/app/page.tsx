@@ -4,6 +4,7 @@ import GoalSection from "@/components/GoalSection";
 import MarketsSection from "@/components/MarketsSection";
 import SecuritySection from "@/components/SecuritySection";
 import SlackSection from "@/components/SlackSection";
+import TrackSection from "@/components/TrackSection";
 import SpendMixSection from "@/components/SpendMixSection";
 import FAQSection from "@/components/FAQSection";
 import FooterSection from "@/components/FooterSection";
@@ -33,6 +34,9 @@ export default function Home() {
 
       {/* Markets closer: shader card + white $0 on black */}
       <MarketsSection />
+
+      {/* Track everything: three tall cards, spend by day, caps, renewals */}
+      <TrackSection />
 
       {/* FAQ accordion */}
       <FAQSection />
