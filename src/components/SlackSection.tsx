@@ -109,7 +109,7 @@ function DesktopAct() {
   const ref = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion() ?? false;
-  const inView = useInView(ref, { amount: 0.4 });
+  const inView = useInView(ref, { once: true, amount: 0.4 });
   const convo = useConversation(inView, reduced);
   const [override, setOverride] = useState<number | null>(null);
   const [fit, setFit] = useState(1);
@@ -165,20 +165,8 @@ function DesktopAct() {
 
   const scene = reduced ? 2 : (override ?? sceneFor(convo.stage));
 
-  /* the two bars pop in together with the final scene, hold 3 seconds,
-     and leave together (they stay put when motion is reduced or a scene
-     is pinned for review) */
-  const [bars, setBars] = useState(false);
-  useEffect(() => {
-    if (scene !== 2) {
-      setBars(false);
-      return;
-    }
-    setBars(true);
-    if (reduced || override !== null) return;
-    const t = window.setTimeout(() => setBars(false), 3000 + 350);
-    return () => window.clearTimeout(t);
-  }, [scene, reduced, override]);
+  /* the two bars pop in together with the final scene and stay */
+  const bars = scene === 2;
   const target = scenes(fit, open)[scene];
 
   return (
@@ -227,7 +215,7 @@ function DesktopAct() {
             style={{ background: "linear-gradient(180deg,#eeeeee 0%,rgba(238,238,238,0.85) 30%,rgba(238,238,238,0) 100%)" }}
           />
 
-          {/* the two bars: one bump in, a 3 second hold, one bump out */}
+          {/* the two bars: one bump in with the final scene, then they hold */}
           <AnimatePresence>
             {bars && (
               <>
@@ -338,7 +326,7 @@ function Phone() {
     setW(el.clientWidth);
     return () => ro.disconnect();
   }, []);
-  const inView = useInView(ref, { amount: 0.35 });
+  const inView = useInView(ref, { once: true, amount: 0.35 });
   return (
     <div ref={ref} className="w-full">
       <PhoneMock width={w} frame="titanium" screenBg={IOS_BG}>
@@ -492,24 +480,23 @@ const SCHEDULE = typingSchedule(QUESTION);
    · 7 notes · 8 buttons (finished) */
 type Stage = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
+/* The conversation plays once: it starts the first time the act scrolls
+   into view, runs to the end whether or not the act stays on screen, and
+   then holds its final state. */
 function useConversation(active: boolean, reduced: boolean) {
   const [stage, setStage] = useState<Stage>(reduced ? 8 : 0);
   const [typed, setTyped] = useState(reduced ? QUESTION.length : 0);
+  const started = useRef(false);
+  const timers = useRef<number[]>([]);
   useEffect(() => {
     if (reduced) {
       setStage(8);
       setTyped(QUESTION.length);
       return;
     }
-    if (!active) return;
-    let cancelled = false;
-    const timers: number[] = [];
-    const at = (ms: number, fn: () => void) =>
-      timers.push(
-        window.setTimeout(() => {
-          if (!cancelled) fn();
-        }, ms),
-      );
+    if (!active || started.current) return;
+    started.current = true;
+    const at = (ms: number, fn: () => void) => timers.current.push(window.setTimeout(fn, ms));
     const run = () => {
       setStage(0);
       setTyped(0);
@@ -522,15 +509,15 @@ function useConversation(active: boolean, reduced: boolean) {
       at(sent + 5800, () => setStage(5)); /* the line draws */
       at(sent + 7600, () => setStage(6)); /* the projection, the markers */
       at(sent + 9600, () => setStage(7)); /* the notes */
-      at(sent + 10800, () => setStage(8)); /* complete: the angled view */
-      at(sent + 19500, run);
+      at(sent + 10800, () => setStage(8)); /* complete: the final view, held */
     };
     run();
-    return () => {
-      cancelled = true;
-      timers.forEach((t) => window.clearTimeout(t));
-    };
   }, [active, reduced]);
+  /* pending timers die with the component */
+  useEffect(() => {
+    const pending = timers.current;
+    return () => pending.forEach((t) => window.clearTimeout(t));
+  }, []);
   return { stage, typed };
 }
 
