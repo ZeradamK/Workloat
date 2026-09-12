@@ -253,13 +253,11 @@ function PhoneAct() {
 
 /* ---------- the two callouts, in the goal act's notification-bar anatomy ---------- */
 
-function NotifBar({ icon, name, note, amount }: { icon: React.ReactNode; name: string; note: string; amount: string }) {
+function NotifBar({ icon, name, note, amount }: { icon: string; name: string; note: string; amount: string }) {
   return (
     <div className="flex items-center gap-3 rounded-[18px] bg-white py-[6px] pl-[6px] pr-2.5 shadow-[0_18px_50px_rgba(0,0,0,0.12)]">
       <span className="flex h-[43px] w-[43px] shrink-0 items-center justify-center rounded-[11px]" style={{ backgroundColor: "#eeeeee" }}>
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-          {icon}
-        </svg>
+        <Image src={icon} alt="" width={22} height={22} className="h-[22px] w-[22px] object-contain" />
       </span>
       <span className="min-w-0 flex-1">
         <span className="block truncate text-[16px] font-semibold text-ink">{name}</span>
@@ -274,11 +272,11 @@ function NotifBar({ icon, name, note, amount }: { icon: React.ReactNode; name: s
 }
 
 function Bar1() {
-  return <NotifBar icon={<path d="M4 20V10M10 20V4M16 20v-8M22 20H2" />} name="This month" note="Graph and what to look at" amount="$27,900" />;
+  return <NotifBar icon="/icons/sales.png" name="This month" note="Graph and what to look at" amount="$27,900" />;
 }
 
 function Bar2() {
-  return <NotifBar icon={<path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z" />} name="Every charge" note="Answered in seconds" amount="17 agents" />;
+  return <NotifBar icon="/icons/wallet.png" name="Every charge" note="Answered in seconds" amount="17 agents" />;
 }
 
 /* ---------- devices ---------- */
