@@ -36,7 +36,7 @@ export default function MarketsSection() {
   });
 
   return (
-    <section ref={sectionRef} className="mx-auto max-w-[1200px] px-6 pb-28 pt-8">
+    <section ref={sectionRef} className="mx-auto max-w-[1200px] px-6 py-[clamp(32px,5vw,80px)]">
       <motion.div
         initial={{ opacity: 0, y: 70 }}
         whileInView={{ opacity: 1, y: 0 }}

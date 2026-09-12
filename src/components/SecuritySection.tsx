@@ -12,7 +12,7 @@ import Image from "next/image";
 
 export default function SecuritySection() {
   return (
-    <section className="mx-auto max-w-[1200px] px-6 pb-[clamp(56px,7vw,120px)] pt-[clamp(40px,5vw,96px)]">
+    <section className="mx-auto max-w-[1200px] px-6 py-[clamp(32px,5vw,80px)]">
       <div className="grid grid-cols-12 gap-6">
         {/* ---- Left: heading ---- */}
         <div className="col-span-12 min-[1100px]:col-span-3">

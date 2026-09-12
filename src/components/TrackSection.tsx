@@ -1,12 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { motion } from "motion/react";
 
 /**
  * Track everything, on Origin's three-card anatomy: a centered headline
- * with a two-line lead and a pill button, then three tall rounded cards.
+ * with a two-line lead, then three tall rounded cards.
  * Each card carries a dark translucent panel near its top (spend by day,
  * caps per agent, upcoming charges on a calendar) and a caption at its
  * foot. The cards' grounds are #eeeeee for now; photos come later, so the
@@ -59,10 +58,10 @@ const short = (n: number) => (n >= 1000 ? `$${(n / 1000).toFixed(1).replace(/\.0
 
 export default function TrackSection() {
   return (
-    <section className="mx-auto max-w-[1200px] px-6 py-[clamp(56px,7vw,112px)]">
+    <section className="mx-auto max-w-[1200px] px-6 py-[clamp(32px,5vw,80px)]">
       {/* the head */}
       <div className="mx-auto max-w-[560px] text-center">
-        <motion.h2 {...up} className="text-[clamp(38px,5vw,72px)] font-bold leading-[1.02] tracking-[-2.5px] text-ink">
+        <motion.h2 {...up} className="text-[clamp(26px,2.6vw,36px)] font-medium leading-[1.15] tracking-[-1px] text-ink">
           Track everything
         </motion.h2>
         <motion.p {...up} className="mt-5 text-[16px] font-semibold text-ink">
@@ -72,18 +71,10 @@ export default function TrackSection() {
           Connect your banks and give each agent a key to see all of it in one place. Easy to
           find, easy to understand.
         </motion.p>
-        <motion.div {...up} className="mt-7">
-          <Link
-            href="/ledger"
-            className="inline-flex h-12 items-center rounded-full bg-[#0a0a0a] px-6 text-[13px] font-semibold uppercase tracking-[0.08em] text-white transition-transform hover:scale-[1.03] active:scale-[0.97]"
-          >
-            More about the ledger
-          </Link>
-        </motion.div>
       </div>
 
       {/* the three cards */}
-      <div className="mt-12 grid gap-5 min-[800px]:mt-16 min-[800px]:grid-cols-3">
+      <div className="mt-[clamp(32px,4vw,56px)] grid gap-5 min-[800px]:grid-cols-3">
         {/* 1. spend this month */}
         <Card title="Monitor agent spend" body="See every purchase, by agent and by day, the moment it lands.">
           <Panel>

@@ -52,11 +52,11 @@ export default function SpendMixSection({
   const on = inView || reduced;
 
   return (
-    <section className="mx-auto max-w-[1200px] px-6 py-[clamp(72px,9vw,140px)]">
+    <section className="mx-auto max-w-[1200px] px-6 py-[clamp(32px,5vw,80px)]">
       <div className="grid gap-14 min-[900px]:grid-cols-[1fr_1.25fr] min-[900px]:gap-16">
         {/* the copy */}
         <div>
-          <motion.h2 {...up} className="max-w-[440px] text-[clamp(32px,3.8vw,52px)] font-bold leading-[1.08] tracking-[-1.5px] text-ink" style={{ textWrap: "balance" }}>
+          <motion.h2 {...up} className="max-w-[440px] text-[clamp(26px,2.6vw,36px)] font-medium leading-[1.15] tracking-[-1px] text-ink" style={{ textWrap: "balance" }}>
             {title}
           </motion.h2>
           <motion.p {...up} className="mt-5 max-w-[420px] text-[16px] leading-[1.55] text-sub">
