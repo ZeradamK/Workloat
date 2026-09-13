@@ -47,7 +47,10 @@ type Screen = {
   h: number;
   bg: string;
   tilt: number;
-  window: { top: number; bottom: number };
+  /* the part of the photo to show: top and bottom shares of its height
+     (the box's height fits this), left and right shares of its width (the
+     phone with a little hand around it, which the box's width must fit) */
+  window: { top: number; bottom: number; left: number; right: number };
   left: number;
   top: number;
   width: number;
@@ -60,13 +63,13 @@ type Screen = {
 const SCREENS: Record<"portrait" | "landscape", Screen> = {
   portrait: {
     src: "/mocks/spend-hands.png", w: 1024, h: 1536, bg: "linear-gradient(180deg,#ffffff 0%,#fdfdfd 50%,#f8f8f8 78%,#f4f4f5 100%)", tilt: 0,
-    window: { top: 0.09, bottom: 0.72 },
+    window: { top: 0.09, bottom: 0.72, left: 0.26, right: 0.74 },
     left: 332 / 1024, top: 188 / 1536, width: 361 / 1024, height: 794 / 1536, radius: 0.125, island: true,
     camera: null,
   },
   landscape: {
     src: "/mocks/upcoming-landscape.webp", w: 4800, h: 3584, bg: "#d5d5d5", tilt: 0,
-    window: { top: 0.14, bottom: 0.82 },
+    window: { top: 0.14, bottom: 0.82, left: 0.19, right: 0.81 },
     left: 1158 / 4800, top: 805 / 3584, width: 2489 / 4800, height: 1750 / 3584, radius: 0.06, island: false,
     camera: null,
   },
@@ -216,20 +219,32 @@ function Mock({ spec, panelWidth, panelShare, panelTop, fill, children }: { spec
     return () => ro.disconnect();
   }, []);
   const windowH = (spec.window.bottom - spec.window.top) * spec.h;
-  const k = box.h ? box.h / windowH : 0;
+  const windowW = (spec.window.right - spec.window.left) * spec.w;
+  /* fit the window's height to the box, unless the box is too narrow for
+     the phone, then fit its width and let the ground fill above and below */
+  const byHeight = box.h ? box.h / windowH : 0;
+  const byWidth = box.w ? box.w / windowW : 0;
+  const narrow = byWidth > 0 && byWidth < byHeight;
+  const k = narrow ? byWidth : byHeight;
   const imgW = spec.w * k;
   const imgH = spec.h * k;
+  const left = box.w / 2 - ((spec.window.left + spec.window.right) / 2) * imgW;
+  const top = narrow ? (box.h - windowH * k) / 2 - spec.window.top * imgH : -spec.window.top * imgH;
   const screen = { left: spec.left * imgW, top: spec.top * imgH, width: spec.width * imgW, height: spec.height * imgH };
   const scale = (screen.width * panelShare) / panelWidth;
+  /* the photo's side edges feather into the ground; when it sits inside the
+     box's height, its top and bottom edges feather too */
+  const feather = narrow
+    ? "linear-gradient(to right, transparent 0, #000 7%, #000 93%, transparent 100%), linear-gradient(to bottom, transparent 0, #000 8%, #000 92%, transparent 100%)"
+    : "linear-gradient(to right, transparent 0, #000 7%, #000 93%, transparent 100%)";
   return (
     <div ref={ref} className="relative h-full w-full overflow-hidden">
       {k > 0 && (
         <div
           className="absolute"
-          style={{ left: (box.w - imgW) / 2, top: -spec.window.top * imgH, width: imgW, height: imgH, transform: spec.tilt ? `rotate(${spec.tilt}deg)` : undefined }}
+          style={{ left, top, width: imgW, height: imgH, transform: spec.tilt ? `rotate(${spec.tilt}deg)` : undefined }}
         >
-          {/* the photo, its side edges feathered into the slide's ground */}
-          <div className="absolute inset-0" style={{ maskImage: "linear-gradient(to right, transparent 0, #000 7%, #000 93%, transparent 100%)", WebkitMaskImage: "linear-gradient(to right, transparent 0, #000 7%, #000 93%, transparent 100%)" }}>
+          <div className="absolute inset-0" style={{ maskImage: feather, WebkitMaskImage: feather, maskComposite: "intersect", WebkitMaskComposite: "source-in" }}>
             {/* served as supplied, no recompression, so the photo stays as crisp as its source */}
             <Image src={spec.src} alt="" fill unoptimized className="object-contain" />
           </div>
