@@ -9,13 +9,16 @@ import { motion, useReducedMotion, useScroll, useSpring, useTransform, type Moti
  * that plays three slides as the page scrolls. Each slide is a photo
  * mock (hands holding a phone) with one of the panels laid into the
  * phone's screen: spend by day on the portrait phone, caps per agent on
- * a plain gray slide until its mock arrives, upcoming charges on the
- * landscape phone. Scrolling down, the current slide rises, its lower
+ * a plain gray slide until its mock arrives, upcoming charges filling
+ * the landscape phone. Scrolling down, the current slide rises, its lower
  * edge fading and blurring away, and the next zips up from below.
  * Scrolling up runs the same in reverse, fading from the top.
  *
- * The screen rectangles are measured from the mocks' pixels (see SCREENS)
- * and the panels are laid out at a design width and scaled to the screen.
+ * Each mock is shown through a window (a top and bottom share of the
+ * photo) scaled to the box's height, so the box's bottom edge is where
+ * the hands are cut. The screen rectangles are measured from the mocks'
+ * pixels (see SCREENS); the panels are laid out at a design width and
+ * scaled to the screen. Screens are #eeeeee, panels white, type SF Pro.
  */
 
 const EASE = [0.25, 0.6, 0.2, 1] as const;
@@ -27,16 +30,26 @@ const up = {
   transition: { duration: 0.55, ease: EASE },
 } as const;
 
-/* the dark panels inside the screens */
-const PANEL = "rgba(12,12,12,0.86)";
-const PANEL_LINE = "rgba(255,255,255,0.1)";
-const EYEBROW = "text-[11px] font-semibold uppercase tracking-[0.16em] text-white/60";
+const SCREEN_BG = "#eeeeee";
+const INK = "#0a0a0a";
+const MUTED = "#706e68";
+const LINE = "rgba(10,10,10,0.08)";
 
-/* the mocks: canvas size, background, and the screen rectangle inside,
-   as fractions, plus the corner radius as a share of the screen width */
+/* the mocks: canvas size, backdrop, the window shown (shares of the
+   height), the screen rectangle (fractions), and the corner radius as a
+   share of the screen width. `tilt` straightens a leaning phone; the
+   portrait mock measures level, so it stays at 0. */
 const SCREENS = {
-  portrait: { src: "/mocks/spend-portrait.webp", w: 1000, h: 1500, bg: "#ffffff", left: 334 / 1000, top: 217 / 1500, width: 343 / 1000, height: 742 / 1500, radius: 0.13, island: true },
-  landscape: { src: "/mocks/upcoming-landscape.webp", w: 4800, h: 3584, bg: "#d5d5d5", left: 1158 / 4800, top: 805 / 3584, width: 2489 / 4800, height: 1750 / 3584, radius: 0.04, island: false },
+  portrait: {
+    src: "/mocks/spend-portrait.webp", w: 1000, h: 1500, bg: "#ffffff", tilt: 0,
+    window: { top: 0.125, bottom: 0.7 },
+    left: 334 / 1000, top: 217 / 1500, width: 343 / 1000, height: 742 / 1500, radius: 0.13, island: true,
+  },
+  landscape: {
+    src: "/mocks/upcoming-landscape.webp", w: 4800, h: 3584, bg: "#d5d5d5", tilt: 0,
+    window: { top: 0.14, bottom: 0.82 },
+    left: 1158 / 4800, top: 805 / 3584, width: 2489 / 4800, height: 1750 / 3584, radius: 0.04, island: false,
+  },
 } as const;
 
 /* sample data, per company in the product. September 2026 starts on a
@@ -65,6 +78,8 @@ const fmt = (n: number) => `$${n.toLocaleString("en-US")}`;
 const short = (n: number) => (n >= 1000 ? `$${(n / 1000).toFixed(1).replace(/\.0$/, "")}k` : `$${n}`);
 
 const SLIDES = 3;
+/* the pinned box: 30% shorter than the viewport, less the page's inset */
+const BOX_H = "max(420px, calc(70vh - 34px))";
 
 export default function TrackSection() {
   const runway = useRef<HTMLDivElement>(null);
@@ -89,23 +104,23 @@ export default function TrackSection() {
       {/* the runway: the box pins while the three slides play */}
       <div ref={runway} className="relative mt-[clamp(32px,4vw,56px)]" style={{ height: reduced ? "auto" : `${SLIDES * 100}vh` }}>
         <div
-          className="sticky top-[24px] overflow-hidden rounded-[30px]"
-          style={{ height: reduced ? "min(80vh, 820px)" : "calc(100vh - 48px)", backgroundColor: "#eeeeee" }}
+          className="sticky overflow-hidden rounded-[30px]"
+          style={{ top: "calc(15vh + 17px)", height: BOX_H, backgroundColor: SCREEN_BG }}
         >
           <Slide index={0} progress={progress} reduced={reduced} bg={SCREENS.portrait.bg}>
-            <Mock spec={SCREENS.portrait} panelWidth={343} panelShare={1} panelTop={0.12}>
+            <Mock spec={SCREENS.portrait} panelWidth={300} panelShare={1} panelTop={0.1}>
               <SpendPanel />
             </Mock>
           </Slide>
-          <Slide index={1} progress={progress} reduced={reduced} bg="#eeeeee">
+          <Slide index={1} progress={progress} reduced={reduced} bg={SCREEN_BG}>
             <div className="flex h-full w-full items-center justify-center px-6">
-              <div className="w-full max-w-[360px]">
+              <div className="w-full max-w-[380px]">
                 <CapsPanel />
               </div>
             </div>
           </Slide>
           <Slide index={2} progress={progress} reduced={reduced} bg={SCREENS.landscape.bg}>
-            <Mock spec={SCREENS.landscape} panelWidth={560} panelShare={0.72} panelTop={0.1}>
+            <Mock spec={SCREENS.landscape} panelWidth={640} panelShare={1} panelTop={0} fill>
               <UpcomingPanel />
             </Mock>
           </Slide>
@@ -153,11 +168,13 @@ function Slide({ index, progress, reduced, bg, children }: { index: number; prog
   );
 }
 
-/* A photo mock fitted inside the slide (whole image visible), with the
-   panel laid into the phone's screen. The panel is designed at
-   `panelWidth` px and scaled so it spans `panelShare` of the screen's
-   width, `panelTop` of the screen's height down from its top. */
-function Mock({ spec, panelWidth, panelShare, panelTop, children }: { spec: (typeof SCREENS)[keyof typeof SCREENS]; panelWidth: number; panelShare: number; panelTop: number; children: React.ReactNode }) {
+/* A photo mock in the slide: the mock's window (top to bottom share) is
+   scaled to the box's height and its top pinned to the box's top, so the
+   box's bottom edge is the cut through the hands. The panel is designed
+   at `panelWidth` px and scaled to span `panelShare` of the screen's
+   width, `panelTop` of the screen's height down; with `fill` it is also
+   stretched to the screen's full height. */
+function Mock({ spec, panelWidth, panelShare, panelTop, fill, children }: { spec: (typeof SCREENS)[keyof typeof SCREENS]; panelWidth: number; panelShare: number; panelTop: number; fill?: boolean; children: React.ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
   const [box, setBox] = useState({ w: 0, h: 0 });
   useEffect(() => {
@@ -169,26 +186,34 @@ function Mock({ spec, panelWidth, panelShare, panelTop, children }: { spec: (typ
     ro.observe(el);
     return () => ro.disconnect();
   }, []);
-  const k = Math.min(box.w / spec.w, box.h / spec.h) || 0;
+  const windowH = (spec.window.bottom - spec.window.top) * spec.h;
+  const k = box.h ? box.h / windowH : 0;
   const imgW = spec.w * k;
   const imgH = spec.h * k;
   const screen = { left: spec.left * imgW, top: spec.top * imgH, width: spec.width * imgW, height: spec.height * imgH };
   const scale = (screen.width * panelShare) / panelWidth;
   return (
-    <div ref={ref} className="relative h-full w-full">
+    <div ref={ref} className="relative h-full w-full overflow-hidden">
       {k > 0 && (
-        <div className="absolute" style={{ left: (box.w - imgW) / 2, top: (box.h - imgH) / 2, width: imgW, height: imgH }}>
-          <Image src={spec.src} alt="" fill sizes="(min-width: 1200px) 1200px, 100vw" className="object-contain" priority={false} />
-          {/* the screen: the brand gradient, then the panel */}
-          <div className="absolute overflow-hidden" style={{ ...screen, borderRadius: screen.width * spec.radius }}>
-            <Image src="/slack-gradient.jpg" alt="" fill sizes="1200px" className="object-cover" />
-            {/* the dynamic island, drawn back over the wallpaper */}
+        <div
+          className="absolute"
+          style={{ left: (box.w - imgW) / 2, top: -spec.window.top * imgH, width: imgW, height: imgH, transform: spec.tilt ? `rotate(${spec.tilt}deg)` : undefined }}
+        >
+          <Image src={spec.src} alt="" fill sizes="(min-width: 1200px) 1400px, 120vw" className="object-contain" />
+          {/* the screen: the gray ground, then the panel */}
+          <div className="absolute overflow-hidden" style={{ ...screen, borderRadius: screen.width * spec.radius, backgroundColor: SCREEN_BG }}>
             {spec.island && (
               <div className="absolute left-1/2 -translate-x-1/2 rounded-full bg-[#050505]" style={{ top: screen.height * 0.022, width: screen.width * 0.29, height: screen.height * 0.034 }} />
             )}
             <div
               className="absolute origin-top-left"
-              style={{ left: (screen.width - panelWidth * scale) / 2, top: screen.height * panelTop, width: panelWidth, transform: `scale(${scale})` }}
+              style={{
+                left: (screen.width - panelWidth * scale) / 2,
+                top: screen.height * panelTop,
+                width: panelWidth,
+                height: fill ? screen.height / scale : undefined,
+                transform: `scale(${scale})`,
+              }}
             >
               {children}
             </div>
@@ -199,35 +224,34 @@ function Mock({ spec, panelWidth, panelShare, panelTop, children }: { spec: (typ
   );
 }
 
-/* ---------- the panels ---------- */
+/* ---------- the panels, white on the gray screens ---------- */
 
-function Panel({ children }: { children: React.ReactNode }) {
+function Panel({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className="rounded-[16px]" style={{ backgroundColor: PANEL, border: `1px solid ${PANEL_LINE}`, backdropFilter: "blur(10px)" }}>
+    <div className={`rounded-[18px] bg-white ${className ?? ""}`} style={{ color: INK, boxShadow: "0 1px 2px rgba(10,10,10,0.06)" }}>
       {children}
     </div>
   );
 }
 
+function Label({ children }: { children: React.ReactNode }) {
+  return <p className="text-[14px] font-semibold">{children}</p>;
+}
+
 function SpendPanel() {
   return (
     <Panel>
-      <div className="flex items-center justify-between px-5 py-4" style={{ borderBottom: `1px solid ${PANEL_LINE}` }}>
-        <p className={EYEBROW}>Spend this month</p>
-        <span className="flex items-center gap-1">
-          <span className="flex h-[26px] w-[30px] items-center justify-center rounded-l-[7px]" style={{ border: `1px solid ${PANEL_LINE}` }}>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M3 17l5-6 4 4 5-8 4 5" /></svg>
-          </span>
-          <span className="-ml-1 flex h-[26px] w-[30px] items-center justify-center rounded-r-[7px]" style={{ border: `1px solid ${PANEL_LINE}` }}>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" aria-hidden><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 10h18M8 3v4M16 3v4" /></svg>
-          </span>
-          <span className="ml-1.5 flex h-[26px] w-[30px] items-center justify-center rounded-[7px]" style={{ border: `1px solid ${PANEL_LINE}` }}>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="#fff" aria-hidden><path d="M12 2l2.2 6.8L21 11l-6.8 2.2L12 20l-2.2-6.8L3 11l6.8-2.2z" /></svg>
-          </span>
+      <div className="flex items-center justify-between px-5 py-4" style={{ borderBottom: `1px solid ${LINE}` }}>
+        <Label>Spend this month</Label>
+        <span className="rounded-full px-2.5 py-1 text-[12px] font-medium" style={{ backgroundColor: SCREEN_BG, color: MUTED }}>
+          September
         </span>
       </div>
       <div className="px-5 pb-5 pt-4">
-        <p className="font-numeral text-[30px] font-semibold leading-none tracking-[-1px] text-white tabular-nums">{fmt(CAPS_TOTAL.spent)}</p>
+        <p className="font-numeral text-[36px] font-semibold leading-none tracking-[-1.2px] tabular-nums">{fmt(CAPS_TOTAL.spent)}</p>
+        <p className="mt-1.5 text-[13px]" style={{ color: MUTED }}>
+          17 agents, 10 days in
+        </p>
         <div className="mt-4 grid grid-cols-7 gap-[5px]">
           {Array.from({ length: OFFSET }).map((_, i) => (
             <span key={`o${i}`} />
@@ -241,15 +265,18 @@ function SpendPanel() {
             return (
               <span
                 key={d}
-                className="flex h-[46px] flex-col justify-between rounded-[6px] px-[6px] py-[5px] text-[11px] leading-none"
+                className="flex h-[52px] flex-col justify-between rounded-[7px] px-[6px] py-[6px] leading-none"
                 style={{
-                  border: `1px solid ${PANEL_LINE}`,
-                  backgroundColor: today ? "#ffffff" : has ? `rgba(255,255,255,${0.08 + heat * 0.45})` : "transparent",
-                  color: today ? "#0a0a0a" : has && heat > 0.55 ? "#0a0a0a" : "#ffffff",
+                  backgroundColor: today ? INK : has ? `rgba(10,10,10,${0.06 + heat * 0.16})` : SCREEN_BG,
+                  color: today ? "#ffffff" : INK,
                 }}
               >
-                <span className={has ? "" : "text-white/70"}>{d}</span>
-                <span className={`font-numeral text-[10px] tabular-nums ${has ? "" : "text-white/40"}`}>{has ? short(v) : "-"}</span>
+                <span className="text-[12px] font-medium" style={{ color: today ? "#ffffff" : has ? INK : MUTED }}>
+                  {d}
+                </span>
+                <span className="font-numeral text-[11px] font-semibold tabular-nums" style={{ color: today ? "#ffffff" : has ? INK : "rgba(112,110,104,0.5)" }}>
+                  {has ? short(v) : "·"}
+                </span>
               </span>
             );
           })}
@@ -262,25 +289,28 @@ function SpendPanel() {
 function CapsPanel() {
   return (
     <Panel>
-      <div className="px-5 py-4" style={{ borderBottom: `1px solid ${PANEL_LINE}` }}>
-        <p className={EYEBROW}>Caps</p>
+      <div className="flex items-center justify-between px-5 py-4" style={{ borderBottom: `1px solid ${LINE}` }}>
+        <Label>Caps</Label>
+        <span className="text-[12px]" style={{ color: MUTED }}>
+          Per agent, per month
+        </span>
       </div>
-      <div className="px-5 pb-5 pt-4 text-white">
-        <div className="flex items-baseline justify-between text-[15px]">
-          <span className="font-semibold">All agents</span>
-          <span className="font-numeral tabular-nums">
-            {fmt(CAPS_TOTAL.spent)} <span className="text-white/60">of {fmt(CAPS_TOTAL.cap)}</span>
+      <div className="px-5 pb-5 pt-4">
+        <div className="flex items-baseline justify-between">
+          <span className="text-[15px] font-semibold">All agents</span>
+          <span className="font-numeral text-[15px] tabular-nums">
+            {fmt(CAPS_TOTAL.spent)} <span style={{ color: MUTED }}>of {fmt(CAPS_TOTAL.cap)}</span>
           </span>
         </div>
         <Bar pct={CAPS_TOTAL.spent / CAPS_TOTAL.cap} className="mt-2" />
         <ul className="mt-5 flex flex-col gap-4">
           {CAPS.map((c) => (
             <li key={c.name} className="flex items-center gap-3">
-              <span className="flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full text-[11px] font-bold" style={{ backgroundColor: "rgba(255,255,255,0.12)" }}>
+              <span className="flex h-[32px] w-[32px] shrink-0 items-center justify-center rounded-full text-[12px] font-bold" style={{ backgroundColor: SCREEN_BG }}>
                 {c.name[0]}
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block text-[13px]">{c.name}</span>
+                <span className="block text-[14px] font-medium">{c.name}</span>
                 <Bar pct={c.spent / c.cap} className="mt-1.5" />
               </span>
             </li>
@@ -291,41 +321,48 @@ function CapsPanel() {
   );
 }
 
+/* fills the landscape screen: the header, the weekday row, two week rows
+   that share the remaining height */
 function UpcomingPanel() {
   return (
-    <Panel>
-      <div className="px-5 py-4" style={{ borderBottom: `1px solid ${PANEL_LINE}` }}>
-        <p className={EYEBROW}>Upcoming charges</p>
+    <Panel className="flex h-full flex-col rounded-none">
+      <div className="flex items-center justify-between px-6 py-4" style={{ borderBottom: `1px solid ${LINE}` }}>
+        <Label>Upcoming charges</Label>
+        <span className="text-[12px]" style={{ color: MUTED }}>
+          September 13 to 26
+        </span>
       </div>
-      <div className="px-3 pb-4 pt-3 text-white">
-        <div className="grid grid-cols-7 text-center text-[11px] font-medium text-white/70">
+      <div className="flex min-h-0 flex-1 flex-col px-4 pb-4 pt-2">
+        <div className="grid grid-cols-7 text-center text-[12px] font-medium" style={{ color: MUTED }}>
           {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
-            <span key={d} className="py-1.5">
+            <span key={d} className="py-2">
               {d}
             </span>
           ))}
         </div>
-        <div className="grid grid-cols-7">
+        <div className="grid min-h-0 flex-1 grid-cols-7 grid-rows-2">
           {Array.from({ length: 14 }).map((_, i) => {
             const d = 13 + i;
             const u = UPCOMING[d];
             return (
               <span
                 key={d}
-                className="flex h-[74px] flex-col items-center gap-1 pt-1.5 text-[12px]"
-                style={{ borderTop: `1px solid ${PANEL_LINE}`, borderLeft: i % 7 === 0 ? "none" : `1px solid ${PANEL_LINE}` }}
+                className="flex flex-col items-center gap-1.5 pt-2 text-[13px]"
+                style={{ borderTop: `1px solid ${LINE}`, borderLeft: i % 7 === 0 ? "none" : `1px solid ${LINE}` }}
               >
-                <span className="text-white/80">{d}</span>
+                <span className="font-medium" style={{ color: u ? INK : MUTED }}>
+                  {d}
+                </span>
                 {u && (
                   <>
                     <span className="flex items-center">
                       {u.logos.map((l, j) => (
-                        <span key={l} className="flex h-[20px] w-[20px] items-center justify-center rounded-full bg-white" style={{ marginLeft: j === 0 ? 0 : -6 }}>
-                          <Image src={l} alt="" width={12} height={12} className="h-[12px] w-[12px] object-contain" />
+                        <span key={l} className="flex h-[26px] w-[26px] items-center justify-center rounded-full border border-black/10 bg-white" style={{ marginLeft: j === 0 ? 0 : -7 }}>
+                          <Image src={l} alt="" width={15} height={15} className="h-[15px] w-[15px] object-contain" />
                         </span>
                       ))}
                     </span>
-                    <span className="font-numeral text-[10px] tabular-nums">{u.amount}</span>
+                    <span className="font-numeral text-[12px] font-semibold tabular-nums">{u.amount}</span>
                   </>
                 )}
               </span>
@@ -342,14 +379,16 @@ function Bar({ pct, className }: { pct: number; className?: string }) {
   const p = Math.min(1, pct);
   return (
     <span className={`flex items-center gap-2 ${className ?? ""}`}>
-      <span className="relative h-[6px] flex-1 overflow-hidden rounded-full" style={{ backgroundColor: "rgba(255,255,255,0.14)" }}>
-        <span className="absolute inset-y-0 left-0 rounded-full bg-white" style={{ width: `${p * 100}%` }} />
+      <span className="relative h-[6px] flex-1 overflow-hidden rounded-full" style={{ backgroundColor: SCREEN_BG }}>
+        <span className="absolute inset-y-0 left-0 rounded-full" style={{ width: `${p * 100}%`, backgroundColor: INK }} />
         <span
           className="absolute inset-y-0"
-          style={{ left: `${p * 100}%`, width: `${Math.min(18, (1 - p) * 100)}%`, backgroundImage: "repeating-linear-gradient(90deg,#fff 0 4px,transparent 4px 7px)", opacity: 0.8 }}
+          style={{ left: `${p * 100}%`, width: `${Math.min(18, (1 - p) * 100)}%`, backgroundImage: `repeating-linear-gradient(90deg,${INK} 0 4px,transparent 4px 7px)`, opacity: 0.6 }}
         />
       </span>
-      <span className="font-numeral w-[44px] text-right text-[12px] tabular-nums text-white/85">{Math.round(p * 100)}%</span>
+      <span className="font-numeral w-[44px] text-right text-[12px] tabular-nums" style={{ color: MUTED }}>
+        {Math.round(p * 100)}%
+      </span>
     </span>
   );
 }
