@@ -40,7 +40,7 @@ export default function MarketsSection() {
       <motion.div
         initial={{ opacity: 0, y: 70 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ amount: 0.18 }}
+        viewport={{ once: true, amount: 0.18 }}
         transition={{ type: "spring", stiffness: 120, damping: 24 }}
       >
       <h2 className="text-[clamp(28px,3vw,40px)] font-medium tracking-[-1px] text-ink">
