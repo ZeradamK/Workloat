@@ -26,6 +26,9 @@ export default function Home() {
       {/* Slack act: tilted monitor, @Payloat answers a spend question */}
       <SlackSection />
 
+      {/* Track everything: the pinned mocks, spend by day and upcoming charges */}
+      <TrackSection />
+
       {/* Spend mix: banks and agents in one place, three bars filling in */}
       <SpendMixSection />
 
@@ -34,9 +37,6 @@ export default function Home() {
 
       {/* Markets closer: shader card + white $0 on black */}
       <MarketsSection />
-
-      {/* Track everything: three tall cards, spend by day, caps, renewals */}
-      <TrackSection />
 
       {/* FAQ accordion */}
       <FAQSection />

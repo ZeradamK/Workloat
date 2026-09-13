@@ -124,7 +124,7 @@ export default function TrackSection() {
         <div className={`flex flex-col items-center justify-center gap-[clamp(20px,3.5vh,40px)] ${reduced ? "" : "sticky top-0 h-screen"}`}>
           {/* the head, at its size and place */}
           <div className="mx-auto max-w-[560px] text-center">
-            <motion.h2 {...up} className="text-[clamp(28px,3vw,40px)] font-medium leading-[1.15] tracking-[-1px] text-ink">
+            <motion.h2 {...up} className="text-[clamp(32px,4.2vw,60px)] font-bold leading-[1.06] tracking-[-2px] text-ink">
               Track everything
             </motion.h2>
             <motion.p {...up} className="mt-4 text-[16px] leading-[1.5] text-sub" style={COPY}>
