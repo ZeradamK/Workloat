@@ -29,14 +29,14 @@ export default function Home() {
       {/* Track everything: the pinned mocks, spend by day and upcoming charges */}
       <TrackSection />
 
+      {/* Markets closer: shader card + white $0 on black */}
+      <MarketsSection />
+
       {/* Spend mix: banks and agents in one place, three bars filling in */}
       <SpendMixSection />
 
       {/* Security trio: live clock, alert toasts, lock toggle */}
       <SecuritySection />
-
-      {/* Markets closer: shader card + white $0 on black */}
-      <MarketsSection />
 
       {/* FAQ accordion */}
       <FAQSection />

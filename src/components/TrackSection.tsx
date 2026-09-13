@@ -120,7 +120,7 @@ export default function TrackSection() {
   const progress = useSpring(staged, { stiffness: 120, damping: 24, mass: 0.6 });
 
   return (
-    <section className="mx-auto max-w-[1200px] px-6 py-[clamp(32px,5vw,80px)]">
+    <section className="mx-auto max-w-[1200px] px-6 pb-[clamp(72px,10vw,160px)] pt-[clamp(32px,5vw,80px)]">
       {/* the runway: the head and the box pin together, centered in the
           viewport, while the slides play */}
       <div ref={runway} className="relative" style={{ height: reduced ? "auto" : `${RUNWAY_VH}vh` }}>
