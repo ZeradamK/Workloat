@@ -29,6 +29,8 @@ const WORDS_SPAN = 0.56;
 const NOTIFS = [
   {
     name: "OpenAI",
+    bg: "#eeeeee",
+    dark: false,
     logo: "/logos/openai.svg",
     amount: "$2,500.00",
     note: "API usage this month",
@@ -36,6 +38,8 @@ const NOTIFS = [
   },
   {
     name: "Stripe",
+    bg: "#fff5f5",
+    dark: false,
     logo: "/logos/stripe.png",
     amount: "$600.00",
     note: "Platform fees, monthly",
@@ -43,6 +47,8 @@ const NOTIFS = [
   },
   {
     name: "Vercel",
+    bg: "#0a0a0a",
+    dark: true,
     logo: "/logos/vercel.svg",
     amount: "$350.00",
     note: "Hosting, Ops agent",
@@ -50,6 +56,8 @@ const NOTIFS = [
   },
   {
     name: "Claude",
+    bg: "#eae2d6",
+    dark: false,
     logo: "/logos/claude.svg",
     amount: "$4,000.00",
     note: "Renews tomorrow",
@@ -57,6 +65,8 @@ const NOTIFS = [
   },
   {
     name: "AWS",
+    bg: "#2e6fa0",
+    dark: true,
     logo: "/logos/aws.svg",
     amount: "$850.00",
     note: "Storage, Ops agent",
@@ -64,12 +74,16 @@ const NOTIFS = [
   },
   {
     name: "Brex",
+    bg: "#eeeeee",
+    dark: false,
     logo: "/logos/brex.svg",
     amount: "$12,480.00",
     note: "14 charges matched",
     at: 0.82,
   },
 ] as const;
+/* each notice carries its own ground (`bg`) and, on the dark grounds,
+   white type and arrow (`dark`) */
 
 export default function GoalSection() {
   const ref = useRef<HTMLDivElement>(null);
@@ -122,7 +136,7 @@ export default function GoalSection() {
                 }
                 transition={{ type: "spring", stiffness: 320, damping: 26 }}
                 className="absolute inset-x-0 top-0 flex items-center gap-3 rounded-[18px] py-[6px] pl-[6px] pr-2.5"
-                style={{ backgroundColor: "#eeeeee" }}
+                style={{ backgroundColor: n.bg }}
               >
                 <NotifInner n={n} />
               </motion.div>
@@ -164,14 +178,14 @@ function NotifInner({ n }: { n: (typeof NOTIFS)[number] }) {
         />
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block text-[16px] font-semibold text-ink">
+        <span className={`block text-[16px] font-semibold ${n.dark ? "text-white" : "text-ink"}`}>
           {n.name}
         </span>
-        <span className="block text-[13px] leading-snug text-sub">
+        <span className={`block text-[13px] leading-snug ${n.dark ? "text-white/70" : "text-sub"}`}>
           {n.note}
         </span>
       </span>
-      <span className="text-[17px] font-semibold tracking-[-0.43px] text-ink">
+      <span className={`text-[17px] font-semibold tracking-[-0.43px] ${n.dark ? "text-white" : "text-ink"}`}>
         {n.amount}
       </span>
       <svg
@@ -180,7 +194,7 @@ function NotifInner({ n }: { n: (typeof NOTIFS)[number] }) {
         viewBox="0 0 16 16"
         fill="none"
         aria-hidden
-        className="shrink-0 text-sub"
+        className={`shrink-0 ${n.dark ? "text-white" : "text-sub"}`}
       >
         <path
           d="m5.5 3 5 5-5 5"
