@@ -8,7 +8,7 @@ import FooterSection from "@/components/FooterSection";
 import SpendMixSection from "@/components/SpendMixSection";
 
 /**
- * The ledger page: "Every bank, every agent, one place." A draft with more
+ * The integration page: "Every bank, every agent, one place." A draft with more
  * sections than it needs so they can be cut or reworked. In order:
  *
  *  1. Hero, headline and two calls to action (Monarch "sync all your bank
@@ -118,7 +118,7 @@ export default function LedgerPage() {
           transition={{ duration: 0.5, ease: EASE }}
           className="text-[15px] text-sub"
         >
-          The ledger
+          Integration
         </motion.p>
         <motion.h1
           initial={{ opacity: 0, y: 30 }}

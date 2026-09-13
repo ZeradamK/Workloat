@@ -40,19 +40,21 @@ const RADIUS = 24;
 type PanelKey = "Product" | "Features" | "Pricing" | "Contact";
 
 const PANEL_DIMS: Record<PanelKey, { w: number; h: number }> = {
-  Product: { w: 356, h: 286 },
+  Product: { w: 356, h: 326 },
   Features: { w: 400, h: 246 },
   Pricing: { w: 380, h: 286 },
   Contact: { w: 380, h: 286 },
 };
 
-/** Product sub-items: the ledger page, then the product page's anchored
-    cards (purchases and receipts, caps and subscriptions), then security. */
+/** Product sub-items: the product page (its intro), its anchored rows
+    (purchases and receipts, caps and subscriptions, security), then the
+    integration page. */
 const PRODUCT_ITEMS = [
-  { label: "The ledger", href: "/ledger" },
+  { label: "Product intro", href: "/product" },
   { label: "Purchases & receipts", href: "/product#agent-purchases" },
   { label: "Caps & subscriptions", href: "/product#cap-alerts" },
-  { label: "Security & privacy", href: "/security" },
+  { label: "Security & privacy", href: "/product#security" },
+  { label: "Integration", href: "/integration" },
 ];
 
 const SOLUTION_ITEMS = [

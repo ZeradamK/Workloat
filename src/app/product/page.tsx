@@ -41,55 +41,78 @@ type Tab = {
   amount: string;
   details: [string, string][];
   pill?: { label: string; tone: "green" | "ink" };
+  /** the bar's ground and, on dark grounds, white type */
+  bg?: string;
+  dark?: boolean;
 };
 
-const RETURN_TABS: Tab[] = [
+/* the notification bars carry the goal act's grounds per charge; on the
+   gray canvases the two #eeeeee ones read as white */
+const PURCHASE_TABS: Tab[] = [
   {
-    logo: "/logos/zara.webp",
-    name: "Zara",
-    note: "Staff aprons, by Procurement",
-    amount: "$84.00",
+    logo: "/logos/openai.svg",
+    name: "OpenAI",
+    note: "API usage, Software agent",
+    amount: "$2,500.00",
     details: [
-      ["Task", "Replace 4 aprons"],
-      ["Cap", "$100"],
+      ["Task", "Support replies, September"],
+      ["Cap", "$3,000"],
       ["Receipt", "Matched"],
     ],
     pill: { label: "Under cap", tone: "ink" },
   },
   {
-    logo: "/logos/nike.webp",
-    name: "Nike",
-    note: "Kitchen shoes, by Procurement",
-    amount: "$129.00",
+    logo: "/logos/vercel.svg",
+    name: "Vercel",
+    note: "Hosting, Ops agent",
+    amount: "$350.00",
+    bg: "#0a0a0a",
+    dark: true,
     details: [
-      ["Task", "Two pairs, non-slip"],
-      ["Cap", "$120"],
+      ["Task", "Pro seats and bandwidth"],
+      ["Cap", "$400"],
       ["Receipt", "Matched"],
     ],
-    pill: { label: "Over cap by $9", tone: "ink" },
+    pill: { label: "Under cap", tone: "ink" },
+  },
+  {
+    logo: "/logos/claude.svg",
+    name: "Claude",
+    note: "Seats, Software agent",
+    amount: "$4,000.00",
+    bg: "#eae2d6",
+    details: [
+      ["Task", "Team plan, 20 seats"],
+      ["Cap", "$3,000"],
+      ["Receipt", "Matched"],
+    ],
+    pill: { label: "Over cap by $1,000", tone: "ink" },
   },
 ];
 
-const REFUND_TABS: Tab[] = [
+const RECEIPT_TABS: Tab[] = [
   {
-    logo: "/logos/adobe.webp",
-    name: "Adobe",
-    note: "Receipt matched Jul 14",
-    amount: "$49.99",
+    logo: "/logos/stripe.png",
+    name: "Stripe",
+    note: "Receipt matched Sep 3",
+    amount: "$600.00",
+    bg: "#fff5f5",
     details: [
-      ["Recorded", "$49.99"],
-      ["Receipt", "$49.99"],
+      ["Recorded", "$600.00"],
+      ["Receipt", "$600.00"],
     ],
     pill: { label: "Matched", tone: "green" },
   },
   {
-    logo: "/logos/apple.webp",
-    name: "Apple Store",
+    logo: "/logos/aws.svg",
+    name: "AWS",
     note: "Receipt still missing",
-    amount: "$129.00",
+    amount: "$850.00",
+    bg: "#2e6fa0",
+    dark: true,
     details: [
-      ["Recorded", "Jul 20"],
-      ["Expected by", "Aug 1"],
+      ["Recorded", "Sep 8"],
+      ["Expected by", "Sep 12"],
     ],
     pill: { label: "No receipt yet", tone: "ink" },
   },
@@ -100,26 +123,27 @@ const ROWS: Row[] = [
     slug: "agent-purchases",
     copy: "Every agent purchase, recorded with the task behind it. Payloat Ledger keeps the merchant, the amount, the cap the agent was given, and what it was asked to do, so no purchase is a mystery.",
     bg: "#eeeeee",
-    visual: <ClickTabs tabs={RETURN_TABS} />,
+    visual: <ClickTabs tabs={PURCHASE_TABS} />,
   },
   {
     slug: "receipt-matching",
     copy: "A receipt that never matches is money lost. Payloat Ledger checks every receipt against what the agent recorded and flags the ones that are missing or wrong.",
     bg: "#eeeeee",
-    visual: <ClickTabs tabs={REFUND_TABS} />,
+    visual: <ClickTabs tabs={RECEIPT_TABS} />,
   },
   {
     slug: "cap-alerts",
-    copy: "The moment an agent spends past the cap it was given, Payloat Ledger flags it, before the month closes.",
+    copy: "The moment an agent spends past the cap it was given, Payloat Ledger flags it, to the agent and to whoever owns it, before the month closes.",
     bg: "#eeeeee",
     cta: { label: "Get Payloat Ledger", href: "/signup" },
     visual: (
       <div className="w-full max-w-[360px] space-y-2.5">
         <Bar
-          logo="/logos/netflix.webp"
-          name="Netflix"
-          note="Lounge screen plan, Friday"
-          amount="$15.49"
+          logo="/logos/claude.svg"
+          name="Claude"
+          note="Renews tomorrow"
+          amount="$4,000.00"
+          bg="#eae2d6"
         />
         <div className="flex items-center gap-3 rounded-[18px] bg-[#0a0a0a] py-[6px] pl-[6px] pr-2.5">
           <span className="flex h-[43px] w-[43px] shrink-0 items-center justify-center rounded-[11px] bg-white text-[20px] font-bold text-ink">
@@ -130,7 +154,7 @@ const ROWS: Row[] = [
               Cap alert
             </span>
             <span className="block text-[13px] leading-snug text-white/60">
-              Procurement went $16.50 over its cap
+              Software &amp; seats went $1,000 over its cap
             </span>
           </span>
         </div>
@@ -144,16 +168,19 @@ const ROWS: Row[] = [
     visual: (
       <div className="w-full max-w-[360px] space-y-2.5">
         <Bar
-          logo="/logos/spotify.webp"
-          name="Spotify"
-          note="In-store music, renews tomorrow"
-          amount="$11.99"
+          logo="/logos/vercel.svg"
+          name="Vercel"
+          note="Hosting, renews Friday"
+          amount="$350.00"
+          bg="#0a0a0a"
+          dark
         />
         <Bar
-          logo="/logos/doordash.webp"
-          name="DoorDash"
-          note="Delivery plan renews tomorrow"
-          amount="$9.99"
+          logo="/logos/stripe.png"
+          name="Stripe"
+          note="Platform fees, monthly"
+          amount="$600.00"
+          bg="#fff5f5"
         />
       </div>
     ),
@@ -242,6 +269,14 @@ export default function ProductPage() {
       <NavDock forceDark />
 
       <section className="mx-auto max-w-[1200px] px-6 pb-[clamp(96px,11vw,176px)] pt-[170px]">
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: EASE }}
+          className="mb-4 text-[15px] text-sub"
+        >
+          Product intro
+        </motion.p>
         {/* massive display headline, outsmart-scams scale */}
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
@@ -310,10 +345,10 @@ export default function ProductPage() {
             >
               <div className="relative w-[min(320px,80%)]">
                 <Bar
-                  logo="/logos/spotify.webp"
-                  name="Spotify"
-                  note="In-store music, renews tomorrow"
-                  amount="$11.99"
+                  logo="/logos/openai.svg"
+                  name="OpenAI"
+                  note="API usage this month"
+                  amount="$2,500.00"
                 />
                 <div className="absolute -bottom-10 right-3 flex items-center gap-1.5">
                   <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden>
@@ -457,14 +492,14 @@ function ClickTabs({ tabs }: { tabs: Tab[] }) {
       {tabs.map((t, i) => {
         const isOpen = open === i;
         return (
-          <div key={t.name} className="overflow-hidden rounded-[18px] bg-white">
+          <div key={t.name} className="overflow-hidden rounded-[18px]" style={{ backgroundColor: t.bg ?? "#ffffff", color: t.dark ? "#ffffff" : "#0a0a0a" }}>
             <button
               type="button"
               onClick={() => setOpen(isOpen ? -1 : i)}
               aria-expanded={isOpen}
               className="flex w-full items-center gap-3 py-[6px] pl-[6px] pr-2.5 text-left"
             >
-              <span className="flex h-[43px] w-[43px] shrink-0 items-center justify-center rounded-[11px] bg-[#eeeeee]">
+              <span className={`flex h-[43px] w-[43px] shrink-0 items-center justify-center rounded-[11px] ${t.bg ? "bg-white" : "bg-[#eeeeee]"}`}>
                 <Image
                   src={t.logo}
                   alt={t.name}
@@ -474,18 +509,18 @@ function ClickTabs({ tabs }: { tabs: Tab[] }) {
                 />
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block text-[16px] font-semibold text-ink">
+                <span className={`block text-[16px] font-semibold ${t.dark ? "text-white" : "text-ink"}`}>
                   {t.name}
                 </span>
-                <span className="block text-[13px] leading-snug text-sub">
+                <span className={`block text-[13px] leading-snug ${t.dark ? "text-white/70" : "text-sub"}`}>
                   {t.note}
                 </span>
               </span>
-              <span className="text-[17px] font-semibold tracking-[-0.43px] text-ink">
+              <span className={`text-[17px] font-semibold tracking-[-0.43px] ${t.dark ? "text-white" : "text-ink"}`}>
                 {t.amount}
               </span>
               <motion.span
-                className="flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-full bg-[#eeeeee]"
+                className={`flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-full ${t.dark ? "bg-white/20" : "bg-[#eeeeee]"}`}
                 initial={false}
                 animate={{ rotate: isOpen ? 45 : 0 }}
                 transition={{ duration: 0.25, ease: [0.3, 0.9, 0.3, 1] }}
@@ -493,7 +528,7 @@ function ClickTabs({ tabs }: { tabs: Tab[] }) {
                 <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden>
                   <path
                     d="M6 1v10M1 6h10"
-                    stroke="#0a0a0a"
+                    stroke={t.dark ? "#ffffff" : "#0a0a0a"}
                     strokeWidth="1.6"
                     strokeLinecap="round"
                   />
@@ -509,22 +544,24 @@ function ClickTabs({ tabs }: { tabs: Tab[] }) {
                   transition={{ duration: 0.3, ease: [0.3, 0.9, 0.3, 1] }}
                   className="overflow-hidden"
                 >
-                  <div className="mx-2.5 border-t border-black/5 py-3 pl-[46px] pr-1.5">
+                  <div className={`mx-2.5 border-t py-3 pl-[46px] pr-1.5 ${t.dark ? "border-white/10" : "border-black/5"}`}>
                     {t.details.map(([label, value]) => (
                       <div
                         key={label}
                         className="flex items-baseline justify-between py-1 text-[13px]"
                       >
-                        <span className="text-sub">{label}</span>
-                        <span className="font-semibold text-ink">{value}</span>
+                        <span className={t.dark ? "text-white/60" : "text-sub"}>{label}</span>
+                        <span className={`font-semibold ${t.dark ? "text-white" : "text-ink"}`}>{value}</span>
                       </div>
                     ))}
                     {t.pill && (
                       <span
                         className={`mt-2 inline-flex items-center gap-2 rounded-full py-1.5 text-[12px] font-semibold ${
                           t.pill.tone === "green"
-                            ? "bg-[#eeeeee] pl-1.5 pr-3 text-ink"
-                            : "bg-[#0a0a0a] px-3 text-white"
+                            ? "bg-white pl-1.5 pr-3 text-ink"
+                            : t.dark
+                              ? "bg-white px-3 text-ink"
+                              : "bg-[#0a0a0a] px-3 text-white"
                         }`}
                       >
                         {t.pill.tone === "green" && (
@@ -560,15 +597,21 @@ function Bar({
   name,
   note,
   amount,
+  bg,
+  dark,
 }: {
   logo: string;
   name: string;
   note: string;
   amount: string;
+  /** the bar's ground (the goal act's per-charge colors) and, on dark
+      grounds, white type */
+  bg?: string;
+  dark?: boolean;
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-[18px] bg-white py-[6px] pl-[6px] pr-2.5">
-      <span className="flex h-[43px] w-[43px] shrink-0 items-center justify-center rounded-[11px] bg-[#eeeeee]">
+    <div className="flex items-center gap-3 rounded-[18px] py-[6px] pl-[6px] pr-2.5" style={{ backgroundColor: bg ?? "#ffffff" }}>
+      <span className={`flex h-[43px] w-[43px] shrink-0 items-center justify-center rounded-[11px] ${bg ? "bg-white" : "bg-[#eeeeee]"}`}>
         <Image
           src={logo}
           alt={name}
@@ -578,16 +621,16 @@ function Bar({
         />
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block text-[16px] font-semibold text-ink">{name}</span>
-        <span className="block text-[13px] leading-snug text-sub">{note}</span>
+        <span className={`block text-[16px] font-semibold ${dark ? "text-white" : "text-ink"}`}>{name}</span>
+        <span className={`block text-[13px] leading-snug ${dark ? "text-white/70" : "text-sub"}`}>{note}</span>
       </span>
-      <span className="text-[17px] font-semibold tracking-[-0.43px] text-ink">
+      <span className={`text-[17px] font-semibold tracking-[-0.43px] ${dark ? "text-white" : "text-ink"}`}>
         {amount}
       </span>
       <svg width="11" height="11" viewBox="0 0 16 16" fill="none" aria-hidden>
         <path
           d="m6 3.5 5 4.5-5 4.5"
-          stroke="#b3b1ac"
+          stroke={dark ? "#ffffff" : "#b3b1ac"}
           strokeWidth="1.8"
           strokeLinecap="round"
           strokeLinejoin="round"
