@@ -149,22 +149,23 @@ export default function TrackSection() {
 /* ---------- the slides ---------- */
 
 /* One slide of the pinned box. `t` is its distance from the front: 0 is
-   in view, 1 is fully risen and gone, -1 is waiting below. Rising, the
-   slide lifts, blurs, and its lower edge fades out; waiting below, its
-   upper edge is the faded one. */
+   in view, 1 is fully risen and gone, -1 is waiting underneath. The slide
+   in front rises, grows a little, blurs, and fades from its lower edge;
+   the one underneath waits at full opacity, zoomed in, and settles back
+   to size as it takes the front. So the box is always covered: nothing
+   ever shrinks away from its edges and nothing is see-through. */
 function Slide({ index, progress, reduced, bg, children }: { index: number; progress: MotionValue<number>; reduced: boolean; bg: string; children: React.ReactNode }) {
   const t = useTransform(progress, (v) => v * (SLIDES - 1) - index);
-  const y = useTransform(t, (v) => `${Math.max(-1, Math.min(1, v)) * -56}%`);
-  const scale = useTransform(t, (v) => 1 - Math.min(1, Math.abs(v)) * 0.06);
-  const opacity = useTransform(t, (v) => 1 - Math.min(1, Math.abs(v) * 1.25));
-  const filter = useTransform(t, (v) => `blur(${Math.min(1, Math.abs(v)) * 16}px)`);
+  const clamp = (v: number) => Math.max(-1, Math.min(1, v));
+  const y = useTransform(t, (v) => `${Math.max(0, clamp(v)) * -40}%`);
+  const scale = useTransform(t, (v) => 1 + Math.abs(clamp(v)) * (v > 0 ? 0.06 : 0.1));
+  const opacity = useTransform(t, (v) => (v > 0 ? 1 - Math.min(1, v * 1.2) : 1));
+  const filter = useTransform(t, (v) => `blur(${Math.abs(clamp(v)) * (v > 0 ? 16 : 10)}px)`);
   const mask = useTransform(t, (v) => {
-    const a = Math.min(1, Math.abs(v));
-    if (a < 0.02) return "none";
-    /* rising: fade the bottom; waiting below: fade the top */
-    const dir = v > 0 ? "to bottom" : "to top";
-    const solid = Math.max(0, 100 - a * 130);
-    return `linear-gradient(${dir}, #000 ${solid}%, transparent 100%)`;
+    if (v <= 0.02) return "none";
+    /* the front slide fades from its lower edge as it rises */
+    const solid = Math.max(0, 100 - Math.min(1, v) * 130);
+    return `linear-gradient(to bottom, #000 ${solid}%, transparent 100%)`;
   });
   const display = useTransform(t, (v) => (Math.abs(v) >= 1 ? "none" : "block"));
   if (reduced) {
