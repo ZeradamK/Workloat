@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { animate, motion, useReducedMotion, useScroll, useSpring, useTransform, type MotionValue } from "motion/react";
+import { motion, useReducedMotion, useScroll, useSpring, useTransform, type MotionValue } from "motion/react";
 
 /**
  * Track everything: the headline and one line of copy, then a pinned box
@@ -93,6 +93,11 @@ const fmt = (n: number) => `$${n.toLocaleString("en-US")}`;
 const short = (n: number) => (n >= 1000 ? `$${(n / 1000).toFixed(1).replace(/\.0$/, "")}k` : `$${n}`);
 
 const SLIDES = 2;
+/* the runway in viewport heights, and where along it the handoff runs:
+   the first hold is the opening 32%, the handoff the next 26%, the second
+   hold the remaining 42% */
+const RUNWAY_VH = 380;
+const HOLDS = [0, 0.32, 0.58, 1];
 /* the pinned box: 30% shorter than the viewport, leaving room above it
    for the head inside the pinned, viewport-tall block */
 const BOX_H = "max(380px, calc(70vh - 34px))";
@@ -101,15 +106,17 @@ export default function TrackSection() {
   const runway = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion() ?? false;
   const { scrollYProgress } = useScroll({ target: runway, offset: ["start start", "end end"] });
-  /* a spring on the progress gives the zip between slides */
-  const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 24, mass: 0.6 });
-  useScrollStops(runway, !reduced);
+  /* the lock phases: the first mock holds through the opening stretch of
+     the runway, the handoff plays across the middle, the second mock holds
+     through the rest before the page scrolls on. A spring gives the zip. */
+  const staged = useTransform(scrollYProgress, HOLDS, [0, 0, 1, 1]);
+  const progress = useSpring(staged, { stiffness: 120, damping: 24, mass: 0.6 });
 
   return (
     <section className="mx-auto max-w-[1200px] px-6 py-[clamp(32px,5vw,80px)]">
       {/* the runway: the head and the box pin together, centered in the
           viewport, while the slides play */}
-      <div ref={runway} className="relative" style={{ height: reduced ? "auto" : `${SLIDES * 100}vh` }}>
+      <div ref={runway} className="relative" style={{ height: reduced ? "auto" : `${RUNWAY_VH}vh` }}>
         <div className={`flex flex-col items-center justify-center gap-[clamp(20px,3.5vh,40px)] ${reduced ? "" : "sticky top-0 h-screen"}`}>
           {/* the head */}
           <div className="mx-auto max-w-[560px] text-center">
@@ -145,105 +152,6 @@ export default function TrackSection() {
       </div>
     </section>
   );
-}
-
-/* ---------- the stops ----------
-   The runway has one stop per slide. Scrolling into it locks the page on
-   the first stop; each further wheel burst or swipe moves one stop (the
-   handoff plays between them); a gesture past the last stop, or back
-   past the first, lets go, and the page scrolls on. Re-entering the
-   runway from either side locks again. */
-function useScrollStops(runway: React.RefObject<HTMLDivElement | null>, enabled: boolean) {
-  useEffect(() => {
-    if (!enabled) return;
-    const el = runway.current;
-    if (!el) return;
-    const stops = () => {
-      const top = el.getBoundingClientRect().top + window.scrollY;
-      const span = el.offsetHeight - window.innerHeight;
-      return Array.from({ length: SLIDES }, (_, i) => top + (span * i) / (SLIDES - 1));
-    };
-    let at = -1; /* the stop we are locked on, or -1 when free */
-    let moving = false;
-    let lastWheel = 0;
-    let armed = true;
-    let touchY = 0;
-    let touchUsed = false;
-    const glide = (to: number, then?: () => void) => {
-      moving = true;
-      animate(window.scrollY, to, {
-        duration: 0.85,
-        ease: [0.25, 0.6, 0.2, 1],
-        onUpdate: (v) => window.scrollTo({ top: v, behavior: "instant" }),
-        onComplete: () => {
-          moving = false;
-          then?.();
-        },
-      });
-    };
-    /* a gesture while locked: one stop in its direction, or let go at the ends */
-    const step = (dir: 1 | -1) => {
-      if (moving) return;
-      const s = stops();
-      const next = at + dir;
-      if (next < 0 || next >= s.length) {
-        at = -1;
-        armed = false;
-        return;
-      }
-      at = next;
-      glide(s[at]);
-    };
-    /* free scrolling that crosses into the runway locks on the nearest end */
-    const onScroll = () => {
-      if (moving || at >= 0) return;
-      const s = stops();
-      const y = window.scrollY;
-      const inside = y > s[0] - 2 && y < s[s.length - 1] + 2;
-      if (!armed) {
-        if (!inside) armed = true;
-        return;
-      }
-      if (!inside) return;
-      const fromTop = y - s[0] < s[s.length - 1] - y;
-      at = fromTop ? 0 : s.length - 1;
-      glide(s[at]);
-    };
-    const onWheel = (e: WheelEvent) => {
-      if (at < 0 && !moving) return;
-      e.preventDefault();
-      if (moving) return;
-      const now = performance.now();
-      const fresh = now - lastWheel > 320;
-      lastWheel = now;
-      if (fresh && Math.abs(e.deltaY) > 2) step(e.deltaY > 0 ? 1 : -1);
-    };
-    const onTouchStart = (e: TouchEvent) => {
-      touchY = e.touches[0].clientY;
-      touchUsed = false;
-    };
-    const onTouchMove = (e: TouchEvent) => {
-      if (at < 0 && !moving) return;
-      e.preventDefault();
-      if (moving || touchUsed) return;
-      const dy = touchY - e.touches[0].clientY;
-      if (Math.abs(dy) > 36) {
-        touchUsed = true;
-        step(dy > 0 ? 1 : -1);
-      }
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("wheel", onWheel, { passive: false });
-    window.addEventListener("touchstart", onTouchStart, { passive: true });
-    window.addEventListener("touchmove", onTouchMove, { passive: false });
-    onScroll();
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("wheel", onWheel);
-      window.removeEventListener("touchstart", onTouchStart);
-      window.removeEventListener("touchmove", onTouchMove);
-    };
-  }, [runway, enabled]);
 }
 
 /* ---------- the slides ---------- */
