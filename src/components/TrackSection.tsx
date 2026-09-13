@@ -92,10 +92,8 @@ const UPCOMING: Record<number, { logos: string[]; amount: string }> = {
 const fmt = (n: number) => `$${n.toLocaleString("en-US")}`;
 const short = (n: number) => (n >= 1000 ? `$${(n / 1000).toFixed(1).replace(/\.0$/, "")}k` : `$${n}`);
 
-/* the head's type styles (sizes and placement stay as they were) */
+/* the copy's type style; the headline is the site's SF Pro as elsewhere */
 const SANS = 'Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-const TITLE: React.CSSProperties = { fontFamily: SANS, fontWeight: 900 };
-const TITLE_SPAN: React.CSSProperties = { fontFamily: 'Georgia, "Times New Roman", serif', fontStyle: "italic", fontWeight: 400, letterSpacing: "-0.02em" };
 const COPY: React.CSSProperties = { fontFamily: SANS, fontWeight: 400, letterSpacing: "-0.025em" };
 
 const SLIDES = 2;
@@ -124,11 +122,10 @@ export default function TrackSection() {
           viewport, while the slides play */}
       <div ref={runway} className="relative" style={{ height: reduced ? "auto" : `${RUNWAY_VH}vh` }}>
         <div className={`flex flex-col items-center justify-center gap-[clamp(20px,3.5vh,40px)] ${reduced ? "" : "sticky top-0 h-screen"}`}>
-          {/* the head, at its size and place: "Track" heavy, "everything"
-              italic serif, the copy in the same sans */}
+          {/* the head, at its size and place */}
           <div className="mx-auto max-w-[560px] text-center">
-            <motion.h2 {...up} className="text-[clamp(26px,2.6vw,36px)] leading-[1.15] tracking-[-1px] text-ink" style={TITLE}>
-              Track <span style={TITLE_SPAN}>everything</span>
+            <motion.h2 {...up} className="text-[clamp(26px,2.6vw,36px)] font-medium leading-[1.15] tracking-[-1px] text-ink">
+              Track everything
             </motion.h2>
             <motion.p {...up} className="mt-4 text-[16px] leading-[1.5] text-sub" style={COPY}>
               Connect your banks and give each agent a key to see all of it in one place. Easy to
