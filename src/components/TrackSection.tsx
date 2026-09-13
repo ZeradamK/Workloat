@@ -37,16 +37,32 @@ const LINE = "rgba(10,10,10,0.08)";
 /* the mocks: canvas size, backdrop, the window shown (shares of the
    height), the screen rectangle (fractions, in the straightened frame),
    the corner radius as a share of the screen width, and `tilt`, the
-   clockwise turn that levels the phone. Both are the iPhone Duo: its
-   screen corners measure a radius of 6% of the long side (150px on the
-   2489px landscape screen), and the portrait mock leans 0.5° so it is
-   turned back that much. The portrait mock's camera is drawn back on. */
-const SCREENS = {
+   clockwise turn that levels a leaning phone. The portrait mock is an
+   iPhone held in two hands, level, with its dynamic island drawn back on;
+   the landscape mock is the iPhone Duo, whose screen corners measure a
+   radius of 6% of the long side (150px on the 2489px screen). */
+type Screen = {
+  src: string;
+  w: number;
+  h: number;
+  bg: string;
+  tilt: number;
+  window: { top: number; bottom: number };
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+  radius: number;
+  island: boolean;
+  camera: { x: number; y: number; d: number } | null;
+};
+
+const SCREENS: Record<"portrait" | "landscape", Screen> = {
   portrait: {
-    src: "/mocks/spend-fold.webp", w: 2470, h: 1752, bg: "#e4e4e4", tilt: 0.5,
-    window: { top: 0.13, bottom: 0.86 },
-    left: 911 / 2470, top: 316 / 1752, width: 739 / 2470, height: 1074 / 1752, radius: 0.087, island: false,
-    camera: { x: 0.907, y: 0.068, d: 0.08 },
+    src: "/mocks/spend-hands.png", w: 1024, h: 1536, bg: "#ffffff", tilt: 0,
+    window: { top: 0.09, bottom: 0.72 },
+    left: 332 / 1024, top: 188 / 1536, width: 361 / 1024, height: 794 / 1536, radius: 0.125, island: true,
+    camera: null,
   },
   landscape: {
     src: "/mocks/upcoming-landscape.webp", w: 4800, h: 3584, bg: "#d5d5d5", tilt: 0,
@@ -54,7 +70,7 @@ const SCREENS = {
     left: 1158 / 4800, top: 805 / 3584, width: 2489 / 4800, height: 1750 / 3584, radius: 0.06, island: false,
     camera: null,
   },
-} as const;
+};
 
 /* sample data, per company in the product. September 2026 starts on a
    Tuesday; spend by day through the 10th sums to $9,190 */
@@ -77,8 +93,9 @@ const fmt = (n: number) => `$${n.toLocaleString("en-US")}`;
 const short = (n: number) => (n >= 1000 ? `$${(n / 1000).toFixed(1).replace(/\.0$/, "")}k` : `$${n}`);
 
 const SLIDES = 2;
-/* the pinned box: 30% shorter than the viewport, less the page's inset */
-const BOX_H = "max(420px, calc(70vh - 34px))";
+/* the pinned box: 30% shorter than the viewport, leaving room above it
+   for the head inside the pinned, viewport-tall block */
+const BOX_H = "max(380px, calc(70vh - 34px))";
 
 export default function TrackSection() {
   const runway = useRef<HTMLDivElement>(null);
@@ -89,23 +106,25 @@ export default function TrackSection() {
 
   return (
     <section className="mx-auto max-w-[1200px] px-6 py-[clamp(32px,5vw,80px)]">
-      {/* the head */}
-      <div className="mx-auto max-w-[560px] text-center">
-        <motion.h2 {...up} className="text-[clamp(26px,2.6vw,36px)] font-medium leading-[1.15] tracking-[-1px] text-ink">
-          Track everything
-        </motion.h2>
-        <motion.p {...up} className="mt-4 text-[16px] leading-[1.5] text-sub">
-          Connect your banks and give each agent a key to see all of it in one place. Easy to
-          find, easy to understand.
-        </motion.p>
-      </div>
+      {/* the runway: the head and the box pin together, centered in the
+          viewport, while the slides play */}
+      <div ref={runway} className="relative" style={{ height: reduced ? "auto" : `${SLIDES * 100}vh` }}>
+        <div className={`flex flex-col items-center justify-center gap-[clamp(20px,3.5vh,40px)] ${reduced ? "" : "sticky top-0 h-screen"}`}>
+          {/* the head */}
+          <div className="mx-auto max-w-[560px] text-center">
+            <motion.h2 {...up} className="text-[clamp(26px,2.6vw,36px)] font-medium leading-[1.15] tracking-[-1px] text-ink">
+              Track everything
+            </motion.h2>
+            <motion.p {...up} className="mt-4 text-[16px] leading-[1.5] text-sub">
+              Connect your banks and give each agent a key to see all of it in one place. Easy to
+              find, easy to understand.
+            </motion.p>
+          </div>
 
-      {/* the runway: the box pins while the three slides play */}
-      <div ref={runway} className="relative mt-[clamp(32px,4vw,56px)]" style={{ height: reduced ? "auto" : `${SLIDES * 100}vh` }}>
-        <div
-          className="sticky overflow-hidden rounded-[30px]"
-          style={{ top: "calc(15vh + 17px)", height: BOX_H, backgroundColor: SCREEN_BG }}
-        >
+          <div
+            className="relative w-full overflow-hidden rounded-[30px]"
+            style={{ height: BOX_H, backgroundColor: SCREEN_BG }}
+          >
           <Slide index={0} progress={progress} reduced={reduced} bg={SCREENS.portrait.bg}>
             <Mock spec={SCREENS.portrait} panelWidth={330} panelShare={0.92} panelTop={0.12}>
               <SpendPanel />
@@ -116,6 +135,7 @@ export default function TrackSection() {
               <UpcomingPanel />
             </Mock>
           </Slide>
+          </div>
         </div>
       </div>
     </section>
@@ -166,7 +186,7 @@ function Slide({ index, progress, reduced, bg, children }: { index: number; prog
    at `panelWidth` px and scaled to span `panelShare` of the screen's
    width, `panelTop` of the screen's height down; with `fill` it is also
    stretched to the screen's full height. */
-function Mock({ spec, panelWidth, panelShare, panelTop, fill, children }: { spec: (typeof SCREENS)[keyof typeof SCREENS]; panelWidth: number; panelShare: number; panelTop: number; fill?: boolean; children: React.ReactNode }) {
+function Mock({ spec, panelWidth, panelShare, panelTop, fill, children }: { spec: Screen; panelWidth: number; panelShare: number; panelTop: number; fill?: boolean; children: React.ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
   const [box, setBox] = useState({ w: 0, h: 0 });
   useEffect(() => {
@@ -194,6 +214,9 @@ function Mock({ spec, panelWidth, panelShare, panelTop, fill, children }: { spec
           <Image src={spec.src} alt="" fill sizes="(min-width: 1200px) 1400px, 120vw" className="object-contain" />
           {/* the screen: the gray ground, then the panel */}
           <div className="absolute overflow-hidden" style={{ ...screen, borderRadius: screen.width * spec.radius, backgroundColor: SCREEN_BG }}>
+            {spec.island && (
+              <div className="absolute left-1/2 -translate-x-1/2 rounded-full bg-[#050505]" style={{ top: screen.height * 0.015, width: screen.width * 0.32, height: screen.height * 0.042 }} />
+            )}
             {spec.camera && (
               <div
                 className="absolute rounded-full"
