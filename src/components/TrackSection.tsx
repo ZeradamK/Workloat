@@ -218,7 +218,8 @@ function Mock({ spec, panelWidth, panelShare, panelTop, fill, children }: { spec
         >
           {/* the photo, its side edges feathered into the slide's ground */}
           <div className="absolute inset-0" style={{ maskImage: "linear-gradient(to right, transparent 0, #000 7%, #000 93%, transparent 100%)", WebkitMaskImage: "linear-gradient(to right, transparent 0, #000 7%, #000 93%, transparent 100%)" }}>
-            <Image src={spec.src} alt="" fill sizes="(min-width: 1200px) 1400px, 120vw" className="object-contain" />
+            {/* served as supplied, no recompression, so the photo stays as crisp as its source */}
+            <Image src={spec.src} alt="" fill unoptimized className="object-contain" />
           </div>
           {/* the screen: the gray ground, then the panel */}
           <div className="absolute overflow-hidden" style={{ ...screen, borderRadius: screen.width * spec.radius, backgroundColor: SCREEN_BG }}>
