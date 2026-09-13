@@ -255,8 +255,8 @@ function PhoneAct() {
 
 function NotifBar({ icon, name, note, amount }: { icon: string; name: string; note: string; amount: string }) {
   return (
-    <div className="flex items-center gap-3 rounded-[18px] bg-white py-[6px] pl-[6px] pr-2.5 shadow-[0_18px_50px_rgba(0,0,0,0.12)]">
-      <span className="flex h-[43px] w-[43px] shrink-0 items-center justify-center rounded-[11px]" style={{ backgroundColor: "#eeeeee" }}>
+    <div className="flex items-center gap-3 rounded-[18px] bg-[#c8dfdb] py-[6px] pl-[6px] pr-2.5 shadow-[0_18px_50px_rgba(0,0,0,0.12)]">
+      <span className="flex h-[43px] w-[43px] shrink-0 items-center justify-center rounded-[11px] bg-white">
         <Image src={icon} alt="" width={22} height={22} className="h-[22px] w-[22px] object-contain" />
       </span>
       <span className="min-w-0 flex-1">
