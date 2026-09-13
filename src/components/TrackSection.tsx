@@ -59,7 +59,7 @@ type Screen = {
 
 const SCREENS: Record<"portrait" | "landscape", Screen> = {
   portrait: {
-    src: "/mocks/spend-hands.png", w: 1024, h: 1536, bg: "#ffffff", tilt: 0,
+    src: "/mocks/spend-hands.png", w: 1024, h: 1536, bg: "linear-gradient(180deg,#ffffff 0%,#fdfdfd 50%,#f8f8f8 78%,#f4f4f5 100%)", tilt: 0,
     window: { top: 0.09, bottom: 0.72 },
     left: 332 / 1024, top: 188 / 1536, width: 361 / 1024, height: 794 / 1536, radius: 0.125, island: true,
     camera: null,
@@ -126,8 +126,12 @@ export default function TrackSection() {
             style={{ height: BOX_H, backgroundColor: SCREEN_BG }}
           >
           <Slide index={0} progress={progress} reduced={reduced} bg={SCREENS.portrait.bg}>
-            <Mock spec={SCREENS.portrait} panelWidth={330} panelShare={0.92} panelTop={0.12}>
-              <SpendPanel />
+            <Mock spec={SCREENS.portrait} panelWidth={330} panelShare={0.92} panelTop={0.075}>
+              <div className="flex flex-col gap-3">
+                <LogoRow />
+                <SpendPanel />
+                <NotifList />
+              </div>
             </Mock>
           </Slide>
           <Slide index={1} progress={progress} reduced={reduced} bg={SCREENS.landscape.bg}>
@@ -165,7 +169,7 @@ function Slide({ index, progress, reduced, bg, children }: { index: number; prog
   const display = useTransform(t, (v) => (Math.abs(v) >= 1 ? "none" : "block"));
   if (reduced) {
     return index === 0 ? (
-      <div className="absolute inset-0" style={{ backgroundColor: bg }}>
+      <div className="absolute inset-0" style={{ background: bg }}>
         {children}
       </div>
     ) : null;
@@ -173,7 +177,7 @@ function Slide({ index, progress, reduced, bg, children }: { index: number; prog
   return (
     <motion.div
       className="absolute inset-0 will-change-transform"
-      style={{ backgroundColor: bg, y, scale, opacity, filter, maskImage: mask, WebkitMaskImage: mask, display, zIndex: SLIDES - index }}
+      style={{ background: bg, y, scale, opacity, filter, maskImage: mask, WebkitMaskImage: mask, display, zIndex: SLIDES - index }}
     >
       {children}
     </motion.div>
@@ -211,7 +215,10 @@ function Mock({ spec, panelWidth, panelShare, panelTop, fill, children }: { spec
           className="absolute"
           style={{ left: (box.w - imgW) / 2, top: -spec.window.top * imgH, width: imgW, height: imgH, transform: spec.tilt ? `rotate(${spec.tilt}deg)` : undefined }}
         >
-          <Image src={spec.src} alt="" fill sizes="(min-width: 1200px) 1400px, 120vw" className="object-contain" />
+          {/* the photo, its side edges feathered into the slide's ground */}
+          <div className="absolute inset-0" style={{ maskImage: "linear-gradient(to right, transparent 0, #000 7%, #000 93%, transparent 100%)", WebkitMaskImage: "linear-gradient(to right, transparent 0, #000 7%, #000 93%, transparent 100%)" }}>
+            <Image src={spec.src} alt="" fill sizes="(min-width: 1200px) 1400px, 120vw" className="object-contain" />
+          </div>
           {/* the screen: the gray ground, then the panel */}
           <div className="absolute overflow-hidden" style={{ ...screen, borderRadius: screen.width * spec.radius, backgroundColor: SCREEN_BG }}>
             {spec.island && (
@@ -255,6 +262,53 @@ function Panel({ children, className }: { children: React.ReactNode; className?:
   return (
     <div className={`rounded-[18px] bg-white ${className ?? ""}`} style={{ color: INK, boxShadow: "0 1px 2px rgba(10,10,10,0.06)" }}>
       {children}
+    </div>
+  );
+}
+
+/* the app mark and name, under the island */
+function LogoRow() {
+  return (
+    <div className="flex items-center gap-2 px-1">
+      <Image src="/payloat-app-icon-v2.png" alt="" width={22} height={22} className="h-[22px] w-[22px] rounded-[6px]" />
+      <span className="text-[15px] font-semibold" style={{ color: INK }}>
+        Payloat
+      </span>
+    </div>
+  );
+}
+
+/* the latest charges, in the goal act's bar anatomy at phone size */
+const NOTICES = [
+  { name: "OpenAI", logo: "/logos/openai.svg", note: "API usage this month", amount: "$2,500.00" },
+  { name: "Vercel", logo: "/logos/vercel.svg", note: "Hosting, Ops agent", amount: "$350.00" },
+  { name: "Brex", logo: "/logos/brex.svg", note: "14 charges matched", amount: "$12,480.00" },
+] as const;
+
+function NotifList() {
+  return (
+    <div className="flex flex-col gap-2">
+      {NOTICES.map((n) => (
+        <div key={n.name} className="flex items-center gap-2.5 rounded-[14px] bg-white py-[5px] pl-[5px] pr-2.5" style={{ boxShadow: "0 1px 2px rgba(10,10,10,0.06)" }}>
+          <span className="flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-[9px] border border-black/10 bg-white">
+            <Image src={n.logo} alt="" width={20} height={20} className="h-[20px] w-[20px] rounded-[4px] object-contain" />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block truncate text-[13px] font-semibold" style={{ color: INK }}>
+              {n.name}
+            </span>
+            <span className="block truncate text-[11px] leading-snug" style={{ color: MUTED }}>
+              {n.note}
+            </span>
+          </span>
+          <span className="font-numeral text-[13px] font-semibold tabular-nums" style={{ color: INK }}>
+            {n.amount}
+          </span>
+          <svg width="9" height="9" viewBox="0 0 16 16" fill="none" aria-hidden className="shrink-0" style={{ color: MUTED }}>
+            <path d="m5.5 3 5 5-5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </div>
+      ))}
     </div>
   );
 }
