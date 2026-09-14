@@ -17,8 +17,6 @@ import { productLight } from "@/components/introProgress";
  *     accounts in one place" anatomy, copy only).
  *  2. The spend mix, the home page's three-bar section, reused as is.
  *  3. Connected banks, a tile grid (Wise "choose from these banks").
- *  4. How it fills in, three steps beside a curl call (Notion and
- *     Customer.io developer sections).
  *  5. Team and agents side by side, a ledger table with copy and three
  *     checks (Mews ledger-report section).
  */
@@ -41,23 +39,6 @@ const BANKS = [
   { name: "Stripe", src: "/logos/stripe.png" },
 ] as const;
 
-const STEPS = [
-  {
-    n: "1",
-    title: "Connect the banks and cards",
-    body: "Chase, Mercury, Brex, and the rest, through Teller or Plaid. The ledger reads every charge as it lands.",
-  },
-  {
-    n: "2",
-    title: "Give each agent a key",
-    body: "One key per agent, with a cap. The agent posts an intent before it buys, a checkout when it pays, and the receipt after.",
-  },
-  {
-    n: "3",
-    title: "Read one ledger",
-    body: "Bank charges and agent purchases match up on their own. What did not match is the short list you look at.",
-  },
-] as const;
 
 /* sample rows, labeled as such on the table; per company in the product */
 const ROWS = [
@@ -84,16 +65,6 @@ const GAP = "110px";
 const FRAME_FADE = "linear-gradient(to bottom, #000 0%, #000 50%, rgba(0,0,0,0.7) 62%, rgba(0,0,0,0.35) 72%, rgba(0,0,0,0.1) 79%, transparent 82%, transparent 100%)";
 const GROUND_FADE = "linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.15) 20%, rgba(255,255,255,0.5) 42%, rgba(255,255,255,0.85) 62%, rgba(255,255,255,0.98) 82%, #ffffff 100%)";
 
-const CURL = `curl -X POST https://api.payloat.com/ledger/record \\
-  -H "Authorization: Bearer pl_live_7f2a…" \\
-  -H "Content-Type: application/json" \\
-  -d '{
-    "type": "intent",
-    "merchant": "WebstaurantStore",
-    "task": "Restock deli paper",
-    "amount": 216.50,
-    "cap": 200.00
-  }'`;
 
 /* the charges that slide into the frame on load, newest on top, and the
    figure the month starts from before they land */
@@ -291,41 +262,6 @@ export default function LedgerPage() {
         <motion.p {...up} className="mt-6 text-center text-[13px] text-sub">
           Any US bank through Teller or Plaid. Cards from Brex, Ramp, and Mercury by statement.
         </motion.p>
-      </section>
-
-      {/* 4. how it fills in */}
-      <section className="mx-auto max-w-[1200px] px-6 py-[clamp(56px,7vw,112px)]">
-        <div className="grid gap-12 min-[900px]:grid-cols-[1fr_1.1fr] min-[900px]:items-center min-[900px]:gap-16">
-          <div>
-            <motion.h2 {...up} className="text-[clamp(30px,3.4vw,46px)] font-bold leading-[1.1] tracking-[-1.5px] text-ink">
-              How the ledger fills in.
-            </motion.h2>
-            <ol className="mt-8 flex flex-col gap-6">
-              {STEPS.map((s) => (
-                <motion.li key={s.n} {...up} className="flex gap-4">
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#eeeeee] text-[13px] font-semibold text-ink">
-                    {s.n}
-                  </span>
-                  <span>
-                    <p className="text-[17px] font-semibold text-ink">{s.title}</p>
-                    <p className="mt-1 max-w-[420px] text-[15px] leading-[1.5] text-sub">{s.body}</p>
-                  </span>
-                </motion.li>
-              ))}
-            </ol>
-          </div>
-          <motion.div {...up} className="overflow-hidden rounded-[20px] bg-[#0a0a0a] text-white">
-            <div className="flex items-center gap-2 px-5 py-3" style={{ borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
-              <span className="h-[10px] w-[10px] rounded-full bg-white/20" />
-              <span className="h-[10px] w-[10px] rounded-full bg-white/20" />
-              <span className="h-[10px] w-[10px] rounded-full bg-white/20" />
-              <span className="ml-2 text-[12px] text-white/50">One POST per event: intent, checkout, receipt, status, note</span>
-            </div>
-            <pre className="overflow-x-auto px-5 py-5 text-[13px] leading-[1.6] text-white/85" style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace" }}>
-              {CURL}
-            </pre>
-          </motion.div>
-        </div>
       </section>
 
       {/* 5. team and agents side by side */}
