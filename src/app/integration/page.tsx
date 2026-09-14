@@ -18,8 +18,6 @@ import { productLight } from "@/components/introProgress";
  *     accounts in one place" anatomy, copy only).
  *  2. The spend mix, the home page's three-bar section, reused as is.
  *  3. Connected banks, a tile grid (Wise "choose from these banks").
- *  5. Team and agents side by side, a ledger table with copy and three
- *     checks (Mews ledger-report section).
  */
 
 const EASE = [0.25, 0.6, 0.2, 1] as const;
@@ -41,15 +39,6 @@ const BANKS = [
 ] as const;
 
 
-/* sample rows, labeled as such on the table; per company in the product */
-const ROWS = [
-  { when: "Today, 9:12", who: "Procurement agent", kind: "agent", merchant: "WebstaurantStore", task: "Restock deli paper", amount: "$216.50", status: "Over cap", tone: "amber" },
-  { when: "Today, 8:40", who: "Maya C.", kind: "team", merchant: "Instacart", task: "Card ••4412", amount: "$142.10", status: "Receipt missing", tone: "amber" },
-  { when: "Yesterday", who: "Software agent", kind: "agent", merchant: "OpenAI", task: "API usage, September", amount: "$2,500.00", status: "Matched", tone: "green" },
-  { when: "Yesterday", who: "Travel agent", kind: "agent", merchant: "United", task: "Austin, 2 nights", amount: "$486.00", status: "Matched", tone: "green" },
-  { when: "Sep 8", who: "Dani R.", kind: "team", merchant: "Sysco", task: "Card ••0917", amount: "$1,204.16", status: "Matched", tone: "green" },
-  { when: "Sep 8", who: "Ops agent", kind: "agent", merchant: "Vercel", task: "Hosting, Pro seats", amount: "$350.00", status: "Matched", tone: "green" },
-] as const;
 
 
 
@@ -267,95 +256,6 @@ export default function LedgerPage() {
 
       {/* 4. built for agents: the agent's own view, X Money's anatomy */}
       <AgentsBuiltSection />
-
-      {/* 5. team and agents side by side */}
-      <section className="mx-auto max-w-[1200px] px-6 py-[clamp(56px,7vw,112px)]">
-        <div className="rounded-[30px] bg-[#0a0a0a] p-6 text-white min-[900px]:p-12">
-          {/* the pitch on top, the table full width beneath it */}
-          <div className="grid gap-8 min-[900px]:grid-cols-[1fr_1.1fr] min-[900px]:items-start min-[900px]:gap-14">
-            <div>
-              <motion.h2 {...up} className="text-[clamp(28px,3vw,40px)] font-bold leading-[1.1] tracking-[-1.2px]">
-                Team and agents, side by side.
-              </motion.h2>
-            </div>
-            <div>
-              <motion.ul {...up} className="mt-6 flex flex-col gap-3 text-[15px] leading-[1.5] text-white/80">
-                {[
-                  "A card swipe by a person and a purchase by an agent sit in the same rows.",
-                  "Agent rows carry the task and the cap. Team rows carry the card and the receipt.",
-                  "Anything over cap or missing a receipt rises to the top of the month.",
-                ].map((t) => (
-                  <li key={t} className="flex gap-3">
-                    <span className="mt-[3px] flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full border border-white/40">
-                      <svg width="9" height="9" viewBox="0 0 24 24" fill="none" aria-hidden>
-                        <path d="m5 12.5 4.5 4.5L19 7.5" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    </span>
-                    {t}
-                  </li>
-                ))}
-              </motion.ul>
-              <motion.div {...up} className="mt-8">
-                <Link
-                  href="/product#agent-purchases"
-                  className="inline-flex h-11 items-center rounded-full bg-white px-5 text-[13px] font-semibold tracking-[-0.3px] text-ink transition-transform hover:scale-[1.03] active:scale-[0.97]"
-                >
-                  See a purchase up close
-                </Link>
-              </motion.div>
-            </div>
-          </div>
-          <div className="mt-10">
-            <motion.div {...up} className="overflow-x-auto rounded-[16px] bg-white text-ink">
-              <div className="flex items-center justify-between px-5 py-4" style={{ borderBottom: "1px solid rgba(10,10,10,0.08)" }}>
-                <p className="text-[14px] font-semibold">September · Sample data</p>
-                <p className="text-[12px] text-sub">Team and agents</p>
-              </div>
-              <table className="w-full min-w-[560px] border-collapse text-left text-[12px]">
-                <thead>
-                  <tr className="text-[11px] text-sub">
-                    {["When", "By", "Merchant", "Task or card", "Amount", "Status"].map((h) => (
-                      <th key={h} className="px-3 py-2 font-medium first:pl-5 last:pr-5" style={{ borderBottom: "1px solid rgba(10,10,10,0.08)" }}>
-                        {h}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {ROWS.map((r, i) => (
-                    <tr key={i} style={{ borderBottom: "1px solid rgba(10,10,10,0.06)" }}>
-                      <td className="whitespace-nowrap py-3 pl-5 pr-3 text-sub">{r.when}</td>
-                      <td className="whitespace-nowrap px-3 py-3">
-                        <span className="flex items-center gap-2 font-semibold">
-                          <span
-                            className="flex h-[22px] w-[22px] items-center justify-center rounded-[6px] text-[10px] font-bold"
-                            style={{ backgroundColor: r.kind === "agent" ? "#0a0a0a" : "#eeeeee", color: r.kind === "agent" ? "#ffffff" : "#0a0a0a" }}
-                          >
-                            {r.kind === "agent" ? "A" : r.who[0]}
-                          </span>
-                          {r.who}
-                        </span>
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-3">{r.merchant}</td>
-                      <td className="px-3 py-3 text-sub">{r.task}</td>
-                      <td className="font-numeral whitespace-nowrap px-3 py-3 tabular-nums">{r.amount}</td>
-                      <td className="whitespace-nowrap py-3 pl-3 pr-5">
-                        <span
-                          className="inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-semibold"
-                          style={{ border: "1px solid rgba(10,10,10,0.1)", color: r.tone === "green" ? "#1e9e56" : "#c77d00" }}
-                        >
-                          <span className="h-[6px] w-[6px] rounded-full" style={{ backgroundColor: r.tone === "green" ? "#1e9e56" : "#c77d00" }} />
-                          {r.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </motion.div>
-          </div>
-        </div>
-      </section>
 
       <FooterSection />
     </main>
