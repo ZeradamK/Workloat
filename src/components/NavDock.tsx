@@ -49,7 +49,7 @@ const PANEL_DIMS: Record<PanelKey, { w: number; h: number }> = {
 /** Product sub-items: one per page. */
 const PRODUCT_ITEMS = [
   { label: "Product intro", href: "/product" },
-  { label: "Integration", href: "/integration" },
+  { label: "Bank Integration", href: "/integration" },
 ];
 
 const SOLUTION_ITEMS = [

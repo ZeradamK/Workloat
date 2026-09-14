@@ -19,10 +19,6 @@ import SpendMixSection from "@/components/SpendMixSection";
  *     Customer.io developer sections).
  *  5. Team and agents side by side, a ledger table with copy and three
  *     checks (Mews ledger-report section).
- *  6. What every row carries, a checklist card (Midday "ready for
- *     accounting" section).
- *  7. Three benefits in columns (Duna and Current).
- *  8. Closing call to action, black box.
  */
 
 const EASE = [0.25, 0.6, 0.2, 1] as const;
@@ -71,28 +67,7 @@ const ROWS = [
   { when: "Sep 8", who: "Ops agent", kind: "agent", merchant: "Vercel", task: "Hosting, Pro seats", amount: "$350.00", status: "Matched", tone: "green" },
 ] as const;
 
-const CARRIES = [
-  "The task the agent was given, in the agent's own words",
-  "The cap it was allowed, and how much of it this purchase used",
-  "The receipt, matched to the bank charge or flagged when it is missing",
-  "The status: intended, paid, delivered, renewed, or refunded",
-  "Every event in a hash-chained log, so nothing is rewritten after the fact",
-] as const;
 
-const BENEFITS = [
-  {
-    title: "One picture for the owner",
-    body: "Team cards and agent keys land in the same ledger, so the month reads as one number with the story behind it.",
-  },
-  {
-    title: "Agents check their own work",
-    body: "An agent can read its own purchases, receipts, and status before its next buy. Fewer repeats, fewer surprises.",
-  },
-  {
-    title: "Nothing bought without a record",
-    body: "Every purchase carries its task, cap, and receipt from the moment it is intended. The record exists before the charge does.",
-  },
-] as const;
 
 const CURL = `curl -X POST https://api.payloat.com/ledger/record \\
   -H "Authorization: Bearer pl_live_7f2a…" \\
@@ -118,7 +93,7 @@ export default function LedgerPage() {
           transition={{ duration: 0.5, ease: EASE }}
           className="text-[15px] text-sub"
         >
-          Integration
+          Bank Integration
         </motion.p>
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
@@ -308,66 +283,6 @@ export default function LedgerPage() {
             </motion.div>
           </div>
         </div>
-      </section>
-
-      {/* 6. what every row carries */}
-      <section className="mx-auto max-w-[1200px] px-6 py-[clamp(56px,7vw,112px)]">
-        <div className="mx-auto max-w-[720px] text-center">
-          <motion.h2 {...up} className="text-[clamp(28px,3vw,40px)] font-bold leading-[1.1] tracking-[-1.2px] text-ink">
-            What every row carries.
-          </motion.h2>
-          <motion.p {...up} className="mt-4 text-[16px] leading-[1.5] text-sub">
-            A bank feed tells you what was paid. The ledger also keeps why, by whom, and whether it was allowed.
-          </motion.p>
-        </div>
-        <motion.ul {...up} className="mx-auto mt-8 flex max-w-[720px] flex-col gap-3 rounded-[20px] bg-[#eeeeee] p-6 text-[15px] leading-[1.5] text-ink min-[640px]:p-8">
-          {CARRIES.map((c) => (
-            <li key={c} className="flex gap-3">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden className="mt-[3px] shrink-0">
-                <path d="m5 12.5 4.5 4.5L19 7.5" stroke="#0a0a0a" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              {c}
-            </li>
-          ))}
-        </motion.ul>
-      </section>
-
-      {/* 7. three benefits */}
-      <section className="mx-auto max-w-[1200px] px-6 py-[clamp(56px,7vw,112px)]">
-        <div className="grid gap-10 min-[800px]:grid-cols-3 min-[800px]:gap-8">
-          {BENEFITS.map((b) => (
-            <motion.div key={b.title} {...up} className="border-t border-black/15 pt-5">
-              <p className="text-[18px] font-semibold text-ink">{b.title}</p>
-              <p className="mt-2 text-[15px] leading-[1.5] text-sub">{b.body}</p>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      {/* 8. closing call to action */}
-      <section className="mx-auto max-w-[1200px] px-6 pb-[clamp(72px,9vw,140px)] pt-4">
-        <motion.div {...up} className="rounded-[30px] bg-[#0a0a0a] px-8 py-14 text-center text-white min-[900px]:py-20">
-          <h2 className="mx-auto max-w-[720px] text-[clamp(30px,3.6vw,50px)] font-bold leading-[1.08] tracking-[-1.5px]" style={{ textWrap: "balance" }}>
-            See your agents&apos; spend in one place.
-          </h2>
-          <p className="mx-auto mt-4 max-w-[480px] text-[16px] leading-[1.5] text-white/75">
-            Connect a bank, give one agent a key, and read the first row this week.
-          </p>
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <Link
-              href="/signup"
-              className="inline-flex h-12 items-center rounded-full bg-white px-6 text-[14px] font-semibold tracking-[-0.3px] text-ink transition-transform hover:scale-[1.03] active:scale-[0.97]"
-            >
-              Get started
-            </Link>
-            <Link
-              href="/contact#sales"
-              className="inline-flex h-12 items-center rounded-full border border-white/30 px-6 text-[14px] font-semibold tracking-[-0.3px] text-white transition-transform hover:scale-[1.03] active:scale-[0.97]"
-            >
-              Talk to us
-            </Link>
-          </div>
-        </motion.div>
       </section>
 
       <FooterSection />
