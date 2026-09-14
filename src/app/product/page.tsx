@@ -137,8 +137,7 @@ export default function ProductPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
               transition={{ duration: 0.55, ease: EASE }}
-              className="text-[clamp(44px,5.6vw,80px)] font-black uppercase leading-[0.92] tracking-[-2.5px]"
-              style={{ color: LIME }}
+              className="text-[clamp(44px,5.6vw,80px)] font-black uppercase leading-[0.92] tracking-[-2.5px] text-white"
             >
               Investing
               <br />
