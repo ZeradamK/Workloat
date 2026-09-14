@@ -108,21 +108,6 @@ export default function ProductPage() {
             agents and checked before the receipts land.
           </p>
         </motion.div>
-
-
-        {/* Fluz "It works" anatomy: centered display headline + two moment
-            canvases */}
-        <div className="mt-[clamp(96px,11vw,176px)]">
-          <h2 className="text-center text-[clamp(34px,4.5vw,64px)] font-medium leading-[1.05] tracking-[-2px] text-ink">
-            From the order
-            <br />
-            to the fill. It works.
-          </h2>
-          <p className="mx-auto mt-4 max-w-[440px] text-center text-[15px] leading-[1.5] text-sub">
-            Payloat Ledger takes every stock order an agent places and every
-            fill the broker confirms, and lines them up.
-          </p>
-        </div>
       </section>
 
       {/* the home page's markets closer, as is */}
