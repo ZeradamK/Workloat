@@ -30,19 +30,11 @@ export default function ProductPage() {
           line under it, a soft pill, then a wide rounded image card that
           carries the loop of events an agent posts, one chip at each side */}
       <section className="mx-auto max-w-[1200px] px-6 pb-[clamp(72px,9vw,140px)] pt-[170px]">
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: EASE }}
-          className="text-center text-[15px] text-sub"
-        >
-          Investing with agents
-        </motion.p>
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, ease: EASE, delay: 0.05 }}
-          className="mx-auto mt-6 max-w-[900px] text-center text-[clamp(40px,5.6vw,80px)] font-medium leading-[1.04] tracking-[-2.5px] text-ink"
+          className="mx-auto max-w-[900px] text-center text-[clamp(40px,5.6vw,80px)] font-medium leading-[1.04] tracking-[-2.5px] text-ink"
           style={{ textWrap: "balance" }}
         >
           The one ledger for every agent&apos;s spend.
