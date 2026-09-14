@@ -70,7 +70,7 @@ export default function ProductPage() {
           style={{ backgroundColor: "#bcb18e" }}
         >
           {/* zoomed on phones so the render's side cards stay out of the frame */}
-          <Image src="/product-hero-card-ui.png" alt="" fill priority unoptimized className="scale-[1.36] object-cover object-center min-[700px]:scale-100" />
+          <Image src="/product-hero-card-ui.png" alt="" fill priority unoptimized className="scale-[1.48] object-cover object-center min-[700px]:scale-100" />
         </motion.div>
       </section>
 
