@@ -38,8 +38,8 @@ const NOTIFS = [
   },
   {
     name: "Stripe",
-    bg: "#7965c1",
-    dark: true,
+    bg: "#eeeeee",
+    dark: false,
     logo: "/logos/stripe.png",
     amount: "$600.00",
     note: "Platform fees, monthly",
