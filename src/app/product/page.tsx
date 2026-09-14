@@ -1,16 +1,19 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
-import {
-  motion,
-} from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import NavDock from "@/components/NavDock";
 import FooterSection from "@/components/FooterSection";
 import MarketsSection from "@/components/MarketsSection";
 
 /**
- * Product page, Cash App outsmart-scams anatomy: massive H1, a hero canvas
- * then the markets closer and the investing section.
+ * Product page. The hero runs on the supplied cream-to-black gradient,
+ * behind the nav too: a centered headline, one line, a soft pill, then a
+ * white block on Amigo's "Define" anatomy (a two-tone headline left, the
+ * paragraph and a soft button right, a row of tabs, and a dark canvas
+ * whose graph of chips changes with the tab). Then the markets closer and
+ * the investing section.
  */
 
 const EASE = [0.25, 0.6, 0.2, 1] as const;
@@ -22,56 +25,52 @@ const LIME = "#9fe870";
 export default function ProductPage() {
   return (
     <main className="bg-white">
-      <NavDock forceDark />
+      <NavDock forceDark logoSrc="/payloat-app-icon-blacktile.png" />
 
-      {/* the hero, on Amigo's anatomy: a centered two-line headline, one
-          line under it, a soft pill, then a wide rounded image card that
-          carries the loop of events an agent posts, one chip at each side */}
-      <section className="mx-auto max-w-[1200px] px-6 pb-[clamp(72px,9vw,140px)] pt-[170px]">
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.55, ease: EASE, delay: 0.05 }}
-          className="mx-auto max-w-[900px] text-center text-[clamp(40px,5.6vw,80px)] font-medium leading-[1.04] tracking-[-2.5px] text-ink"
-          style={{ textWrap: "balance" }}
-        >
-          The one ledger for every agent&apos;s spend.
-        </motion.h1>
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.55, ease: EASE, delay: 0.12 }}
-          className="mx-auto mt-8 max-w-[560px] text-center text-[17px] leading-[1.5] text-ink"
-        >
-          Tell us what your agents may buy. We&apos;ll record the rest.
-        </motion.p>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.55, ease: EASE, delay: 0.18 }}
-          className="mt-8 flex justify-center"
-        >
-          <a
-            href="/signup"
-            className="inline-flex h-12 items-center rounded-[12px] bg-[#f2f2f0] px-6 text-[15px] font-medium text-ink shadow-[0_1px_2px_rgba(10,10,10,0.06)] transition-transform hover:scale-[1.03] active:scale-[0.97]"
+      {/* the hero on the gradient, which also sits behind the nav */}
+      <section className="relative overflow-hidden" style={{ backgroundColor: "#0a0a0a" }}>
+        <Image src="/product-hero-gradient.jpg" alt="" fill priority sizes="100vw" className="object-cover" />
+        <div className="relative mx-auto max-w-[1200px] px-6 pb-[clamp(72px,9vw,140px)] pt-[170px]">
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, ease: EASE, delay: 0.05 }}
+            className="mx-auto max-w-[900px] text-center text-[clamp(40px,5.6vw,80px)] font-medium leading-[1.04] tracking-[-2.5px] text-white"
+            style={{ textWrap: "balance" }}
           >
-            Get started
-          </a>
-        </motion.div>
+            The one ledger for every agent&apos;s spend.
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, ease: EASE, delay: 0.12 }}
+            className="mx-auto mt-8 max-w-[560px] text-center text-[17px] leading-[1.5] text-white/90"
+          >
+            Tell us what your agents may buy. We&apos;ll record the rest.
+          </motion.p>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, ease: EASE, delay: 0.18 }}
+            className="mt-8 flex justify-center"
+          >
+            <a
+              href="/signup"
+              className="inline-flex h-12 items-center rounded-[12px] bg-white px-6 text-[15px] font-medium text-ink shadow-[0_1px_2px_rgba(10,10,10,0.12)] transition-transform hover:scale-[1.03] active:scale-[0.97]"
+            >
+              Get started
+            </a>
+          </motion.div>
 
-        {/* the image card: the generated render, which carries the bloom and
-            the five UI cards itself. 16:9 from 700px so nothing is cropped;
-            portrait on phones, cropped to the bloom at the center */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: EASE, delay: 0.24 }}
-          className="relative mt-[clamp(40px,5vw,72px)] aspect-[4/5] w-full overflow-hidden rounded-[28px] min-[700px]:aspect-[16/9]"
-          style={{ backgroundColor: "#bcb18e" }}
-        >
-          {/* zoomed on phones so the render's side cards stay out of the frame */}
-          <Image src="/product-hero-card-ui.png" alt="" fill priority unoptimized className="scale-[1.48] object-cover object-center min-[700px]:scale-100" />
-        </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: EASE, delay: 0.24 }}
+            className="mt-[clamp(40px,5vw,72px)]"
+          >
+            <DefineBlock />
+          </motion.div>
+        </div>
       </section>
 
       {/* the home page's markets closer, on white */}
@@ -218,5 +217,149 @@ export default function ProductPage() {
         <FooterSection tone="light" />
       </div>
     </main>
+  );
+}
+
+/* ---------- the Define block ---------- */
+
+/* one tab per stage of an investing agent's work; each carries the copy
+   at the canvas's top left and the six chips around the agent */
+const TABS = [
+  {
+    label: "Mandate",
+    copy: "What the agent is for: the tickers it may touch, the horizon, the risk it can take, and how far it may drift before it rebalances.",
+    chips: ["SCOPE", "TICKERS", "HORIZON", "RISK", "REBALANCE", "LIMITS"],
+  },
+  {
+    label: "Caps",
+    copy: "How much it may place: per order, per day, per month, and per ticker, with who approves an exception and who gets told.",
+    chips: ["PER ORDER", "PER DAY", "PER MONTH", "BY TICKER", "APPROVALS", "ALERTS"],
+  },
+  {
+    label: "Orders",
+    copy: "Every order the agent places, from the moment it intends to trade to the fill, the partials, the cancels, and the receipt.",
+    chips: ["INTENT", "CHECKOUT", "FILL", "PARTIAL", "CANCEL", "RECEIPT"],
+  },
+  {
+    label: "Confirmations",
+    copy: "The broker's confirmations lined up against what the agent recorded, so the mismatches and the missing ones are a short list.",
+    chips: ["MATCHED", "MISSING", "MISMATCH", "LATE", "DUPLICATE", "RESOLVED"],
+  },
+  {
+    label: "Reporting",
+    copy: "The position as it stands, cost basis, and the month's result, by agent and by ticker, ready before the statement lands.",
+    chips: ["POSITION", "COST BASIS", "P&L", "BY AGENT", "BY TICKER", "EXPORT"],
+  },
+] as const;
+
+function DefineBlock() {
+  const [tab, setTab] = useState(0);
+  const t = TABS[tab];
+  return (
+    <div className="rounded-[28px] bg-white p-6 min-[900px]:p-10">
+      {/* the head: two-tone headline left, paragraph and button right */}
+      <div className="grid gap-8 min-[900px]:grid-cols-[1.2fr_1fr] min-[900px]:gap-16">
+        <h2 className="text-[clamp(32px,3.6vw,52px)] font-medium leading-[1.08] tracking-[-1.6px]">
+          <span className="block text-ink">Control</span>
+          <span className="block text-[#8a8883]">every order an investing agent places</span>
+        </h2>
+        <div>
+          <p className="text-[16px] leading-[1.55] text-ink">
+            Payloat gives an investing agent a mandate, a cap, and a ledger. Every order it places
+            is recorded with the task behind it, matched to the broker&apos;s confirmation, and rolled
+            into a position you can read before the statement lands.
+          </p>
+          <a
+            href="/integration"
+            className="mt-6 inline-flex h-11 items-center rounded-[10px] bg-[#f2f2f0] px-5 text-[14px] font-medium text-ink transition-transform hover:scale-[1.03] active:scale-[0.97]"
+          >
+            See the API
+          </a>
+        </div>
+      </div>
+
+      {/* the tabs */}
+      <div className="mt-12 flex gap-6 overflow-x-auto text-[16px] min-[900px]:gap-8" style={{ scrollbarWidth: "none" }}>
+        {TABS.map((x, i) => (
+          <button
+            key={x.label}
+            type="button"
+            onClick={() => setTab(i)}
+            className={`shrink-0 pb-3 transition-colors ${i === tab ? "text-ink" : "text-[#8a8883] hover:text-ink"}`}
+          >
+            {x.label}
+          </button>
+        ))}
+      </div>
+
+      {/* the canvas: the copy top left, the graph right */}
+      <div className="relative mt-4 overflow-hidden rounded-[22px] bg-[#0a0a0a] p-6 text-white min-[900px]:p-8">
+        <div className="grid gap-10 min-[900px]:grid-cols-[1fr_1.3fr] min-[900px]:items-center">
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.p
+              key={t.label}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.3, ease: EASE }}
+              className="max-w-[360px] self-start text-[15px] leading-[1.55] text-white/80"
+            >
+              {t.copy}
+            </motion.p>
+          </AnimatePresence>
+          <AgentGraph chips={t.chips} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* the six chips around the agent, on a slowly turning dotted ring; the
+   set swaps with the tab, each chip popping in in turn */
+const ANGLES = [-90, -30, 30, 90, 150, 210];
+
+function AgentGraph({ chips }: { chips: readonly string[] }) {
+  return (
+    <div className="relative mx-auto aspect-square w-full max-w-[520px] scale-[0.78] min-[520px]:scale-100">
+      <motion.svg
+        viewBox="0 0 100 100"
+        className="absolute inset-0 h-full w-full"
+        animate={{ rotate: 360 }}
+        transition={{ repeat: Infinity, duration: 90, ease: "linear" }}
+        aria-hidden
+      >
+        <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth="0.35" strokeDasharray="0.35 2.2" strokeLinecap="round" />
+      </motion.svg>
+      {/* the agent at the center */}
+      <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-2">
+        <Image src="/payloat-icon-dark.svg" alt="" width={34} height={34} className="h-[34px] w-[34px]" style={{ filter: "invert(1)" }} />
+        <span className="text-[11px] font-medium tracking-[0.16em] text-white/85" style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace" }}>
+          INVESTING AGENT
+        </span>
+      </div>
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.div key={chips.join("|")} className="absolute inset-0">
+          {chips.map((c, i) => {
+            const a = (ANGLES[i] * Math.PI) / 180;
+            const x = 50 + 40 * Math.cos(a);
+            const y = 50 + 40 * Math.sin(a);
+            return (
+              <motion.span
+                key={c}
+                initial={{ opacity: 0, scale: 0.85 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ duration: 0.35, ease: EASE, delay: i * 0.07 }}
+                className="absolute flex -translate-x-1/2 -translate-y-1/2 items-center gap-3 whitespace-nowrap rounded-[10px] px-4 py-3 text-[11px] font-medium tracking-[0.14em] text-white"
+                style={{ left: `${x}%`, top: `${y}%`, fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", backgroundColor: "#1a1a1a", border: "1px solid rgba(255,255,255,0.14)" }}
+              >
+                {c}
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.55)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M12 20h9M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4L16.5 3.5Z" /></svg>
+              </motion.span>
+            );
+          })}
+        </motion.div>
+      </AnimatePresence>
+    </div>
   );
 }
