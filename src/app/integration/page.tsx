@@ -7,6 +7,7 @@ import { AnimatePresence, animate, motion } from "motion/react";
 import NavDock from "@/components/NavDock";
 import FooterSection from "@/components/FooterSection";
 import SpendMixSection from "@/components/SpendMixSection";
+import AgentsBuiltSection from "@/components/AgentsBuiltSection";
 import { productLight } from "@/components/introProgress";
 
 /**
@@ -263,6 +264,9 @@ export default function LedgerPage() {
           Any US bank through Teller or Plaid. Cards from Brex, Ramp, and Mercury by statement.
         </motion.p>
       </section>
+
+      {/* 4. built for agents: the agent's own view, X Money's anatomy */}
+      <AgentsBuiltSection />
 
       {/* 5. team and agents side by side */}
       <section className="mx-auto max-w-[1200px] px-6 py-[clamp(56px,7vw,112px)]">
