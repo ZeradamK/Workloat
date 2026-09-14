@@ -44,6 +44,11 @@ const BANKS = [
 /* the hero's ground continues this far under the next section, fading to
    white by its paragraph; the phone frame fades out over the same stretch
    instead of being cut */
+/* the return to blue above the footer: white for the first stretch under
+   the banks' caption, then a slow ease into the gradient */
+const LEAD = "520px";
+const LEAD_FADE = "linear-gradient(to bottom, #ffffff 0%, rgba(255,255,255,0.98) 14%, rgba(255,255,255,0.85) 34%, rgba(255,255,255,0.5) 58%, rgba(255,255,255,0.15) 82%, rgba(255,255,255,0) 100%)";
+
 const TAIL = "420px";
 /* the next section's head starts this far above the tail's end, on the
    last, near-white stretch of the fade */
@@ -233,8 +238,9 @@ export default function LedgerPage() {
       />
       </div>
 
-      {/* 3. connected banks */}
-      <section className="mx-auto max-w-[1200px] px-6 py-[clamp(56px,7vw,112px)]">
+      {/* 3. connected banks; the page's ground begins turning blue again
+          right under its last line */}
+      <section className="mx-auto max-w-[1200px] px-6 pb-0 pt-[clamp(56px,7vw,112px)]">
         <motion.p {...up} className="text-center text-[15px] text-sub">
           Reads from the banks and cards you already use
         </motion.p>
@@ -253,7 +259,15 @@ export default function LedgerPage() {
         </motion.p>
       </section>
 
-      <FooterSection />
+      {/* the ground loops back to the blue for the footer: the gradient
+          returns under the banks' last line and the type goes white */}
+      <div className="relative overflow-hidden" style={{ backgroundColor: "#0a1fd2" }}>
+        <Image src="/slack-gradient.jpg" alt="" fill sizes="100vw" className="object-cover object-bottom" />
+        <div className="absolute inset-x-0 top-0" style={{ height: LEAD, background: LEAD_FADE }} />
+        <div className="relative" style={{ paddingTop: `calc(${LEAD} - 96px)` }}>
+          <FooterSection tone="light" />
+        </div>
+      </div>
     </main>
   );
 }

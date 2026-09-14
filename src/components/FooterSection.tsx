@@ -41,7 +41,10 @@ const COLS: { label: string; links: { label: string; href: string }[] }[] = [
   },
 ];
 
-export default function FooterSection() {
+export default function FooterSection({ tone = "dark" }: { /** "light" sets white type and the white mark, for a dark or colored ground */ tone?: "dark" | "light" }) {
+  const light = tone === "light";
+  const ink = light ? "text-white" : "text-ink";
+  const sub = light ? "text-white/70" : "text-sub";
   return (
     <footer className="px-8 pb-10 pt-24">
       {/* centered mark */}
@@ -52,6 +55,7 @@ export default function FooterSection() {
           width={90}
           height={90}
           className="h-[90px] w-[90px]"
+          style={light ? { filter: "invert(1)" } : undefined}
         />
       </div>
 
@@ -59,7 +63,7 @@ export default function FooterSection() {
       <div className="mt-36 grid gap-12 min-[800px]:grid-cols-4">
         {COLS.map((col) => (
           <div key={col.label}>
-            <p className="text-[13px] uppercase tracking-[0.02em] text-sub">
+            <p className={`text-[13px] uppercase tracking-[0.02em] ${sub}`}>
               {col.label}
             </p>
             <ul className="mt-7 space-y-[4px]">
@@ -68,14 +72,14 @@ export default function FooterSection() {
                   {link.href.startsWith("/") ? (
                     <Link
                       href={link.href}
-                      className="text-[15px] uppercase tracking-[0.02em] text-ink transition-opacity hover:opacity-60"
+                      className={`text-[15px] uppercase tracking-[0.02em] ${ink} transition-opacity hover:opacity-60`}
                     >
                       {link.label}
                     </Link>
                   ) : (
                     <a
                       href={link.href}
-                      className="text-[15px] uppercase tracking-[0.02em] text-ink transition-opacity hover:opacity-60"
+                      className={`text-[15px] uppercase tracking-[0.02em] ${ink} transition-opacity hover:opacity-60`}
                     >
                       {link.label}
                     </a>
@@ -88,10 +92,10 @@ export default function FooterSection() {
       </div>
 
       {/* copyright */}
-      <p className="mt-40 text-[13px] text-sub">
+      <p className={`mt-40 text-[13px] ${sub}`}>
         Product imagery and numbers shown are illustrative.
       </p>
-      <p className="mt-2 text-[14px] text-ink">
+      <p className={`mt-2 text-[14px] ${ink}`}>
         © 2026 Payloat. All rights reserved.
       </p>
     </footer>
