@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef } from "react";
-import { animate, motion } from "motion/react";
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, animate, motion } from "motion/react";
 import NavDock from "@/components/NavDock";
 import FooterSection from "@/components/FooterSection";
 import SpendMixSection from "@/components/SpendMixSection";
@@ -78,7 +78,7 @@ const TAIL = "420px";
 /* the next section's head starts this far above the tail's end, on the
    last, near-white stretch of the fade */
 const GAP = "110px";
-const FRAME_FADE = "linear-gradient(to bottom, #000 0%, #000 66%, rgba(0,0,0,0.5) 82%, rgba(0,0,0,0.12) 94%, transparent 100%)";
+const FRAME_FADE = "linear-gradient(to bottom, #000 0%, #000 68%, rgba(0,0,0,0.5) 84%, rgba(0,0,0,0.12) 95%, transparent 100%)";
 const GROUND_FADE = "linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.15) 20%, rgba(255,255,255,0.5) 42%, rgba(255,255,255,0.85) 62%, rgba(255,255,255,0.98) 82%, #ffffff 100%)";
 
 const CURL = `curl -X POST https://api.payloat.com/ledger/record \\
@@ -91,6 +91,73 @@ const CURL = `curl -X POST https://api.payloat.com/ledger/record \\
     "amount": 216.50,
     "cap": 200.00
   }'`;
+
+/* the charges that slide into the frame on load, newest on top, and the
+   figure the month starts from before they land */
+const START = 6090;
+const CHARGES = [
+  { at: 0.9, name: "OpenAI", logo: "/logos/openai.svg", time: "Today, 11:28", agent: "Software agent", amount: 2500 },
+  { at: 2.1, name: "Stripe", logo: "/logos/stripe.png", time: "Today, 11:31", agent: "Ops agent", amount: 600 },
+] as const;
+
+/* the month's figure: starts at what was there and counts each charge in
+   as its notice lands */
+function Counted() {
+  const [v, setV] = useState(START);
+  useEffect(() => {
+    const timers: number[] = [];
+    let total = START;
+    CHARGES.forEach((c) => {
+      timers.push(
+        window.setTimeout(() => {
+          const from = total;
+          total += c.amount;
+          animate(from, total, { duration: 0.7, ease: EASE, onUpdate: (x) => setV(Math.round(x)) });
+        }, c.at * 1000 + 250),
+      );
+    });
+    return () => timers.forEach((t) => window.clearTimeout(t));
+  }, []);
+  return <>${v.toLocaleString("en-US")}</>;
+}
+
+/* the notices: each slides up and fades in on its cue, the newest on top */
+function Notices() {
+  const [shown, setShown] = useState(0);
+  useEffect(() => {
+    const timers = CHARGES.map((c, i) => window.setTimeout(() => setShown(i + 1), c.at * 1000));
+    return () => timers.forEach((t) => window.clearTimeout(t));
+  }, []);
+  const list = CHARGES.slice(0, shown).slice().reverse();
+  return (
+    <div className="absolute inset-x-6 top-[40%] flex flex-col gap-3">
+      <AnimatePresence initial={false}>
+        {list.map((c) => (
+          <motion.div
+            key={c.name}
+            layout
+            initial={{ opacity: 0, y: 28, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ type: "spring", stiffness: 320, damping: 28 }}
+            className="flex items-center gap-4 rounded-[20px] bg-white p-3 pr-5"
+          >
+            <span className="flex h-[56px] w-[56px] shrink-0 items-center justify-center rounded-full bg-[#eeeeee]">
+              <Image src={c.logo} alt="" width={28} height={28} className="h-[28px] w-[28px] rounded-[6px] object-contain" />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-[18px] font-semibold leading-tight text-ink min-[900px]:text-[20px]">{c.name}</span>
+              <span className="block truncate text-[13px] text-sub min-[900px]:text-[16px]">
+                {c.time}
+                <span className="hidden min-[900px]:inline"> · {c.agent}</span>
+              </span>
+            </span>
+            <span className="font-numeral text-[18px] font-semibold tabular-nums text-ink min-[900px]:text-[20px]">${c.amount.toLocaleString("en-US")}</span>
+          </motion.div>
+        ))}
+      </AnimatePresence>
+    </div>
+  );
+}
 
 export default function LedgerPage() {
   /* the dock runs light while the hero's blue is under it and eases to
@@ -123,77 +190,75 @@ export default function LedgerPage() {
       <NavDock forceDark />
 
       {/* 1. hero, on Revolut's anatomy: a full-bleed ground, the headline in
-          bold caps at the left, a line of copy and a black pill, and an
-          outlined phone frame over the image with the month's figure at
-          its center and a charge card at its foot, cut by the section's
-          bottom edge. The ground is the brand gradient until a photo lands. */}
+          bold caps, a line of copy and a black pill, and an outlined phone
+          frame with the month's figure and the charges that make it up.
+          The frame sits below the headline, beside the copy on desktop and
+          under the button on phones, and runs down into the ground's fade.
+          On load, two charges slide in like notifications and the figure
+          counts them in. The ground is the brand gradient until a photo lands. */}
       <section ref={heroRef} className="relative overflow-hidden" style={{ backgroundColor: "#0a1fd2", paddingBottom: TAIL }}>
         <Image src="/slack-gradient.jpg" alt="" fill priority sizes="100vw" className="object-cover" />
         {/* the ground runs on under the next section's head and fades to white there */}
         <div className="absolute inset-x-0 bottom-0" style={{ height: TAIL, background: GROUND_FADE }} />
-        <div className="relative mx-auto grid max-w-[1200px] px-6 pt-[150px] min-[900px]:min-h-[100vh] min-[900px]:grid-cols-[1fr_1fr] min-[900px]:pt-[170px]">
-          {/* the copy, over the frame on desktop */}
-          <div className="relative z-10 min-[900px]:col-span-2">
-            <motion.h1
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.55, ease: EASE }}
-              className="max-w-[900px] text-[clamp(44px,7vw,104px)] font-black uppercase leading-[0.96] tracking-[-2px] text-white"
-            >
-              Every bank,
-              <br />
-              every agent
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.55, ease: EASE, delay: 0.1 }}
-              className="mt-8 max-w-[440px] text-[clamp(17px,1.4vw,20px)] leading-[1.45] text-white/90"
-            >
-              Chase, Mercury, Brex, or any bank through Teller and Plaid. Connect once, and every
-              charge lands beside the agent that made it.
-            </motion.p>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.55, ease: EASE, delay: 0.18 }}
-              className="mt-8"
-            >
-              <Link
-                href="/signup"
-                className="inline-flex h-12 items-center rounded-full bg-[#0a0a0a] px-6 text-[15px] font-medium text-white transition-transform hover:scale-[1.03] active:scale-[0.97]"
+        <div className="relative mx-auto max-w-[1200px] px-6 pt-[150px] min-[900px]:pt-[170px]">
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, ease: EASE }}
+            className="mx-auto max-w-[900px] text-center text-[clamp(44px,7vw,104px)] font-black uppercase leading-[0.96] tracking-[-2px] text-white min-[900px]:mx-0 min-[900px]:text-left"
+          >
+            Every bank,
+            <br />
+            every agent
+          </motion.h1>
+
+          <div className="mt-8 grid gap-12 min-[900px]:grid-cols-2 min-[900px]:items-start min-[900px]:gap-10">
+            {/* the copy: centered on phones, left on desktop */}
+            <div className="relative z-10 text-center min-[900px]:text-left">
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.55, ease: EASE, delay: 0.1 }}
+                className="mx-auto max-w-[440px] text-[clamp(17px,1.4vw,20px)] leading-[1.45] text-white/90 min-[900px]:mx-0"
               >
-                Connect a bank
-              </Link>
+                Chase, Mercury, Brex, or any bank through Teller and Plaid. Connect once, and every
+                charge lands beside the agent that made it.
+              </motion.p>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.55, ease: EASE, delay: 0.18 }}
+                className="mt-8"
+              >
+                <Link
+                  href="/signup"
+                  className="inline-flex h-12 items-center rounded-full bg-[#0a0a0a] px-6 text-[15px] font-medium text-white transition-transform hover:scale-[1.03] active:scale-[0.97]"
+                >
+                  Connect a bank
+                </Link>
+              </motion.div>
+            </div>
+
+            {/* the phone frame: under the button on phones, beside the copy
+                on desktop, running down into the fade */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: EASE, delay: 0.2 }}
+              className="relative mx-auto mb-[-120px] h-[640px] w-[min(92%,380px)] min-[900px]:mx-0 min-[900px]:mb-[-300px] min-[900px]:h-[760px] min-[900px]:w-[min(100%,540px)] min-[900px]:justify-self-end"
+              style={{ maskImage: FRAME_FADE, WebkitMaskImage: FRAME_FADE }}
+            >
+              <div className="absolute inset-x-0 top-0 h-[200%] rounded-[36px]" style={{ border: "2px solid rgba(255,255,255,0.55)" }} />
+              <div className="absolute inset-x-0 top-[9%] flex flex-col items-center text-white">
+                <p className="text-[18px] font-medium text-white/90">Agent spend</p>
+                <p className="font-numeral mt-1 text-[clamp(48px,5vw,72px)] font-bold leading-none tracking-[-2px] tabular-nums">
+                  <Counted />
+                </p>
+                <span className="mt-5 rounded-full bg-white px-7 py-3 text-[18px] font-medium text-ink">Agents</span>
+              </div>
+              <Notices />
             </motion.div>
           </div>
-
-          {/* the phone frame: an outline over the ground, the figure at its
-              center, the charge card at its foot */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: EASE, delay: 0.2 }}
-            className="relative mx-auto mt-12 h-[600px] w-[min(92%,380px)] min-[900px]:absolute min-[900px]:mt-0 min-[900px]:h-[calc(100vh-260px)] min-[900px]:min-h-[560px] min-[900px]:w-[min(40vw,540px)] min-[900px]:-translate-x-[10%] min-[900px]:left-1/2"
-            style={{ bottom: "40px", maskImage: FRAME_FADE, WebkitMaskImage: FRAME_FADE }}
-          >
-            <div className="absolute inset-x-0 top-0 h-[200%] rounded-[36px]" style={{ border: "2px solid rgba(255,255,255,0.55)" }} />
-            <div className="absolute inset-x-0 top-[16%] flex flex-col items-center text-white">
-              <p className="text-[18px] font-medium text-white/90">Agent spend</p>
-              <p className="font-numeral mt-1 text-[clamp(48px,5vw,72px)] font-bold leading-none tracking-[-2px] tabular-nums">$9,190</p>
-              <span className="mt-5 rounded-full bg-white px-7 py-3 text-[18px] font-medium text-ink">Agents</span>
-            </div>
-            <div className="absolute inset-x-6 top-[49%] flex items-center gap-4 rounded-[20px] bg-white p-3 pr-5">
-              <span className="flex h-[56px] w-[56px] shrink-0 items-center justify-center rounded-full bg-[#eeeeee]">
-                <Image src="/logos/openai.svg" alt="" width={28} height={28} className="h-[28px] w-[28px] object-contain" />
-              </span>
-              <span className="min-w-0 flex-1">
-                <span className="block text-[18px] font-semibold leading-tight text-ink min-[900px]:text-[20px]">OpenAI</span>
-                <span className="block truncate text-[14px] text-sub min-[900px]:text-[16px]">Today, 11:28 · Software agent</span>
-              </span>
-              <span className="font-numeral text-[20px] font-semibold tabular-nums text-ink">$2,500</span>
-            </div>
-          </motion.div>
         </div>
       </section>
 
