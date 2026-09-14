@@ -12,6 +12,7 @@ import {
 import NavDock from "@/components/NavDock";
 import FooterSection from "@/components/FooterSection";
 import { productLight } from "@/components/introProgress";
+import MarketsSection from "@/components/MarketsSection";
 
 /**
  * Product page, Cash App outsmart-scams anatomy: massive H1, a hero canvas
@@ -113,16 +114,19 @@ export default function ProductPage() {
             canvases */}
         <div className="mt-[clamp(96px,11vw,176px)]">
           <h2 className="text-center text-[clamp(34px,4.5vw,64px)] font-medium leading-[1.05] tracking-[-2px] text-ink">
-            From the agent or
+            From the order
             <br />
-            from the card. It works.
+            to the fill. It works.
           </h2>
           <p className="mx-auto mt-4 max-w-[440px] text-center text-[15px] leading-[1.5] text-sub">
-            Payloat Ledger takes what agents record and what cards charge,
-            and lines them up.
+            Payloat Ledger takes every stock order an agent places and every
+            fill the broker confirms, and lines them up.
           </p>
         </div>
       </section>
+
+      {/* the home page's markets closer, as is */}
+      <MarketsSection />
 
       {/* Investing with agents, on Wise's hero anatomy: a deep green ground,
           the headline in heavy lime caps, the copy in white with lime links
