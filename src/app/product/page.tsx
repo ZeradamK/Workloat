@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "motion/react";
 import NavDock from "@/components/NavDock";
 import FooterSection from "@/components/FooterSection";
 import MarketsSection from "@/components/MarketsSection";
+import AgentScene, { type SceneKey } from "@/components/AgentScenes";
 
 /**
  * Product page. The hero runs on the supplied cream-to-black gradient,
@@ -25,7 +26,7 @@ const LIME = "#9fe870";
 export default function ProductPage() {
   return (
     <main className="bg-white">
-      <NavDock forceDark logoSrc="/payloat-app-icon-blacktile.png" />
+      <NavDock forceDark logoSrc="/payloat-app-icon-blacktile.png" surface="#f7f2eb" ctaOutline />
 
       {/* the hero on the gradient, which also sits behind the nav */}
       <section className="relative overflow-hidden" style={{ backgroundColor: "#0a0a0a" }}>
@@ -223,32 +224,32 @@ export default function ProductPage() {
 /* ---------- the Define block ---------- */
 
 /* one tab per stage of an investing agent's work; each carries the copy
-   at the canvas's top left and the six chips around the agent */
+   at the canvas's top left and names the scene drawn beside it */
 const TABS = [
   {
     label: "Mandate",
+    scene: "mandate" as SceneKey,
     copy: "What the agent is for: the tickers it may touch, the horizon, the risk it can take, and how far it may drift before it rebalances.",
-    chips: ["SCOPE", "TICKERS", "HORIZON", "RISK", "REBALANCE", "LIMITS"],
   },
   {
     label: "Caps",
+    scene: "caps" as SceneKey,
     copy: "How much it may place: per order, per day, per month, and per ticker, with who approves an exception and who gets told.",
-    chips: ["PER ORDER", "PER DAY", "PER MONTH", "BY TICKER", "APPROVALS", "ALERTS"],
   },
   {
     label: "Orders",
+    scene: "orders" as SceneKey,
     copy: "Every order the agent places, from the moment it intends to trade to the fill, the partials, the cancels, and the receipt.",
-    chips: ["INTENT", "CHECKOUT", "FILL", "PARTIAL", "CANCEL", "RECEIPT"],
   },
   {
     label: "Confirmations",
+    scene: "confirmations" as SceneKey,
     copy: "The broker's confirmations lined up against what the agent recorded, so the mismatches and the missing ones are a short list.",
-    chips: ["MATCHED", "MISSING", "MISMATCH", "LATE", "DUPLICATE", "RESOLVED"],
   },
   {
     label: "Reporting",
+    scene: "reporting" as SceneKey,
     copy: "The position as it stands, cost basis, and the month's result, by agent and by ticker, ready before the statement lands.",
-    chips: ["POSITION", "COST BASIS", "P&L", "BY AGENT", "BY TICKER", "EXPORT"],
   },
 ] as const;
 
@@ -307,59 +308,9 @@ function DefineBlock() {
               {t.copy}
             </motion.p>
           </AnimatePresence>
-          <AgentGraph chips={t.chips} />
+          <AgentScene scene={t.scene} />
         </div>
       </div>
-    </div>
-  );
-}
-
-/* the six chips around the agent, on a slowly turning dotted ring; the
-   set swaps with the tab, each chip popping in in turn */
-const ANGLES = [-90, -30, 30, 90, 150, 210];
-
-function AgentGraph({ chips }: { chips: readonly string[] }) {
-  return (
-    <div className="relative mx-auto aspect-square w-full max-w-[520px] scale-[0.78] min-[520px]:scale-100">
-      <motion.svg
-        viewBox="0 0 100 100"
-        className="absolute inset-0 h-full w-full"
-        animate={{ rotate: 360 }}
-        transition={{ repeat: Infinity, duration: 90, ease: "linear" }}
-        aria-hidden
-      >
-        <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth="0.35" strokeDasharray="0.35 2.2" strokeLinecap="round" />
-      </motion.svg>
-      {/* the agent at the center */}
-      <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-2">
-        <Image src="/payloat-icon-dark.svg" alt="" width={34} height={34} className="h-[34px] w-[34px]" style={{ filter: "invert(1)" }} />
-        <span className="text-[11px] font-medium tracking-[0.16em] text-white/85" style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace" }}>
-          INVESTING AGENT
-        </span>
-      </div>
-      <AnimatePresence mode="wait" initial={false}>
-        <motion.div key={chips.join("|")} className="absolute inset-0">
-          {chips.map((c, i) => {
-            const a = (ANGLES[i] * Math.PI) / 180;
-            const x = 50 + 40 * Math.cos(a);
-            const y = 50 + 40 * Math.sin(a);
-            return (
-              <motion.span
-                key={c}
-                initial={{ opacity: 0, scale: 0.85 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.35, ease: EASE, delay: i * 0.07 }}
-                className="absolute flex -translate-x-1/2 -translate-y-1/2 items-center gap-3 whitespace-nowrap rounded-[10px] px-4 py-3 text-[11px] font-medium tracking-[0.14em] text-white"
-                style={{ left: `${x}%`, top: `${y}%`, fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", backgroundColor: "#1a1a1a", border: "1px solid rgba(255,255,255,0.14)" }}
-              >
-                {c}
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.55)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M12 20h9M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4L16.5 3.5Z" /></svg>
-              </motion.span>
-            );
-          })}
-        </motion.div>
-      </AnimatePresence>
     </div>
   );
 }

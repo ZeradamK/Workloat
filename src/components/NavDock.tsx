@@ -95,7 +95,14 @@ export default function NavDock({
   forceDark = false,
   logoSrc = "/payloat-app-icon-v2.png",
   logoLightSrc,
+  surface,
+  ctaOutline = false,
 }: {
+  /** A fixed dock color for the whole page (light type on it is assumed
+      dark), in place of the scroll-driven black-or-gray surface. */
+  surface?: string;
+  /** A 1px white border on the Get started pill, for dark grounds. */
+  ctaOutline?: boolean;
   /** The app icon at the top left. */
   logoSrc?: string;
   /** A white-tile version that crossfades in over the standard icon while
@@ -179,12 +186,12 @@ export default function NavDock({
     /* the Slack act's gray box: dark while it is under the dock */
     return base * (1 - darkOverride) * (1 - slackDark.get());
   });
-  const dockBg = useTransform(lightAmt, [0, 1], ["#0a0a0a", "#eeeeee"]);
-  const navFg = useTransform(lightAmt, [0, 1], ["#ffffff", "#0a0a0a"]);
+  const dockBg = useTransform(lightAmt, [0, 1], [surface ?? "#0a0a0a", surface ?? "#eeeeee"]);
+  const navFg = useTransform(lightAmt, [0, 1], [surface ? "#0a0a0a" : "#ffffff", "#0a0a0a"]);
   const navLabel = useTransform(
     lightAmt,
     [0, 1],
-    ["rgba(255,255,255,0.4)", "rgba(10,10,10,0.4)"],
+    [surface ? "rgba(10,10,10,0.4)" : "rgba(255,255,255,0.4)", "rgba(10,10,10,0.4)"],
   );
 
   const open = active !== null;
@@ -414,6 +421,7 @@ export default function NavDock({
           <Link
             href="/signup"
             className="flex h-11 items-center rounded-full bg-[#0a0a0a] px-5 text-[13px] font-semibold tracking-[-0.5px] text-white transition-transform hover:scale-[1.03] active:scale-[0.97]"
+            style={ctaOutline ? { border: "1px solid #ffffff" } : undefined}
           >
             Get started
           </Link>
