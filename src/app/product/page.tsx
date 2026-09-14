@@ -69,7 +69,8 @@ export default function ProductPage() {
           className="relative mt-[clamp(40px,5vw,72px)] aspect-[4/5] w-full overflow-hidden rounded-[28px] min-[700px]:aspect-[16/9]"
           style={{ backgroundColor: "#bcb18e" }}
         >
-          <Image src="/product-hero-card-ui.png" alt="" fill priority unoptimized className="object-cover object-center" />
+          {/* zoomed on phones so the render's side cards stay out of the frame */}
+          <Image src="/product-hero-card-ui.png" alt="" fill priority unoptimized className="scale-[1.36] object-cover object-center min-[700px]:scale-100" />
         </motion.div>
       </section>
 
