@@ -10,9 +10,7 @@ import MarketsSection from "@/components/MarketsSection";
 
 /**
  * Product page, Cash App outsmart-scams anatomy: massive H1, a hero canvas
- * with a corner paragraph, then the two "it works" canvases. Canvases are
- * reserved for supplied motion assets (shader / video / 3D) and ship as
- * clean color fields until then.
+ * then the markets closer and the investing section.
  */
 
 const EASE = [0.25, 0.6, 0.2, 1] as const;
@@ -61,15 +59,17 @@ export default function ProductPage() {
           </a>
         </motion.div>
 
-        {/* the image card */}
+        {/* the image card: the generated render, which carries the bloom and
+            the five UI cards itself. 16:9 from 700px so nothing is cropped;
+            portrait on phones, cropped to the bloom at the center */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: EASE, delay: 0.24 }}
-          className="relative mt-[clamp(40px,5vw,72px)] aspect-[4/5] w-full overflow-hidden rounded-[28px] min-[700px]:aspect-[1.6] min-[1000px]:aspect-[2.1]"
+          className="relative mt-[clamp(40px,5vw,72px)] aspect-[4/5] w-full overflow-hidden rounded-[28px] min-[700px]:aspect-[16/9]"
+          style={{ backgroundColor: "#bcb18e" }}
         >
-          <Image src="/product-hero-bg.jpg" alt="" fill priority sizes="(min-width: 1200px) 1200px, 100vw" className="object-cover" />
-          <Loop />
+          <Image src="/product-hero-card-ui.png" alt="" fill priority unoptimized className="object-cover object-center" />
         </motion.div>
       </section>
 
@@ -217,49 +217,5 @@ export default function ProductPage() {
         <FooterSection tone="light" />
       </div>
     </main>
-  );
-}
-
-/* The loop drawn over the hero card: a rounded track inset from the
-   card's edges, a slow dashed flow running around it, and one chip at
-   each side for the four events an agent posts. */
-const EVENTS = [
-  { label: "INTENT", pos: "left-1/2 top-[11%] -translate-x-1/2 -translate-y-1/2" },
-  { label: "CHECKOUT", pos: "right-[11%] top-1/2 translate-x-1/2 -translate-y-1/2" },
-  { label: "RECEIPT", pos: "left-1/2 bottom-[11%] -translate-x-1/2 translate-y-1/2" },
-  { label: "STATUS", pos: "left-[11%] top-1/2 -translate-x-1/2 -translate-y-1/2" },
-] as const;
-
-function Loop() {
-  return (
-    <>
-      <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
-        <rect x="11" y="11" width="78" height="78" rx="4" ry="9" fill="none" stroke="rgba(10,10,10,0.45)" strokeWidth="0.18" vectorEffect="non-scaling-stroke" />
-        <motion.rect
-          x="11"
-          y="11"
-          width="78"
-          height="78"
-          rx="4"
-          ry="9"
-          fill="none"
-          stroke="rgba(255,255,255,0.7)"
-          strokeWidth="0.18"
-          vectorEffect="non-scaling-stroke"
-          strokeDasharray="0.8 2.4"
-          animate={{ strokeDashoffset: [0, -32] }}
-          transition={{ repeat: Infinity, duration: 14, ease: "linear" }}
-        />
-      </svg>
-      {EVENTS.map((e) => (
-        <span
-          key={e.label}
-          className={`absolute ${e.pos} rounded-[10px] px-4 py-3 text-[11px] font-medium tracking-[0.14em] text-ink`}
-          style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", backgroundColor: "rgba(245,245,242,0.82)", boxShadow: "0 1px 0 rgba(255,255,255,0.6) inset, 0 6px 18px rgba(10,10,10,0.12)", backdropFilter: "blur(6px)" }}
-        >
-          {e.label}
-        </span>
-      ))}
-    </>
   );
 }
