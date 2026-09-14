@@ -200,9 +200,19 @@ export default function LedgerPage() {
               >
                 <Link
                   href="/signup"
-                  className="inline-flex h-12 items-center rounded-full bg-[#0a0a0a] px-6 text-[15px] font-medium text-white transition-transform hover:scale-[1.03] active:scale-[0.97]"
+                  className="group inline-flex h-12 items-center gap-1.5 rounded-full bg-white px-6 text-[15px] font-medium text-ink transition-transform hover:scale-[1.03] active:scale-[0.97]"
                 >
                   Connect a bank
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    aria-hidden
+                    className="transition-transform duration-200 ease-out group-hover:translate-x-[3px]"
+                  >
+                    <path d="M2.5 8h11m0 0L8.8 3.3M13.5 8l-4.7 4.7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
                 </Link>
               </motion.div>
             </div>
