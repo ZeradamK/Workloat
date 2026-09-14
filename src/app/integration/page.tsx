@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, animate, motion } from "motion/react";
 import NavDock from "@/components/NavDock";
 import FooterSection from "@/components/FooterSection";
@@ -128,29 +128,10 @@ function Notices() {
 }
 
 export default function LedgerPage() {
-  /* the dock runs light while the hero's blue is under it and eases to
-     dark as the next section comes up */
-  const heroRef = useRef<HTMLElement>(null);
-  const litRef = useRef(false);
+  /* the dock runs light (#eeeeee) the whole way down this page */
   useEffect(() => {
-    const onScroll = () => {
-      const r = heroRef.current?.getBoundingClientRect();
-      if (!r) return;
-      /* dark once the tail's midpoint, where the blue is half gone, passes
-         under the dock; the next section's head arrives right after */
-      const blueBottom = r.bottom - parseFloat(TAIL) * 0.5;
-      const lit = blueBottom > 68;
-      if (lit !== litRef.current) {
-        litRef.current = lit;
-        animate(productLight, lit ? 1 : 0, { duration: 0.3, ease: "easeOut" });
-      }
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      productLight.set(0);
-    };
+    productLight.set(1);
+    return () => productLight.set(0);
   }, []);
 
   return (
@@ -164,7 +145,7 @@ export default function LedgerPage() {
           under the button on phones, and runs down into the ground's fade.
           On load, two charges slide in like notifications and the figure
           counts them in. The ground is the brand gradient until a photo lands. */}
-      <section ref={heroRef} className="relative overflow-hidden" style={{ backgroundColor: "#0a1fd2", paddingBottom: TAIL }}>
+      <section className="relative overflow-hidden" style={{ backgroundColor: "#0a1fd2", paddingBottom: TAIL }}>
         <Image src="/slack-gradient.jpg" alt="" fill priority sizes="100vw" className="object-cover" />
         {/* the ground runs on under the next section's head and fades to white there */}
         <div className="absolute inset-x-0 bottom-0" style={{ height: TAIL, background: GROUND_FADE }} />
