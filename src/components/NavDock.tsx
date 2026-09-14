@@ -94,10 +94,14 @@ export default function NavDock({
   introChoreo = false,
   forceDark = false,
   logoSrc = "/payloat-app-icon-v2.png",
+  logoLightSrc,
 }: {
-  /** The app icon at the top left; pages on a dark or colored ground can
-      pass the white-tile version. Same size and radius either way. */
+  /** The app icon at the top left. */
   logoSrc?: string;
+  /** A white-tile version that crossfades in over the standard icon while
+      the page's `productLight` signal is up (over a colored hero) and back
+      out as the page scrolls on. Same size and radius. */
+  logoLightSrc?: string;
   /** Sync the nav's entrance to the intro scroll act: the dock blurs in
       as the phone screen fills the viewport, then the logo and buttons
       ease in once the phone has fully vanished. */
@@ -221,14 +225,28 @@ export default function NavDock({
             className="block transition-opacity hover:opacity-80"
             aria-label="Payloat home"
           >
-            <Image
-              src={logoSrc}
-              alt="Payloat"
-              width={50}
-              height={50}
-              priority
-              className="h-[50px] w-[50px] rounded-[11px]"
-            />
+            <span className="relative block h-[50px] w-[50px]">
+              <Image
+                src={logoSrc}
+                alt="Payloat"
+                width={50}
+                height={50}
+                priority
+                className="h-[50px] w-[50px] rounded-[11px]"
+              />
+              {logoLightSrc && (
+                <motion.span className="absolute inset-0" style={{ opacity: productLight }}>
+                  <Image
+                    src={logoLightSrc}
+                    alt=""
+                    width={50}
+                    height={50}
+                    priority
+                    className="h-[50px] w-[50px] rounded-[11px]"
+                  />
+                </motion.span>
+              )}
+            </span>
           </Link>
         </motion.div>
 
