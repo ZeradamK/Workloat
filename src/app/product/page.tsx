@@ -87,24 +87,29 @@ export default function ProductPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, ease: EASE, delay: 0.1 }}
           className="relative mt-12 min-h-[420px] overflow-hidden rounded-[32px] p-8 min-[900px]:min-h-[600px] min-[900px]:p-12"
-          style={{ backgroundColor: "#000000" }}
+          style={{ backgroundColor: "#ffffff" }}
         >
-          {/* smaller than native so it never upscales; its black field
-              blends into the canvas */}
+          {/* the card render, cropped to the card itself (its black field
+              measured out: the card spans 22.7% to 76.8% of the image's
+              width and starts 24.4% down) so it sits on the white canvas
+              with rounded corners and a soft shadow */}
           <Parallax
             amount={26}
-            className="absolute bottom-0 right-0 w-[min(62%,820px)]"
+            className="absolute bottom-0 right-6 w-[min(50%,600px)] min-[900px]:right-12"
           >
-            <Image
-              src="/product-hero-card.jpg"
-              alt=""
-              width={1672}
-              height={941}
-              priority
-              className="h-auto w-full"
-            />
+            <div className="relative overflow-hidden rounded-t-[44px] shadow-[0_24px_60px_rgba(0,0,0,0.18)]" style={{ aspectRatio: "890 / 704" }}>
+              <Image
+                src="/product-hero-card.jpg"
+                alt=""
+                width={1672}
+                height={941}
+                priority
+                className="absolute h-auto max-w-none"
+                style={{ width: "187.9%", left: "-43.5%", top: "-33.5%" }}
+              />
+            </div>
           </Parallax>
-          <p className="relative max-w-[460px] text-[clamp(20px,2vw,26px)] leading-[1.35] tracking-[-0.5px] text-white">
+          <p className="relative max-w-[460px] text-[clamp(20px,2vw,26px)] leading-[1.35] tracking-[-0.5px] text-ink">
             Purchases, subscriptions, orders, and travel, recorded by your
             agents and checked before the receipts land.
           </p>
