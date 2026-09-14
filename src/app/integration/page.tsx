@@ -78,7 +78,10 @@ const TAIL = "420px";
 /* the next section's head starts this far above the tail's end, on the
    last, near-white stretch of the fade */
 const GAP = "110px";
-const FRAME_FADE = "linear-gradient(to bottom, #000 0%, #000 68%, rgba(0,0,0,0.5) 84%, rgba(0,0,0,0.12) 95%, transparent 100%)";
+/* the frame's outline is gone well before the next section's head: solid
+   through its upper half, then a progressive ramp that reaches nothing at
+   82%, leaving the lowest stretch fully clear */
+const FRAME_FADE = "linear-gradient(to bottom, #000 0%, #000 50%, rgba(0,0,0,0.7) 62%, rgba(0,0,0,0.35) 72%, rgba(0,0,0,0.1) 79%, transparent 82%, transparent 100%)";
 const GROUND_FADE = "linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.15) 20%, rgba(255,255,255,0.5) 42%, rgba(255,255,255,0.85) 62%, rgba(255,255,255,0.98) 82%, #ffffff 100%)";
 
 const CURL = `curl -X POST https://api.payloat.com/ledger/record \\
@@ -130,7 +133,7 @@ function Notices() {
   }, []);
   const list = CHARGES.slice(0, shown).slice().reverse();
   return (
-    <div className="absolute inset-x-6 top-[40%] flex flex-col gap-3">
+    <div className="absolute inset-x-6 top-[33%] flex flex-col gap-3">
       <AnimatePresence initial={false}>
         {list.map((c) => (
           <motion.div
