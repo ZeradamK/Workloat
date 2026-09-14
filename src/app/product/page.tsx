@@ -56,6 +56,8 @@ export default function ProductPage() {
 
   return (
     <main className="bg-white">
+      {/* the hero on black */}
+      <div ref={heroRef} style={{ backgroundColor: "#0a0a0a" }}>
       <NavDock forceDark />
 
       <section className="mx-auto max-w-[1200px] px-6 pb-[clamp(96px,11vw,176px)] pt-[170px]">
@@ -63,7 +65,7 @@ export default function ProductPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: EASE }}
-          className="mb-4 text-[15px] text-sub"
+          className="mb-4 text-[15px] text-white/60"
         >
           Investing with agents
         </motion.p>
@@ -72,7 +74,7 @@ export default function ProductPage() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, ease: EASE }}
-          className="text-[clamp(48px,7.5vw,96px)] font-medium leading-[1.02] tracking-[-3px] text-ink"
+          className="text-[clamp(48px,7.5vw,96px)] font-medium leading-[1.02] tracking-[-3px] text-white"
         >
           Everything Payloat Ledger
           <br />
@@ -81,7 +83,6 @@ export default function ProductPage() {
 
         {/* hero canvas: the glowing card render, corner paragraph on top */}
         <motion.div
-          ref={heroRef}
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, ease: EASE, delay: 0.1 }}
@@ -110,16 +111,20 @@ export default function ProductPage() {
         </motion.div>
       </section>
 
-      {/* the home page's markets closer, as is */}
-      <MarketsSection />
+      </div>
+
+      {/* the home page's markets closer, on white */}
+      <div className="bg-white">
+        <MarketsSection />
+      </div>
 
       {/* Investing with agents, on Wise's hero anatomy: a deep green ground,
           the headline in heavy lime caps, the copy in white with lime links
           and two small link columns; a white card on the right that works
           an investing agent's budget the way Wise's works a transfer, with
           a colored strip at its foot. */}
-      <section className="mx-auto mt-[clamp(72px,9vw,144px)] max-w-[1200px] px-6">
-        <div className="grid gap-12 rounded-[32px] p-8 min-[900px]:grid-cols-[1.15fr_1fr] min-[900px]:items-center min-[900px]:gap-12 min-[900px]:p-12" style={{ backgroundColor: GREEN_INK }}>
+      <section className="px-6 pt-[clamp(72px,9vw,140px)]" style={{ backgroundColor: GREEN_INK }}>
+        <div className="mx-auto grid max-w-[1200px] gap-12 min-[900px]:grid-cols-[1.15fr_1fr] min-[900px]:items-center min-[900px]:gap-12">
           <div>
             <motion.h2
               initial={{ opacity: 0, y: 30 }}
@@ -247,7 +252,10 @@ export default function ProductPage() {
         </div>
       </section>
 
-      <FooterSection />
+      {/* the footer on the same green, in white */}
+      <div style={{ backgroundColor: GREEN_INK }}>
+        <FooterSection tone="light" />
+      </div>
     </main>
   );
 }
