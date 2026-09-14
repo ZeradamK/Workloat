@@ -93,7 +93,11 @@ const PAGE_ROUTES: Partial<Record<PanelKey, string>> = {
 export default function NavDock({
   introChoreo = false,
   forceDark = false,
+  logoSrc = "/payloat-app-icon-v2.png",
 }: {
+  /** The app icon at the top left; pages on a dark or colored ground can
+      pass the white-tile version. Same size and radius either way. */
+  logoSrc?: string;
   /** Sync the nav's entrance to the intro scroll act: the dock blurs in
       as the phone screen fills the viewport, then the logo and buttons
       ease in once the phone has fully vanished. */
@@ -218,7 +222,7 @@ export default function NavDock({
             aria-label="Payloat home"
           >
             <Image
-              src="/payloat-app-icon-v2.png"
+              src={logoSrc}
               alt="Payloat"
               width={50}
               height={50}

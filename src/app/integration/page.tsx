@@ -190,7 +190,7 @@ export default function LedgerPage() {
 
   return (
     <main className="bg-white">
-      <NavDock forceDark />
+      <NavDock forceDark logoSrc="/payloat-app-icon-light.png" />
 
       {/* 1. hero, on Revolut's anatomy: a full-bleed ground, the headline in
           bold caps, a line of copy and a black pill, and an outlined phone
