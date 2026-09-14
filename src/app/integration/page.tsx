@@ -69,6 +69,12 @@ const ROWS = [
 
 
 
+/* the hero's ground continues this far under the next section, fading to
+   white by its paragraph; the phone frame fades out over the same stretch
+   instead of being cut */
+const TAIL = "240px";
+const FRAME_FADE = "linear-gradient(to bottom, #000 0%, #000 82%, transparent 100%)";
+
 const CURL = `curl -X POST https://api.payloat.com/ledger/record \\
   -H "Authorization: Bearer pl_live_7f2a…" \\
   -H "Content-Type: application/json" \\
@@ -90,8 +96,10 @@ export default function LedgerPage() {
           outlined phone frame over the image with the month's figure at
           its center and a charge card at its foot, cut by the section's
           bottom edge. The ground is the brand gradient until a photo lands. */}
-      <section className="relative overflow-hidden" style={{ backgroundColor: "#0a1fd2" }}>
+      <section className="relative overflow-hidden" style={{ backgroundColor: "#0a1fd2", paddingBottom: TAIL }}>
         <Image src="/slack-gradient.jpg" alt="" fill priority sizes="100vw" className="object-cover" />
+        {/* the ground runs on under the next section's head and fades to white there */}
+        <div className="absolute inset-x-0 bottom-0" style={{ height: TAIL, background: "linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.75) 60%, #ffffff 100%)" }} />
         <div className="relative mx-auto grid max-w-[1200px] px-6 pt-[150px] min-[900px]:min-h-[100vh] min-[900px]:grid-cols-[1fr_1fr] min-[900px]:pt-[170px]">
           {/* the copy, over the frame on desktop */}
           <div className="relative z-10 min-[900px]:col-span-2">
@@ -135,15 +143,16 @@ export default function LedgerPage() {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: EASE, delay: 0.2 }}
-            className="relative mx-auto mt-12 h-[560px] w-[min(100%,420px)] min-[900px]:absolute min-[900px]:bottom-0 min-[900px]:left-1/2 min-[900px]:mt-0 min-[900px]:h-[calc(100vh-360px)] min-[900px]:min-h-[520px] min-[900px]:w-[min(44vw,600px)] min-[900px]:-translate-x-[10%]"
+            className="relative mx-auto mt-12 h-[520px] w-[min(92%,380px)] min-[900px]:absolute min-[900px]:mt-0 min-[900px]:h-[calc(90vh-324px)] min-[900px]:min-h-[468px] min-[900px]:w-[min(40vw,540px)] min-[900px]:-translate-x-[10%] min-[900px]:left-1/2"
+            style={{ bottom: `calc(${TAIL} - 40px)`, maskImage: FRAME_FADE, WebkitMaskImage: FRAME_FADE }}
           >
             <div className="absolute inset-x-0 top-0 h-[200%] rounded-[36px]" style={{ border: "2px solid rgba(255,255,255,0.55)" }} />
-            <div className="absolute inset-x-0 top-[42%] flex flex-col items-center text-white">
+            <div className="absolute inset-x-0 top-[24%] flex flex-col items-center text-white">
               <p className="text-[18px] font-medium text-white/90">Agent spend</p>
               <p className="font-numeral mt-1 text-[clamp(48px,5vw,72px)] font-bold leading-none tracking-[-2px] tabular-nums">$9,190</p>
               <span className="mt-5 rounded-full bg-white px-7 py-3 text-[18px] font-medium text-ink">Agents</span>
             </div>
-            <div className="absolute inset-x-6 bottom-6 flex items-center gap-4 rounded-[20px] bg-white p-3 pr-5 min-[900px]:inset-x-6">
+            <div className="absolute inset-x-6 bottom-[19%] flex items-center gap-4 rounded-[20px] bg-white p-3 pr-5">
               <span className="flex h-[56px] w-[56px] shrink-0 items-center justify-center rounded-full bg-[#eeeeee]">
                 <Image src="/logos/openai.svg" alt="" width={28} height={28} className="h-[28px] w-[28px] object-contain" />
               </span>
@@ -157,11 +166,13 @@ export default function LedgerPage() {
         </div>
       </section>
 
-      {/* 2. the spend mix, the home page's section with its own headline here */}
+      {/* 2. the spend mix, pulled up onto the hero's fading tail */}
+      <div className="relative" style={{ marginTop: `-${TAIL}` }}>
       <SpendMixSection
         title="Where the month went, by team."
         body="Agent charges grouped the way you would ask about them: the tools they run on, the cards and fees they touch, and the AI they burn. Every bar opens to the purchases behind it."
       />
+      </div>
 
       {/* 3. connected banks */}
       <section className="mx-auto max-w-[1200px] px-6 py-[clamp(56px,7vw,112px)]">
