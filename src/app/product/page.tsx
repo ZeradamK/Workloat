@@ -129,15 +129,15 @@ export default function ProductPage() {
           and two small link columns; a white card on the right that works
           an investing agent's budget the way Wise's works a transfer, with
           a colored strip at its foot. */}
-      <section className="mt-[clamp(72px,9vw,144px)] px-6 py-[clamp(72px,9vw,140px)]" style={{ backgroundColor: GREEN_INK }}>
-        <div className="mx-auto grid max-w-[1200px] gap-12 min-[900px]:grid-cols-[1fr_1fr] min-[900px]:items-center min-[900px]:gap-16">
+      <section className="mx-auto mt-[clamp(72px,9vw,144px)] max-w-[1200px] px-6">
+        <div className="grid gap-12 rounded-[32px] p-8 min-[900px]:grid-cols-[1.15fr_1fr] min-[900px]:items-center min-[900px]:gap-12 min-[900px]:p-12" style={{ backgroundColor: GREEN_INK }}>
           <div>
             <motion.h2
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
               transition={{ duration: 0.55, ease: EASE }}
-              className="text-[clamp(44px,6.2vw,92px)] font-black uppercase leading-[0.92] tracking-[-2.5px]"
+              className="text-[clamp(44px,5.6vw,80px)] font-black uppercase leading-[0.92] tracking-[-2.5px]"
               style={{ color: LIME }}
             >
               Investing
@@ -189,22 +189,22 @@ export default function ProductPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.6, ease: EASE, delay: 0.1 }}
-            className="relative overflow-hidden rounded-[28px] bg-white pb-[18px]"
+            className="relative w-full max-w-[400px] overflow-hidden rounded-[24px] bg-white pb-[14px] min-[900px]:justify-self-end"
           >
-            <div className="p-8 text-ink min-[900px]:p-10">
-              <p className="text-[17px]" style={{ color: "#454745" }}>
+            <div className="p-6 text-ink">
+              <p className="text-[14px]" style={{ color: "#454745" }}>
                 The agent may place up to
               </p>
-              <div className="mt-3 flex h-[76px] items-center justify-between gap-3 rounded-[12px] px-5 min-[600px]:h-[88px] min-[600px]:px-6" style={{ border: "1.5px solid #868685" }}>
-                <span className="font-numeral text-[24px] font-semibold tabular-nums min-[600px]:text-[30px]">5,000</span>
-                <span className="flex shrink-0 items-center gap-2 text-[20px] font-semibold min-[600px]:text-[24px]">
-                  <span className="h-[26px] w-[26px] rounded-full" style={{ background: "conic-gradient(#b22234 0 33%, #ffffff 33% 66%, #3c3b6e 66%)" }} />
+              <div className="mt-2.5 flex h-[60px] items-center justify-between gap-3 rounded-[10px] px-4" style={{ border: "1.5px solid #868685" }}>
+                <span className="font-numeral text-[22px] font-semibold tabular-nums">5,000</span>
+                <span className="flex shrink-0 items-center gap-1.5 text-[17px] font-semibold">
+                  <span className="h-[20px] w-[20px] rounded-full" style={{ background: "conic-gradient(#b22234 0 33%, #ffffff 33% 66%, #3c3b6e 66%)" }} />
                   USD
                   <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden><path d="M3 5.5 8 10.5l5-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 </span>
               </div>
 
-              <div className="mt-6 flex flex-col gap-3 text-[15px] min-[600px]:text-[18px]">
+              <div className="mt-5 flex flex-col gap-2.5 text-[13px]">
                 {[
                   ["•", "3,240 USD", "Placed so far, 12 orders", false],
                   ["•", "12 of 12", "Confirmations matched", false],
@@ -212,8 +212,8 @@ export default function ProductPage() {
                   ["=", "1,752.70 USD", "Left on the cap", true],
                   ["×", "4 hours", "Confirmations usually arrive in", true],
                 ].map(([mark, value, label, strong]) => (
-                  <div key={String(label)} className="flex items-center gap-4" style={strong ? { borderTop: "1px solid #dedede", paddingTop: 12 } : undefined}>
-                    <span className="flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full text-[11px] font-bold" style={{ backgroundColor: mark === "•" ? "#e6e6e6" : "#0a0a0a", color: mark === "•" ? "#e6e6e6" : "#ffffff" }}>
+                  <div key={String(label)} className="flex items-center gap-3" style={strong ? { borderTop: "1px solid #dedede", paddingTop: 10 } : undefined}>
+                    <span className="flex h-[15px] w-[15px] shrink-0 items-center justify-center rounded-full text-[9px] font-bold" style={{ backgroundColor: mark === "•" ? "#e6e6e6" : "#0a0a0a", color: mark === "•" ? "#e6e6e6" : "#ffffff" }}>
                       {mark === "•" ? "" : mark}
                     </span>
                     <span className="font-numeral whitespace-nowrap font-semibold tabular-nums">{value}</span>
@@ -224,35 +224,35 @@ export default function ProductPage() {
                 ))}
               </div>
 
-              <p className="mt-8 text-[17px]" style={{ color: "#454745" }}>
+              <p className="mt-6 text-[14px]" style={{ color: "#454745" }}>
                 The agent can still place
               </p>
-              <div className="mt-3 flex h-[76px] items-center justify-between gap-3 rounded-[12px] px-5 min-[600px]:h-[88px] min-[600px]:px-6" style={{ border: "1.5px solid #868685" }}>
-                <span className="font-numeral text-[24px] font-semibold tabular-nums min-[600px]:text-[30px]">1,752.70</span>
-                <span className="flex shrink-0 items-center gap-2 text-[20px] font-semibold min-[600px]:text-[24px]">
-                  <span className="h-[26px] w-[26px] rounded-full" style={{ background: "conic-gradient(#b22234 0 33%, #ffffff 33% 66%, #3c3b6e 66%)" }} />
+              <div className="mt-2.5 flex h-[60px] items-center justify-between gap-3 rounded-[10px] px-4" style={{ border: "1.5px solid #868685" }}>
+                <span className="font-numeral text-[22px] font-semibold tabular-nums">1,752.70</span>
+                <span className="flex shrink-0 items-center gap-1.5 text-[17px] font-semibold">
+                  <span className="h-[20px] w-[20px] rounded-full" style={{ background: "conic-gradient(#b22234 0 33%, #ffffff 33% 66%, #3c3b6e 66%)" }} />
                   USD
                   <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden><path d="M3 5.5 8 10.5l5-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 </span>
               </div>
 
-              <p className="mt-6 text-[15px] leading-[1.5] min-[600px]:text-[17px]" style={{ color: "#454745" }}>
+              <p className="mt-5 text-[13px] leading-[1.5]" style={{ color: "#454745" }}>
                 Every order carries the <span className="font-semibold text-ink">task behind it</span>
                 <br />
                 Over the cap, the agent is <span className="font-semibold text-ink">stopped, not warned</span>
               </p>
 
-              <div className="mt-8 grid gap-4 min-[600px]:grid-cols-2">
-                <a href="#" className="flex h-[64px] items-center justify-center rounded-full text-[18px] font-semibold text-ink" style={{ border: "1.5px solid #0a0a0a" }}>
-                  See a sample ledger
+              <div className="mt-6 grid grid-cols-2 gap-3">
+                <a href="#" className="flex h-[48px] items-center justify-center rounded-full text-[14px] font-semibold text-ink" style={{ border: "1.5px solid #0a0a0a" }}>
+                  Sample ledger
                 </a>
-                <a href="/signup" className="flex h-[64px] items-center justify-center rounded-full text-[18px] font-semibold text-ink" style={{ backgroundColor: LIME }}>
+                <a href="/signup" className="flex h-[48px] items-center justify-center rounded-full text-[14px] font-semibold text-ink" style={{ backgroundColor: LIME }}>
                   Get started
                 </a>
               </div>
             </div>
             {/* the colored strip at the card's foot */}
-            <div className="absolute inset-x-0 bottom-0 h-[18px] overflow-hidden">
+            <div className="absolute inset-x-0 bottom-0 h-[14px] overflow-hidden">
               <Image src="/slack-gradient.jpg" alt="" fill sizes="600px" className="object-cover" style={{ filter: "hue-rotate(140deg) saturate(1.4)" }} />
             </div>
           </motion.div>
