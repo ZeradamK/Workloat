@@ -85,54 +85,76 @@ export default function LedgerPage() {
     <main className="bg-white">
       <NavDock forceDark />
 
-      {/* 1. hero */}
-      <section className="mx-auto max-w-[1200px] px-6 pt-[170px] pb-[clamp(40px,5vw,72px)]">
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: EASE }}
-          className="text-[15px] text-sub"
-        >
-          Bank Integration
-        </motion.p>
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.55, ease: EASE, delay: 0.05 }}
-          className="mt-4 max-w-[820px] text-[clamp(38px,5vw,72px)] font-bold leading-[1.04] tracking-[-2.5px] text-ink"
-          style={{ textWrap: "balance" }}
-        >
-          Every bank, every agent, one place.
-        </motion.h1>
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.55, ease: EASE, delay: 0.12 }}
-          className="mt-6 max-w-[560px] text-[clamp(17px,1.4vw,20px)] leading-[1.5] text-sub"
-        >
-          Your banks&apos; books and your agents&apos; spending history sit side by side, with the
-          team&apos;s own spend alongside them. One place shows where every dollar went and which
-          agent sent it.
-        </motion.p>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.55, ease: EASE, delay: 0.18 }}
-          className="mt-8 flex flex-wrap items-center gap-3"
-        >
-          <Link
-            href="/signup"
-            className="inline-flex h-12 items-center rounded-full bg-[#0a0a0a] px-6 text-[14px] font-semibold tracking-[-0.3px] text-white transition-transform hover:scale-[1.03] active:scale-[0.97]"
+      {/* 1. hero, on Revolut's anatomy: a full-bleed ground, the headline in
+          bold caps at the left, a line of copy and a black pill, and an
+          outlined phone frame over the image with the month's figure at
+          its center and a charge card at its foot, cut by the section's
+          bottom edge. The ground is the brand gradient until a photo lands. */}
+      <section className="relative overflow-hidden" style={{ backgroundColor: "#0a1fd2" }}>
+        <Image src="/slack-gradient.jpg" alt="" fill priority sizes="100vw" className="object-cover" />
+        <div className="relative mx-auto grid max-w-[1200px] px-6 pt-[150px] min-[900px]:min-h-[100vh] min-[900px]:grid-cols-[1fr_1fr] min-[900px]:pt-[170px]">
+          {/* the copy, over the frame on desktop */}
+          <div className="relative z-10 min-[900px]:col-span-2">
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.55, ease: EASE }}
+              className="max-w-[900px] text-[clamp(44px,7vw,104px)] font-black uppercase leading-[0.96] tracking-[-2px] text-white"
+            >
+              Every bank,
+              <br />
+              every agent
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.55, ease: EASE, delay: 0.1 }}
+              className="mt-8 max-w-[440px] text-[clamp(17px,1.4vw,20px)] leading-[1.45] text-white/90"
+            >
+              Chase, Mercury, Brex, or any bank through Teller and Plaid. Connect once, and every
+              charge lands beside the agent that made it.
+            </motion.p>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.55, ease: EASE, delay: 0.18 }}
+              className="mt-8"
+            >
+              <Link
+                href="/signup"
+                className="inline-flex h-12 items-center rounded-full bg-[#0a0a0a] px-6 text-[15px] font-medium text-white transition-transform hover:scale-[1.03] active:scale-[0.97]"
+              >
+                Connect a bank
+              </Link>
+            </motion.div>
+          </div>
+
+          {/* the phone frame: an outline over the ground, the figure at its
+              center, the charge card at its foot */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: EASE, delay: 0.2 }}
+            className="relative mx-auto mt-12 h-[560px] w-[min(100%,420px)] min-[900px]:absolute min-[900px]:bottom-0 min-[900px]:left-1/2 min-[900px]:mt-0 min-[900px]:h-[calc(100vh-360px)] min-[900px]:min-h-[520px] min-[900px]:w-[min(44vw,600px)] min-[900px]:-translate-x-[10%]"
           >
-            Get started
-          </Link>
-          <Link
-            href="/contact#sales"
-            className="inline-flex h-12 items-center rounded-full border border-solid border-black bg-white px-6 text-[14px] font-semibold tracking-[-0.3px] text-ink transition-transform hover:scale-[1.03] active:scale-[0.97]"
-          >
-            Talk to us
-          </Link>
-        </motion.div>
+            <div className="absolute inset-x-0 top-0 h-[200%] rounded-[36px]" style={{ border: "2px solid rgba(255,255,255,0.55)" }} />
+            <div className="absolute inset-x-0 top-[42%] flex flex-col items-center text-white">
+              <p className="text-[18px] font-medium text-white/90">Agent spend</p>
+              <p className="font-numeral mt-1 text-[clamp(48px,5vw,72px)] font-bold leading-none tracking-[-2px] tabular-nums">$9,190</p>
+              <span className="mt-5 rounded-full bg-white px-7 py-3 text-[18px] font-medium text-ink">Agents</span>
+            </div>
+            <div className="absolute inset-x-6 bottom-6 flex items-center gap-4 rounded-[20px] bg-white p-3 pr-5 min-[900px]:inset-x-6">
+              <span className="flex h-[56px] w-[56px] shrink-0 items-center justify-center rounded-full bg-[#eeeeee]">
+                <Image src="/logos/openai.svg" alt="" width={28} height={28} className="h-[28px] w-[28px] object-contain" />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-[18px] font-semibold leading-tight text-ink min-[900px]:text-[20px]">OpenAI</span>
+                <span className="block truncate text-[14px] text-sub min-[900px]:text-[16px]">Today, 11:28 · Software agent</span>
+              </span>
+              <span className="font-numeral text-[20px] font-semibold tabular-nums text-ink">$2,500</span>
+            </div>
+          </motion.div>
+        </div>
       </section>
 
       {/* 2. the spend mix, the home page's section with its own headline here */}
