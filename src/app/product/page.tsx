@@ -1,17 +1,11 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import Image from "next/image";
 import {
-  animate,
   motion,
-  useScroll,
-  useSpring,
-  useTransform,
 } from "motion/react";
 import NavDock from "@/components/NavDock";
 import FooterSection from "@/components/FooterSection";
-import { productLight } from "@/components/introProgress";
 import MarketsSection from "@/components/MarketsSection";
 
 /**
@@ -28,95 +22,64 @@ const GREEN_INK = "#163300";
 const LIME = "#9fe870";
 
 export default function ProductPage() {
-  /* while the fixed dock (viewport band ~15–68px) overlaps the black hero
-     canvas, zip the dock to #EEEEEE in 50ms; zip back once it passes */
-  const heroRef = useRef<HTMLDivElement>(null);
-  const litRef = useRef(false);
-
-  useEffect(() => {
-    const onScroll = () => {
-      const r = heroRef.current?.getBoundingClientRect();
-      if (!r) return;
-      const overlap = r.top < 68 && r.bottom > 15;
-      if (overlap !== litRef.current) {
-        litRef.current = overlap;
-        animate(productLight, overlap ? 1 : 0, {
-          duration: 0.05,
-          ease: "easeOut",
-        });
-      }
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      productLight.set(0);
-    };
-  }, []);
-
   return (
     <main className="bg-white">
-      {/* the hero on black */}
-      <div ref={heroRef} style={{ backgroundColor: "#0a0a0a" }}>
       <NavDock forceDark />
 
-      <section className="mx-auto max-w-[1200px] px-6 pb-[clamp(96px,11vw,176px)] pt-[170px]">
+      {/* the hero, on Amigo's anatomy: a centered two-line headline, one
+          line under it, a soft pill, then a wide rounded image card that
+          carries the loop of events an agent posts, one chip at each side */}
+      <section className="mx-auto max-w-[1200px] px-6 pb-[clamp(72px,9vw,140px)] pt-[170px]">
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: EASE }}
-          className="mb-4 text-[15px] text-white/60"
+          className="text-center text-[15px] text-sub"
         >
           Investing with agents
         </motion.p>
-        {/* massive display headline, outsmart-scams scale */}
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.55, ease: EASE }}
-          className="text-[clamp(48px,7.5vw,96px)] font-medium leading-[1.02] tracking-[-3px] text-white"
+          transition={{ duration: 0.55, ease: EASE, delay: 0.05 }}
+          className="mx-auto mt-6 max-w-[900px] text-center text-[clamp(40px,5.6vw,80px)] font-medium leading-[1.04] tracking-[-2.5px] text-ink"
+          style={{ textWrap: "balance" }}
         >
-          Everything Payloat Ledger
-          <br />
-          sees after an agent pays
+          The one ledger for every agent&apos;s spend.
         </motion.h1>
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.55, ease: EASE, delay: 0.12 }}
+          className="mx-auto mt-8 max-w-[560px] text-center text-[17px] leading-[1.5] text-ink"
+        >
+          Tell us what your agents may buy. We&apos;ll record the rest.
+        </motion.p>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.55, ease: EASE, delay: 0.18 }}
+          className="mt-8 flex justify-center"
+        >
+          <a
+            href="/signup"
+            className="inline-flex h-12 items-center rounded-[12px] bg-[#f2f2f0] px-6 text-[15px] font-medium text-ink shadow-[0_1px_2px_rgba(10,10,10,0.06)] transition-transform hover:scale-[1.03] active:scale-[0.97]"
+          >
+            Get started
+          </a>
+        </motion.div>
 
-        {/* hero canvas: the glowing card render, corner paragraph on top */}
+        {/* the image card */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.55, ease: EASE, delay: 0.1 }}
-          className="relative mt-12 min-h-[420px] overflow-hidden rounded-[32px] p-8 min-[900px]:min-h-[600px] min-[900px]:p-12"
-          style={{ backgroundColor: "#ffffff" }}
+          transition={{ duration: 0.6, ease: EASE, delay: 0.24 }}
+          className="relative mt-[clamp(40px,5vw,72px)] aspect-[4/5] w-full overflow-hidden rounded-[28px] min-[700px]:aspect-[1.6] min-[1000px]:aspect-[2.1]"
         >
-          {/* the card render, cropped to the card itself (its black field
-              measured out: the card spans 22.7% to 76.8% of the image's
-              width and starts 24.4% down) so it sits on the white canvas
-              with rounded corners and a soft shadow */}
-          <Parallax
-            amount={26}
-            className="absolute bottom-0 right-6 w-[min(50%,600px)] min-[900px]:right-12"
-          >
-            <div className="relative overflow-hidden rounded-t-[44px] shadow-[0_24px_60px_rgba(0,0,0,0.18)]" style={{ aspectRatio: "890 / 704" }}>
-              <Image
-                src="/product-hero-card.jpg"
-                alt=""
-                width={1672}
-                height={941}
-                priority
-                className="absolute h-auto max-w-none"
-                style={{ width: "187.9%", left: "-43.5%", top: "-33.5%" }}
-              />
-            </div>
-          </Parallax>
-          <p className="relative max-w-[460px] text-[clamp(20px,2vw,26px)] leading-[1.35] tracking-[-0.5px] text-ink">
-            Purchases, subscriptions, orders, and travel, recorded by your
-            agents and checked before the receipts land.
-          </p>
+          <Image src="/product-hero-bg.jpg" alt="" fill priority sizes="(min-width: 1200px) 1200px, 100vw" className="object-cover" />
+          <Loop />
         </motion.div>
       </section>
-
-      </div>
 
       {/* the home page's markets closer, on white */}
       <div className="bg-white">
@@ -265,31 +228,46 @@ export default function ProductPage() {
   );
 }
 
-/* Scroll parallax: drifts children vertically as the element crosses the
-   viewport, spring-smoothed like the home page scrubs. */
-function Parallax({
-  amount = 40,
-  className,
-  children,
-}: {
-  amount?: number;
-  className?: string;
-  children: React.ReactNode;
-}) {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "end start"],
-  });
-  const smooth = useSpring(scrollYProgress, {
-    stiffness: 120,
-    damping: 26,
-    mass: 0.3,
-  });
-  const y = useTransform(smooth, [0, 1], [amount, -amount]);
+/* The loop drawn over the hero card: a rounded track inset from the
+   card's edges, a slow dashed flow running around it, and one chip at
+   each side for the four events an agent posts. */
+const EVENTS = [
+  { label: "INTENT", pos: "left-1/2 top-[11%] -translate-x-1/2 -translate-y-1/2" },
+  { label: "CHECKOUT", pos: "right-[11%] top-1/2 translate-x-1/2 -translate-y-1/2" },
+  { label: "RECEIPT", pos: "left-1/2 bottom-[11%] -translate-x-1/2 translate-y-1/2" },
+  { label: "STATUS", pos: "left-[11%] top-1/2 -translate-x-1/2 -translate-y-1/2" },
+] as const;
+
+function Loop() {
   return (
-    <motion.div ref={ref} style={{ y }} className={className}>
-      {children}
-    </motion.div>
+    <>
+      <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
+        <rect x="11" y="11" width="78" height="78" rx="4" ry="9" fill="none" stroke="rgba(10,10,10,0.45)" strokeWidth="0.18" vectorEffect="non-scaling-stroke" />
+        <motion.rect
+          x="11"
+          y="11"
+          width="78"
+          height="78"
+          rx="4"
+          ry="9"
+          fill="none"
+          stroke="rgba(255,255,255,0.7)"
+          strokeWidth="0.18"
+          vectorEffect="non-scaling-stroke"
+          strokeDasharray="0.8 2.4"
+          animate={{ strokeDashoffset: [0, -32] }}
+          transition={{ repeat: Infinity, duration: 14, ease: "linear" }}
+        />
+      </svg>
+      {EVENTS.map((e) => (
+        <span
+          key={e.label}
+          className={`absolute ${e.pos} rounded-[10px] px-4 py-3 text-[11px] font-medium tracking-[0.14em] text-ink`}
+          style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", backgroundColor: "rgba(245,245,242,0.82)", boxShadow: "0 1px 0 rgba(255,255,255,0.6) inset, 0 6px 18px rgba(10,10,10,0.12)", backdropFilter: "blur(6px)" }}
+        >
+          {e.label}
+        </span>
+      ))}
+    </>
   );
 }
