@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { motion, useReducedMotion, useScroll, useSpring, useTransform, type MotionValue } from "motion/react";
+import { motion, useAnimationFrame, useMotionValue, useReducedMotion, useScroll, useTransform, type MotionValue } from "motion/react";
 
 /**
  * Track everything: the headline and one line of copy, then a pinned box
@@ -104,6 +104,9 @@ const SLIDES = 2;
    the first hold is the opening 32%, the handoff the next 26%, the second
    hold the remaining 42% */
 const RUNWAY_VH = 380;
+/* the follower's time constant: it covers 95% of any change in about a
+   second (three time constants) */
+const FOLLOW_MS = 330;
 const HOLDS = [0, 0.32, 0.58, 1];
 /* the pinned box: 30% shorter than the viewport, leaving room above it
    for the head inside the pinned, viewport-tall block */
@@ -117,7 +120,20 @@ export default function TrackSection() {
      the runway, the handoff plays across the middle, the second mock holds
      through the rest before the page scrolls on. A spring gives the zip. */
   const staged = useTransform(scrollYProgress, HOLDS, [0, 0, 1, 1]);
-  const progress = useSpring(staged, { stiffness: 120, damping: 24, mass: 0.6 });
+  /* the handoff trails the scroll by about a second: a follower that
+     closes a fixed share of the gap each frame, so it eases the same way
+     in both directions whatever the scroll speed, and never overshoots */
+  const progress = useMotionValue(0);
+  useAnimationFrame((_, delta) => {
+    const target = staged.get();
+    const current = progress.get();
+    const gap = target - current;
+    if (Math.abs(gap) < 0.0005) {
+      if (gap !== 0) progress.set(target);
+      return;
+    }
+    progress.set(current + gap * (1 - Math.exp(-Math.min(delta, 64) / FOLLOW_MS)));
+  });
 
   return (
     <section className="mx-auto max-w-[1200px] px-6 pb-[clamp(72px,10vw,160px)] pt-[clamp(32px,5vw,80px)]">
