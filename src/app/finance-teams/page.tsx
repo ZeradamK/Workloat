@@ -1173,19 +1173,19 @@ function Cta() {
   return (
     <section style={{ backgroundColor: GREEN }}>
       {/* on the green so it runs straight into the footer; the card is
-          white with black type */}
+          green too, with white type and a white pill */}
       <div className={`${FRAME} border-white/10`}>
         <div className="px-[clamp(20px,10.4vw,200px)] pb-[clamp(40px,3.3vw,64px)] pt-[clamp(40px,3.6vw,70px)]">
           <motion.div
             {...up}
-            className="flex flex-col items-center justify-center rounded-[34px] bg-white px-6 text-center text-ink"
-            style={{ minHeight: "clamp(360px,33vw,640px)" }}
+            className="flex flex-col items-center justify-center rounded-[34px] px-6 text-center text-white"
+            style={{ backgroundColor: GREEN, minHeight: "clamp(360px,33vw,640px)" }}
           >
             <h2 className="max-w-[820px] text-[clamp(30px,3vw,58px)] font-medium leading-[1.08] tracking-[-1.8px]" style={{ textWrap: "balance" }}>
               The financial manager your agents report to.
             </h2>
             <div className="mt-[clamp(28px,3vw,58px)]">
-              <Pill href="/contact" dark>
+              <Pill href="/contact" light>
                 Book a demo
               </Pill>
             </div>
