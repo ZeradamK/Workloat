@@ -12,7 +12,10 @@ import FooterSection from "@/components/FooterSection";
 export default function Home() {
   return (
     <main>
-      <NavDock />
+      <NavDock
+        heroSurface={{ bg: "#ffffff", fg: "#0a0a0a", pill: "#eeeeee" }}
+        ctaOutline
+      />
 
       {/* Pinned hero act: still section, parallaxed middle column
           (tracker → wallet stack → total spending). Dormant sections in

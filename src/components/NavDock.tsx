@@ -90,17 +90,35 @@ const PAGE_ROUTES: Partial<Record<PanelKey, string>> = {
   Contact: "/contact",
 };
 
+type Rgb = [number, number, number];
+const clamp01 = (v: number) => Math.min(Math.max(v, 0), 1);
+const hex = (h: string): Rgb => {
+  const n = parseInt(h.slice(1), 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+};
+const lerpRgb = (a: Rgb, b: Rgb, t: number): Rgb =>
+  [0, 1, 2].map((i) => Math.round(a[i] + (b[i] - a[i]) * t)) as Rgb;
+const lerpHex = (a: string, b: string, t: number) => lerpRgb(hex(a), hex(b), t);
+const rgb = (c: Rgb) => `rgb(${c[0]},${c[1]},${c[2]})`;
+const rgba = (c: Rgb, a: number) => `rgba(${c[0]},${c[1]},${c[2]},${a})`;
+
 export default function NavDock({
   introChoreo = false,
   forceDark = false,
   logoSrc = "/payloat-app-icon-v2.png",
   logoLightSrc,
   surface,
+  heroSurface,
   ctaOutline = false,
 }: {
   /** The dock's light surface color in place of #eeeeee; the page's light
       signal still moves it between black and this. */
   surface?: string;
+  /** The dock's colors while the home hero is still dark (heroT below
+      0.4): surface, text, and the hover pill. Defaults to the black dock
+      with white text. The dock fades from this to the light surface in
+      step with the hero's own background. */
+  heroSurface?: { bg: string; fg: string; pill?: string };
   /** A 1px white border on the Get started pill, for dark grounds. */
   ctaOutline?: boolean;
   /** The app icon at the top left. */
@@ -174,24 +192,40 @@ export default function NavDock({
   const chromeY = useTransform(introT, [0.96, 1], [-10, 0]);
   const chromePE = useTransform(chromeO, (v) => (v > 0.5 ? "auto" : "none"));
 
-  /* surface syncs with the page: dark on hero slide 1, #EEEEEE on
-     slide 2, then dips back to dark while the feature splits are on
-     screen */
-  const lightAmt = useTransform(() => {
+  /* surface syncs with the page: the hero surface on hero slide 1 (black
+     by default), the light surface on slide 2, then dips back to dark
+     while a dark-override section (feature splits, the Slack box) is
+     under the dock */
+  const LIGHT = surface ?? "#eeeeee";
+  const heroBg = heroSurface?.bg ?? "#0a0a0a";
+  const heroFg = heroSurface?.fg ?? "#ffffff";
+  const heroPill = heroSurface?.pill ?? "#ffffff";
+  const mix = useTransform(() => {
     /* pinned-dark pages can still flash light while the dock crosses a
        black canvas (productLight, 50ms zip) */
-    if (forceDark) return productLight.get();
-    const base = Math.min(Math.max((heroT.get() - 0.4) / 0.25, 0), 1);
+    if (forceDark) return { base: productLight.get(), dark: 0, pinned: true };
+    const base = clamp01((heroT.get() - 0.4) / 0.25);
     const darkOverride = splitsDark.get() * (1 - marketsLight.get());
     /* the Slack act's gray box: dark while it is under the dock */
-    return base * (1 - darkOverride) * (1 - slackDark.get());
+    const dark = 1 - (1 - darkOverride) * (1 - slackDark.get());
+    return { base, dark, pinned: false };
   });
-  const dockBg = useTransform(lightAmt, [0, 1], ["#0a0a0a", surface ?? "#eeeeee"]);
-  const navFg = useTransform(lightAmt, [0, 1], ["#ffffff", "#0a0a0a"]);
-  const navLabel = useTransform(
-    lightAmt,
-    [0, 1],
-    ["rgba(255,255,255,0.4)", "rgba(10,10,10,0.4)"],
+  const dockBg = useTransform(mix, ({ base, dark, pinned }) =>
+    pinned
+      ? rgb(lerpHex("#0a0a0a", LIGHT, base))
+      : rgb(lerpRgb(lerpHex(heroBg, LIGHT, base), hex("#0a0a0a"), dark)),
+  );
+  const navFgRgb = useTransform(mix, ({ base, dark, pinned }) =>
+    pinned
+      ? lerpHex("#ffffff", "#0a0a0a", base)
+      : lerpRgb(lerpHex(heroFg, "#0a0a0a", base), hex("#ffffff"), dark),
+  );
+  const navFg = useTransform(navFgRgb, rgb);
+  const navLabel = useTransform(navFgRgb, (c) => rgba(c, 0.4));
+  const navPill = useTransform(mix, ({ base, dark, pinned }) =>
+    pinned
+      ? "#ffffff"
+      : rgb(lerpRgb(lerpHex(heroPill, "#ffffff", base), hex("#ffffff"), dark)),
   );
 
   const open = active !== null;
@@ -288,6 +322,7 @@ export default function NavDock({
                 backgroundColor: dockBg,
                 "--nav-fg": navFg,
                 "--nav-label": navLabel,
+                "--nav-pill": navPill,
               } as React.ComponentProps<typeof motion.div>["style"]
             }
           >
@@ -327,7 +362,8 @@ export default function NavDock({
                     {highlight === item && (
                       <motion.span
                         layoutId="dockHover"
-                        className="absolute inset-0 rounded-full bg-white"
+                        className="absolute inset-0 rounded-full"
+                        style={{ backgroundColor: "var(--nav-pill)" }}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0, transition: { duration: 0.15 } }}

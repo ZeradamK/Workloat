@@ -46,6 +46,13 @@ const NAV_TOP = 20; /* the nav bar's top tip line */
 const NAV_BOTTOM = 68; /* nav top + its 48px height */
 const COL_W = 320; /* center column width (350 - 30), matches the dock */
 
+/* the hero ground: black on slide 1, the page's white on slide 2. The
+   fade is a pure function of scroll (same window the nav dock uses), so
+   it tracks any gesture forward and back with no state to desync. */
+const HERO_BLACK = "#0a0a0a";
+const HERO_WHITE = "#fefefe"; /* = var(--background) */
+const GROUND_WINDOW = [0.4, 0.65];
+
 export default function HeroShowcase() {
   const ref = useRef<HTMLDivElement>(null);
   const [vh, setVh] = useState(900);
@@ -108,21 +115,32 @@ export default function HeroShowcase() {
   const textAPE = useTransform(textAO, (v) => (v > 0.5 ? "auto" : "none"));
   const textBPE = useTransform(textBO, (v) => (v > 0.5 ? "auto" : "none"));
 
+  /* ground and type fade together: black/white on slide 1, white/ink on
+     slide 2 */
+  const ground = useTransform(t, GROUND_WINDOW, [HERO_BLACK, HERO_WHITE]);
+  const ink = useTransform(t, GROUND_WINDOW, ["#ffffff", HERO_BLACK]);
+
   return (
     <>
       <MobileHero />
       <div ref={ref} className="relative hidden h-[200vh] min-[800px]:block">
-      <div className="sticky top-0 h-screen overflow-hidden bg-background">
+      <motion.div
+        className="sticky top-0 h-screen overflow-hidden"
+        style={{ backgroundColor: ground }}
+      >
         {/* left headline, slide 1 — fades in place */}
         <motion.div
           className="absolute left-0 top-1/2 hidden w-[calc(50%-160px)] -translate-y-1/2 justify-center min-[800px]:flex"
           style={{ opacity: textAO, pointerEvents: textAPE }}
         >
-          <h1 className="w-max text-[clamp(22px,3.2vw,52px)] font-normal leading-[0.95] tracking-[-1.5px] text-ink">
+          <motion.h1
+            className="w-max text-[clamp(22px,3.2vw,52px)] font-normal leading-[0.95] tracking-[-1.5px]"
+            style={{ color: ink }}
+          >
             See every dollar
             <br />
             your agents spend
-          </h1>
+          </motion.h1>
         </motion.div>
 
         {/* left headline, slide 2 — same exact position */}
@@ -130,11 +148,14 @@ export default function HeroShowcase() {
           className="absolute left-0 top-1/2 hidden w-[calc(50%-160px)] -translate-y-1/2 justify-center min-[800px]:flex"
           style={{ opacity: textBO, pointerEvents: textBPE }}
         >
-          <h2 className="w-max text-[clamp(22px,3.2vw,52px)] font-normal leading-[0.95] tracking-[-1.5px] text-ink">
+          <motion.h2
+            className="w-max text-[clamp(22px,3.2vw,52px)] font-normal leading-[0.95] tracking-[-1.5px]"
+            style={{ color: ink }}
+          >
             Know what was bought
             <br />
             and what it was for
-          </h2>
+          </motion.h2>
         </motion.div>
 
         {/* right description, slide 1 — fades in place */}
@@ -142,10 +163,13 @@ export default function HeroShowcase() {
           className="absolute right-0 top-1/2 hidden w-[calc(50%-160px)] -translate-y-1/2 justify-center min-[800px]:flex"
           style={{ opacity: textAO, pointerEvents: textAPE }}
         >
-          <p className="w-[85%] max-w-[300px] text-pretty text-[17px] leading-[1.2] text-ink">
+          <motion.p
+            className="w-[85%] max-w-[300px] text-pretty text-[17px] leading-[1.2]"
+            style={{ color: ink }}
+          >
             Every purchase, subscription, order, and receipt your agents
             record, in one ledger
-          </p>
+          </motion.p>
         </motion.div>
 
         {/* right description, slide 2 — same exact position, with CTA */}
@@ -154,11 +178,14 @@ export default function HeroShowcase() {
           style={{ opacity: textBO, pointerEvents: textBPE }}
         >
           <div className="flex w-[85%] max-w-[300px] flex-col items-start gap-5">
-            <p className="text-pretty text-[17px] leading-[1.2] text-ink">
+            <motion.p
+              className="text-pretty text-[17px] leading-[1.2]"
+              style={{ color: ink }}
+            >
               Every agent purchase in one view. Payloat Ledger totals what
               each agent spent this month, shows the task it was given, and
               flags anything over its cap.
-            </p>
+            </motion.p>
             <Link
               href="/purchases"
               className="group flex h-11 items-center gap-1.5 rounded-full bg-[#eeeeee] px-5 text-[13px] font-semibold tracking-[-0.5px] text-ink transition-transform hover:scale-[1.03] active:scale-[0.97]"
@@ -240,7 +267,7 @@ export default function HeroShowcase() {
             </div>
           </motion.div>
         </div>
-      </div>
+      </motion.div>
       </div>
     </>
   );
@@ -271,6 +298,14 @@ function MobileHero() {
     if (!isMobile.current) return; /* hidden act must not stomp heroT */
     heroT.set(v);
   });
+  const ground = useTransform(scrollYProgress, GROUND_WINDOW, [
+    HERO_BLACK,
+    HERO_WHITE,
+  ]);
+  const ink = useTransform(scrollYProgress, GROUND_WINDOW, [
+    "#ffffff",
+    HERO_BLACK,
+  ]);
 
   const up = {
     initial: { opacity: 0, y: 40 },
@@ -280,11 +315,16 @@ function MobileHero() {
   } as const;
 
   return (
-    <div ref={ref} className="px-6 pb-20 pt-[120px] min-[800px]:hidden">
+    <motion.div
+      ref={ref}
+      className="px-6 pb-20 pt-[120px] min-[800px]:hidden"
+      style={{ backgroundColor: ground }}
+    >
       {/* screen 1: headline over the wallet act + expense boxes */}
       <motion.h1
         {...up}
-        className="text-center text-[clamp(30px,9vw,40px)] font-normal leading-[1.0] tracking-[-1.5px] text-ink"
+        className="text-center text-[clamp(30px,9vw,40px)] font-normal leading-[1.0] tracking-[-1.5px]"
+        style={{ color: ink }}
       >
         See every dollar
         <br />
@@ -304,7 +344,8 @@ function MobileHero() {
       </motion.div>
       <motion.p
         {...up}
-        className="mx-auto mt-9 max-w-[300px] text-center text-[17px] leading-[1.25] text-ink"
+        className="mx-auto mt-9 max-w-[300px] text-center text-[17px] leading-[1.25]"
+        style={{ color: ink }}
       >
         Every purchase, subscription, order, and receipt your agents record,
         in one ledger
@@ -319,7 +360,8 @@ function MobileHero() {
       {/* screen 2: headline, tracker, copy + CTA */}
       <motion.h2
         {...up}
-        className="text-center text-[clamp(30px,9vw,40px)] font-normal leading-[1.0] tracking-[-1.5px] text-ink"
+        className="text-center text-[clamp(30px,9vw,40px)] font-normal leading-[1.0] tracking-[-1.5px]"
+        style={{ color: ink }}
       >
         Know what was bought
         <br />
@@ -348,11 +390,14 @@ function MobileHero() {
         {...up}
         className="mx-auto mt-9 flex max-w-[300px] flex-col items-center gap-5"
       >
-        <p className="text-center text-[17px] leading-[1.25] text-ink">
+        <motion.p
+          className="text-center text-[17px] leading-[1.25]"
+          style={{ color: ink }}
+        >
           Every agent purchase in one view. Payloat Ledger totals what each
           agent spent this month, shows the task it was given, and flags
           anything over its cap.
-        </p>
+        </motion.p>
         <Link
           href="/purchases"
           className="group flex h-11 items-center gap-1.5 rounded-full bg-[#eeeeee] px-5 text-[13px] font-semibold tracking-[-0.5px] text-ink transition-transform hover:scale-[1.03] active:scale-[0.97]"
@@ -376,7 +421,7 @@ function MobileHero() {
           </svg>
         </Link>
       </motion.div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -438,7 +483,7 @@ function WalletStack({ open }: { open: boolean }) {
   const lit = (i: number) => open && active === i;
 
   return (
-    <div className="rounded-[24px] p-2.5" style={{ backgroundColor: "#eeeeee" }}>
+    <div className="rounded-[24px] p-2.5" style={{ backgroundColor: "#ffffff" }}>
       {/* card 1: Apple Pay — number top-left, VISA top-right, logo
           bottom-left (the Payloat logotype position) */}
       <motion.div
@@ -491,17 +536,17 @@ function WalletStack({ open }: { open: boolean }) {
       {/* card 3: Payloat */}
       <motion.div
         className="relative mt-2 overflow-hidden rounded-[14px]"
-        style={{ backgroundColor: "#d9f268" }}
+        style={{ backgroundColor: "#0a0a0a" }}
         initial={false}
         animate={{ height: h(2) }}
         transition={STACK_EASE}
       >
         <div className="flex items-center justify-between px-4 pt-4">
-          <span className="font-numeral text-[11px] text-ink">•••• 3346</span>
-          <Visa tone="ink" />
+          <span className="font-numeral text-[11px] text-white">•••• 3346</span>
+          <Visa tone="white" />
         </div>
         <motion.span
-          className="absolute bottom-3.5 left-4 text-[38px] font-bold leading-none tracking-[-1.5px] text-ink"
+          className="absolute bottom-3.5 left-4 text-[38px] font-bold leading-none tracking-[-1.5px] text-white"
           initial={false}
           animate={{ opacity: lit(2) ? 1 : 0 }}
           transition={{ duration: 0.3 }}
@@ -582,12 +627,12 @@ function YearlyActivity() {
 
 function TotalSpending() {
   return (
-    <div className="rounded-[18px] p-3" style={{ backgroundColor: "#0a0a0a" }}>
+    <div className="rounded-[18px] p-3" style={{ backgroundColor: "#ffffff" }}>
       <div className="flex items-center justify-between">
-        <span className="text-[11px] font-medium text-white/60">
+        <span className="text-[11px] font-medium text-ink/60">
           Total agent spend
         </span>
-        <span className="flex items-center gap-1 rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold text-ink">
+        <span className="flex items-center gap-1 rounded-full bg-[#0a0a0a] px-2.5 py-1 text-[11px] font-semibold text-white">
           Jul 2026
           <svg width="8" height="8" viewBox="0 0 16 16" fill="none" aria-hidden>
             <path
@@ -600,13 +645,13 @@ function TotalSpending() {
           </svg>
         </span>
       </div>
-      <p className="font-numeral mt-1 text-[22px] font-bold tracking-[-0.5px] text-white">
+      <p className="font-numeral mt-1 text-[22px] font-bold tracking-[-0.5px] text-ink">
         {money(2350)}
       </p>
       <InsightsChart
         daily={HERO_DAILY}
         xLabels={HERO_X_LABELS}
-        tone="dark"
+        tone="light"
         className="mt-1.5 h-[128px]"
       />
     </div>
