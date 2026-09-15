@@ -378,14 +378,16 @@ function Statement() {
         <div className={`${INNER} pb-[clamp(120px,14vw,270px)]`}>
           <motion.div
             {...up}
-            className="relative grid min-h-[clamp(360px,38vw,730px)] gap-10 rounded-[24px] bg-white px-[clamp(24px,4vw,78px)] py-[clamp(40px,7vw,140px)] text-ink min-[900px]:grid-cols-[clamp(120px,22%,444px)_1fr]"
+            className="relative grid min-h-[clamp(360px,38vw,730px)] gap-10 rounded-[24px] px-[clamp(24px,4vw,78px)] py-[clamp(40px,7vw,140px)] text-white min-[900px]:grid-cols-[clamp(120px,22%,444px)_1fr]"
+            style={{ backgroundColor: GREEN }}
           >
+            {/* the Payloat mark, which is Payle's mark too, in white */}
             <Image
-              src="/payloat-logo-black.svg"
+              src="/payloat-icon-dark.svg"
               alt="Payloat"
-              width={150}
-              height={40}
-              className="h-[clamp(24px,2vw,38px)] w-auto self-start"
+              width={56}
+              height={56}
+              className="h-[clamp(36px,3vw,56px)] w-auto self-start invert"
             />
             <div className="max-w-[1000px]">
               <p className="text-[clamp(22px,2vw,38px)] leading-[1.15] tracking-[-1px]">
@@ -397,16 +399,16 @@ function Statement() {
               <p className="mt-[clamp(32px,4.5vw,86px)] text-[clamp(15px,0.95vw,18px)] leading-[1.45]">
                 Payle
                 <br />
-                <span className="text-sub">
+                <span className="text-white/70">
                   Financial manager agent, running on Payloat infrastructure
                 </span>
               </p>
             </div>
             {/* the little pager Amigo shows at the right edge */}
             <div className="absolute right-[clamp(16px,3.5vw,66px)] top-1/2 hidden -translate-y-1/2 flex-col items-center gap-2 min-[900px]:flex">
-              <span className="h-5 w-[3px] rounded-full bg-ink" />
-              <span className="h-[3px] w-[3px] rounded-full bg-ink/40" />
-              <span className="h-[3px] w-[3px] rounded-full bg-ink/40" />
+              <span className="h-5 w-[3px] rounded-full bg-white" />
+              <span className="h-[3px] w-[3px] rounded-full bg-white/60" />
+              <span className="h-[3px] w-[3px] rounded-full bg-white/60" />
             </div>
           </motion.div>
         </div>
