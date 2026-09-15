@@ -19,7 +19,7 @@ import { money } from "@/components/tracker/money";
  *      card right with the team → Payle → agents flow and a scrolling
  *      list of finance tasks. "Trusted by" caps + a ruled logo strip.
  *   2. Stats band on the green: three ruled columns.
- *   3. Statement card on the green, then the green fades to white.
+ *   3. Statement on the green, full width, then the green fades to white.
  *   4. Workflows: centered headline, a carousel of tall canvases with a
  *      centered pill label, arrows, a note.
  *   5. The playbook on black: two-tone headline, pill, numbered tabs, a
@@ -369,50 +369,49 @@ function StatsBand() {
 
 function Statement() {
   return (
-    <section
-      style={{
-        background: `linear-gradient(to bottom, ${GREEN} 0%, ${GREEN} 62%, #ffffff 100%)`,
-      }}
-    >
-      <div className={`${FRAME} border-transparent`}>
-        <div className={`${INNER} pb-[clamp(120px,14vw,270px)]`}>
-          <motion.div
-            {...up}
-            className="relative grid min-h-[clamp(360px,38vw,730px)] gap-10 rounded-[24px] px-[clamp(24px,4vw,78px)] py-[clamp(40px,7vw,140px)] text-white min-[900px]:grid-cols-[clamp(120px,22%,444px)_1fr]"
-            style={{ backgroundColor: GREEN }}
-          >
-            {/* the Payloat mark, which is Payle's mark too, in white */}
-            <Image
-              src="/payloat-icon-dark.svg"
-              alt="Payloat"
-              width={56}
-              height={56}
-              className="h-[clamp(36px,3vw,56px)] w-auto self-start invert"
-            />
-            <div className="max-w-[1000px]">
-              <p className="text-[clamp(22px,2vw,38px)] leading-[1.15] tracking-[-1px]">
-                &ldquo;The expensive mistakes in finance are the ones nobody
-                saw coming. Payle sees every agent charge the moment it
-                lands, so the team decides before the money moves, and spends
-                its time on the customer instead of the spreadsheet.&rdquo;
-              </p>
-              <p className="mt-[clamp(32px,4.5vw,86px)] text-[clamp(15px,0.95vw,18px)] leading-[1.45]">
-                Payle
-                <br />
-                <span className="text-white/70">
-                  Financial manager agent, running on Payloat infrastructure
-                </span>
-              </p>
-            </div>
-            {/* the little pager Amigo shows at the right edge */}
-            <div className="absolute right-[clamp(16px,3.5vw,66px)] top-1/2 hidden -translate-y-1/2 flex-col items-center gap-2 min-[900px]:flex">
-              <span className="h-5 w-[3px] rounded-full bg-white" />
-              <span className="h-[3px] w-[3px] rounded-full bg-white/60" />
-              <span className="h-[3px] w-[3px] rounded-full bg-white/60" />
-            </div>
-          </motion.div>
-        </div>
+    <section style={{ backgroundColor: GREEN }}>
+      {/* the statement lies on the green itself, full width, then the
+          green fades to white toward the workflows */}
+      <div className={`${FRAME} border-white/10`}>
+        <motion.div
+          {...up}
+          className="relative grid gap-10 px-[clamp(24px,5.7vw,110px)] pb-[clamp(56px,8vw,160px)] pt-[clamp(24px,5vw,96px)] text-white min-[900px]:grid-cols-[clamp(120px,22%,444px)_1fr]"
+        >
+          {/* the Payloat mark, which is Payle's mark too, in white */}
+          <Image
+            src="/payloat-icon-dark.svg"
+            alt="Payloat"
+            width={56}
+            height={56}
+            className="h-[clamp(36px,3vw,56px)] w-auto self-start invert"
+          />
+          <div className="max-w-[1000px]">
+            <p className="text-[clamp(22px,2vw,38px)] leading-[1.15] tracking-[-1px]">
+              &ldquo;The expensive mistakes in finance are the ones nobody
+              saw coming. Payle sees every agent charge the moment it
+              lands, so the team decides before the money moves, and spends
+              its time on the customer instead of the spreadsheet.&rdquo;
+            </p>
+            <p className="mt-[clamp(32px,4.5vw,86px)] text-[clamp(15px,0.95vw,18px)] leading-[1.45]">
+              Payle
+              <br />
+              <span className="text-white/70">
+                Financial manager agent, running on Payloat infrastructure
+              </span>
+            </p>
+          </div>
+          {/* the little pager Amigo shows at the right edge */}
+          <div className="absolute right-[clamp(16px,3.5vw,66px)] top-1/2 hidden -translate-y-1/2 flex-col items-center gap-2 min-[900px]:flex">
+            <span className="h-5 w-[3px] rounded-full bg-white" />
+            <span className="h-[3px] w-[3px] rounded-full bg-white/60" />
+            <span className="h-[3px] w-[3px] rounded-full bg-white/60" />
+          </div>
+        </motion.div>
       </div>
+      <div
+        className="h-[clamp(160px,18vw,340px)]"
+        style={{ background: `linear-gradient(to bottom, ${GREEN}, #ffffff)` }}
+      />
     </section>
   );
 }
