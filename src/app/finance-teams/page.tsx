@@ -1047,10 +1047,12 @@ function SetUp() {
             </div>
             <motion.div
               {...up}
-              className="relative overflow-hidden rounded-[24px] p-[clamp(24px,2.5vw,48px)] text-white"
-              style={{ backgroundColor: GREEN, aspectRatio: "1120 / 720" }}
+              className="relative rounded-[24px] p-[clamp(24px,2.5vw,48px)] text-white"
+              style={{ backgroundColor: GREEN, minHeight: "clamp(360px,37.5vw,720px)" }}
             >
-              <ol className="flex h-full flex-col justify-between">
+              {/* the card grows with its steps; the min height keeps
+                  Amigo's 1120x720 proportion when the steps are short */}
+              <ol className="flex h-full flex-col justify-between gap-[clamp(20px,2vw,40px)]">
                 {SETUP.map(([t, b], k) => (
                   <li key={t} className="flex gap-[clamp(16px,1.5vw,28px)] border-t border-white/20 pt-[clamp(14px,1.4vw,26px)] first:border-t-0 first:pt-0">
                     <span className={`${MONO} pt-1.5 text-white/60`}>0{k + 1}</span>
@@ -1169,19 +1171,21 @@ function Guides() {
 
 function Cta() {
   return (
-    <section className="bg-white">
-      <div className={`${FRAME} border-t border-black/[0.08]`}>
+    <section style={{ backgroundColor: GREEN }}>
+      {/* on the green so it runs straight into the footer; the card is
+          white with black type */}
+      <div className={`${FRAME} border-white/10`}>
         <div className="px-[clamp(20px,10.4vw,200px)] pb-[clamp(40px,3.3vw,64px)] pt-[clamp(40px,3.6vw,70px)]">
           <motion.div
             {...up}
-            className="flex flex-col items-center justify-center rounded-[34px] px-6 text-center text-white"
-            style={{ backgroundColor: GREEN, minHeight: "clamp(360px,33vw,640px)" }}
+            className="flex flex-col items-center justify-center rounded-[34px] bg-white px-6 text-center text-ink"
+            style={{ minHeight: "clamp(360px,33vw,640px)" }}
           >
             <h2 className="max-w-[820px] text-[clamp(30px,3vw,58px)] font-medium leading-[1.08] tracking-[-1.8px]" style={{ textWrap: "balance" }}>
               The financial manager your agents report to.
             </h2>
             <div className="mt-[clamp(28px,3vw,58px)]">
-              <Pill href="/contact" light>
+              <Pill href="/contact" dark>
                 Book a demo
               </Pill>
             </div>
