@@ -536,16 +536,29 @@ function WalletStack({ open }: { open: boolean }) {
       {/* card 3: Payloat */}
       <motion.div
         className="relative mt-2 overflow-hidden rounded-[14px]"
-        style={{
-          backgroundColor: "#0a0a0a",
-          /* the card's edge on the hero's black ground */
-          boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.14)",
-        }}
+        style={{ backgroundColor: "#0a0a0a" }}
         initial={false}
         animate={{ height: h(2) }}
         transition={STACK_EASE}
       >
-        <div className="flex items-center justify-between px-4 pt-4">
+        {/* card face: the black studio photo (teal sphere and light ring),
+            framed on the band where the ring crosses the sphere */}
+        <div className="absolute inset-0">
+          <Image
+            src="/payloat-card-bg.jpg"
+            alt=""
+            fill
+            unoptimized
+            className="object-cover"
+            style={{ objectPosition: "50% 55%" }}
+          />
+        </div>
+        {/* the card's edge on the hero's black ground */}
+        <div
+          className="pointer-events-none absolute inset-0 rounded-[14px]"
+          style={{ boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.14)" }}
+        />
+        <div className="relative flex items-center justify-between px-4 pt-4">
           <span className="font-numeral text-[11px] text-white">•••• 3346</span>
           <Visa tone="white" />
         </div>
