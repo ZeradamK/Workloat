@@ -17,7 +17,7 @@ import FooterSection from "@/components/FooterSection";
 import InsightsChart from "@/components/tracker/InsightsChart";
 
 /**
- * Features page (ElevenLabs anatomy, user refs). Section 1: eyebrow +
+ * Consumer page (the former features page, ElevenLabs anatomy, user refs). Section 1: eyebrow +
  * split headline/paragraph + Learn more, then two cards — gradient chat
  * canvas (refund conversation) and analytics card. Section 2: centered
  * headline + segmented toggle + masonry of feature cards (placeholder
@@ -40,7 +40,7 @@ const DAILY = [
 ];
 const X_LABELS = ["Jul 01", "Jul 07", "Jul 13", "Jul 20"];
 
-export default function FeaturesPage() {
+export default function ConsumerPage() {
   return (
     <main className="bg-white">
       <NavDock forceDark />

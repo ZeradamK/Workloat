@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Features — Payloat",
+  title: "Enterprise — Payloat",
   description:
-    "Record, match, and summarize. Payloat Ledger records what your agents buy, matches the receipts, and turns agent spend into a view you can trust.",
+    "Payloat for enterprises: one ledger for every agent's spend across every team, bank, and card.",
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {

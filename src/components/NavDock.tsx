@@ -52,10 +52,11 @@ const PRODUCT_ITEMS = [
   { label: "Investing with agents", href: "/product" },
 ];
 
+/** Features sub-items: one per audience page. */
 const SOLUTION_ITEMS = [
-  "For restaurants",
-  "For agent builders",
-  "For finance teams",
+  { label: "Consumer", href: "/consumer" },
+  { label: "Financial teams", href: "/finance-teams" },
+  { label: "Enterprise", href: "/enterprise" },
 ];
 
 const PRICING_ITEMS = [
@@ -86,7 +87,7 @@ const ROW_W = SHOW_PRICING ? 470 : 386;
 /** main nav items with a page of their own */
 const PAGE_ROUTES: Partial<Record<PanelKey, string>> = {
   Product: "/product",
-  Features: "/features",
+  Features: "/consumer",
   Contact: "/contact",
 };
 
@@ -600,13 +601,13 @@ export default function NavDock({
                                 ))}
                               {item === "Features" &&
                                 SOLUTION_ITEMS.map((f) => (
-                                  <li key={f}>
+                                  <li key={f.label}>
                                     <Link
-                                      href="/features"
+                                      href={f.href}
                                       onClick={() => setMenuOpen(false)}
                                       className="block py-1 text-[15px] [color:var(--nav-fg)] opacity-80 transition-opacity hover:opacity-100"
                                     >
-                                      {f}
+                                      {f.label}
                                     </Link>
                                   </li>
                                 ))}
@@ -715,9 +716,9 @@ function SolutionsPanel() {
       <PanelLabel>Features</PanelLabel>
       <ul className="mt-2">
         {SOLUTION_ITEMS.map((s) => (
-          <li key={s}>
-            <Link href="/features" className={bigLink}>
-              {s}
+          <li key={s.label}>
+            <Link href={s.href} className={bigLink}>
+              {s.label}
             </Link>
           </li>
         ))}
