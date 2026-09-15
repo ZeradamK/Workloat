@@ -561,7 +561,7 @@ function WalletStack({ open }: { open: boolean }) {
 
 function CardExpenses() {
   return (
-    <div className="flex flex-1 flex-col rounded-[18px] bg-mist p-3">
+    <div className="flex flex-1 flex-col rounded-[18px] bg-white p-3">
       <span className="text-[11px] font-medium text-sub">Agent spend</span>
       <span className="font-numeral mt-1 text-[21px] font-semibold tracking-[-0.5px] text-ink">
         {money(1240.6)}
@@ -572,7 +572,7 @@ function CardExpenses() {
 
 function PaymentDue() {
   return (
-    <div className="flex w-full flex-col rounded-[18px] bg-mist p-3">
+    <div className="flex w-full flex-col rounded-[18px] bg-white p-3">
       <span className="text-[11px] font-medium text-sub">Renewing soon</span>
       <span className="font-numeral mt-1 text-[21px] font-semibold tracking-[-0.5px] text-ink">
         $120
@@ -590,7 +590,7 @@ function PaymentDue() {
       {/* white pill, the app's Pay Early treatment */}
       <button
         type="button"
-        className="mt-auto h-9 w-full rounded-full bg-white text-[12px] font-semibold text-ink"
+        className="mt-auto h-9 w-full rounded-full bg-mist text-[12px] font-semibold text-ink"
       >
         See plans
       </button>
@@ -600,7 +600,7 @@ function PaymentDue() {
 
 function YearlyActivity() {
   return (
-    <div className="flex flex-1 flex-col rounded-[18px] bg-mist p-3">
+    <div className="flex flex-1 flex-col rounded-[18px] bg-white p-3">
       <span className="text-[11px] font-medium text-sub">Yearly activity</span>
       <div className="mt-2 flex flex-1 items-end justify-between">
         {YEARLY.map((v, i) => (
@@ -628,7 +628,7 @@ function YearlyActivity() {
 
 function TotalSpending() {
   return (
-    <div className="rounded-[18px] p-3" style={{ backgroundColor: "#eeeeee" }}>
+    <div className="rounded-[18px] p-3" style={{ backgroundColor: "#ffffff" }}>
       <div className="flex items-center justify-between">
         <span className="text-[11px] font-medium text-ink/60">
           Total agent spend
