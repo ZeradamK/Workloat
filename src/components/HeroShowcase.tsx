@@ -46,10 +46,12 @@ const NAV_TOP = 20; /* the nav bar's top tip line */
 const NAV_BOTTOM = 68; /* nav top + its 48px height */
 const COL_W = 320; /* center column width (350 - 30), matches the dock */
 
-/* the hero ground: black on slide 1, the page's white on slide 2. The
-   fade is a pure function of scroll (same window the nav dock uses), so
-   it tracks any gesture forward and back with no state to desync. */
-const HERO_BLACK = "#0a0a0a";
+/* the hero ground: the investing green on slide 1, the page's white on
+   slide 2. The fade is a pure function of scroll (same window the nav
+   dock uses), so it tracks any gesture forward and back with no state to
+   desync. */
+const HERO_GREEN = "#163300"; /* = the product page's investing section */
+const HERO_BLACK = "#0a0a0a"; /* the ink the type settles on */
 const HERO_WHITE = "#fefefe"; /* = var(--background) */
 const GROUND_WINDOW = [0.4, 0.65];
 
@@ -117,7 +119,7 @@ export default function HeroShowcase() {
 
   /* ground and type fade together: black/white on slide 1, white/ink on
      slide 2 */
-  const ground = useTransform(t, GROUND_WINDOW, [HERO_BLACK, HERO_WHITE]);
+  const ground = useTransform(t, GROUND_WINDOW, [HERO_GREEN, HERO_WHITE]);
   const ink = useTransform(t, GROUND_WINDOW, ["#ffffff", HERO_BLACK]);
 
   return (
@@ -299,7 +301,7 @@ function MobileHero() {
     heroT.set(v);
   });
   const ground = useTransform(scrollYProgress, GROUND_WINDOW, [
-    HERO_BLACK,
+    HERO_GREEN,
     HERO_WHITE,
   ]);
   const ink = useTransform(scrollYProgress, GROUND_WINDOW, [
@@ -536,8 +538,7 @@ function WalletStack({ open }: { open: boolean }) {
       {/* card 3: Payloat */}
       <motion.div
         className="relative mt-2 overflow-hidden rounded-[14px]"
-        /* the investing green from the product page */
-        style={{ backgroundColor: "#163300" }}
+        style={{ backgroundColor: "#0a0a0a" }}
         initial={false}
         animate={{ height: h(2) }}
         transition={STACK_EASE}
