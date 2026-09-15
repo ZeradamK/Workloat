@@ -30,6 +30,7 @@ export default function PurchaseTrackerCard({
   xLabels,
   countUp = false,
   tone = "light",
+  bgImage,
   href,
   className = "",
 }: {
@@ -45,6 +46,8 @@ export default function PurchaseTrackerCard({
   countUp?: boolean;
   /** "dark": black card, light title/chart/CTA; stat boxes stay as-is. */
   tone?: "light" | "dark";
+  /** Optional cover image painted behind the card, centered. */
+  bgImage?: string;
   /** omit to render the CTAs as non-links */
   href?: string;
   className?: string;
@@ -80,7 +83,17 @@ export default function PurchaseTrackerCard({
   return (
     <div
       className={`w-full rounded-[24px] p-3 ${className}`}
-      style={{ backgroundColor: dark ? "#0a0a0a" : MIST }}
+      style={{
+        backgroundColor: dark ? "#0a0a0a" : MIST,
+        ...(bgImage
+          ? {
+              backgroundImage: `url(${bgImage})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              backgroundRepeat: "no-repeat",
+            }
+          : {}),
+      }}
     >
       {/* Title row */}
       <div className="flex items-start justify-between pl-1 pt-1">

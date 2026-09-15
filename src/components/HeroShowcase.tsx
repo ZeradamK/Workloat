@@ -216,7 +216,8 @@ export default function HeroShowcase() {
             >
               <PurchaseTrackerCard
                 countUp={trackerLive}
-                tone="light"
+                tone="dark"
+                bgImage="/product-hero-gradient.jpg"
                 href="/purchases"
                 purchases={42}
                 spend={2350}
@@ -228,6 +229,7 @@ export default function HeroShowcase() {
               {/* the iOS home's subscriptions card, exact anatomy */}
               <SubscriptionTrackerCard
                 fluid
+                tone="dark"
                 href="/purchases"
                 spend={210}
                 daily={SUBS_DAILY}
@@ -329,7 +331,8 @@ function MobileHero() {
       >
         <PurchaseTrackerCard
           countUp={trackerLive}
-          tone="light"
+          tone="dark"
+          bgImage="/product-hero-gradient.jpg"
           href="/purchases"
           purchases={42}
           spend={2350}
