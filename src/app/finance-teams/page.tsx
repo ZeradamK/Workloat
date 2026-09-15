@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, animate, motion, useMotionValue } from "motion/react";
 import NavDock from "@/components/NavDock";
 import FooterSection from "@/components/FooterSection";
 import InsightsChart from "@/components/tracker/InsightsChart";
@@ -27,11 +27,10 @@ import { money } from "@/components/tracker/money";
  *   6. Security and integrations on black with a ruled logo strip.
  *   7. Built for how you spend: two-tone centered headline, tab rail with
  *      an animated scene, three ruled stats.
- *   8. Gradient band.
- *   9. Set up in days: headline + steps card, then a ruled bank strip.
- *  10. Guides: three tall cards.
- *  11. CTA card on the green.
- *  12. Footer on the green.
+ *   8. Set up in days: headline + steps card, then a ruled bank strip.
+ *   9. Guides: three tall cards.
+ *  10. CTA card on the green.
+ *  11. Footer on the green.
  */
 
 const EASE = [0.25, 0.6, 0.2, 1] as const;
@@ -72,7 +71,6 @@ export default function FinanceTeamsPage() {
       <Playbook />
       <Security />
       <BuiltFor />
-      <GradientBand />
       <SetUp />
       <Guides />
       <Cta />
@@ -380,14 +378,10 @@ function Statement() {
         <div className={`${INNER} pb-[clamp(120px,14vw,270px)]`}>
           <motion.div
             {...up}
-            className="relative grid min-h-[clamp(360px,38vw,730px)] gap-10 rounded-[24px] px-[clamp(24px,4vw,78px)] py-[clamp(40px,7vw,140px)] text-white min-[900px]:grid-cols-[clamp(120px,22%,444px)_1fr]"
-            style={{
-              background:
-                "linear-gradient(135deg, rgba(255,255,255,0.14), rgba(255,255,255,0.06))",
-            }}
+            className="relative grid min-h-[clamp(360px,38vw,730px)] gap-10 rounded-[24px] bg-white px-[clamp(24px,4vw,78px)] py-[clamp(40px,7vw,140px)] text-ink min-[900px]:grid-cols-[clamp(120px,22%,444px)_1fr]"
           >
             <Image
-              src="/payloat-logo-white.svg"
+              src="/payloat-logo-black.svg"
               alt="Payloat"
               width={150}
               height={40}
@@ -403,16 +397,16 @@ function Statement() {
               <p className="mt-[clamp(32px,4.5vw,86px)] text-[clamp(15px,0.95vw,18px)] leading-[1.45]">
                 Payle
                 <br />
-                <span className="text-white/70">
+                <span className="text-sub">
                   Financial manager agent, running on Payloat infrastructure
                 </span>
               </p>
             </div>
             {/* the little pager Amigo shows at the right edge */}
             <div className="absolute right-[clamp(16px,3.5vw,66px)] top-1/2 hidden -translate-y-1/2 flex-col items-center gap-2 min-[900px]:flex">
-              <span className="h-5 w-[3px] rounded-full bg-white" />
-              <span className="h-[3px] w-[3px] rounded-full bg-white/60" />
-              <span className="h-[3px] w-[3px] rounded-full bg-white/60" />
+              <span className="h-5 w-[3px] rounded-full bg-ink" />
+              <span className="h-[3px] w-[3px] rounded-full bg-ink/40" />
+              <span className="h-[3px] w-[3px] rounded-full bg-ink/40" />
             </div>
           </motion.div>
         </div>
@@ -433,9 +427,21 @@ const WORKFLOWS = [
   { label: "Forecasting", canvas: "ink" as const, figure: "forecast" as const },
 ];
 
+const CARD_W = 452;
+const CARD_GAP = 22;
+const STEP = CARD_W + CARD_GAP;
+
 function Workflows() {
-  const [offset, setOffset] = useState(0);
+  const [index, setIndex] = useState(0);
   const max = WORKFLOWS.length - 1;
+  /* the track's x: the arrows animate it, a drag moves it live and then
+     snaps to the nearest card by position and fling */
+  const x = useMotionValue(0);
+  const go = (i: number) => {
+    const next = Math.min(max, Math.max(0, i));
+    setIndex(next);
+    animate(x, -next * STEP, { type: "spring", stiffness: 140, damping: 26 });
+  };
   return (
     <section className="overflow-hidden pb-[clamp(72px,7vw,140px)] pt-[clamp(40px,4.4vw,84px)]">
       <motion.h2
@@ -446,12 +452,23 @@ function Workflows() {
       </motion.h2>
 
       {/* the track: 452x630 cards with 22px gaps at 1920, centered so
-          a card bleeds on both edges like Amigo's */}
+          a card bleeds on both edges like Amigo's; drag it or use the
+          arrows */}
       <div className="mt-[clamp(40px,4.3vw,84px)] flex justify-center">
         <motion.div
-          className="flex gap-[clamp(12px,1.15vw,22px)]"
-          animate={{ x: -offset * 474 }}
-          transition={{ type: "spring", stiffness: 140, damping: 26 }}
+          className="flex cursor-grab gap-[22px] active:cursor-grabbing"
+          style={{ x }}
+          drag="x"
+          dragConstraints={{ left: -max * STEP, right: 0 }}
+          dragElastic={0.12}
+          dragMomentum={false}
+          onDragEnd={(_, info) => {
+            const fling = info.velocity.x;
+            const at = -x.get() / STEP;
+            const target =
+              Math.abs(fling) > 400 ? (fling < 0 ? Math.ceil(at) : Math.floor(at)) : Math.round(at);
+            go(target);
+          }}
         >
           {WORKFLOWS.map((w) => (
             <WorkflowCard key={w.label} {...w} />
@@ -463,18 +480,18 @@ function Workflows() {
         <button
           type="button"
           aria-label="Previous"
-          onClick={() => setOffset((o) => Math.max(0, o - 1))}
+          onClick={() => go(index - 1)}
           className="flex h-[34px] w-[34px] items-center justify-center rounded-full bg-mist text-ink transition-transform hover:scale-105 disabled:opacity-40"
-          disabled={offset === 0}
+          disabled={index === 0}
         >
           <ArrowIcon dir="left" />
         </button>
         <button
           type="button"
           aria-label="Next"
-          onClick={() => setOffset((o) => Math.min(max, o + 1))}
+          onClick={() => go(index + 1)}
           className="flex h-[34px] w-[34px] items-center justify-center rounded-full bg-mist text-ink transition-transform hover:scale-105 disabled:opacity-40"
-          disabled={offset === max}
+          disabled={index === max}
         >
           <ArrowIcon dir="right" />
         </button>
@@ -515,7 +532,7 @@ function WorkflowCard({
   return (
     <div
       className="relative shrink-0 overflow-hidden rounded-[24px]"
-      style={{ width: 452, height: 630, backgroundColor: bg }}
+      style={{ width: CARD_W, height: 630, backgroundColor: bg }}
     >
       <div className="absolute inset-x-[36px] top-[44px]">
         <Figure kind={figure} dark={dark} />
@@ -870,12 +887,6 @@ const STEPS: { tab: string; title: string; body: string; scene: SceneKey }[] = [
     scene: "confirmations",
   },
   {
-    tab: "Approve",
-    title: "Approve",
-    body: "Charges under a cap clear on their own. Anything over it waits for the budget owner, in Slack, with the context to decide fast.",
-    scene: "caps",
-  },
-  {
     tab: "Report",
     title: "Report",
     body: "Spend by agent, by vendor, by task, every day. At month end Payle drafts the close and your team signs off.",
@@ -999,18 +1010,6 @@ function BuiltFor() {
         </div>
       </div>
     </section>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* 8. Gradient band                                                    */
-/* ------------------------------------------------------------------ */
-
-function GradientBand() {
-  return (
-    <div className="relative h-[clamp(200px,22vw,420px)] overflow-hidden">
-      <Image src="/slack-gradient.jpg" alt="" fill sizes="100vw" className="object-cover" />
-    </div>
   );
 }
 
