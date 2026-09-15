@@ -483,7 +483,7 @@ function WalletStack({ open }: { open: boolean }) {
   const lit = (i: number) => open && active === i;
 
   return (
-    <div className="rounded-[24px] p-2.5" style={{ backgroundColor: "#ffffff" }}>
+    <div>
       {/* card 1: Apple Pay — number top-left, VISA top-right, logo
           bottom-left (the Payloat logotype position) */}
       <motion.div
@@ -536,7 +536,11 @@ function WalletStack({ open }: { open: boolean }) {
       {/* card 3: Payloat */}
       <motion.div
         className="relative mt-2 overflow-hidden rounded-[14px]"
-        style={{ backgroundColor: "#0a0a0a" }}
+        style={{
+          backgroundColor: "#0a0a0a",
+          /* the card's edge on the hero's black ground */
+          boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.14)",
+        }}
         initial={false}
         animate={{ height: h(2) }}
         transition={STACK_EASE}
@@ -627,7 +631,7 @@ function YearlyActivity() {
 
 function TotalSpending() {
   return (
-    <div className="rounded-[18px] p-3" style={{ backgroundColor: "#ffffff" }}>
+    <div className="rounded-[18px] p-3" style={{ backgroundColor: "#eeeeee" }}>
       <div className="flex items-center justify-between">
         <span className="text-[11px] font-medium text-ink/60">
           Total agent spend

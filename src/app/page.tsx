@@ -13,7 +13,7 @@ export default function Home() {
   return (
     <main>
       <NavDock
-        heroSurface={{ bg: "#ffffff", fg: "#0a0a0a", pill: "#eeeeee" }}
+        heroSurface={{ bg: "#eeeeee", fg: "#0a0a0a" }}
         ctaOutline
       />
 
