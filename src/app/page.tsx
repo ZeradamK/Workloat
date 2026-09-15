@@ -14,7 +14,6 @@ export default function Home() {
     <main>
       <NavDock
         heroSurface={{ bg: "#ffffff", fg: "#0a0a0a", pill: "#eeeeee" }}
-        ctaOutline
       />
 
       {/* Pinned hero act: still section, parallaxed middle column
