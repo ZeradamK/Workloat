@@ -24,8 +24,8 @@ const EASE = [0.25, 0.6, 0.2, 1] as const;
 const GREEN_INK = "#163300";
 const LIME = "#9fe870";
 
-/* the canvas's ground, the nav's color, and the scene colors for it */
-const CANVAS_BG = "#f7f2eb";
+/* the canvas's ground and the scene colors for it */
+const CANVAS_BG = "#eeeeee";
 const CANVAS_VARS = {
   "--sc-fg": "#0a0a0a",
   "--sc-muted": "rgba(10,10,10,0.6)",
