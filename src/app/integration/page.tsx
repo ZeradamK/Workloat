@@ -154,9 +154,11 @@ export default function LedgerPage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, ease: EASE }}
-            className="mx-auto max-w-[860px] text-center text-[clamp(28px,4.1vw,59px)] font-semibold leading-[1.15] tracking-[-1.5px] text-white min-[900px]:mx-0 min-[900px]:text-left"
+            className="mx-auto max-w-[900px] text-center text-[clamp(44px,7vw,104px)] font-black uppercase leading-[0.96] tracking-[-2px] text-white min-[900px]:mx-0 min-[900px]:text-left"
           >
-            Every bank, every agent
+            Every bank,
+            <br />
+            every agent
           </motion.h1>
 
           <div className="mt-8 grid gap-12 min-[900px]:grid-cols-2 min-[900px]:items-start min-[900px]:gap-10">
