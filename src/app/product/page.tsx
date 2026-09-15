@@ -36,7 +36,7 @@ export default function ProductPage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, ease: EASE, delay: 0.05 }}
-            className="mx-auto max-w-[900px] text-center text-[clamp(40px,5.6vw,80px)] font-medium leading-[1.04] tracking-[-2.5px] text-white"
+            className="mx-auto max-w-[1000px] text-center text-[clamp(44px,7vw,104px)] font-black uppercase leading-[0.96] tracking-[-2px] text-white"
             style={{ textWrap: "balance" }}
           >
             The one ledger for every agent&apos;s spend.
