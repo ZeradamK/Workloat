@@ -31,6 +31,7 @@ export default function PurchaseTrackerCard({
   countUp = false,
   tone = "light",
   bgImage,
+  purchasesBlack = false,
   href,
   className = "",
 }: {
@@ -48,6 +49,8 @@ export default function PurchaseTrackerCard({
   tone?: "light" | "dark";
   /** Optional cover image painted behind the card, centered. */
   bgImage?: string;
+  /** Paint the PURCHASES stat tile black with white text instead of lime. */
+  purchasesBlack?: boolean;
   /** omit to render the CTAs as non-links */
   href?: string;
   className?: string;
@@ -140,13 +143,13 @@ export default function PurchaseTrackerCard({
           label="PURCHASES"
           number={String(shownPurchases)}
           change={purchasesChange}
-          lime
+          variant={purchasesBlack ? "black" : "lime"}
         />
         <StatCard
           label="SPEND"
           number={money(shownSpend)}
           change={spendChange}
-          lime={false}
+          variant="white"
         />
       </div>
 
@@ -193,36 +196,44 @@ function StatCard({
   label,
   number,
   change,
-  lime,
+  variant,
 }: {
   label: string;
   number: string;
   change: number | null;
-  lime: boolean;
+  variant: "lime" | "white" | "black";
 }) {
+  const black = variant === "black";
+  const ink = black ? "#ffffff" : CARD_INK;
+  const tileBg =
+    variant === "lime" ? STAT_LIME : black ? "#0a0a0a" : "#ffffff";
+  const pillBg =
+    variant === "lime"
+      ? "rgba(255,255,255,0.75)"
+      : black
+        ? "rgba(255,255,255,0.14)"
+        : "#f0f1ec";
   return (
     <div
       className="flex flex-1 flex-col items-center justify-center gap-3 rounded-[24px]"
-      style={{ backgroundColor: lime ? STAT_LIME : "#ffffff" }}
+      style={{ backgroundColor: tileBg }}
     >
       <span
         className="text-[11px] font-medium tracking-[1.5px]"
-        style={{ color: CARD_INK }}
+        style={{ color: ink }}
       >
         {label}
       </span>
       <span
         className="font-numeral text-[25px] font-semibold tracking-[-1px]"
-        style={{ color: CARD_INK }}
+        style={{ color: ink }}
       >
         {number}
       </span>
       {change !== null && (
         <span
           className="flex items-center gap-1.5 rounded-full py-[5px] pl-[5px] pr-3"
-          style={{
-            backgroundColor: lime ? "rgba(255,255,255,0.75)" : "#f0f1ec",
-          }}
+          style={{ backgroundColor: pillBg }}
         >
           <span className="flex h-[18px] w-[18px] items-center justify-center rounded-full bg-white">
             <svg
@@ -246,7 +257,7 @@ function StatCard({
           </span>
           <span
             className="font-numeral text-[12px] font-medium"
-            style={{ color: CARD_INK }}
+            style={{ color: ink }}
           >
             {Math.abs(change)}%
           </span>

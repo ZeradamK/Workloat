@@ -218,6 +218,7 @@ export default function HeroShowcase() {
                 countUp={trackerLive}
                 tone="dark"
                 bgImage="/product-hero-gradient.jpg"
+                purchasesBlack
                 href="/purchases"
                 purchases={42}
                 spend={2350}
@@ -333,6 +334,7 @@ function MobileHero() {
           countUp={trackerLive}
           tone="dark"
           bgImage="/product-hero-gradient.jpg"
+          purchasesBlack
           href="/purchases"
           purchases={42}
           spend={2350}
