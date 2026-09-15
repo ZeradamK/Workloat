@@ -98,8 +98,8 @@ export default function NavDock({
   surface,
   ctaOutline = false,
 }: {
-  /** A fixed dock color for the whole page (light type on it is assumed
-      dark), in place of the scroll-driven black-or-gray surface. */
+  /** The dock's light surface color in place of #eeeeee; the page's light
+      signal still moves it between black and this. */
   surface?: string;
   /** A 1px white border on the Get started pill, for dark grounds. */
   ctaOutline?: boolean;
@@ -186,12 +186,12 @@ export default function NavDock({
     /* the Slack act's gray box: dark while it is under the dock */
     return base * (1 - darkOverride) * (1 - slackDark.get());
   });
-  const dockBg = useTransform(lightAmt, [0, 1], [surface ?? "#0a0a0a", surface ?? "#eeeeee"]);
-  const navFg = useTransform(lightAmt, [0, 1], [surface ? "#0a0a0a" : "#ffffff", "#0a0a0a"]);
+  const dockBg = useTransform(lightAmt, [0, 1], ["#0a0a0a", surface ?? "#eeeeee"]);
+  const navFg = useTransform(lightAmt, [0, 1], ["#ffffff", "#0a0a0a"]);
   const navLabel = useTransform(
     lightAmt,
     [0, 1],
-    [surface ? "rgba(10,10,10,0.4)" : "rgba(255,255,255,0.4)", "rgba(10,10,10,0.4)"],
+    ["rgba(255,255,255,0.4)", "rgba(10,10,10,0.4)"],
   );
 
   const open = active !== null;

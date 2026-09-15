@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, animate, motion } from "motion/react";
 import NavDock from "@/components/NavDock";
 import FooterSection from "@/components/FooterSection";
 import MarketsSection from "@/components/MarketsSection";
+import { productLight } from "@/components/introProgress";
 import AgentScene, { type SceneKey } from "@/components/AgentScenes";
 
 /**
@@ -23,7 +24,48 @@ const EASE = [0.25, 0.6, 0.2, 1] as const;
 const GREEN_INK = "#163300";
 const LIME = "#9fe870";
 
+/* the canvas's ground, the nav's color, and the scene colors for it */
+const CANVAS_BG = "#f7f2eb";
+const CANVAS_VARS = {
+  "--sc-fg": "#0a0a0a",
+  "--sc-muted": "rgba(10,10,10,0.6)",
+  "--sc-line": "rgba(10,10,10,0.3)",
+  "--sc-fill": "rgba(10,10,10,0.06)",
+  "--sc-track": "rgba(10,10,10,0.1)",
+  "--sc-chip-bg": "#ffffff",
+  "--sc-chip-border": "rgba(10,10,10,0.12)",
+  "--sc-chip-on-bg": "#0a0a0a",
+  "--sc-chip-on-fg": "#ffffff",
+  "--sc-card-bg": "#ffffff",
+  "--sc-card-fg": "#0a0a0a",
+  "--sc-card-muted": "#706e68",
+  "--sc-icon": "none",
+} as React.CSSProperties;
+
 export default function ProductPage() {
+  /* the dock runs in the canvas's color, and goes black while the canvas
+     (the same color) is under it, so it never disappears into it */
+  const canvasRef = useRef<HTMLDivElement>(null);
+  const overRef = useRef(false);
+  useEffect(() => {
+    productLight.set(1);
+    const onScroll = () => {
+      const r = canvasRef.current?.getBoundingClientRect();
+      if (!r) return;
+      const over = r.top < 68 && r.bottom > 15;
+      if (over !== overRef.current) {
+        overRef.current = over;
+        animate(productLight, over ? 0 : 1, { duration: 0.25, ease: "easeOut" });
+      }
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      productLight.set(0);
+    };
+  }, []);
+
   return (
     <main className="bg-white">
       <NavDock forceDark logoSrc="/payloat-app-icon-blacktile.png" surface="#f7f2eb" ctaOutline />
@@ -69,7 +111,7 @@ export default function ProductPage() {
             transition={{ duration: 0.6, ease: EASE, delay: 0.24 }}
             className="mt-[clamp(40px,5vw,72px)]"
           >
-            <DefineBlock />
+            <DefineBlock canvasRef={canvasRef} />
           </motion.div>
         </div>
       </section>
@@ -253,7 +295,7 @@ const TABS = [
   },
 ] as const;
 
-function DefineBlock() {
+function DefineBlock({ canvasRef }: { canvasRef: React.RefObject<HTMLDivElement | null> }) {
   const [tab, setTab] = useState(0);
   const t = TABS[tab];
   return (
@@ -294,7 +336,7 @@ function DefineBlock() {
       </div>
 
       {/* the canvas: the copy top left, the graph right */}
-      <div className="relative mt-4 overflow-hidden rounded-[22px] bg-[#0a0a0a] p-6 text-white min-[900px]:p-8">
+      <div ref={canvasRef} className="relative mt-4 overflow-hidden rounded-[22px] p-6 text-ink min-[900px]:p-8" style={{ backgroundColor: CANVAS_BG, ...CANVAS_VARS }}>
         <div className="grid gap-10 min-[900px]:grid-cols-[1fr_1.3fr] min-[900px]:items-center">
           <AnimatePresence mode="wait" initial={false}>
             <motion.p
@@ -303,7 +345,7 @@ function DefineBlock() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.3, ease: EASE }}
-              className="max-w-[360px] self-start text-[15px] leading-[1.55] text-white/80"
+              className="max-w-[360px] self-start text-[15px] leading-[1.55] text-ink/80"
             >
               {t.copy}
             </motion.p>
