@@ -183,12 +183,20 @@ function Hero() {
               className="relative mt-[clamp(0px,3.7vw,72px)] overflow-hidden rounded-[16px] text-white"
               style={{ backgroundColor: INK, aspectRatio: "1152 / 548" }}
             >
-              {/* a soft green glow where Amigo's photo sits */}
+              {/* the cream-to-black gradient where Amigo's photo sits,
+                  pulled down so the white type reads on its light end */}
+              <Image
+                src="/product-hero-gradient.jpg"
+                alt=""
+                fill
+                sizes="(min-width: 1000px) 60vw, 100vw"
+                className="object-cover"
+              />
               <div
                 className="absolute inset-0"
                 style={{
                   background:
-                    "radial-gradient(60% 90% at 42% 50%, rgba(22,51,0,0.9), rgba(10,10,10,0) 70%)",
+                    "linear-gradient(to right, rgba(10,10,10,0.72), rgba(10,10,10,0.5) 45%, rgba(10,10,10,0.35))",
                 }}
               />
               {/* the flow: team → Payle → task → agents */}
