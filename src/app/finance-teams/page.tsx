@@ -300,13 +300,15 @@ function Node({
       {/* the team has no mark, only its bold label; Payle wears the
           Payloat mark, which is Payle's mark too */}
       {avatar === "payle" && (
-        <Image
-          src="/payloat-app-icon-blacktile.png"
-          alt=""
-          width={32}
-          height={32}
-          className={`${size} rounded-full`}
-        />
+        <span className={`${size} flex items-center justify-center rounded-full bg-white`}>
+          <Image
+            src="/payloat-icon-black.svg"
+            alt=""
+            width={18}
+            height={18}
+            className="h-[58%] w-[58%]"
+          />
+        </span>
       )}
       {avatar === "agents" && (
         <span
