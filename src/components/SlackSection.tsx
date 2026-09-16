@@ -158,10 +158,10 @@ function DesktopAct() {
 
   return (
     <section ref={ref} className="hidden px-[100px] pb-[clamp(120px,30vw,300px)] pt-4 min-[900px]:block">
-      {/* the stage sits straight on the page's white, which the green act
-          above has just faded into */}
+      {/* the stage sits on the page's white, which the green act above
+          has just faded into, inside a 1px black outline */}
       <div
-        className="relative flex flex-col overflow-hidden"
+        className="relative flex flex-col overflow-hidden rounded-[30px] border border-solid border-[#0a0a0a]"
         style={{ height: "clamp(840px, calc(100vh - 100px), 1120px)" }}
       >
         {/* headline */}

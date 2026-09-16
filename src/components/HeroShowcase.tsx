@@ -628,12 +628,12 @@ function YearlyActivity() {
 
 function TotalSpending() {
   return (
-    <div className="rounded-[18px] p-3" style={{ backgroundColor: "#ffffff" }}>
+    <div className="rounded-[18px] p-3" style={{ backgroundColor: "#0a0a0a" }}>
       <div className="flex items-center justify-between">
-        <span className="text-[11px] font-medium text-ink/60">
+        <span className="text-[11px] font-medium text-white/60">
           Total agent spend
         </span>
-        <span className="flex items-center gap-1 rounded-full bg-[#0a0a0a] px-2.5 py-1 text-[11px] font-semibold text-white">
+        <span className="flex items-center gap-1 rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold text-ink">
           Jul 2026
           <svg width="8" height="8" viewBox="0 0 16 16" fill="none" aria-hidden>
             <path
@@ -646,13 +646,13 @@ function TotalSpending() {
           </svg>
         </span>
       </div>
-      <p className="font-numeral mt-1 text-[22px] font-bold tracking-[-0.5px] text-ink">
+      <p className="font-numeral mt-1 text-[22px] font-bold tracking-[-0.5px] text-white">
         {money(2350)}
       </p>
       <InsightsChart
         daily={HERO_DAILY}
         xLabels={HERO_X_LABELS}
-        tone="light"
+        tone="dark"
         className="mt-1.5 h-[128px]"
       />
     </div>
