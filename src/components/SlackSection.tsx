@@ -2,13 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { animate, AnimatePresence, motion, useInView, useMotionValueEvent, useReducedMotion, useScroll } from "motion/react";
-import { slackDark } from "./introProgress";
+import { animate, AnimatePresence, motion, useInView, useReducedMotion } from "motion/react";
 import PhoneMock, { screenWidth as phoneScreenWidth } from "./PhoneMock";
 import { SlackIcon, type SlackIconName } from "./slackIcons";
 
 /**
- * Slack act. A #eeeeee rounded stage, inset 100px from the viewport edges,
+ * Slack act. A white stage, inset 100px from the viewport edges,
  * capped at the viewport height minus 300px. The headline sits at the top;
  * below it a Studio Display (CSS: thin black bezel, silver back, arm and
  * base) shows the Slack desktop app in dark mode on the brand gradient
@@ -115,18 +114,6 @@ function DesktopAct() {
   const [fit, setFit] = useState(1);
   const [open, setOpen] = useState<Open>({ scale: 1, y: "0%", cropped: false });
 
-  /* the nav goes dark while the gray box is under it (the dock sits in
-     the top ~70px of the viewport) */
-  const { scrollYProgress: underNav } = useScroll({ target: ref, offset: ["start 70px", "end 70px"] });
-  const darkOn = useRef(false);
-  useMotionValueEvent(underNav, "change", (v) => {
-    const target = v > 0 && v < 1;
-    if (target !== darkOn.current) {
-      darkOn.current = target;
-      animate(slackDark, target ? 1 : 0, { duration: 0.18, ease: "easeOut" });
-    }
-  });
-
   /* measure the stage: the lid should span it minus 100px each side,
      unless the height runs out first; and the opening pose, see Open */
   useEffect(() => {
@@ -171,8 +158,10 @@ function DesktopAct() {
 
   return (
     <section ref={ref} className="hidden px-[100px] pb-[clamp(120px,30vw,300px)] pt-4 min-[900px]:block">
+      {/* the stage sits straight on the page's white, which the green act
+          above has just faded into */}
       <div
-        className="relative flex flex-col overflow-hidden rounded-[30px] bg-[#eeeeee]"
+        className="relative flex flex-col overflow-hidden"
         style={{ height: "clamp(840px, calc(100vh - 100px), 1120px)" }}
       >
         {/* headline */}
@@ -193,7 +182,7 @@ function DesktopAct() {
             animate={{ opacity: scene === 2 ? 1 : 0 }}
             transition={{ duration: 0.5 }}
             className="pointer-events-none absolute inset-x-0 bottom-0 h-[9%]"
-            style={{ background: "linear-gradient(180deg,#e2e2e4 0%,#e9e9eb 12%,#ededef 100%)", borderTop: "1px solid rgba(0,0,0,0.10)" }}
+            style={{ background: "linear-gradient(180deg,#e6e6e8 0%,#f3f3f4 12%,#ffffff 100%)", borderTop: "1px solid rgba(0,0,0,0.10)" }}
           />
           {/* the rig: display + stand, centered, then posed per scene */}
           <motion.div
@@ -212,7 +201,7 @@ function DesktopAct() {
             animate={{ opacity: scene === 0 && open.cropped ? 1 : 0 }}
             transition={{ duration: 0.35 }}
             className="pointer-events-none absolute inset-x-0 top-0 z-10 h-[22%]"
-            style={{ background: "linear-gradient(180deg,#eeeeee 0%,rgba(238,238,238,0.85) 30%,rgba(238,238,238,0) 100%)" }}
+            style={{ background: "linear-gradient(180deg,#ffffff 0%,rgba(255,255,255,0.85) 30%,rgba(255,255,255,0) 100%)" }}
           />
 
           {/* the two bars: one bump in with the final scene, then they hold */}
