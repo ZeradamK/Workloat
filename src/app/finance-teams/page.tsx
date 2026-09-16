@@ -286,38 +286,36 @@ function Node({
   label: string;
   avatar: "team" | "payle" | "agents";
 }) {
+  const size = "h-[clamp(22px,1.6vw,32px)] w-[clamp(22px,1.6vw,32px)]";
   return (
     <div className="flex shrink-0 items-center gap-2.5">
-      <span
-        className="flex h-[clamp(22px,1.6vw,32px)] w-[clamp(22px,1.6vw,32px)] items-center justify-center overflow-hidden rounded-full"
-        style={{
-          backgroundColor:
-            avatar === "payle" ? "#ffffff" : "rgba(255,255,255,0.14)",
-        }}
-      >
-        {avatar === "payle" ? (
-          <Image
-            src="/payloat-icon-black.svg"
-            alt=""
-            width={18}
-            height={18}
-            className="h-[55%] w-[55%]"
-          />
-        ) : avatar === "team" ? (
-          <svg width="55%" height="55%" viewBox="0 0 16 16" fill="none" aria-hidden>
-            <circle cx="8" cy="5.5" r="3" fill="#ffffff" opacity="0.9" />
-            <path d="M2.5 14.5c.6-3 3-4.5 5.5-4.5s4.9 1.5 5.5 4.5" fill="#ffffff" opacity="0.9" />
-          </svg>
-        ) : (
+      {/* the team has no mark, only its bold label; Payle wears the
+          Payloat mark, which is Payle's mark too */}
+      {avatar === "payle" && (
+        <Image
+          src="/payloat-app-icon-blacktile.png"
+          alt=""
+          width={32}
+          height={32}
+          className={`${size} rounded-full`}
+        />
+      )}
+      {avatar === "agents" && (
+        <span
+          className={`${size} flex items-center justify-center overflow-hidden rounded-full`}
+          style={{ backgroundColor: "rgba(255,255,255,0.14)" }}
+        >
           <svg width="55%" height="55%" viewBox="0 0 16 16" fill="none" aria-hidden>
             <rect x="2" y="2" width="5" height="5" rx="1.2" fill="#ffffff" opacity="0.9" />
             <rect x="9" y="2" width="5" height="5" rx="1.2" fill="#ffffff" opacity="0.9" />
             <rect x="2" y="9" width="5" height="5" rx="1.2" fill="#ffffff" opacity="0.9" />
             <rect x="9" y="9" width="5" height="5" rx="1.2" fill="#ffffff" opacity="0.9" />
           </svg>
-        )}
-      </span>
-      <span className={`${MONO} whitespace-nowrap text-[clamp(8px,0.6vw,11px)] text-white/90`}>
+        </span>
+      )}
+      <span
+        className={`${MONO} whitespace-nowrap text-[clamp(8px,0.6vw,11px)] ${avatar === "team" ? "font-bold text-white" : "text-white/90"}`}
+      >
         {label}
       </span>
     </div>
