@@ -37,6 +37,14 @@ const EASE = [0.25, 0.6, 0.2, 1] as const;
 const GREEN = "#163300";
 const INK = "#0a0a0a";
 
+/* green → white along a smoothstep curve, so neither end shows an edge */
+const FADE = `linear-gradient(to bottom, ${[
+  [0, 0], [8, 1], [16, 4], [24, 9], [32, 17], [40, 27], [48, 39], [56, 52],
+  [64, 65], [72, 77], [80, 87], [88, 94], [94, 98], [100, 100],
+]
+  .map(([at, w]) => `color-mix(in srgb, #ffffff ${w}%, #163300) ${at}%`)
+  .join(", ")})`;
+
 const up = {
   initial: { opacity: 0, y: 40 },
   whileInView: { opacity: 1, y: 0 },
@@ -408,10 +416,10 @@ function Statement() {
           </div>
         </motion.div>
       </div>
-      <div
-        className="h-[clamp(160px,18vw,340px)]"
-        style={{ background: `linear-gradient(to bottom, ${GREEN}, #ffffff)` }}
-      />
+      {/* an eased fade: a plain two-stop gradient shows a visible line
+          where the flat green meets it, so the stops follow a smooth
+          curve and the band is tall */}
+      <div className="h-[clamp(260px,28vw,540px)]" style={{ background: FADE }} />
     </section>
   );
 }
