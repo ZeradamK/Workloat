@@ -6,6 +6,7 @@ import Link from "next/link";
 import { AnimatePresence, animate, motion, useMotionValue } from "motion/react";
 import NavDock from "@/components/NavDock";
 import FooterSection from "@/components/FooterSection";
+import StatsStatement from "@/components/StatsStatement";
 import InsightsChart from "@/components/tracker/InsightsChart";
 import AgentScene, { type SceneKey } from "@/components/AgentScenes";
 import { money } from "@/components/tracker/money";
@@ -18,8 +19,8 @@ import { money } from "@/components/tracker/money";
  *   1. Hero: five-line headline left, ruled paragraph, pill; a wide dark
  *      card right with the team → Payle → agents flow and a scrolling
  *      list of finance tasks. "Trusted by" caps + a ruled logo strip.
- *   2. Stats band on the green: three ruled columns.
- *   3. Statement on the green, full width, then the green fades to white.
+ *   2. Stats band and statement on the green (StatsStatement, shared
+ *      with the home page), then the green fades to white.
  *   4. Workflows: centered headline, a carousel of tall canvases with a
  *      centered pill label, arrows, a note.
  *   5. The playbook on black: two-tone headline, pill, numbered tabs, a
@@ -36,14 +37,6 @@ import { money } from "@/components/tracker/money";
 const EASE = [0.25, 0.6, 0.2, 1] as const;
 const GREEN = "#163300";
 const INK = "#0a0a0a";
-
-/* green → white along a smoothstep curve, so neither end shows an edge */
-const FADE = `linear-gradient(to bottom, ${[
-  [0, 0], [8, 1], [16, 4], [24, 9], [32, 17], [40, 27], [48, 39], [56, 52],
-  [64, 65], [72, 77], [80, 87], [88, 94], [94, 98], [100, 100],
-]
-  .map(([at, w]) => `color-mix(in srgb, #ffffff ${w}%, #163300) ${at}%`)
-  .join(", ")})`;
 
 const up = {
   initial: { opacity: 0, y: 40 },
@@ -75,8 +68,16 @@ export default function FinanceTeamsPage() {
       <NavDock forceDark />
 
       <Hero />
-      <StatsBand />
-      <Statement />
+      <StatsStatement
+        stats={[
+          { label: "Payle watches agent charges", value: "24/7" },
+          { label: "To approve a charge under cap", value: "<1s" },
+          { label: "Spent past a cap Payle did not approve", value: "$0" },
+        ]}
+        quote="The expensive mistakes in finance are the ones nobody saw coming. Payle sees every agent charge the moment it lands, so the team decides before the money moves, and spends its time on the customer instead of the spreadsheet."
+        name="Payle"
+        role="Financial manager agent, running on Payloat infrastructure"
+      />
       <Workflows />
       <Playbook />
       <Security />
@@ -340,97 +341,6 @@ function Arrow() {
         <path d="M1 4h6M4.5 1.5 7 4 4.5 6.5" stroke="rgba(255,255,255,0.45)" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     </span>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* 2. Stats band                                                       */
-/* ------------------------------------------------------------------ */
-
-const STATS = [
-  { label: "Payle watches agent charges", value: "24/7" },
-  { label: "To approve a charge under cap", value: "<1s" },
-  { label: "Spent past a cap Payle did not approve", value: "$0" },
-];
-
-function StatsBand() {
-  return (
-    <section style={{ backgroundColor: GREEN }}>
-      <div className={`${FRAME} border-white/10`}>
-        <div className={`${INNER} py-[clamp(48px,5.7vw,110px)]`}>
-          <div className="grid border-y border-white/25 min-[800px]:grid-cols-3">
-            {STATS.map((s, i) => (
-              <motion.div
-                key={s.label}
-                {...up}
-                transition={{ ...up.transition, delay: i * 0.08 }}
-                className="flex flex-col items-center px-6 pb-[clamp(56px,5.5vw,106px)] pt-[clamp(8px,0.7vw,14px)] text-center text-white min-[800px]:border-l min-[800px]:border-white/25 min-[800px]:first:border-l-0"
-              >
-                <span className="text-[clamp(14px,0.95vw,18px)] leading-[1.3] text-white/90">
-                  {s.label}
-                </span>
-                <span className="font-numeral mt-[clamp(28px,3vw,58px)] text-[clamp(64px,6.4vw,124px)] font-medium leading-none tracking-[-4px]">
-                  {s.value}
-                </span>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* 3. Statement card, then the green fades to white                    */
-/* ------------------------------------------------------------------ */
-
-function Statement() {
-  return (
-    <section style={{ backgroundColor: GREEN }}>
-      {/* the statement lies on the green itself, full width, then the
-          green fades to white toward the workflows */}
-      <div className={`${FRAME} border-white/10`}>
-        <motion.div
-          {...up}
-          className="relative grid gap-10 px-[clamp(24px,5.7vw,110px)] pb-[clamp(56px,8vw,160px)] pt-[clamp(24px,5vw,96px)] text-white min-[900px]:grid-cols-[clamp(120px,22%,444px)_1fr]"
-        >
-          {/* the Payloat mark, which is Payle's mark too, in white */}
-          <Image
-            src="/payloat-icon-dark.svg"
-            alt="Payloat"
-            width={56}
-            height={56}
-            className="h-[clamp(36px,3vw,56px)] w-auto self-start invert"
-          />
-          <div className="max-w-[1000px]">
-            <p className="text-[clamp(22px,2vw,38px)] leading-[1.15] tracking-[-1px]">
-              &ldquo;The expensive mistakes in finance are the ones nobody
-              saw coming. Payle sees every agent charge the moment it
-              lands, so the team decides before the money moves, and spends
-              its time on the customer instead of the spreadsheet.&rdquo;
-            </p>
-            <p className="mt-[clamp(32px,4.5vw,86px)] text-[clamp(15px,0.95vw,18px)] leading-[1.45]">
-              Payle
-              <br />
-              <span className="text-white/70">
-                Financial manager agent, running on Payloat infrastructure
-              </span>
-            </p>
-          </div>
-          {/* the little pager Amigo shows at the right edge */}
-          <div className="absolute right-[clamp(16px,3.5vw,66px)] top-1/2 hidden -translate-y-1/2 flex-col items-center gap-2 min-[900px]:flex">
-            <span className="h-5 w-[3px] rounded-full bg-white" />
-            <span className="h-[3px] w-[3px] rounded-full bg-white/60" />
-            <span className="h-[3px] w-[3px] rounded-full bg-white/60" />
-          </div>
-        </motion.div>
-      </div>
-      {/* an eased fade: a plain two-stop gradient shows a visible line
-          where the flat green meets it, so the stops follow a smooth
-          curve and the band is tall */}
-      <div className="h-[clamp(260px,28vw,540px)]" style={{ background: FADE }} />
-    </section>
   );
 }
 

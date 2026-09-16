@@ -1,6 +1,7 @@
 import NavDock from "@/components/NavDock";
 import HeroShowcase from "@/components/HeroShowcase";
 import GoalSection from "@/components/GoalSection";
+import StatsStatement from "@/components/StatsStatement";
 import MarketsSection from "@/components/MarketsSection";
 import SecuritySection from "@/components/SecuritySection";
 import SlackSection from "@/components/SlackSection";
@@ -24,6 +25,19 @@ export default function Home() {
       {/* Pinned goal act: word-by-word headline fill + charge-notice
           notifications; releases once everything is solid. */}
       <GoalSection />
+
+      {/* the green stats and statement act, shared with the finance
+          teams page, easing into white before the Slack act */}
+      <StatsStatement
+        stats={[
+          { label: "Payloat watches agent purchases", value: "24/7" },
+          { label: "To match a charge to the task behind it", value: "<1s" },
+          { label: "Receipts you chase down by hand", value: "0" },
+        ]}
+        quote="Agents do not announce what they buy. Payloat Ledger records every purchase the moment it lands, with the task behind it, so you know what was bought and why before the receipt arrives."
+        name="Payloat Ledger"
+        role="One ledger for every agent's spend"
+      />
 
       {/* Slack act: tilted monitor, @Payloat answers a spend question */}
       <SlackSection />

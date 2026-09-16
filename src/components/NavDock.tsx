@@ -39,9 +39,10 @@ const RADIUS = 24;
 
 type PanelKey = "Product" | "Features" | "Pricing" | "Contact";
 
+/* key order is the dock's item order */
 const PANEL_DIMS: Record<PanelKey, { w: number; h: number }> = {
-  Product: { w: 356, h: 206 },
-  Features: { w: 400, h: 246 },
+  Features: { w: 400, h: 206 },
+  Product: { w: 356, h: 246 },
   Pricing: { w: 380, h: 286 },
   Contact: { w: 380, h: 286 },
 };
@@ -50,11 +51,11 @@ const PANEL_DIMS: Record<PanelKey, { w: number; h: number }> = {
 const PRODUCT_ITEMS = [
   { label: "Bank Integration", href: "/integration" },
   { label: "Investing with agents", href: "/product" },
+  { label: "Personal finance", href: "/consumer" },
 ];
 
 /** Features sub-items: one per audience page. */
 const SOLUTION_ITEMS = [
-  { label: "Consumer", href: "/consumer" },
   { label: "Financial teams", href: "/finance-teams" },
   { label: "Enterprise", href: "/enterprise" },
 ];
@@ -87,7 +88,7 @@ const ROW_W = SHOW_PRICING ? 470 : 386;
 /** main nav items with a page of their own */
 const PAGE_ROUTES: Partial<Record<PanelKey, string>> = {
   Product: "/product",
-  Features: "/consumer",
+  Features: "/finance-teams",
   Contact: "/contact",
 };
 
