@@ -792,16 +792,26 @@ function Playbook() {
                   className="max-w-[560px] rounded-[16px] bg-white p-5 text-ink"
                 >
                   <div className="flex items-start gap-3">
-                    <span className="mt-0.5 h-8 w-8 shrink-0 rounded-[8px] bg-mist" />
+                    <Image
+                      src="/zeradam.jpg"
+                      alt=""
+                      width={32}
+                      height={32}
+                      className="mt-0.5 h-8 w-8 shrink-0 rounded-[8px] object-cover"
+                    />
                     <div>
-                      <p className="text-[13px] font-semibold">Maya (finance)</p>
+                      <p className="text-[13px] font-semibold">Zeradam</p>
                       <p className="mt-0.5 text-[15px] leading-[1.4]">{play.ask}</p>
                     </div>
                   </div>
                   <div className="mt-4 flex items-start gap-3">
-                    <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-[8px]" style={{ backgroundColor: INK }}>
-                      <Image src="/payloat-icon-white.svg" alt="" width={16} height={16} className="h-4 w-4" />
-                    </span>
+                    <Image
+                      src="/payloat-app-icon-blacktile.png"
+                      alt=""
+                      width={32}
+                      height={32}
+                      className="mt-0.5 h-8 w-8 shrink-0 rounded-[8px]"
+                    />
                     <div className="flex-1">
                       <p className="text-[13px] font-semibold">
                         Payle <span className="ml-1 rounded-[4px] bg-mist px-1.5 py-px text-[10px] font-medium text-sub">APP</span>
