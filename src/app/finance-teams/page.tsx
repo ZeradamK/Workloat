@@ -1099,26 +1099,163 @@ function SetUp() {
 /* 10. Guides                                                          */
 /* ------------------------------------------------------------------ */
 
-const GUIDES = [
+const GUIDES: {
+  tag: string;
+  title: string;
+  sub: string;
+  photo?: string;
+  ui: "approve" | "cap" | "close";
+}[] = [
   {
     tag: "Playbook",
     title: "Why agent spend needs a manager, not a dashboard",
     sub: "Dashboards show you what happened. Payle decides what happens next, inside the caps you set.",
-    art: "/product-hero-gradient.jpg",
+    photo: "/guides/chart.jpg",
+    ui: "approve",
   },
   {
     tag: "How to",
     title: "Setting caps that agents actually respect",
     sub: "Per vendor, per task, per month. The three caps every finance team should set on day one.",
-    art: "/slack-gradient.jpg",
+    photo: "/guides/coin.jpg",
+    ui: "cap",
   },
   {
     tag: "Close",
     title: "Closing the month when agents did the buying",
     sub: "Receipts, categories, and the report, drafted by Payle before your team opens the books.",
-    art: "/signup-gradient.jpg",
+    ui: "close",
   },
 ];
+
+/* Mercury's cover anatomy: a photo (or flat gray) ground with a white UI
+   card floating low in the frame and bleeding off its bottom edge */
+function GuideCover({ g }: { g: (typeof GUIDES)[number] }) {
+  const onPhoto = Boolean(g.photo);
+  return (
+    <div
+      className="relative overflow-hidden rounded-[24px]"
+      style={{ aspectRatio: "558 / 740", backgroundColor: "#eeeeee" }}
+    >
+      {g.photo && (
+        <Image
+          src={g.photo}
+          alt=""
+          fill
+          sizes="(min-width: 900px) 33vw, 100vw"
+          className="object-cover"
+        />
+      )}
+      <span
+        className={`${MONO} absolute left-[26px] top-[26px] rounded-[6px] px-4 py-2.5 text-[11px] backdrop-blur-md`}
+        style={{
+          backgroundColor: onPhoto ? "rgba(10,10,10,0.45)" : INK,
+          color: "#ffffff",
+        }}
+      >
+        {g.tag}
+      </span>
+      <span
+        className={`${MONO} absolute right-[26px] top-[36px] text-[10px]`}
+        style={{ color: onPhoto ? "rgba(255,255,255,0.7)" : "rgba(10,10,10,0.45)" }}
+      >
+        Sample data
+      </span>
+
+      {/* the UI card, inset like Mercury's and clipped at the foot */}
+      <div className="absolute inset-x-[clamp(20px,11%,60px)] top-[clamp(120px,32%,236px)] rounded-[12px] bg-white p-[clamp(20px,6.5%,36px)] text-ink shadow-[0_24px_60px_rgba(10,10,10,0.25)]">
+        <UiCard kind={g.ui} />
+      </div>
+    </div>
+  );
+}
+
+function UiCard({ kind }: { kind: "approve" | "cap" | "close" }) {
+  if (kind === "approve") {
+    return (
+      <>
+        <p className="text-[clamp(14px,1.1vw,18px)] font-medium tracking-[-0.3px]">Approve a charge</p>
+        <p className="font-numeral mt-3 text-[clamp(28px,2.6vw,44px)] font-medium leading-none tracking-[-1.5px]">
+          <span className="mr-1 align-top text-[0.55em] text-sub">$</span>2,500.00
+        </p>
+        <div className="mt-3 h-px bg-black/10" />
+        <Field label="Agent" value="Research agent" sub="OpenAI · $500 of cap left" />
+        <Field label="Task" value="Q3 market brief" sub="Requested 2:14 PM" />
+        <div className="mt-5 flex gap-2.5">
+          <span className="flex h-10 flex-1 items-center justify-center rounded-full bg-mist text-[13px] font-medium">Back</span>
+          <span className="flex h-10 flex-1 items-center justify-center rounded-full text-[13px] font-medium text-white" style={{ backgroundColor: INK }}>Approve</span>
+        </div>
+      </>
+    );
+  }
+  if (kind === "cap") {
+    return (
+      <>
+        <p className="text-[clamp(14px,1.1vw,18px)] font-medium tracking-[-0.3px]">Set a monthly cap</p>
+        <p className="font-numeral mt-3 text-[clamp(28px,2.6vw,44px)] font-medium leading-none tracking-[-1.5px]">
+          <span className="mr-1 align-top text-[0.55em] text-sub">$</span>3,000.00
+        </p>
+        <div className="mt-3 h-px bg-black/10" />
+        <Field label="Applies to" value="Research agent" sub="OpenAI, Anthropic" />
+        <Field label="Alert at" value="80% of cap" sub="$2,400.00" />
+        <div className="mt-5 flex items-center justify-between">
+          <span className="text-[13px]">Block charges over the cap</span>
+          <span className="relative h-6 w-11 rounded-full" style={{ backgroundColor: "#9fe870" }}>
+            <span className="absolute right-0.5 top-0.5 h-5 w-5 rounded-full bg-white" />
+          </span>
+        </div>
+      </>
+    );
+  }
+  return (
+    <>
+      <p className="text-[clamp(14px,1.1vw,18px)] font-medium tracking-[-0.3px]">Close July</p>
+      <p className="font-numeral mt-3 text-[clamp(28px,2.6vw,44px)] font-medium leading-none tracking-[-1.5px]">
+        <span className="mr-1 align-top text-[0.55em] text-sub">$</span>2,350.00
+      </p>
+      <div className="mt-3 h-px bg-black/10" />
+      <ul className="mt-4 flex flex-col gap-3 text-[13px]">
+        {[
+          ["142 charges matched to a task", true],
+          ["Categories set by Payle", true],
+          ["2 receipts still missing", false],
+        ].map(([t, done]) => (
+          <li key={String(t)} className="flex items-center gap-2.5">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full" style={{ backgroundColor: done ? "#9fe870" : "#eeeeee" }}>
+              {done && (
+                <svg width="10" height="10" viewBox="0 0 16 16" fill="none" aria-hidden>
+                  <path d="M3 8.5 6.5 12 13 4.5" stroke={INK} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              )}
+            </span>
+            {t}
+          </li>
+        ))}
+      </ul>
+      <div className="mt-5 flex gap-2.5">
+        <span className="flex h-10 flex-1 items-center justify-center rounded-full bg-mist text-[13px] font-medium">Review</span>
+        <span className="flex h-10 flex-1 items-center justify-center rounded-full text-[13px] font-medium text-white" style={{ backgroundColor: INK }}>Send report</span>
+      </div>
+    </>
+  );
+}
+
+function Field({ label, value, sub }: { label: string; value: string; sub: string }) {
+  return (
+    <div className="mt-4">
+      <p className="text-[11px] text-sub">{label}</p>
+      <div className="mt-1.5 flex items-center justify-between rounded-[8px] border border-black/10 px-3 py-2.5">
+        <div>
+          <p className="text-[13px] font-medium leading-tight">{value}</p>
+          <p className="mt-0.5 text-[11px] text-sub">{sub}</p>
+        </div>
+        <svg width="10" height="10" viewBox="0 0 16 16" fill="none" aria-hidden>
+          <path d="M3 5.5 8 10.5l5-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </div>
+    </div>
+  );
+}
 
 function Guides() {
   return (
@@ -1149,12 +1286,7 @@ function Guides() {
                 transition={{ ...up.transition, delay: k * 0.08 }}
                 className="min-[900px]:border-l min-[900px]:border-black/[0.08] min-[900px]:px-[clamp(16px,1.6vw,31px)] min-[900px]:first:border-l-0 min-[900px]:first:pl-0 min-[900px]:last:pr-0"
               >
-                <div className="relative overflow-hidden rounded-[24px]" style={{ aspectRatio: "558 / 740" }}>
-                  <Image src={g.art} alt="" fill sizes="(min-width: 900px) 33vw, 100vw" className="object-cover" />
-                  <span className={`${MONO} absolute left-[26px] top-[26px] rounded-[6px] px-4 py-2.5 text-[11px] text-white backdrop-blur-md`} style={{ backgroundColor: "rgba(10,10,10,0.45)" }}>
-                    {g.tag}
-                  </span>
-                </div>
+                <GuideCover g={g} />
                 <h3 className="mt-[clamp(28px,2.9vw,56px)] text-[clamp(22px,1.65vw,32px)] font-medium leading-[1.15] tracking-[-0.8px] text-ink">
                   {g.title}
                 </h3>
