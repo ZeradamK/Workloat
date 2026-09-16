@@ -302,11 +302,11 @@ function Node({
       {avatar === "payle" && (
         <span className={`${size} flex items-center justify-center rounded-full bg-white`}>
           <Image
-            src="/payloat-icon-black.svg"
+            src="/payloat-icon-dark.svg"
             alt=""
             width={18}
             height={18}
-            className="h-[58%] w-[58%]"
+            className="h-[62%] w-[62%]"
           />
         </span>
       )}
