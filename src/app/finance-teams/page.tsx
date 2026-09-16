@@ -1294,9 +1294,13 @@ function Guides() {
                 </h3>
                 <p className="mt-[clamp(20px,2.2vw,42px)] text-[clamp(14px,0.95vw,18px)] leading-[1.45] text-ink/70">{g.sub}</p>
                 <p className="mt-[clamp(16px,1.7vw,32px)] flex items-center gap-2.5 text-[clamp(13px,0.85vw,16px)] text-sub">
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full" style={{ backgroundColor: INK }}>
-                    <Image src="/payloat-icon-white.svg" alt="" width={12} height={12} className="h-3 w-3" />
-                  </span>
+                  <Image
+                    src="/payloat-app-icon-blacktile.png"
+                    alt=""
+                    width={24}
+                    height={24}
+                    className="h-6 w-6 rounded-full"
+                  />
                   Payloat team
                 </p>
               </motion.article>
