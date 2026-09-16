@@ -2,6 +2,7 @@ import NavDock from "@/components/NavDock";
 import HeroShowcase from "@/components/HeroShowcase";
 import GoalSection from "@/components/GoalSection";
 import StatsStatement from "@/components/StatsStatement";
+import FlowHero from "@/components/FlowHero";
 import MarketsSection from "@/components/MarketsSection";
 import SecuritySection from "@/components/SecuritySection";
 import SlackSection from "@/components/SlackSection";
@@ -25,6 +26,48 @@ export default function Home() {
       {/* Pinned goal act: word-by-word headline fill + charge-notice
           notifications; releases once everything is solid. */}
       <GoalSection />
+
+      {/* the flow hero, shared with the finance teams page, with the
+          ledger's own copy: you → Payloat → what agents buy */}
+      <FlowHero
+        lines={["One ledger", "for every", "dollar your", "agents", "spend."]}
+        body="Payloat records every agent purchase the moment it lands, matches it to the task behind it, and keeps every bank and card in one place."
+        cta={{ label: "Get started", href: "/signup" }}
+        tasks={[
+          "API credits",
+          "Flight bookings",
+          "Grocery reorders",
+          "Cloud hosting",
+          "Ad spend",
+          "Subscription renewals",
+          "Research tools",
+          "Stock orders",
+          "Receipt matching",
+          "Refund tracking",
+          "Spend by task",
+          "Budget caps",
+          "Card issuing",
+          "Vendor payments",
+          "Travel expenses",
+          "Software seats",
+          "Data purchases",
+          "Overspend alerts",
+          "Monthly summaries",
+          "Bank sync",
+        ]}
+        from="You"
+        agent="Payloat"
+        to="Your agents"
+        trustedLabel="Works with the banks and cards you already use"
+        logos={[
+          { src: "/logos/banks/chase.jpg", alt: "Chase" },
+          { src: "/logos/banks/mercury.png", alt: "Mercury" },
+          { src: "/logos/brex.svg", alt: "Brex" },
+          { src: "/logos/stripe.svg", alt: "Stripe" },
+          { src: "/logos/banks/citi.png", alt: "Citi" },
+          { src: "/logos/banks/wellsfargo.png", alt: "Wells Fargo" },
+        ]}
+      />
 
       {/* the green stats and statement act, shared with the finance
           teams page, easing into white before the Slack act */}

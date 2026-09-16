@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, animate, motion, useMotionValue } from "motion/react";
 import NavDock from "@/components/NavDock";
 import FooterSection from "@/components/FooterSection";
 import StatsStatement from "@/components/StatsStatement";
+import FlowHero from "@/components/FlowHero";
 import InsightsChart from "@/components/tracker/InsightsChart";
 import AgentScene, { type SceneKey } from "@/components/AgentScenes";
 import { money } from "@/components/tracker/money";
@@ -16,9 +17,9 @@ import { money } from "@/components/tracker/money";
  * 1920px capture) with Payloat's type and palette. Payle is the financial
  * manager agent that runs on Payloat infrastructure.
  *
- *   1. Hero: five-line headline left, ruled paragraph, pill; a wide dark
- *      card right with the team → Payle → agents flow and a scrolling
- *      list of finance tasks. "Trusted by" caps + a ruled logo strip.
+ *   1. Hero (FlowHero, shared with the home page): five-line headline,
+ *      ruled paragraph, pill; the team → Payle → agents flow card with a
+ *      scrolling list of finance tasks; "Trusted by" caps + logo strip.
  *   2. Stats band and statement on the green (StatsStatement, shared
  *      with the home page), then the green fades to white.
  *   4. Workflows: centered headline, a carousel of tall canvases with a
@@ -62,12 +63,55 @@ const DAILY = [
 ];
 const X_LABELS = ["Jul 01", "Jul 07", "Jul 13", "Jul 20"];
 
+const FINANCE_TASKS = [
+  "Runway forecasting",
+  "Vendor spend caps",
+  "Budget approvals",
+  "Month-end close",
+  "Agent charge review",
+  "Subscription audits",
+  "Card issuing for agents",
+  "Receipt matching",
+  "Cost per task reporting",
+  "Overspend alerts",
+  "Renewal negotiations",
+  "Cash position updates",
+  "Department budgets",
+  "Slack approvals",
+  "Refund tracking",
+  "Vendor onboarding",
+  "Quarterly planning",
+  "Board reporting",
+  "Tax categorization",
+  "Duplicate charge checks",
+];
+
+const BANK_LOGOS = [
+  { src: "/logos/banks/chase.jpg", alt: "Chase" },
+  { src: "/logos/banks/mercury.png", alt: "Mercury" },
+  { src: "/logos/brex.svg", alt: "Brex" },
+  { src: "/logos/stripe.svg", alt: "Stripe" },
+  { src: "/logos/banks/citi.png", alt: "Citi" },
+  { src: "/logos/banks/wellsfargo.png", alt: "Wells Fargo" },
+];
+
 export default function FinanceTeamsPage() {
   return (
     <main className="bg-white">
       <NavDock forceDark />
 
-      <Hero />
+      <FlowHero
+        first
+        lines={["The finance", "agent that", "watches every", "dollar your", "agents spend."]}
+        body="Payle plans budgets, approves agent charges, and closes the month, so your team can focus on the customer."
+        cta={{ label: "Book a demo", href: "/contact" }}
+        tasks={FINANCE_TASKS}
+        from="Your finance team"
+        agent="Payle"
+        to="Your agents"
+        trustedLabel="Trusted by finance teams on"
+        logos={BANK_LOGOS}
+      />
       <StatsStatement
         stats={[
           { label: "Payle watches agent charges", value: "24/7" },
@@ -90,257 +134,6 @@ export default function FinanceTeamsPage() {
         <FooterSection tone="light" />
       </div>
     </main>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* 1. Hero                                                             */
-/* ------------------------------------------------------------------ */
-
-const TASKS = [
-  "Runway forecasting",
-  "Vendor spend caps",
-  "Budget approvals",
-  "Month-end close",
-  "Agent charge review",
-  "Subscription audits",
-  "Card issuing for agents",
-  "Receipt matching",
-  "Cost per task reporting",
-  "Overspend alerts",
-  "Renewal negotiations",
-  "Cash position updates",
-  "Department budgets",
-  "Slack approvals",
-  "Refund tracking",
-  "Vendor onboarding",
-  "Quarterly planning",
-  "Board reporting",
-  "Tax categorization",
-  "Duplicate charge checks",
-];
-const TASK_H = 34; /* one row of the list at 1920 (27.5px text, 34 leading) */
-const TASK_MS = 1400;
-
-function Hero() {
-  const [active, setActive] = useState(10);
-  useEffect(() => {
-    const id = setInterval(
-      () => setActive((a) => (a + 1) % TASKS.length),
-      TASK_MS,
-    );
-    return () => clearInterval(id);
-  }, []);
-
-  return (
-    <section className="pt-[clamp(120px,9vw,170px)]">
-      <div className={FRAME}>
-        <div className={`${INNER} pb-[clamp(40px,3.5vw,64px)] pt-[clamp(48px,5vw,96px)]`}>
-          <div className="grid gap-12 min-[1000px]:grid-cols-[minmax(0,644px)_minmax(0,1152px)] min-[1000px]:items-start min-[1000px]:gap-[clamp(40px,3.2vw,62px)]">
-            {/* left: headline, ruled paragraph, pill */}
-            <div>
-              <motion.h1
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.55, ease: EASE, delay: 0.05 }}
-                className="text-[clamp(40px,4.5vw,86px)] font-medium leading-[0.96] tracking-[-2.5px] text-ink"
-              >
-                The finance
-                <br />
-                agent that
-                <br />
-                watches every
-                <br />
-                dollar your
-                <br />
-                agents spend.
-              </motion.h1>
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.55, ease: EASE, delay: 0.12 }}
-                className="mt-[clamp(40px,4.5vw,86px)] max-w-[540px] border-l-[3px] border-black/10 pl-7 text-[clamp(18px,1.35vw,26px)] leading-[1.3] tracking-[-0.3px] text-ink"
-              >
-                Payle plans budgets, approves agent charges, and closes the
-                month, so your team can focus on the customer.
-              </motion.p>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.55, ease: EASE, delay: 0.18 }}
-                className="mt-[clamp(28px,2.6vw,50px)] pl-[31px]"
-              >
-                <Pill href="/contact" dark>
-                  Book a demo
-                </Pill>
-              </motion.div>
-            </div>
-
-            {/* right: the flow card */}
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, ease: EASE, delay: 0.2 }}
-              className="relative mt-[clamp(0px,3.7vw,72px)] overflow-hidden rounded-[16px] text-white"
-              style={{ backgroundColor: INK, aspectRatio: "1152 / 548" }}
-            >
-              {/* the cream-to-black gradient where Amigo's photo sits,
-                  pulled down so the white type reads on its light end */}
-              <Image
-                src="/product-hero-gradient.jpg"
-                alt=""
-                fill
-                sizes="(min-width: 1000px) 60vw, 100vw"
-                className="object-cover"
-              />
-              <div
-                className="absolute inset-0"
-                style={{
-                  background:
-                    "linear-gradient(to right, rgba(10,10,10,0.72), rgba(10,10,10,0.5) 45%, rgba(10,10,10,0.35))",
-                }}
-              />
-              {/* the flow: team → Payle → task → agents */}
-              <div className="absolute inset-y-0 left-[5.2%] right-[3.5%] flex items-center">
-                {/* the outer nodes step out under 700px so the card keeps
-                    Payle and the list */}
-                <span className="hidden min-[700px]:contents">
-                  <Node label="Your finance team" avatar="team" />
-                  <Arrow />
-                </span>
-                <Node label="Payle" avatar="payle" />
-                <Arrow />
-                {/* the task list, centered on the active row */}
-                <div
-                  className="relative h-full w-[clamp(180px,26%,300px)] shrink-0 overflow-hidden"
-                  style={{
-                    maskImage:
-                      "linear-gradient(to bottom, transparent, black 18%, black 82%, transparent)",
-                    WebkitMaskImage:
-                      "linear-gradient(to bottom, transparent, black 18%, black 82%, transparent)",
-                  }}
-                >
-                  <motion.ul
-                    className="absolute left-0 top-1/2 w-full"
-                    animate={{ y: -(active + 0.5) * TASK_H }}
-                    transition={{ type: "spring", stiffness: 120, damping: 24 }}
-                  >
-                    {TASKS.map((t, i) => (
-                      <li
-                        key={t}
-                        className="whitespace-nowrap text-[clamp(15px,1.4vw,27px)] tracking-[-0.4px] transition-colors duration-500"
-                        style={{
-                          height: TASK_H,
-                          lineHeight: `${TASK_H}px`,
-                          color:
-                            i === active
-                              ? "#ffffff"
-                              : "rgba(255,255,255,0.42)",
-                        }}
-                      >
-                        {t}
-                      </li>
-                    ))}
-                  </motion.ul>
-                </div>
-                <span className="hidden min-[700px]:contents">
-                  <Arrow />
-                  <Node label="Your agents" avatar="agents" />
-                </span>
-              </div>
-            </motion.div>
-          </div>
-
-          {/* trusted by */}
-          <p className={`${MONO} mt-[clamp(48px,6vw,112px)] text-ink`}>
-            Trusted by finance teams on
-          </p>
-        </div>
-
-        {/* the ruled logo strip */}
-        <div className="border-t border-black/[0.08]">
-          <div className={`${INNER} grid grid-cols-3 min-[800px]:grid-cols-6`}>
-            {[
-              { src: "/logos/banks/chase.jpg", alt: "Chase" },
-              { src: "/logos/banks/mercury.png", alt: "Mercury" },
-              { src: "/logos/brex.svg", alt: "Brex" },
-              { src: "/logos/stripe.svg", alt: "Stripe" },
-              { src: "/logos/banks/citi.png", alt: "Citi" },
-              { src: "/logos/banks/wellsfargo.png", alt: "Wells Fargo" },
-            ].map((l) => (
-              <div
-                key={l.alt}
-                className="flex h-[clamp(72px,5.6vw,108px)] items-center justify-center"
-              >
-                <Image
-                  src={l.src}
-                  alt={l.alt}
-                  width={140}
-                  height={40}
-                  className="h-[clamp(20px,1.6vw,30px)] w-auto opacity-70 grayscale"
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Node({
-  label,
-  avatar,
-}: {
-  label: string;
-  avatar: "team" | "payle" | "agents";
-}) {
-  const size = "h-[clamp(22px,1.6vw,32px)] w-[clamp(22px,1.6vw,32px)]";
-  return (
-    <div className="flex shrink-0 items-center gap-2.5">
-      {/* the team has no mark, only its bold label; Payle wears the
-          Payloat mark, which is Payle's mark too */}
-      {avatar === "payle" && (
-        <span className={`${size} flex items-center justify-center rounded-full bg-white`}>
-          <Image
-            src="/payloat-icon-dark.svg"
-            alt=""
-            width={18}
-            height={18}
-            className="h-[62%] w-[62%]"
-          />
-        </span>
-      )}
-      {avatar === "agents" && (
-        <span
-          className={`${size} flex items-center justify-center overflow-hidden rounded-full`}
-          style={{ backgroundColor: "rgba(255,255,255,0.14)" }}
-        >
-          <svg width="55%" height="55%" viewBox="0 0 16 16" fill="none" aria-hidden>
-            <rect x="2" y="2" width="5" height="5" rx="1.2" fill="#ffffff" opacity="0.9" />
-            <rect x="9" y="2" width="5" height="5" rx="1.2" fill="#ffffff" opacity="0.9" />
-            <rect x="2" y="9" width="5" height="5" rx="1.2" fill="#ffffff" opacity="0.9" />
-            <rect x="9" y="9" width="5" height="5" rx="1.2" fill="#ffffff" opacity="0.9" />
-          </svg>
-        </span>
-      )}
-      <span
-        className={`${MONO} whitespace-nowrap text-[clamp(8px,0.6vw,11px)] ${avatar === "team" ? "font-bold text-white" : "text-white/90"}`}
-      >
-        {label}
-      </span>
-    </div>
-  );
-}
-
-function Arrow() {
-  return (
-    <span className="mx-[clamp(10px,2.4vw,48px)] flex flex-1 items-center">
-      <span className="h-px flex-1 bg-white/25" />
-      <svg width="8" height="8" viewBox="0 0 8 8" fill="none" aria-hidden>
-        <path d="M1 4h6M4.5 1.5 7 4 4.5 6.5" stroke="rgba(255,255,255,0.45)" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    </span>
   );
 }
 
