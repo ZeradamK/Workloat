@@ -60,6 +60,8 @@ const INNER = "px-[clamp(20px,1.7vw,32px)]";
 /* mono caps, the small labels Amigo sets in a monospace face */
 const MONO =
   "font-numeral text-[12px] uppercase tracking-[1.8px]";
+/* the same caps in SF Pro, for the guide covers' chips */
+const CAPS = "text-[12px] uppercase tracking-[1.8px]";
 
 const DAILY = [
   0, 85, 85, 210, 210, 340, 340, 495, 640, 640, 820, 980, 980, 1210, 1385,
@@ -1147,7 +1149,7 @@ function GuideCover({ g }: { g: (typeof GUIDES)[number] }) {
         />
       )}
       <span
-        className={`${MONO} absolute left-[26px] top-[26px] rounded-[6px] px-4 py-2.5 text-[11px] backdrop-blur-md`}
+        className={`${CAPS} absolute left-[26px] top-[26px] rounded-[6px] px-4 py-2.5 text-[11px] font-medium backdrop-blur-md`}
         style={{
           backgroundColor: onPhoto ? "rgba(10,10,10,0.45)" : INK,
           color: "#ffffff",
@@ -1156,7 +1158,7 @@ function GuideCover({ g }: { g: (typeof GUIDES)[number] }) {
         {g.tag}
       </span>
       <span
-        className={`${MONO} absolute right-[26px] top-[36px] text-[10px]`}
+        className={`${CAPS} absolute right-[26px] top-[36px] text-[10px]`}
         style={{ color: onPhoto ? "rgba(255,255,255,0.7)" : "rgba(10,10,10,0.45)" }}
       >
         Sample data
