@@ -38,7 +38,7 @@ const NOTIFS = [
   },
   {
     name: "Stripe",
-    bg: "#eeeeee",
+    bg: "#c5b3d3",
     dark: false,
     logo: "/logos/stripe.png",
     amount: "$600.00",
