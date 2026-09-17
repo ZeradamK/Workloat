@@ -23,14 +23,20 @@ const up = {
   viewport: { once: true, margin: "-80px" },
 } as const;
 
-const FRAME = "mx-auto max-w-[1860px] border-x border-black/[0.08]";
+const FRAME = "mx-auto max-w-[1860px] border-x";
 const INNER = "px-[clamp(20px,1.7vw,32px)]";
 const MONO = "font-numeral text-[12px] uppercase tracking-[1.8px]";
 
 const TASK_H = 34; /* one row of the list at 1920 (27.5px text, 34 leading) */
 const TASK_MS = 1400;
 
-export type Logo = { src: string; alt: string };
+export type Logo = {
+  src: string;
+  alt: string;
+  /** a raster app icon: shown as a small rounded tile in its own colors
+      rather than a silhouette */
+  tile?: boolean;
+};
 
 export default function FlowHero({
   lines,
@@ -43,6 +49,7 @@ export default function FlowHero({
   trustedLabel,
   logos,
   first = false,
+  tone = "light",
 }: {
   /** the headline, one entry per line */
   lines: string[];
@@ -59,7 +66,12 @@ export default function FlowHero({
   logos: Logo[];
   /** true when the section opens the page under the nav */
   first?: boolean;
+  /** "dark": the act on #0a0a0a with white type and rails */
+  tone?: "light" | "dark";
 }) {
+  const dark = tone === "dark";
+  const ink = dark ? "text-white" : "text-ink";
+  const rail = dark ? "border-white/10" : "border-black/[0.08]";
   const [active, setActive] = useState(Math.floor(tasks.length / 2));
   useEffect(() => {
     const id = setInterval(
@@ -70,8 +82,11 @@ export default function FlowHero({
   }, [tasks.length]);
 
   return (
-    <section className={first ? "pt-[clamp(120px,9vw,170px)]" : "pt-[clamp(32px,5vw,80px)]"}>
-      <div className={FRAME}>
+    <section
+      className={first ? "pt-[clamp(120px,9vw,170px)]" : "pt-[clamp(32px,5vw,80px)]"}
+      style={{ backgroundColor: dark ? "#0a0a0a" : undefined }}
+    >
+      <div className={`${FRAME} ${rail}`}>
         <div className={`${INNER} pb-[clamp(40px,3.5vw,64px)] pt-[clamp(48px,5vw,96px)]`}>
           <div className="grid gap-12 min-[1000px]:grid-cols-[minmax(0,644px)_minmax(0,1152px)] min-[1000px]:items-start min-[1000px]:gap-[clamp(40px,3.2vw,62px)]">
             {/* left: headline, ruled paragraph, pill */}
@@ -79,7 +94,7 @@ export default function FlowHero({
               <motion.h2
                 {...up}
                 transition={{ duration: 0.55, ease: EASE, delay: 0.05 }}
-                className="text-[clamp(40px,4.5vw,86px)] font-medium leading-[0.96] tracking-[-2.5px] text-ink"
+                className={`text-[clamp(40px,4.5vw,86px)] font-medium leading-[0.96] tracking-[-2.5px] ${ink}`}
               >
                 {lines.map((l, i) => (
                   <span key={l}>
@@ -91,7 +106,7 @@ export default function FlowHero({
               <motion.p
                 {...up}
                 transition={{ duration: 0.55, ease: EASE, delay: 0.12 }}
-                className="mt-[clamp(40px,4.5vw,86px)] max-w-[540px] border-l-[3px] border-black/10 pl-7 text-[clamp(18px,1.35vw,26px)] leading-[1.3] tracking-[-0.3px] text-ink"
+                className={`mt-[clamp(40px,4.5vw,86px)] max-w-[540px] border-l-[3px] ${dark ? "border-white/20" : "border-black/10"} pl-7 text-[clamp(18px,1.35vw,26px)] leading-[1.3] tracking-[-0.3px] ${ink}`}
               >
                 {body}
               </motion.p>
@@ -102,7 +117,7 @@ export default function FlowHero({
               >
                 <Link
                   href={cta.href}
-                  className="inline-flex h-12 items-center rounded-full bg-[#0a0a0a] px-6 text-[15px] font-medium text-white transition-transform hover:scale-[1.03] active:scale-[0.97]"
+                  className={`inline-flex h-12 items-center rounded-full px-6 text-[15px] font-medium transition-transform hover:scale-[1.03] active:scale-[0.97] ${dark ? "bg-white text-ink" : "bg-[#0a0a0a] text-white"}`}
                 >
                   {cta.label}
                 </Link>
@@ -179,27 +194,33 @@ export default function FlowHero({
             </motion.div>
           </div>
 
-          <p className={`${MONO} mt-[clamp(48px,6vw,112px)] text-ink`}>{trustedLabel}</p>
+          <p className={`${MONO} mt-[clamp(48px,6vw,112px)] ${ink}`}>{trustedLabel}</p>
         </div>
 
-        {/* the ruled logo strip */}
-        <div className="border-t border-black/[0.08]">
-          <div className={`${INNER} grid grid-cols-3 min-[800px]:grid-cols-6`}>
-            {logos.map((l) => (
-              <div
-                key={l.alt}
-                className="flex h-[clamp(72px,5.6vw,108px)] items-center justify-center"
-              >
-                <Image
-                  src={l.src}
-                  alt={l.alt}
-                  width={140}
-                  height={40}
-                  className="h-[clamp(20px,1.6vw,30px)] w-auto opacity-70 grayscale"
-                />
-              </div>
-            ))}
-          </div>
+        {/* the ruled logo strip: six blocked cells on one row at every
+            width, narrowing with the viewport */}
+        <div className={`grid grid-cols-6 border-y ${rail}`}>
+          {logos.map((l) => (
+            <div
+              key={l.alt}
+              className={`flex h-[clamp(52px,5.6vw,108px)] items-center justify-center border-l first:border-l-0 ${rail}`}
+              style={{ backgroundColor: dark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)" }}
+            >
+              <Image
+                src={l.src}
+                alt={l.alt}
+                width={140}
+                height={40}
+                className={
+                  l.tile
+                    ? "h-[clamp(20px,2vw,36px)] w-auto rounded-[22%]"
+                    : dark
+                      ? "h-[clamp(14px,1.5vw,28px)] w-auto opacity-85 brightness-0 invert"
+                      : "h-[clamp(14px,1.6vw,30px)] w-auto opacity-70 grayscale"
+                }
+              />
+            </div>
+          ))}
         </div>
       </div>
     </section>

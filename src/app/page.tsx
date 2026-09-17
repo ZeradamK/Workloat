@@ -59,8 +59,9 @@ export default function Home() {
 
       {/* the flow hero, shared with the finance teams page, with the
           ledger's own copy; on white, over the Slack act's foot */}
-      <div className="relative z-10 bg-white">
+      <div className="relative z-10">
         <FlowHero
+          tone="dark"
           lines={["One ledger", "for every", "dollar your", "agents", "spend."]}
           body="Payloat records every agent purchase the moment it lands, matches it to the task behind it, and keeps every bank and card in one place."
           cta={{ label: "Get started", href: "/signup" }}
@@ -91,12 +92,12 @@ export default function Home() {
           to="Your agents"
           trustedLabel="Works with the banks and cards you already use"
           logos={[
-            { src: "/logos/banks/chase.jpg", alt: "Chase" },
-            { src: "/logos/banks/mercury.png", alt: "Mercury" },
+            { src: "/logos/banks/chase.jpg", alt: "Chase", tile: true },
+            { src: "/logos/banks/mercury.png", alt: "Mercury", tile: true },
             { src: "/logos/brex.svg", alt: "Brex" },
             { src: "/logos/stripe.svg", alt: "Stripe" },
             { src: "/logos/banks/citi.png", alt: "Citi" },
-            { src: "/logos/banks/wellsfargo.png", alt: "Wells Fargo" },
+            { src: "/logos/banks/wellsfargo.png", alt: "Wells Fargo", tile: true },
           ]}
         />
       </div>
