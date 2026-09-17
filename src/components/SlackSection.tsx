@@ -36,17 +36,18 @@ const up = {
    images), at the panel's own aspect (1204x769) so it fills the screen */
 const DESIGN = { w: 1600 / 1.3, h: (1600 / 1.3) * (769 / 1204) };
 
-/* public/macbook.webp: the supplied MacBook Pro mock (2000x1500, background
+/* public/macbook-clean.png: the supplied MacBook Pro mock (1448x1086, the
+   screen a transparent cutout, no shadow; earlier: macbook.webp, 2000x1500, background
    cut to transparency). Measured from its pixels: screen (397,312) to
    (1601,1081); lid 377..1622 wide, to y=1121; deck to y=1184. Fractions of
    the canvas: */
 const FRAME = {
-  aspect: 2000 / 1500,
-  screen: { left: 397 / 2000, top: 312 / 1500, width: 1204 / 2000, height: 769 / 1500 },
-  screenCenterY: (312 + 1081) / 2 / 1500,
-  lidWidth: (1622 - 377) / 2000,
+  aspect: 1448 / 1086,
+  screen: { left: 177 / 1448, top: 214 / 1086, width: 1094 / 1448, height: 707 / 1086 },
+  screenCenterY: (214 + 920) / 2 / 1086,
+  lidWidth: (1290 - 157) / 1448,
   /* the base's foot: the last opaque row of the image */
-  foot: 1184 / 1500,
+  foot: 1013 / 1086,
 };
 
 /* the opening pose, measured from the stage: the lid alone, sized to
@@ -167,8 +168,8 @@ function DesktopAct() {
   const target = scenes(fit, open)[scene];
 
   return (
-    <section ref={ref} className="hidden px-[100px] pb-[5px] pt-[100px] min-[900px]:block" style={{ backgroundColor: "#0a0a0a", marginBottom: -2 }}>
-      {/* the stage on black, 5px above the next section, which covers
+    <section ref={ref} className="hidden px-[100px] pb-[5px] pt-[100px] min-[900px]:block" style={{ backgroundColor: "#eeeeee", marginBottom: -2 }}>
+      {/* the stage on #eeeeee, 5px above the next section, which covers
           just the last 2px of the laptop's base */}
       <div
         className="relative flex flex-col overflow-hidden rounded-[30px]"
@@ -177,7 +178,7 @@ function DesktopAct() {
         {/* headline */}
         <motion.h2
           {...up}
-          className="z-10 px-6 pt-[clamp(28px,4vh,56px)] text-center text-[clamp(32px,4.2vw,60px)] font-bold leading-[1.06] tracking-[-2px] text-white"
+          className="z-10 px-6 pt-[clamp(28px,4vh,56px)] text-center text-[clamp(32px,4.2vw,60px)] font-bold leading-[1.06] tracking-[-2px] text-ink"
         >
           Ask @Payloat what
           <br />
@@ -192,7 +193,7 @@ function DesktopAct() {
             animate={{ opacity: scene === 2 ? 1 : 0 }}
             transition={{ duration: 0.5 }}
             className="pointer-events-none absolute inset-x-0 bottom-0 h-[9%]"
-            style={{ background: "linear-gradient(180deg,rgba(255,255,255,0.10) 0%,rgba(255,255,255,0) 100%)", borderTop: "1px solid rgba(255,255,255,0.2)" }}
+            style={{ background: "linear-gradient(180deg,#e2e2e4 0%,#e9e9eb 12%,#eeeeee 100%)", borderTop: "1px solid rgba(0,0,0,0.10)" }}
           />
           {/* the rig: display + stand, centered, then posed per scene */}
           <motion.div
@@ -211,7 +212,7 @@ function DesktopAct() {
             animate={{ opacity: scene === 0 && open.cropped ? 1 : 0 }}
             transition={{ duration: 0.35 }}
             className="pointer-events-none absolute inset-x-0 top-0 z-10 h-[22%]"
-            style={{ background: "linear-gradient(180deg,#0a0a0a 0%,rgba(10,10,10,0.85) 30%,rgba(10,10,10,0) 100%)" }}
+            style={{ background: "linear-gradient(180deg,#eeeeee 0%,rgba(238,238,238,0.85) 30%,rgba(238,238,238,0) 100%)" }}
           />
 
           {/* the two bars: one bump in with the final scene, then they hold */}
@@ -280,19 +281,19 @@ function Bar2() {
 
 /* ---------- devices ---------- */
 
-/* The MacBook: the supplied mock (public/macbook.webp) with the gradient
+/* The MacBook: the supplied mock (public/macbook-clean.png) with the gradient
    wallpaper and the Slack desktop laid into its measured screen rectangle,
    and the notch drawn back on top. */
 function StudioDisplay({ stage, typed }: { stage: Stage; typed: number }) {
   return (
     <div className="relative h-full w-full" style={{ containerType: "size" }}>
-      <Image src="/macbook.webp" alt="" fill priority unoptimized className="object-contain" />
+      <Image src="/macbook-clean.png" alt="" fill priority unoptimized className="object-contain" />
       {/* the screen: the MacBook's panel has rounded top corners, so the
           content box does too (radius sized from the rig's width) */}
       <div
         className="absolute overflow-hidden bg-[#eeeeee]"
         style={{
-          borderRadius: "0.9cqw 0.9cqw 0 0",
+          borderRadius: "0.76cqw 0.76cqw 0 0",
           left: `${FRAME.screen.left * 100}%`,
           top: `${FRAME.screen.top * 100}%`,
           width: `${FRAME.screen.width * 100}%`,
@@ -304,7 +305,8 @@ function StudioDisplay({ stage, typed }: { stage: Stage; typed: number }) {
           <Desktop stage={stage} typed={typed} />
         </ScaledScreen>
         <Sheen />
-        <div className="absolute left-1/2 top-0 h-[2.9%] w-[10.5%] -translate-x-1/2 rounded-b-[7px] bg-[#0b0b0c]" />
+        {/* the notch, 126 of the screen's 1094 wide and 21 of its 707 tall */}
+        <div className="absolute left-1/2 top-0 h-[3%] w-[11.5%] -translate-x-1/2 rounded-b-[7px] bg-[#0b0b0c]" />
       </div>
     </div>
   );
