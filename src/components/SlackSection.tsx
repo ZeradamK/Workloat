@@ -141,8 +141,8 @@ function DesktopAct() {
 
 function PhoneAct() {
   return (
-    <section className="mx-4 mb-[clamp(80px,20vw,160px)] rounded-[30px] bg-[#0a0a0a] px-5 pb-16 pt-12 min-[900px]:hidden">
-      <motion.h2 {...up} className="text-center text-[clamp(32px,9vw,44px)] font-bold leading-[1.06] tracking-[-1.5px] text-white">
+    <section className="bg-[#eeeeee] px-5 pb-16 pt-12 min-[900px]:hidden">
+      <motion.h2 {...up} className="text-center text-[clamp(32px,9vw,44px)] font-bold leading-[1.06] tracking-[-1.5px] text-ink">
         Ask @Payloat what
         <br />
         your agents spent.
