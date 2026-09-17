@@ -6,7 +6,8 @@ import FlowHero from "@/components/FlowHero";
 import MarketsSection from "@/components/MarketsSection";
 import SecuritySection from "@/components/SecuritySection";
 import SlackSection from "@/components/SlackSection";
-import AgentPromptSection from "@/components/AgentPromptSection";
+import AgentPromptSection, { AgentLogoStrip } from "@/components/AgentPromptSection";
+import Image from "next/image";
 import SpendMixSection from "@/components/SpendMixSection";
 import FAQSection from "@/components/FAQSection";
 import FooterSection from "@/components/FooterSection";
@@ -87,9 +88,24 @@ export default function Home() {
           TrackSection.tsx stays in the repo.) */}
       <AgentPromptSection />
 
+      {/* the cream-to-black gradient, full bleed, under the act's logo
+          strip and the Slack act together */}
+      <div className="relative">
+        <Image
+          src="/product-hero-gradient.jpg"
+          alt=""
+          fill
+          sizes="100vw"
+          className="object-cover"
+        />
+        <div className="relative">
+          <AgentLogoStrip />
+
       {/* Slack act: @Payloat answers a spend question, just before the
           markets closer */}
-      <SlackSection />
+          <SlackSection />
+        </div>
+      </div>
 
       {/* Markets closer: shader card + white $0 on black */}
       <MarketsSection />

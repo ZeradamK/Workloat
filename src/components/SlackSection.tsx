@@ -82,20 +82,11 @@ const BAR_POP = {
 
 export default function SlackSection() {
   return (
-    /* the whole act sits on the cream-to-black gradient, full bleed */
-    <div className="relative">
-      <Image
-        src="/product-hero-gradient.jpg"
-        alt=""
-        fill
-        sizes="100vw"
-        className="object-cover"
-      />
-      <div className="relative">
-        <DesktopAct />
-        <PhoneAct />
-      </div>
-    </div>
+    /* the page lays this act on the cream-to-black gradient */
+    <>
+      <DesktopAct />
+      <PhoneAct />
+    </>
   );
 }
 

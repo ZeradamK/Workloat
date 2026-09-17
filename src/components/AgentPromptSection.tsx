@@ -9,8 +9,9 @@ import { motion } from "motion/react";
  * hairline rails 97px in from each edge, a centered three-line headline,
  * a rule, then a 730px prompt card whose 1px border carries a shine in
  * the cream-to-orange gradient, with vendor chips bottom-left and a cream
- * pill bottom-right; a "talk with us" line; a rule; a six-cell logo strip;
- * Payloat's type throughout.
+ * pill bottom-right; a "talk with us" line; a rule. The six-cell logo
+ * strip is exported on its own so the page can lay it on the gradient
+ * that follows. Payloat's type throughout.
  */
 
 const EASE = [0.25, 0.6, 0.2, 1] as const;
@@ -114,26 +115,35 @@ export default function AgentPromptSection() {
             </Link>
           </p>
         </div>
-
-        {/* the logo strip: six ruled cells */}
-        <div className="grid grid-cols-3 border-b border-white/10 min-[800px]:grid-cols-6">
-          {LOGOS.map((l) => (
-            <div
-              key={l.alt}
-              className="flex h-[clamp(72px,6vw,116px)] items-center justify-center border-l border-white/10 first:border-l-0"
-            >
-              <Image
-                src={l.src}
-                alt={l.alt}
-                width={120}
-                height={36}
-                className="h-[clamp(18px,1.5vw,28px)] w-auto opacity-85 brightness-0 invert"
-              />
-            </div>
-          ))}
-        </div>
       </div>
     </section>
+  );
+}
+
+/** The six-cell logo strip that follows the act. It renders on whatever
+    ground the page gives it (the gradient) with a 20% black overlay per
+    cell, inside the same rails. */
+export function AgentLogoStrip() {
+  return (
+    <div className="mx-auto max-w-[1726px] border-x border-white/10">
+      <div className="grid grid-cols-3 border-b border-white/10 min-[800px]:grid-cols-6">
+        {LOGOS.map((l) => (
+          <div
+            key={l.alt}
+            className="flex h-[clamp(72px,6vw,116px)] items-center justify-center border-l border-white/10 first:border-l-0"
+            style={{ backgroundColor: "rgba(0,0,0,0.2)" }}
+          >
+            <Image
+              src={l.src}
+              alt={l.alt}
+              width={120}
+              height={36}
+              className="h-[clamp(18px,1.5vw,28px)] w-auto opacity-85 brightness-0 invert"
+            />
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
