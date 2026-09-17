@@ -74,8 +74,8 @@ const NOTIFS = [
   },
   {
     name: "Brex",
-    bg: "#eeeeee",
-    dark: false,
+    bg: "#2c2c2c",
+    dark: true,
     logo: "/logos/brex.svg",
     amount: "$12,480.00",
     note: "14 charges matched",
