@@ -82,10 +82,20 @@ const BAR_POP = {
 
 export default function SlackSection() {
   return (
-    <>
-      <DesktopAct />
-      <PhoneAct />
-    </>
+    /* the whole act sits on the cream-to-black gradient, full bleed */
+    <div className="relative">
+      <Image
+        src="/product-hero-gradient.jpg"
+        alt=""
+        fill
+        sizes="100vw"
+        className="object-cover"
+      />
+      <div className="relative">
+        <DesktopAct />
+        <PhoneAct />
+      </div>
+    </div>
   );
 }
 
@@ -157,11 +167,10 @@ function DesktopAct() {
   const target = scenes(fit, open)[scene];
 
   return (
-    <section ref={ref} className="hidden px-[100px] pb-[clamp(120px,30vw,300px)] pt-4 min-[900px]:block">
-      {/* the stage sits on the page's white, which the green act above
-          has just faded into, inside a 1px black outline */}
+    <section ref={ref} className="hidden px-[100px] py-[100px] min-[900px]:block">
+      {/* the white stage on the gradient, inside a 1px black outline */}
       <div
-        className="relative flex flex-col overflow-hidden rounded-[30px] border border-solid border-[#0a0a0a]"
+        className="relative flex flex-col overflow-hidden rounded-[30px] border border-solid border-[#0a0a0a] bg-white"
         style={{ height: "clamp(840px, calc(100vh - 100px), 1120px)" }}
       >
         {/* headline */}
@@ -227,7 +236,7 @@ function DesktopAct() {
 
 function PhoneAct() {
   return (
-    <section className="mx-4 mb-[clamp(120px,30vw,300px)] rounded-[30px] bg-[#0a0a0a] px-5 pb-16 pt-12 min-[900px]:hidden">
+    <section className="mx-4 rounded-[30px] bg-[#0a0a0a] px-5 pb-16 pt-12 min-[900px]:hidden">
       <motion.h2 {...up} className="text-center text-[clamp(32px,9vw,44px)] font-bold leading-[1.06] tracking-[-1.5px] text-white">
         Ask @Payloat what
         <br />

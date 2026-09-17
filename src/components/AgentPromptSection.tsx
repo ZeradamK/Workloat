@@ -10,7 +10,7 @@ import { motion } from "motion/react";
  * a rule, then a 730px prompt card whose 1px border carries a shine in
  * the cream-to-orange gradient, with vendor chips bottom-left and a cream
  * pill bottom-right; a "talk with us" line; a rule; a six-cell logo strip;
- * then a full-bleed image band. Payloat's type throughout.
+ * Payloat's type throughout.
  */
 
 const EASE = [0.25, 0.6, 0.2, 1] as const;
@@ -132,18 +132,6 @@ export default function AgentPromptSection() {
             </div>
           ))}
         </div>
-      </div>
-
-      {/* the full-bleed band: the attached render */}
-      <div className="relative h-[clamp(240px,30vw,580px)] overflow-hidden">
-        <Image
-          src="/agent-band.jpg"
-          alt=""
-          fill
-          sizes="100vw"
-          className="object-cover"
-          style={{ objectPosition: "50% 60%" }}
-        />
       </div>
     </section>
   );
