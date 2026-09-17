@@ -120,9 +120,9 @@ export default function AgentPromptSection() {
   );
 }
 
-/** The six-cell logo strip that follows the act. It renders on whatever
-    ground the page gives it (the gradient) with a 20% black overlay per
-    cell, inside the same rails. */
+/** The six-cell logo strip that follows the act, inside the same rails.
+    On the black it reads as a ruled strip; the light overlay per cell
+    keeps the cells from vanishing into the ground. */
 export function AgentLogoStrip() {
   return (
     <div className="mx-auto max-w-[1726px] border-x border-white/10">
@@ -131,7 +131,7 @@ export function AgentLogoStrip() {
           <div
             key={l.alt}
             className="flex h-[clamp(72px,6vw,116px)] items-center justify-center border-l border-white/10 first:border-l-0"
-            style={{ backgroundColor: "rgba(0,0,0,0.2)" }}
+            style={{ backgroundColor: "rgba(255,255,255,0.03)" }}
           >
             <Image
               src={l.src}
