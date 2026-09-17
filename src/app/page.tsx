@@ -27,6 +27,19 @@ export default function Home() {
           notifications; releases once everything is solid. */}
       <GoalSection />
 
+      {/* the green stats and statement act, shared with the finance
+          teams page, easing into white before the flow hero */}
+      <StatsStatement
+        stats={[
+          { label: "Payloat watches agent purchases", value: "24/7" },
+          { label: "To match a charge to the task behind it", value: "<1s" },
+          { label: "Receipts you chase down by hand", value: "0" },
+        ]}
+        quote="Agents do not announce what they buy. Payloat Ledger records every purchase the moment it lands, with the task behind it, so you know what was bought and why before the receipt arrives."
+        name="Payloat Ledger"
+        role="One ledger for every agent's spend"
+      />
+
       {/* the flow hero, shared with the finance teams page, with the
           ledger's own copy: you → Payloat → what agents buy */}
       <FlowHero
@@ -69,26 +82,14 @@ export default function Home() {
         ]}
       />
 
-      {/* the green stats and statement act, shared with the finance
-          teams page, easing into white before the Slack act */}
-      <StatsStatement
-        stats={[
-          { label: "Payloat watches agent purchases", value: "24/7" },
-          { label: "To match a charge to the task behind it", value: "<1s" },
-          { label: "Receipts you chase down by hand", value: "0" },
-        ]}
-        quote="Agents do not announce what they buy. Payloat Ledger records every purchase the moment it lands, with the task behind it, so you know what was bought and why before the receipt arrives."
-        name="Payloat Ledger"
-        role="One ledger for every agent's spend"
-      />
-
-      {/* Slack act: tilted monitor, @Payloat answers a spend question */}
-      <SlackSection />
-
       {/* Agent act on black: the prompt card with the gradient shine,
           vendor logos, and the render band. (Track everything is parked;
           TrackSection.tsx stays in the repo.) */}
       <AgentPromptSection />
+
+      {/* Slack act: @Payloat answers a spend question, just before the
+          markets closer */}
+      <SlackSection />
 
       {/* Markets closer: shader card + white $0 on black */}
       <MarketsSection />
