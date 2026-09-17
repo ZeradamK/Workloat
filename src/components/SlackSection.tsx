@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { animate, AnimatePresence, motion, useInView, useReducedMotion, useScroll, useTransform } from "motion/react";
+import { animate, AnimatePresence, motion, useInView, useReducedMotion } from "motion/react";
 import PhoneMock, { screenWidth as phoneScreenWidth } from "./PhoneMock";
 import { SlackIcon, type SlackIconName } from "./slackIcons";
 
@@ -45,6 +45,8 @@ const FRAME = {
   screen: { left: 397 / 2000, top: 312 / 1500, width: 1204 / 2000, height: 769 / 1500 },
   screenCenterY: (312 + 1081) / 2 / 1500,
   lidWidth: (1622 - 377) / 2000,
+  /* the base's foot: the last opaque row of the image */
+  foot: 1184 / 1500,
 };
 
 /* the opening pose, measured from the stage: the lid alone, sized to
@@ -106,16 +108,15 @@ function DesktopAct() {
   const stageRef = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion() ?? false;
   const inView = useInView(ref, { once: true, amount: 0.4 });
-  /* a slow drift as the act scrolls out, so the next section's white
-     slides over the laptop's base */
-  const { scrollYProgress: leaving } = useScroll({ target: ref, offset: ["end end", "end start"] });
-  const drift = useTransform(leaving, [0, 1], [0, 140]);
   /* the conversation sits at its final state from the start: no typing,
      no zoom; the display holds the third scene's pose */
   const convo = useConversation(inView, true);
   const [override, setOverride] = useState<number | null>(null);
   const [fit, setFit] = useState(1);
   const [open, setOpen] = useState<Open>({ scale: 1, y: "0%", cropped: false });
+  /* the room under the laptop's base at the fitted scale; the stage gives
+     it back so the next section lands on the base */
+  const [tuck, setTuck] = useState(0);
 
   /* measure the stage: the lid should span it minus 100px each side,
      unless the height runs out first; and the opening pose, see Open */
@@ -129,7 +130,8 @@ function DesktopAct() {
       const rigW = rigH * FRAME.aspect;
       const lidW = rigW * FRAME.lidWidth;
       /* the lid spans the stage minus 100px each side when it can */
-      setFit(Math.max(0.5, Math.min(1, (stageW - 200) / lidW)));
+      const fitValue = Math.max(0.5, Math.min(1, (stageW - 200) / lidW));
+      setFit(fitValue);
 
       /* the lid at 50px from each side, then zoomed out by a fifth */
       const scale = ((stageW - 100) / lidW) * 0.8;
@@ -140,6 +142,10 @@ function DesktopAct() {
       const ty = stageH + 3 - after(FRAME.screen.top + FRAME.screen.height);
       const cropped = after(FRAME.screen.top) + ty < 0;
       setOpen({ scale, y: `${(ty / rigH) * 100}%`, cropped });
+
+      /* the base's foot at the fitted scale, measured from the stage top */
+      const foot = originY + (rigTop + FRAME.foot * rigH - originY) * fitValue;
+      setTuck(Math.max(0, stageH - foot));
     };
     measure();
     const ro = new ResizeObserver(measure);
@@ -161,16 +167,17 @@ function DesktopAct() {
   const target = scenes(fit, open)[scene];
 
   return (
-    <section ref={ref} className="hidden bg-white px-[100px] pt-[100px] min-[900px]:block" style={{ marginBottom: -160 }}>
-      {/* the stage on white; its foot runs under the next section */}
-      <motion.div
+    <section ref={ref} className="hidden px-[100px] pb-[5px] pt-[100px] min-[900px]:block" style={{ backgroundColor: "#0a0a0a", marginBottom: -2 }}>
+      {/* the stage on black, 5px above the next section, which covers
+          just the last 2px of the laptop's base */}
+      <div
         className="relative flex flex-col overflow-hidden rounded-[30px]"
-        style={{ height: "clamp(840px, calc(100vh - 100px), 1120px)", y: drift }}
+        style={{ height: "clamp(840px, calc(100vh - 100px), 1120px)", marginBottom: -tuck }}
       >
         {/* headline */}
         <motion.h2
           {...up}
-          className="z-10 px-6 pt-[clamp(28px,4vh,56px)] text-center text-[clamp(32px,4.2vw,60px)] font-bold leading-[1.06] tracking-[-2px] text-ink"
+          className="z-10 px-6 pt-[clamp(28px,4vh,56px)] text-center text-[clamp(32px,4.2vw,60px)] font-bold leading-[1.06] tracking-[-2px] text-white"
         >
           Ask @Payloat what
           <br />
@@ -185,7 +192,7 @@ function DesktopAct() {
             animate={{ opacity: scene === 2 ? 1 : 0 }}
             transition={{ duration: 0.5 }}
             className="pointer-events-none absolute inset-x-0 bottom-0 h-[9%]"
-            style={{ background: "linear-gradient(180deg,#e6e6e8 0%,#f3f3f4 12%,#ffffff 100%)", borderTop: "1px solid rgba(0,0,0,0.10)" }}
+            style={{ background: "linear-gradient(180deg,rgba(255,255,255,0.10) 0%,rgba(255,255,255,0) 100%)", borderTop: "1px solid rgba(255,255,255,0.2)" }}
           />
           {/* the rig: display + stand, centered, then posed per scene */}
           <motion.div
@@ -204,7 +211,7 @@ function DesktopAct() {
             animate={{ opacity: scene === 0 && open.cropped ? 1 : 0 }}
             transition={{ duration: 0.35 }}
             className="pointer-events-none absolute inset-x-0 top-0 z-10 h-[22%]"
-            style={{ background: "linear-gradient(180deg,#ffffff 0%,rgba(255,255,255,0.85) 30%,rgba(255,255,255,0) 100%)" }}
+            style={{ background: "linear-gradient(180deg,#0a0a0a 0%,rgba(10,10,10,0.85) 30%,rgba(10,10,10,0) 100%)" }}
           />
 
           {/* the two bars: one bump in with the final scene, then they hold */}
@@ -221,7 +228,7 @@ function DesktopAct() {
             )}
           </AnimatePresence>
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 }
