@@ -27,13 +27,15 @@ const INNER = "px-[clamp(20px,1.7vw,32px)]";
 
 /* green → the next ground along a smoothstep curve, so neither end shows
    an edge */
+const STOPS = [
+  [0, 0], [8, 1], [16, 4], [24, 9], [32, 17], [40, 27], [48, 39], [56, 52],
+  [64, 65], [72, 77], [80, 87], [88, 94], [94, 98], [100, 100],
+];
 const fadeTo = (to: string) =>
-  `linear-gradient(to bottom, ${[
-    [0, 0], [8, 1], [16, 4], [24, 9], [32, 17], [40, 27], [48, 39], [56, 52],
-    [64, 65], [72, 77], [80, 87], [88, 94], [94, 98], [100, 100],
-  ]
-    .map(([at, w]) => `color-mix(in srgb, ${to} ${w}%, ${GREEN}) ${at}%`)
-    .join(", ")})`;
+  `linear-gradient(to bottom, ${STOPS.map(([at, w]) => `color-mix(in srgb, ${to} ${w}%, ${GREEN}) ${at}%`).join(", ")})`;
+/* over an image ground the fade is the next ground rising in alpha */
+const fadeOver = (to: string) =>
+  `linear-gradient(to bottom, ${STOPS.map(([at, w]) => `color-mix(in srgb, ${to} ${w}%, transparent) ${at}%`).join(", ")})`;
 
 export type Stat = { label: string; value: string };
 
@@ -43,6 +45,7 @@ export default function StatsStatement({
   name,
   role,
   to = "#ffffff",
+  image,
 }: {
   /** three columns: a short label above a large figure */
   stats: Stat[];
@@ -53,11 +56,26 @@ export default function StatsStatement({
   role: string;
   /** the ground the green fades into at the foot (the next section's) */
   to?: string;
+  /** an image ground in place of the green, with a dark wash on its
+      light side so the white type reads */
+  image?: string;
 }) {
   return (
-    <section style={{ backgroundColor: GREEN }}>
+    <section className="relative" style={{ backgroundColor: GREEN }}>
+      {image && (
+        <>
+          <Image src={image} alt="" fill sizes="100vw" className="object-cover" />
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(to right, rgba(10,10,10,0.55), rgba(10,10,10,0.35) 45%, rgba(10,10,10,0.15))",
+            }}
+          />
+        </>
+      )}
       {/* the stats band */}
-      <div className={FRAME}>
+      <div className={`relative ${FRAME}`}>
         <div className={`${INNER} py-[clamp(48px,5.7vw,110px)]`}>
           <div className="grid border-y border-white/25 min-[800px]:grid-cols-3">
             {stats.map((s, i) => (
@@ -79,8 +97,8 @@ export default function StatsStatement({
         </div>
       </div>
 
-      {/* the statement, full width on the green */}
-      <div className={FRAME}>
+      {/* the statement, full width on the ground */}
+      <div className={`relative ${FRAME}`}>
         <motion.div
           {...up}
           className="relative grid gap-10 px-[clamp(24px,5.7vw,110px)] pb-[clamp(56px,8vw,160px)] pt-[clamp(24px,5vw,96px)] text-white min-[900px]:grid-cols-[clamp(120px,22%,444px)_1fr]"
@@ -112,7 +130,7 @@ export default function StatsStatement({
       </div>
 
       {/* the eased fade into white */}
-      <div className="h-[clamp(260px,28vw,540px)]" style={{ background: fadeTo(to) }} />
+      <div className="relative h-[clamp(260px,28vw,540px)]" style={{ background: image ? fadeOver(to) : fadeTo(to) }} />
     </section>
   );
 }
