@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { animate, AnimatePresence, motion, useInView, useReducedMotion } from "motion/react";
+import { animate, AnimatePresence, motion, useInView, useReducedMotion, useScroll, useTransform } from "motion/react";
 import PhoneMock, { screenWidth as phoneScreenWidth } from "./PhoneMock";
 import { SlackIcon, type SlackIconName } from "./slackIcons";
 
@@ -70,7 +70,6 @@ function scenes(fit: number, open: Open) {
   ] as const;
 }
 
-const ZIP = { type: "spring", stiffness: 260, damping: 30, mass: 0.9 } as const;
 
 /* the notification bars' entrance and exit: a springy bump in, a quick
    drop out, both bars on the same clock */
@@ -95,9 +94,6 @@ export default function SlackSection() {
 /* The scenes follow the conversation: the close-up holds while Zeradam
    types, sends, and Payloat answers in text; the zip to the front-on view
    lands with the graph; the angled view once the answer is complete. */
-function sceneFor(stage: Stage): number {
-  return stage < 4 ? 0 : stage < 8 ? 1 : 2;
-}
 
 /* the rig's natural height as a share of the stage: the display face fills
    the stage height at scale 1 (so the close scenes rasterize crisp) and the
@@ -110,7 +106,13 @@ function DesktopAct() {
   const stageRef = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion() ?? false;
   const inView = useInView(ref, { once: true, amount: 0.4 });
-  const convo = useConversation(inView, reduced);
+  /* a slow drift as the act scrolls out, so the next section's white
+     slides over the laptop's base */
+  const { scrollYProgress: leaving } = useScroll({ target: ref, offset: ["end end", "end start"] });
+  const drift = useTransform(leaving, [0, 1], [0, 140]);
+  /* the conversation sits at its final state from the start: no typing,
+     no zoom; the display holds the third scene's pose */
+  const convo = useConversation(inView, true);
   const [override, setOverride] = useState<number | null>(null);
   const [fit, setFit] = useState(1);
   const [open, setOpen] = useState<Open>({ scale: 1, y: "0%", cropped: false });
@@ -151,23 +153,24 @@ function DesktopAct() {
     if (q !== null) setOverride(Math.min(2, Math.max(0, Number(q))));
   }, []);
 
-  const scene = reduced ? 2 : (override ?? sceneFor(convo.stage));
+  const scene = override ?? 2;
 
-  /* the two bars pop in together with the final scene and stay */
-  const bars = scene === 2;
+  /* the only motion: the two bars pop in once the act is in view, then
+     stay */
+  const bars = scene === 2 && (inView || reduced);
   const target = scenes(fit, open)[scene];
 
   return (
-    <section ref={ref} className="hidden px-[100px] py-[100px] min-[900px]:block">
-      {/* the stage lies straight on the gradient */}
-      <div
+    <section ref={ref} className="hidden bg-white px-[100px] pt-[100px] min-[900px]:block" style={{ marginBottom: -160 }}>
+      {/* the stage on white; its foot runs under the next section */}
+      <motion.div
         className="relative flex flex-col overflow-hidden rounded-[30px]"
-        style={{ height: "clamp(840px, calc(100vh - 100px), 1120px)" }}
+        style={{ height: "clamp(840px, calc(100vh - 100px), 1120px)", y: drift }}
       >
         {/* headline */}
         <motion.h2
           {...up}
-          className="z-10 px-6 pt-[clamp(28px,4vh,56px)] text-center text-[clamp(32px,4.2vw,60px)] font-bold leading-[1.06] tracking-[-2px] text-white"
+          className="z-10 px-6 pt-[clamp(28px,4vh,56px)] text-center text-[clamp(32px,4.2vw,60px)] font-bold leading-[1.06] tracking-[-2px] text-ink"
         >
           Ask @Payloat what
           <br />
@@ -182,13 +185,13 @@ function DesktopAct() {
             animate={{ opacity: scene === 2 ? 1 : 0 }}
             transition={{ duration: 0.5 }}
             className="pointer-events-none absolute inset-x-0 bottom-0 h-[9%]"
-            style={{ background: "linear-gradient(180deg,rgba(255,255,255,0.10) 0%,rgba(255,255,255,0) 100%)", borderTop: "1px solid rgba(255,255,255,0.25)" }}
+            style={{ background: "linear-gradient(180deg,#e6e6e8 0%,#f3f3f4 12%,#ffffff 100%)", borderTop: "1px solid rgba(0,0,0,0.10)" }}
           />
           {/* the rig: display + stand, centered, then posed per scene */}
           <motion.div
             initial={false}
             animate={target}
-            transition={reduced ? { duration: 0 } : ZIP}
+            transition={{ duration: 0 }}
             className="absolute left-1/2 -translate-x-1/2"
             style={{ top: `${(1 - RIG_H) * 50}%`, height: `${RIG_H * 100}%`, aspectRatio: String(FRAME.aspect), transformOrigin: `50% ${FACE_CENTER}%` }}
           >
@@ -201,7 +204,7 @@ function DesktopAct() {
             animate={{ opacity: scene === 0 && open.cropped ? 1 : 0 }}
             transition={{ duration: 0.35 }}
             className="pointer-events-none absolute inset-x-0 top-0 z-10 h-[22%]"
-            style={{ background: "linear-gradient(180deg,rgba(10,10,10,0.35) 0%,rgba(10,10,10,0.2) 30%,rgba(10,10,10,0) 100%)" }}
+            style={{ background: "linear-gradient(180deg,#ffffff 0%,rgba(255,255,255,0.85) 30%,rgba(255,255,255,0) 100%)" }}
           />
 
           {/* the two bars: one bump in with the final scene, then they hold */}
@@ -218,7 +221,7 @@ function DesktopAct() {
             )}
           </AnimatePresence>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }
@@ -227,7 +230,7 @@ function DesktopAct() {
 
 function PhoneAct() {
   return (
-    <section className="mx-4 rounded-[30px] bg-[#0a0a0a] px-5 pb-16 pt-12 min-[900px]:hidden">
+    <section className="mx-4 mb-[clamp(80px,20vw,160px)] rounded-[30px] bg-[#0a0a0a] px-5 pb-16 pt-12 min-[900px]:hidden">
       <motion.h2 {...up} className="text-center text-[clamp(32px,9vw,44px)] font-bold leading-[1.06] tracking-[-1.5px] text-white">
         Ask @Payloat what
         <br />

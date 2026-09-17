@@ -7,8 +7,8 @@ import { motion } from "motion/react";
  * The green stats-and-statement act from the finance teams page, shared
  * so the home page runs the same design: a band of three ruled columns
  * on the investing green, a full-width statement with the Payloat mark,
- * then the green easing into white along a smoothstep fade so the next
- * section lands on white with no seam.
+ * then the green easing into the next section's ground along a smoothstep
+ * fade so it lands with no seam.
  */
 
 const EASE = [0.25, 0.6, 0.2, 1] as const;
@@ -25,13 +25,15 @@ const up = {
 const FRAME = "mx-auto max-w-[1860px] border-x border-white/10";
 const INNER = "px-[clamp(20px,1.7vw,32px)]";
 
-/* green → white along a smoothstep curve, so neither end shows an edge */
-const FADE = `linear-gradient(to bottom, ${[
-  [0, 0], [8, 1], [16, 4], [24, 9], [32, 17], [40, 27], [48, 39], [56, 52],
-  [64, 65], [72, 77], [80, 87], [88, 94], [94, 98], [100, 100],
-]
-  .map(([at, w]) => `color-mix(in srgb, #ffffff ${w}%, ${GREEN}) ${at}%`)
-  .join(", ")})`;
+/* green → the next ground along a smoothstep curve, so neither end shows
+   an edge */
+const fadeTo = (to: string) =>
+  `linear-gradient(to bottom, ${[
+    [0, 0], [8, 1], [16, 4], [24, 9], [32, 17], [40, 27], [48, 39], [56, 52],
+    [64, 65], [72, 77], [80, 87], [88, 94], [94, 98], [100, 100],
+  ]
+    .map(([at, w]) => `color-mix(in srgb, ${to} ${w}%, ${GREEN}) ${at}%`)
+    .join(", ")})`;
 
 export type Stat = { label: string; value: string };
 
@@ -40,6 +42,7 @@ export default function StatsStatement({
   quote,
   name,
   role,
+  to = "#ffffff",
 }: {
   /** three columns: a short label above a large figure */
   stats: Stat[];
@@ -48,6 +51,8 @@ export default function StatsStatement({
   /** who is speaking, and their line */
   name: string;
   role: string;
+  /** the ground the green fades into at the foot (the next section's) */
+  to?: string;
 }) {
   return (
     <section style={{ backgroundColor: GREEN }}>
@@ -107,7 +112,7 @@ export default function StatsStatement({
       </div>
 
       {/* the eased fade into white */}
-      <div className="h-[clamp(260px,28vw,540px)]" style={{ background: FADE }} />
+      <div className="h-[clamp(260px,28vw,540px)]" style={{ background: fadeTo(to) }} />
     </section>
   );
 }

@@ -29,7 +29,7 @@ export default function Home() {
       <GoalSection />
 
       {/* the green stats and statement act, shared with the finance
-          teams page, easing into white before the flow hero */}
+          teams page, easing into black toward the agent act */}
       <StatsStatement
         stats={[
           { label: "Payloat watches agent purchases", value: "24/7" },
@@ -39,48 +39,7 @@ export default function Home() {
         quote="Agents do not announce what they buy. Payloat Ledger records every purchase the moment it lands, with the task behind it, so you know what was bought and why before the receipt arrives."
         name="Payloat Ledger"
         role="One ledger for every agent's spend"
-      />
-
-      {/* the flow hero, shared with the finance teams page, with the
-          ledger's own copy: you → Payloat → what agents buy */}
-      <FlowHero
-        lines={["One ledger", "for every", "dollar your", "agents", "spend."]}
-        body="Payloat records every agent purchase the moment it lands, matches it to the task behind it, and keeps every bank and card in one place."
-        cta={{ label: "Get started", href: "/signup" }}
-        tasks={[
-          "API credits",
-          "Flight bookings",
-          "Grocery reorders",
-          "Cloud hosting",
-          "Ad spend",
-          "Subscription renewals",
-          "Research tools",
-          "Stock orders",
-          "Receipt matching",
-          "Refund tracking",
-          "Spend by task",
-          "Budget caps",
-          "Card issuing",
-          "Vendor payments",
-          "Travel expenses",
-          "Software seats",
-          "Data purchases",
-          "Overspend alerts",
-          "Monthly summaries",
-          "Bank sync",
-        ]}
-        from="You"
-        agent="Payloat"
-        to="Your agents"
-        trustedLabel="Works with the banks and cards you already use"
-        logos={[
-          { src: "/logos/banks/chase.jpg", alt: "Chase" },
-          { src: "/logos/banks/mercury.png", alt: "Mercury" },
-          { src: "/logos/brex.svg", alt: "Brex" },
-          { src: "/logos/stripe.svg", alt: "Stripe" },
-          { src: "/logos/banks/citi.png", alt: "Citi" },
-          { src: "/logos/banks/wellsfargo.png", alt: "Wells Fargo" },
-        ]}
+        to="#0a0a0a"
       />
 
       {/* Agent act on black: the prompt card with the gradient shine,
@@ -89,7 +48,7 @@ export default function Home() {
       <AgentPromptSection />
 
       {/* the cream-to-black gradient, full bleed, under the act's logo
-          strip and the Slack act together */}
+          strip only */}
       <div className="relative">
         <Image
           src="/product-hero-gradient.jpg"
@@ -100,11 +59,55 @@ export default function Home() {
         />
         <div className="relative">
           <AgentLogoStrip />
-
-      {/* Slack act: @Payloat answers a spend question, just before the
-          markets closer */}
-          <SlackSection />
         </div>
+      </div>
+
+      {/* Slack act on white: the laptop's base tucks under the next
+          section */}
+      <SlackSection />
+
+      {/* the flow hero, shared with the finance teams page, with the
+          ledger's own copy; on white, over the Slack act's foot */}
+      <div className="relative z-10 bg-white">
+        <FlowHero
+          lines={["One ledger", "for every", "dollar your", "agents", "spend."]}
+          body="Payloat records every agent purchase the moment it lands, matches it to the task behind it, and keeps every bank and card in one place."
+          cta={{ label: "Get started", href: "/signup" }}
+          tasks={[
+            "API credits",
+            "Flight bookings",
+            "Grocery reorders",
+            "Cloud hosting",
+            "Ad spend",
+            "Subscription renewals",
+            "Research tools",
+            "Stock orders",
+            "Receipt matching",
+            "Refund tracking",
+            "Spend by task",
+            "Budget caps",
+            "Card issuing",
+            "Vendor payments",
+            "Travel expenses",
+            "Software seats",
+            "Data purchases",
+            "Overspend alerts",
+            "Monthly summaries",
+            "Bank sync",
+          ]}
+          from="You"
+          agent="Payloat"
+          to="Your agents"
+          trustedLabel="Works with the banks and cards you already use"
+          logos={[
+            { src: "/logos/banks/chase.jpg", alt: "Chase" },
+            { src: "/logos/banks/mercury.png", alt: "Mercury" },
+            { src: "/logos/brex.svg", alt: "Brex" },
+            { src: "/logos/stripe.svg", alt: "Stripe" },
+            { src: "/logos/banks/citi.png", alt: "Citi" },
+            { src: "/logos/banks/wellsfargo.png", alt: "Wells Fargo" },
+          ]}
+        />
       </div>
 
       {/* Markets closer: shader card + white $0 on black */}
