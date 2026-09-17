@@ -2,38 +2,21 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
-import {
-  motion,
-  useMotionValueEvent,
-  useScroll,
-  useSpring,
-  useTransform,
-} from "motion/react";
-import PurchaseTrackerCard from "./tracker/PurchaseTrackerCard";
-import SubscriptionTrackerCard from "./tracker/SubscriptionTrackerCard";
+import { motion, useMotionValueEvent, useScroll } from "motion/react";
 import InsightsChart from "./tracker/InsightsChart";
 import { money } from "./tracker/money";
 import { heroT } from "./introProgress";
 
 /**
- * The pinned hero act (200vh). The section never moves; only the middle
- * column parallaxes, at constant size, sliding up UNDER the nav bar. The
- * zone above the nav bar's top line (page top → nav top) is a hidden
- * region: blocks clip there and never appear above the nav. When half of
- * the active block has slid under the nav, it zip-vanishes in 200ms.
- *   Block 1: Purchase Tracker
- *   Block 2: the wallet + spending column (iOS Card tab anatomy)
+ * The hero: one still screen on #eeeeee. The headline sits left, the
+ * wallet + spending column (iOS Card tab anatomy) sits center. The act
+ * writes heroT as it scrolls out so the nav dock moves to its light
+ * surface once the hero is gone.
  */
 
 const HERO_DAILY = [
   0, 85, 85, 210, 210, 340, 340, 495, 640, 640, 820, 980, 980, 1210, 1385,
   1500, 1500, 1830, 2100, 2350,
-];
-/* cumulative subscription spend, ending at $210 for July */
-const SUBS_DAILY = [
-  0, 13, 13, 30, 30, 62, 62, 79, 79, 105, 105, 118, 130, 130, 155, 155, 172,
-  186, 198, 210,
 ];
 const HERO_X_LABELS = ["Jul 01", "Jul 07", "Jul 13", "Jul 20"];
 
@@ -42,21 +25,11 @@ const HERO_X_LABELS = ["Jul 01", "Jul 07", "Jul 13", "Jul 20"];
 const YEARLY = [0.5, 0.62, 0.42, 0.7, 0.55, 0.78, 1, 0.66, 0.58, 0.72, 0.48, 0.64];
 const CURRENT_MONTH = 6;
 
-const NAV_TOP = 20; /* the nav bar's top tip line */
-const NAV_BOTTOM = 68; /* nav top + its 48px height */
 const COL_W = 320; /* center column width (350 - 30), matches the dock */
-
-/* the hero ground: #eeeeee on slide 1, the page's white on slide 2. The
-   fade is a pure function of scroll (same window the nav dock uses), so
-   it tracks any gesture forward and back with no state to desync. */
-const HERO_START = "#eeeeee";
-const HERO_BLACK = "#0a0a0a"; /* the ink the type settles on */
-const HERO_WHITE = "#fefefe"; /* = var(--background) */
-const GROUND_WINDOW = [0.4, 0.65];
+const HERO_GROUND = "#eeeeee";
 
 export default function HeroShowcase() {
   const ref = useRef<HTMLDivElement>(null);
-  const [vh, setVh] = useState(900);
   /* only the visible breakpoint's act may write the shared heroT signal */
   const isDesktop = useRef(true);
   useEffect(() => {
@@ -68,219 +41,61 @@ export default function HeroShowcase() {
     mq.addEventListener("change", update);
     return () => mq.removeEventListener("change", update);
   }, []);
-  const [zip0, setZip0] = useState(false);
-  const [trackerLive, setTrackerLive] = useState(false);
 
-  useEffect(() => {
-    const measure = () => setVh(window.innerHeight);
-    measure();
-    window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
-  }, []);
-
+  /* 0 while the hero fills the viewport, 1 once it has scrolled away */
   const { scrollYProgress } = useScroll({
     target: ref,
-    offset: ["start start", "end end"],
+    offset: ["start start", "end start"],
   });
-  const t = useSpring(scrollYProgress, {
-    stiffness: 120,
-    damping: 26,
-    mass: 0.3,
-  });
-
-  const EXIT_DIST = vh * 0.78;
-
-  /* block 0 (the wallet column) rests slightly low, then slides up under
-     the nav at constant size */
-  const y0 = useTransform(t, [0, 1], [30, -EXIT_DIST]);
-
-  /* zip-vanish (200ms) once half the block has entered under the nav bar;
-     the tracker's roll-up animations arm as its slide approaches */
-  useMotionValueEvent(t, "change", (v) => {
+  useMotionValueEvent(scrollYProgress, "change", (v) => {
     if (!isDesktop.current) return; /* hidden act must not stomp heroT */
-    const threshold = (vh / 2 - NAV_BOTTOM) / EXIT_DIST;
-    setZip0(v > threshold);
-    setTrackerLive(v > 0.15);
-    heroT.set(v); /* NavDock syncs its surface color to the slides */
+    heroT.set(v);
   });
-
-  /* block 1 (the tracker column) rolls up into place. It starts deep and
-     travels faster than block 0 so a clear vertical gap (>= 150px) holds
-     between the two sets the whole time both are on screen. */
-  const y1 = useTransform(t, [0, 1], [vh * 1.28, 30]);
-  const o1 = useTransform(t, [0.08, 0.5], [0, 1]);
-
-  /* side texts crossfade in place with the slides — no sliding */
-  const textAO = useTransform(t, [0.3, 0.5], [1, 0]);
-  const textBO = useTransform(t, [0.52, 0.72], [0, 1]);
-  const textAPE = useTransform(textAO, (v) => (v > 0.5 ? "auto" : "none"));
-  const textBPE = useTransform(textBO, (v) => (v > 0.5 ? "auto" : "none"));
-
-  /* ground and type fade together: black/white on slide 1, white/ink on
-     slide 2 */
-  const ground = useTransform(t, GROUND_WINDOW, [HERO_START, HERO_WHITE]);
-  const ink = useTransform(t, GROUND_WINDOW, [HERO_BLACK, HERO_BLACK]);
 
   return (
     <>
       <MobileHero />
-      <div ref={ref} className="relative hidden h-[200vh] min-[800px]:block">
-      <motion.div
-        className="sticky top-0 h-screen overflow-hidden"
-        style={{ backgroundColor: ground }}
+      <div
+        ref={ref}
+        className="relative hidden min-h-screen min-[800px]:block"
+        style={{ backgroundColor: HERO_GROUND }}
       >
-        {/* left headline, slide 1 — fades in place */}
-        <motion.div
-          className="absolute left-0 top-1/2 hidden w-[calc(50%-160px)] -translate-y-1/2 justify-center min-[800px]:flex"
-          style={{ opacity: textAO, pointerEvents: textAPE }}
-        >
+        {/* left headline */}
+        <div className="absolute left-0 top-1/2 flex w-[calc(50%-160px)] -translate-y-1/2 justify-center">
           <motion.h1
-            className="w-max text-[clamp(22px,3.2vw,52px)] font-normal leading-[0.95] tracking-[-1.5px]"
-            style={{ color: ink }}
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.25, 0.6, 0.2, 1] }}
+            className="w-max text-[clamp(22px,3.2vw,52px)] font-normal leading-[0.95] tracking-[-1.5px] text-ink"
           >
             See every dollar
             <br />
             your agents spend
           </motion.h1>
-        </motion.div>
+        </div>
 
-        {/* left headline, slide 2 — same exact position */}
-        <motion.div
-          className="absolute left-0 top-1/2 hidden w-[calc(50%-160px)] -translate-y-1/2 justify-center min-[800px]:flex"
-          style={{ opacity: textBO, pointerEvents: textBPE }}
-        >
-          <motion.h2
-            className="w-max text-[clamp(22px,3.2vw,52px)] font-normal leading-[0.95] tracking-[-1.5px]"
-            style={{ color: ink }}
-          >
-            Know what was bought
-            <br />
-            and what it was for
-          </motion.h2>
-        </motion.div>
-
-        {/* right description, slide 1 — fades in place */}
-        <motion.div
-          className="absolute right-0 top-1/2 hidden w-[calc(50%-160px)] -translate-y-1/2 justify-center min-[800px]:flex"
-          style={{ opacity: textAO, pointerEvents: textAPE }}
-        >
-          <motion.p
-            className="w-[85%] max-w-[300px] text-pretty text-[17px] leading-[1.2]"
-            style={{ color: ink }}
-          >
-            Every purchase, subscription, order, and receipt your agents
-            record, in one ledger
-          </motion.p>
-        </motion.div>
-
-        {/* right description, slide 2 — same exact position, with CTA */}
-        <motion.div
-          className="absolute right-0 top-1/2 hidden w-[calc(50%-160px)] -translate-y-1/2 justify-center min-[800px]:flex"
-          style={{ opacity: textBO, pointerEvents: textBPE }}
-        >
-          <div className="flex w-[85%] max-w-[300px] flex-col items-start gap-5">
-            <motion.p
-              className="text-pretty text-[17px] leading-[1.2]"
-              style={{ color: ink }}
-            >
-              Every agent purchase in one view. Payloat Ledger totals what
-              each agent spent this month, shows the task it was given, and
-              flags anything over its cap.
-            </motion.p>
-            <Link
-              href="/purchases"
-              className="group flex h-11 items-center gap-1.5 rounded-full bg-[#eeeeee] px-5 text-[13px] font-semibold tracking-[-0.5px] text-ink transition-transform hover:scale-[1.03] active:scale-[0.97]"
-            >
-              Learn more
-              <svg
-                width="11"
-                height="11"
-                viewBox="0 0 16 16"
-                fill="none"
-                aria-hidden
-                className="transition-transform duration-200 ease-out group-hover:translate-x-[3px]"
-              >
-                <path
-                  d="M2.5 8h11m0 0L8.8 3.3M13.5 8l-4.7 4.7"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </Link>
-          </div>
-        </motion.div>
-
-        {/* the parallax layer: everything above the nav's top line is a
-            hidden region — blocks slide under the nav, never above it */}
-        <div
-          className="pointer-events-none absolute inset-0"
-          style={{ clipPath: `inset(${NAV_TOP}px 0 0 0)` }}
-        >
-          {/* block 0: the wallet + spending column (first slide) */}
+        {/* the wallet + spending column, centered under the dock */}
+        <div className="flex min-h-screen items-center justify-center pb-10 pt-[100px]">
           <motion.div
-            className="pointer-events-none absolute inset-0 flex items-center justify-center"
-            style={{ y: y0 }}
-            animate={{ opacity: zip0 ? 0 : 1 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.25, 0.6, 0.2, 1], delay: 0.1 }}
+            className="w-full"
+            style={{ maxWidth: COL_W }}
           >
-            <div
-              className="pointer-events-auto w-full"
-              style={{ maxWidth: COL_W }}
-            >
-              <WalletSpendBlock />
-            </div>
-          </motion.div>
-
-          {/* block 1: Purchase Tracker + Subscriptions (second slide) */}
-          <motion.div
-            className="pointer-events-none absolute inset-0 flex items-center justify-center"
-            style={{ y: y1, opacity: o1 }}
-          >
-            <div
-              className="pointer-events-auto flex w-full flex-col gap-2.5"
-              style={{ maxWidth: COL_W }}
-            >
-              <PurchaseTrackerCard
-                countUp={trackerLive}
-                tone="dark"
-                bgImage="/product-hero-gradient.jpg"
-                purchasesBlack
-                href="/purchases"
-                purchases={42}
-                spend={2350}
-                purchasesChange={8}
-                spendChange={14}
-                daily={HERO_DAILY}
-                xLabels={HERO_X_LABELS}
-              />
-              {/* the iOS home's subscriptions card, exact anatomy */}
-              <SubscriptionTrackerCard
-                fluid
-                tone="dark"
-                href="/purchases"
-                spend={210}
-                daily={SUBS_DAILY}
-                xLabels={HERO_X_LABELS}
-                drawIn={trackerLive}
-              />
-            </div>
+            <WalletSpendBlock />
           </motion.div>
         </div>
-      </motion.div>
       </div>
     </>
   );
 }
 
-/* ---- Mobile hero (<800px): the pinned act unstacks into a Cash App
-        style column, headline then graphic then copy, per screen. The
-        subscriptions card is intentionally absent here. ---- */
+/* ---- Mobile hero (<800px): headline then the wallet act and the
+        spending tiles, on the same ground. ---- */
 
 function MobileHero() {
   const ref = useRef<HTMLDivElement>(null);
-  const [trackerLive, setTrackerLive] = useState(false);
   const isMobile = useRef(false);
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 799px)");
@@ -293,20 +108,12 @@ function MobileHero() {
   }, []);
   const { scrollYProgress } = useScroll({
     target: ref,
-    offset: ["start 0.6", "end 0.75"],
+    offset: ["start start", "end start"],
   });
   useMotionValueEvent(scrollYProgress, "change", (v) => {
     if (!isMobile.current) return; /* hidden act must not stomp heroT */
     heroT.set(v);
   });
-  const ground = useTransform(scrollYProgress, GROUND_WINDOW, [
-    HERO_START,
-    HERO_WHITE,
-  ]);
-  const ink = useTransform(scrollYProgress, GROUND_WINDOW, [
-    HERO_BLACK,
-    HERO_BLACK,
-  ]);
 
   const up = {
     initial: { opacity: 0, y: 40 },
@@ -316,113 +123,23 @@ function MobileHero() {
   } as const;
 
   return (
-    <motion.div
+    <div
       ref={ref}
       className="px-6 pb-20 pt-[120px] min-[800px]:hidden"
-      style={{ backgroundColor: ground }}
+      style={{ backgroundColor: HERO_GROUND }}
     >
-      {/* screen 1: headline over the wallet act + expense boxes */}
       <motion.h1
         {...up}
-        className="text-center text-[clamp(30px,9vw,40px)] font-normal leading-[1.0] tracking-[-1.5px]"
-        style={{ color: ink }}
+        className="text-center text-[clamp(30px,9vw,40px)] font-normal leading-[1.0] tracking-[-1.5px] text-ink"
       >
         See every dollar
         <br />
         your agents spend
       </motion.h1>
       <motion.div {...up} className="mx-auto mt-9 w-full max-w-[340px]">
-        <WalletStack open />
-        <div className="mt-2.5 flex items-stretch gap-2.5">
-          <div className="flex flex-1 flex-col gap-2.5">
-            <CardExpenses />
-            <YearlyActivity />
-          </div>
-          <div className="flex flex-1">
-            <PaymentDue />
-          </div>
-        </div>
+        <WalletSpendBlock />
       </motion.div>
-      <motion.p
-        {...up}
-        className="mx-auto mt-9 max-w-[300px] text-center text-[17px] leading-[1.25]"
-        style={{ color: ink }}
-      >
-        Every purchase, subscription, order, and receipt your agents record,
-        in one ledger
-      </motion.p>
-      <motion.div {...up} className="mx-auto mt-9 w-full max-w-[340px]">
-        <TotalSpending />
-      </motion.div>
-
-      {/* responsive breather before the second screen */}
-      <div className="h-[clamp(80px,20vw,150px)]" />
-
-      {/* screen 2: headline, tracker, copy + CTA */}
-      <motion.h2
-        {...up}
-        className="text-center text-[clamp(30px,9vw,40px)] font-normal leading-[1.0] tracking-[-1.5px]"
-        style={{ color: ink }}
-      >
-        Know what was bought
-        <br />
-        and what it was for
-      </motion.h2>
-      <motion.div
-        {...up}
-        onViewportEnter={() => setTrackerLive(true)}
-        className="mx-auto mt-9 w-full max-w-[340px]"
-      >
-        <PurchaseTrackerCard
-          countUp={trackerLive}
-          tone="dark"
-          bgImage="/product-hero-gradient.jpg"
-          purchasesBlack
-          href="/purchases"
-          purchases={42}
-          spend={2350}
-          purchasesChange={8}
-          spendChange={14}
-          daily={HERO_DAILY}
-          xLabels={HERO_X_LABELS}
-        />
-      </motion.div>
-      <motion.div
-        {...up}
-        className="mx-auto mt-9 flex max-w-[300px] flex-col items-center gap-5"
-      >
-        <motion.p
-          className="text-center text-[17px] leading-[1.25]"
-          style={{ color: ink }}
-        >
-          Every agent purchase in one view. Payloat Ledger totals what each
-          agent spent this month, shows the task it was given, and flags
-          anything over its cap.
-        </motion.p>
-        <Link
-          href="/purchases"
-          className="group flex h-11 items-center gap-1.5 rounded-full bg-[#eeeeee] px-5 text-[13px] font-semibold tracking-[-0.5px] text-ink transition-transform hover:scale-[1.03] active:scale-[0.97]"
-        >
-          Learn more
-          <svg
-            width="11"
-            height="11"
-            viewBox="0 0 16 16"
-            fill="none"
-            aria-hidden
-            className="transition-transform duration-200 ease-out group-hover:translate-x-[3px]"
-          >
-            <path
-              d="M2.5 8h11m0 0L8.8 3.3M13.5 8l-4.7 4.7"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </Link>
-      </motion.div>
-    </motion.div>
+    </div>
   );
 }
 
