@@ -187,14 +187,6 @@ function DesktopAct() {
 
         {/* the stage, its own box well below the headline */}
         <div ref={stageRef} className="relative mt-10 min-h-0 flex-1 overflow-hidden" style={{ clipPath: "inset(0)" }}>
-          {/* floor: the final scene sits on it */}
-          <motion.div
-            initial={false}
-            animate={{ opacity: scene === 2 ? 1 : 0 }}
-            transition={{ duration: 0.5 }}
-            className="pointer-events-none absolute inset-x-0 bottom-0 h-[9%]"
-            style={{ background: "linear-gradient(180deg,#e2e2e4 0%,#e9e9eb 12%,#eeeeee 100%)", borderTop: "1px solid rgba(0,0,0,0.10)" }}
-          />
           {/* the rig: display + stand, centered, then posed per scene */}
           <motion.div
             initial={false}
@@ -205,15 +197,6 @@ function DesktopAct() {
           >
             <StudioDisplay stage={convo.stage} typed={convo.typed} />
           </motion.div>
-
-          {/* the window's top dissolves into the section while cropped */}
-          <motion.div
-            initial={false}
-            animate={{ opacity: scene === 0 && open.cropped ? 1 : 0 }}
-            transition={{ duration: 0.35 }}
-            className="pointer-events-none absolute inset-x-0 top-0 z-10 h-[22%]"
-            style={{ background: "linear-gradient(180deg,#eeeeee 0%,rgba(238,238,238,0.85) 30%,rgba(238,238,238,0) 100%)" }}
-          />
 
           {/* the two bars: one bump in with the final scene, then they hold */}
           <AnimatePresence>
@@ -304,7 +287,6 @@ function StudioDisplay({ stage, typed }: { stage: Stage; typed: number }) {
         <ScaledScreen>
           <Desktop stage={stage} typed={typed} />
         </ScaledScreen>
-        <Sheen />
         {/* the notch, 126 of the screen's 1094 wide and 21 of its 707 tall */}
         <div className="absolute left-1/2 top-0 h-[3%] w-[11.5%] -translate-x-1/2 rounded-b-[7px] bg-[#0b0b0c]" />
       </div>
@@ -342,15 +324,6 @@ function Phone() {
    Slack window sitting in the section until the laptop appears around it */
 function Wallpaper() {
   return <div className="absolute inset-0 bg-[#eeeeee]" />;
-}
-
-function Sheen() {
-  return (
-    <div
-      className="pointer-events-none absolute inset-0"
-      style={{ background: "linear-gradient(115deg,rgba(255,255,255,0.10) 0%,rgba(255,255,255,0.03) 22%,transparent 40%)" }}
-    />
-  );
 }
 
 /* Lays children out at the design size and scales them to the box
