@@ -29,8 +29,8 @@ const WORDS_SPAN = 0.56;
 const NOTIFS = [
   {
     name: "OpenAI",
-    bg: "#eeeeee",
-    dark: false,
+    bg: "#546b41",
+    dark: true,
     logo: "/logos/openai.svg",
     amount: "$2,500.00",
     note: "API usage this month",
