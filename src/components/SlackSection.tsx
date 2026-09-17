@@ -102,14 +102,11 @@ function DesktopAct() {
           your agents spent.
         </motion.h2>
 
-        {/* the laptop: the lid spans the stage minus 100px each side, so
-            the wider base runs a little into the section's padding */}
+        {/* the laptop spans the stage, so it scales with the viewport and
+            never runs past it */}
         <div
-          className="relative mx-auto mt-10 overflow-hidden"
-          style={{
-            width: `calc((100% - 200px) / ${FRAME.lidWidth})`,
-            aspectRatio: `${FRAME.aspect} / ${shown}`,
-          }}
+          className="relative mx-auto mt-10 w-full overflow-hidden"
+          style={{ aspectRatio: `${FRAME.aspect} / ${shown}` }}
         >
           <div
             className="absolute inset-x-0"
@@ -125,10 +122,10 @@ function DesktopAct() {
           <AnimatePresence>
             {bars && (
               <>
-                <motion.div key="b1" {...BAR_POP} className="absolute left-[6%] top-[46%] z-10 w-[340px]">
+                <motion.div key="b1" {...BAR_POP} className="absolute left-[4%] top-[46%] z-10 w-[clamp(320px,27%,340px)]">
                   <Bar1 />
                 </motion.div>
-                <motion.div key="b2" {...BAR_POP} className="absolute bottom-[16%] right-[6%] z-10 w-[340px]">
+                <motion.div key="b2" {...BAR_POP} className="absolute bottom-[16%] right-[4%] z-10 w-[clamp(320px,27%,340px)]">
                   <Bar2 />
                 </motion.div>
               </>
