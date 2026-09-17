@@ -46,33 +46,10 @@ const FRAME = {
   screen: { left: 177 / 1448, top: 214 / 1086, width: 1094 / 1448, height: 707 / 1086 },
   screenCenterY: (214 + 920) / 2 / 1086,
   lidWidth: (1290 - 157) / 1448,
-  /* the base's foot: the last opaque row of the image */
+  /* the lid's crown and the base's foot: the first and last opaque rows */
+  lidTop: 194 / 1086,
   foot: 1013 / 1086,
 };
-
-/* the opening pose, measured from the stage: the lid alone, sized to
-   50px from each side of the gray box then zoomed out by a fifth, the
-   screen's bottom edge flush with the box's bottom (so the bottom bezel
-   and the deck are out of the frame). The desktop is the
-   box's own gray, so only the Slack window and the menu bar read. `y` is
-   a share of the rig's height; `cropped` when the screen's top runs out
-   under the headline. */
-type Open = { scale: number; y: string; cropped: boolean };
-
-/* the three poses of the rig. `fit` is the scale at which the lid spans the
-   stage with 100px of room left and right, or fills the stage height,
-   whichever is smaller. */
-function scenes(fit: number, open: Open) {
-  return [
-    /* 1: the screen, flush with the box's bottom, the desktop the box's gray */
-    { scale: open.scale, x: "0%", y: open.y, rotateY: 0, rotateX: 0 },
-    /* 2: the whole laptop, front-on */
-    { scale: fit, x: "0%", y: "0%", rotateY: 0, rotateX: 0 },
-    /* 3: the same pose, the bars arrive */
-    { scale: fit, x: "0%", y: "0%", rotateY: 0, rotateX: 0 },
-  ] as const;
-}
-
 
 /* the notification bars' entrance and exit: a springy bump in, a quick
    drop out, both bars on the same clock */
@@ -94,118 +71,64 @@ export default function SlackSection() {
 
 /* ---------- desktop: the pinned three-scene act ---------- */
 
-/* The scenes follow the conversation: the close-up holds while Zeradam
-   types, sends, and Payloat answers in text; the zip to the front-on view
-   lands with the graph; the angled view once the answer is complete. */
-
-/* the rig's natural height as a share of the stage: the display face fills
-   the stage height at scale 1 (so the close scenes rasterize crisp) and the
-   stand hangs below, clipped. FACE_CENTER is the scale origin. */
-const RIG_H = 1.55;
-const FACE_CENTER = FRAME.screenCenterY * 100;
-
 function DesktopAct() {
   const ref = useRef<HTMLDivElement>(null);
-  const stageRef = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion() ?? false;
   const inView = useInView(ref, { once: true, amount: 0.4 });
   /* the conversation sits at its final state from the start: no typing,
-     no zoom; the display holds the third scene's pose */
+     no zoom; the display holds its final pose */
   const convo = useConversation(inView, true);
-  const [override, setOverride] = useState<number | null>(null);
-  const [fit, setFit] = useState(1);
-  const [open, setOpen] = useState<Open>({ scale: 1, y: "0%", cropped: false });
-  /* the room under the laptop's base at the fitted scale; the stage gives
-     it back so the next section lands on the base */
-  const [tuck, setTuck] = useState(0);
-
-  /* measure the stage: the lid should span it minus 100px each side,
-     unless the height runs out first; and the opening pose, see Open */
-  useEffect(() => {
-    const el = stageRef.current;
-    if (!el) return;
-    const measure = () => {
-      const stageW = el.clientWidth;
-      const stageH = el.clientHeight;
-      const rigH = stageH * RIG_H;
-      const rigW = rigH * FRAME.aspect;
-      const lidW = rigW * FRAME.lidWidth;
-      /* the lid spans the stage minus 100px each side when it can */
-      const fitValue = Math.max(0.5, Math.min(1, (stageW - 200) / lidW));
-      setFit(fitValue);
-
-      /* the lid at 50px from each side, then zoomed out by a fifth */
-      const scale = ((stageW - 100) / lidW) * 0.8;
-      const rigTop = ((1 - RIG_H) / 2) * stageH;
-      const originY = rigTop + FRAME.screenCenterY * rigH;
-      /* where a point of the rig (a share of its height) lands after the scale */
-      const after = (rigFrac: number) => originY + (rigTop + rigFrac * rigH - originY) * scale;
-      const ty = stageH + 3 - after(FRAME.screen.top + FRAME.screen.height);
-      const cropped = after(FRAME.screen.top) + ty < 0;
-      setOpen({ scale, y: `${(ty / rigH) * 100}%`, cropped });
-
-      /* the base's foot at the fitted scale, measured from the stage top */
-      const foot = originY + (rigTop + FRAME.foot * rigH - originY) * fitValue;
-      setTuck(Math.max(0, stageH - foot));
-    };
-    measure();
-    const ro = new ResizeObserver(measure);
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, []);
-
-  /* dev: ?slackScene=0|1|2 pins a scene for review */
-  useEffect(() => {
-    const q = new URLSearchParams(window.location.search).get("slackScene");
-    if (q !== null) setOverride(Math.min(2, Math.max(0, Number(q))));
-  }, []);
-
-  const scene = override ?? 2;
 
   /* the only motion: the two bars pop in once the act is in view, then
      stay */
-  const bars = scene === 2 && (inView || reduced);
-  const target = scenes(fit, open)[scene];
+  const bars = inView || reduced;
+
+  /* the laptop box shows the image from the lid's crown to the base's
+     foot; the empty bands above and below are cropped away, so the box's
+     height is exactly the laptop's */
+  const shown = FRAME.foot - FRAME.lidTop;
 
   return (
-    <section ref={ref} className="hidden px-[100px] pb-[5px] pt-[100px] min-[900px]:block" style={{ backgroundColor: "#eeeeee", marginBottom: -2 }}>
-      {/* the stage on #eeeeee, 5px above the next section, which covers
-          just the last 2px of the laptop's base */}
-      <div
-        className="relative flex flex-col overflow-hidden rounded-[30px]"
-        style={{ height: "clamp(840px, calc(100vh - 100px), 1120px)", marginBottom: -tuck }}
-      >
-        {/* headline */}
+    <section ref={ref} className="hidden px-[100px] py-[100px] min-[900px]:block" style={{ backgroundColor: "#eeeeee" }}>
+      {/* the stage on #eeeeee: the section's 100px above the headline is
+          the same 100px under the base's foot */}
+      <div className="relative">
         <motion.h2
           {...up}
-          className="z-10 px-6 pt-[clamp(28px,4vh,56px)] text-center text-[clamp(32px,4.2vw,60px)] font-bold leading-[1.06] tracking-[-2px] text-ink"
+          className="relative z-10 px-6 text-center text-[clamp(32px,4.2vw,60px)] font-bold leading-[1.06] tracking-[-2px] text-ink"
         >
           Ask @Payloat what
           <br />
           your agents spent.
         </motion.h2>
 
-        {/* the stage, its own box well below the headline */}
-        <div ref={stageRef} className="relative mt-10 min-h-0 flex-1 overflow-hidden" style={{ clipPath: "inset(0)" }}>
-          {/* the rig: display + stand, centered, then posed per scene */}
-          <motion.div
-            initial={false}
-            animate={target}
-            transition={{ duration: 0 }}
-            className="absolute left-1/2 -translate-x-1/2"
-            style={{ top: `${(1 - RIG_H) * 50}%`, height: `${RIG_H * 100}%`, aspectRatio: String(FRAME.aspect), transformOrigin: `50% ${FACE_CENTER}%` }}
+        {/* the laptop: the lid spans the stage minus 100px each side, so
+            the wider base runs a little into the section's padding */}
+        <div
+          className="relative mx-auto mt-10 overflow-hidden"
+          style={{
+            width: `calc((100% - 200px) / ${FRAME.lidWidth})`,
+            aspectRatio: `${FRAME.aspect} / ${shown}`,
+          }}
+        >
+          <div
+            className="absolute inset-x-0"
+            style={{
+              top: `${(-FRAME.lidTop / shown) * 100}%`,
+              height: `${(1 / shown) * 100}%`,
+            }}
           >
             <StudioDisplay stage={convo.stage} typed={convo.typed} />
-          </motion.div>
+          </div>
 
-          {/* the two bars: one bump in with the final scene, then they hold */}
+          {/* the two bars: one bump in, then they hold */}
           <AnimatePresence>
             {bars && (
               <>
-                <motion.div key="b1" {...BAR_POP} className="absolute left-[6%] top-[52%] z-10 w-[340px]">
+                <motion.div key="b1" {...BAR_POP} className="absolute left-[6%] top-[46%] z-10 w-[340px]">
                   <Bar1 />
                 </motion.div>
-                <motion.div key="b2" {...BAR_POP} className="absolute bottom-[14%] right-[6%] z-10 w-[340px]">
+                <motion.div key="b2" {...BAR_POP} className="absolute bottom-[16%] right-[6%] z-10 w-[340px]">
                   <Bar2 />
                 </motion.div>
               </>
