@@ -168,15 +168,15 @@ function DesktopAct() {
 
   return (
     <section ref={ref} className="hidden px-[100px] py-[100px] min-[900px]:block">
-      {/* the white stage on the gradient, inside a 1px black outline */}
+      {/* the stage lies straight on the gradient */}
       <div
-        className="relative flex flex-col overflow-hidden rounded-[30px] border border-solid border-[#0a0a0a] bg-white"
+        className="relative flex flex-col overflow-hidden rounded-[30px]"
         style={{ height: "clamp(840px, calc(100vh - 100px), 1120px)" }}
       >
         {/* headline */}
         <motion.h2
           {...up}
-          className="z-10 px-6 pt-[clamp(28px,4vh,56px)] text-center text-[clamp(32px,4.2vw,60px)] font-bold leading-[1.06] tracking-[-2px] text-ink"
+          className="z-10 px-6 pt-[clamp(28px,4vh,56px)] text-center text-[clamp(32px,4.2vw,60px)] font-bold leading-[1.06] tracking-[-2px] text-white"
         >
           Ask @Payloat what
           <br />
@@ -191,7 +191,7 @@ function DesktopAct() {
             animate={{ opacity: scene === 2 ? 1 : 0 }}
             transition={{ duration: 0.5 }}
             className="pointer-events-none absolute inset-x-0 bottom-0 h-[9%]"
-            style={{ background: "linear-gradient(180deg,#e6e6e8 0%,#f3f3f4 12%,#ffffff 100%)", borderTop: "1px solid rgba(0,0,0,0.10)" }}
+            style={{ background: "linear-gradient(180deg,rgba(255,255,255,0.10) 0%,rgba(255,255,255,0) 100%)", borderTop: "1px solid rgba(255,255,255,0.25)" }}
           />
           {/* the rig: display + stand, centered, then posed per scene */}
           <motion.div
@@ -210,7 +210,7 @@ function DesktopAct() {
             animate={{ opacity: scene === 0 && open.cropped ? 1 : 0 }}
             transition={{ duration: 0.35 }}
             className="pointer-events-none absolute inset-x-0 top-0 z-10 h-[22%]"
-            style={{ background: "linear-gradient(180deg,#ffffff 0%,rgba(255,255,255,0.85) 30%,rgba(255,255,255,0) 100%)" }}
+            style={{ background: "linear-gradient(180deg,rgba(10,10,10,0.35) 0%,rgba(10,10,10,0.2) 30%,rgba(10,10,10,0) 100%)" }}
           />
 
           {/* the two bars: one bump in with the final scene, then they hold */}
