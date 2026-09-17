@@ -112,7 +112,7 @@ export default function GoalSection() {
 
   return (
     <div ref={ref} className="relative h-[360vh]">
-      <div className="sticky top-0 flex h-screen items-center justify-center overflow-hidden bg-background">
+      <div className="sticky top-0 flex h-screen items-center justify-center overflow-hidden bg-[#eeeeee]">
         {/* the headline: every word fades from #EEEEEE to ink in turn */}
         <div className="relative">
         {/* one notice at a time, at least 80px ABOVE the headline; each new

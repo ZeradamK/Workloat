@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { motion, useMotionValueEvent, useScroll, useTransform } from "motion/react";
+import { motion, useMotionValueEvent, useScroll } from "motion/react";
 import InsightsChart from "./tracker/InsightsChart";
 import { money } from "./tracker/money";
 import { heroT } from "./introProgress";
@@ -27,12 +27,8 @@ const CURRENT_MONTH = 6;
 
 const COL_W = 320; /* center column width (350 - 30), matches the dock */
 
-/* the ground: #eeeeee while the hero fills the viewport, the page's white
-   by the time it has mostly scrolled away. A pure function of scroll, so
-   it tracks any gesture up or down with nothing to desync. */
+/* the ground, shared with the goal act that follows */
 const HERO_GROUND = "#eeeeee";
-const PAGE_WHITE = "#fefefe"; /* = var(--background) */
-const GROUND_WINDOW = [0.15, 0.6];
 
 export default function HeroShowcase() {
   const ref = useRef<HTMLDivElement>(null);
@@ -57,15 +53,14 @@ export default function HeroShowcase() {
     if (!isDesktop.current) return; /* hidden act must not stomp heroT */
     heroT.set(v);
   });
-  const ground = useTransform(scrollYProgress, GROUND_WINDOW, [HERO_GROUND, PAGE_WHITE]);
 
   return (
     <>
       <MobileHero />
-      <motion.div
+      <div
         ref={ref}
         className="relative hidden min-h-screen min-[800px]:block"
-        style={{ backgroundColor: ground }}
+        style={{ backgroundColor: HERO_GROUND }}
       >
         {/* left headline */}
         <div className="absolute left-0 top-1/2 flex w-[calc(50%-160px)] -translate-y-1/2 justify-center">
@@ -93,7 +88,7 @@ export default function HeroShowcase() {
             <WalletSpendBlock />
           </motion.div>
         </div>
-      </motion.div>
+      </div>
     </>
   );
 }
@@ -121,7 +116,6 @@ function MobileHero() {
     if (!isMobile.current) return; /* hidden act must not stomp heroT */
     heroT.set(v);
   });
-  const ground = useTransform(scrollYProgress, GROUND_WINDOW, [HERO_GROUND, PAGE_WHITE]);
 
   const up = {
     initial: { opacity: 0, y: 40 },
@@ -131,10 +125,10 @@ function MobileHero() {
   } as const;
 
   return (
-    <motion.div
+    <div
       ref={ref}
       className="px-6 pb-20 pt-[120px] min-[800px]:hidden"
-      style={{ backgroundColor: ground }}
+      style={{ backgroundColor: HERO_GROUND }}
     >
       <motion.h1
         {...up}
@@ -147,7 +141,7 @@ function MobileHero() {
       <motion.div {...up} className="mx-auto mt-9 w-full max-w-[340px]">
         <WalletSpendBlock />
       </motion.div>
-    </motion.div>
+    </div>
   );
 }
 

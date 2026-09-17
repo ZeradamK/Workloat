@@ -40,7 +40,8 @@ export default function Home() {
         name="Payloat Ledger"
         role="One ledger for every agent's spend"
         to="#0a0a0a"
-        image="/product-hero-gradient.jpg"
+        ground="#eeeeee"
+        ink="dark"
       />
 
       {/* Agent act on black: the prompt card with the gradient shine,

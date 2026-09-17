@@ -22,7 +22,7 @@ const up = {
 } as const;
 
 /* the page frame: 30px rails at 1920 with 1px hairlines, content at +32 */
-const FRAME = "mx-auto max-w-[1860px] border-x border-white/10";
+const FRAME = "mx-auto max-w-[1860px] border-x";
 const INNER = "px-[clamp(20px,1.7vw,32px)]";
 
 /* green → the next ground along a smoothstep curve, so neither end shows
@@ -31,8 +31,8 @@ const STOPS = [
   [0, 0], [8, 1], [16, 4], [24, 9], [32, 17], [40, 27], [48, 39], [56, 52],
   [64, 65], [72, 77], [80, 87], [88, 94], [94, 98], [100, 100],
 ];
-const fadeTo = (to: string) =>
-  `linear-gradient(to bottom, ${STOPS.map(([at, w]) => `color-mix(in srgb, ${to} ${w}%, ${GREEN}) ${at}%`).join(", ")})`;
+const fadeTo = (to: string, from: string) =>
+  `linear-gradient(to bottom, ${STOPS.map(([at, w]) => `color-mix(in srgb, ${to} ${w}%, ${from}) ${at}%`).join(", ")})`;
 /* over an image ground the fade is the next ground rising in alpha */
 const fadeOver = (to: string) =>
   `linear-gradient(to bottom, ${STOPS.map(([at, w]) => `color-mix(in srgb, ${to} ${w}%, transparent) ${at}%`).join(", ")})`;
@@ -46,6 +46,8 @@ export default function StatsStatement({
   role,
   to = "#ffffff",
   image,
+  ground = GREEN,
+  ink = "light",
 }: {
   /** three columns: a short label above a large figure */
   stats: Stat[];
@@ -59,9 +61,19 @@ export default function StatsStatement({
   /** an image ground in place of the green, with a dark wash on its
       light side so the white type reads */
   image?: string;
+  /** a flat ground in place of the green */
+  ground?: string;
+  /** "light": white type and rules (for dark grounds); "dark": black */
+  ink?: "light" | "dark";
 }) {
+  const dark = ink === "dark";
+  const fg = dark ? "text-ink" : "text-white";
+  const sub = dark ? "text-ink/70" : "text-white/70";
+  const rule = dark ? "border-black/15" : "border-white/25";
+  const colRule = dark ? "min-[800px]:border-black/15" : "min-[800px]:border-white/25";
+  const rail = dark ? "border-black/[0.08]" : "border-white/10";
   return (
-    <section className="relative" style={{ backgroundColor: GREEN }}>
+    <section className="relative" style={{ backgroundColor: ground }}>
       {image && (
         <>
           <Image src={image} alt="" fill sizes="100vw" className="object-cover" />
@@ -75,17 +87,17 @@ export default function StatsStatement({
         </>
       )}
       {/* the stats band */}
-      <div className={`relative ${FRAME}`}>
+      <div className={`relative ${FRAME} ${rail}`}>
         <div className={`${INNER} py-[clamp(48px,5.7vw,110px)]`}>
-          <div className="grid border-y border-white/25 min-[800px]:grid-cols-3">
+          <div className={`grid border-y ${rule} min-[800px]:grid-cols-3`}>
             {stats.map((s, i) => (
               <motion.div
                 key={s.label}
                 {...up}
                 transition={{ ...up.transition, delay: i * 0.08 }}
-                className="flex flex-col items-center px-6 pb-[clamp(56px,5.5vw,106px)] pt-[clamp(8px,0.7vw,14px)] text-center text-white min-[800px]:border-l min-[800px]:border-white/25 min-[800px]:first:border-l-0"
+                className={`flex flex-col items-center px-6 pb-[clamp(56px,5.5vw,106px)] pt-[clamp(8px,0.7vw,14px)] text-center ${fg} min-[800px]:border-l ${colRule} min-[800px]:first:border-l-0`}
               >
-                <span className="text-[clamp(14px,0.95vw,18px)] leading-[1.3] text-white/90">
+                <span className={`text-[clamp(14px,0.95vw,18px)] leading-[1.3] ${dark ? "text-ink/90" : "text-white/90"}`}>
                   {s.label}
                 </span>
                 <span className="font-numeral mt-[clamp(28px,3vw,58px)] text-[clamp(64px,6.4vw,124px)] font-medium leading-none tracking-[-4px]">
@@ -98,17 +110,17 @@ export default function StatsStatement({
       </div>
 
       {/* the statement, full width on the ground */}
-      <div className={`relative ${FRAME}`}>
+      <div className={`relative ${FRAME} ${rail}`}>
         <motion.div
           {...up}
-          className="relative grid gap-10 px-[clamp(24px,5.7vw,110px)] pb-[clamp(56px,8vw,160px)] pt-[clamp(24px,5vw,96px)] text-white min-[900px]:grid-cols-[clamp(120px,22%,444px)_1fr]"
+          className={`relative grid gap-10 px-[clamp(24px,5.7vw,110px)] pb-[clamp(56px,8vw,160px)] pt-[clamp(24px,5vw,96px)] ${fg} min-[900px]:grid-cols-[clamp(120px,22%,444px)_1fr]`}
         >
           <Image
             src="/payloat-icon-dark.svg"
             alt="Payloat"
             width={56}
             height={56}
-            className="h-[clamp(36px,3vw,56px)] w-auto self-start invert"
+            className={`h-[clamp(36px,3vw,56px)] w-auto self-start ${dark ? "" : "invert"}`}
           />
           <div className="max-w-[1000px]">
             <p className="text-[clamp(22px,2vw,38px)] leading-[1.15] tracking-[-1px]">
@@ -117,20 +129,20 @@ export default function StatsStatement({
             <p className="mt-[clamp(32px,4.5vw,86px)] text-[clamp(15px,0.95vw,18px)] leading-[1.45]">
               {name}
               <br />
-              <span className="text-white/70">{role}</span>
+              <span className={sub}>{role}</span>
             </p>
           </div>
           {/* the little pager at the right edge */}
           <div className="absolute right-[clamp(16px,3.5vw,66px)] top-1/2 hidden -translate-y-1/2 flex-col items-center gap-2 min-[900px]:flex">
-            <span className="h-5 w-[3px] rounded-full bg-white" />
-            <span className="h-[3px] w-[3px] rounded-full bg-white/60" />
-            <span className="h-[3px] w-[3px] rounded-full bg-white/60" />
+            <span className={`h-5 w-[3px] rounded-full ${dark ? "bg-ink" : "bg-white"}`} />
+            <span className={`h-[3px] w-[3px] rounded-full ${dark ? "bg-ink/40" : "bg-white/60"}`} />
+            <span className={`h-[3px] w-[3px] rounded-full ${dark ? "bg-ink/40" : "bg-white/60"}`} />
           </div>
         </motion.div>
       </div>
 
       {/* the eased fade into white */}
-      <div className="relative h-[clamp(260px,28vw,540px)]" style={{ background: image ? fadeOver(to) : fadeTo(to) }} />
+      <div className="relative h-[clamp(260px,28vw,540px)]" style={{ background: image ? fadeOver(to) : fadeTo(to, ground) }} />
     </section>
   );
 }
