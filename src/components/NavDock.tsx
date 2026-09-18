@@ -479,7 +479,7 @@ export default function NavDock({
         >
           <Link
             href="/signup"
-            className="group hidden h-11 items-center gap-1.5 rounded-full border border-solid border-black bg-white px-5 text-[13px] font-semibold tracking-[-0.5px] text-ink shadow-[0_1px_3px_rgba(0,0,0,0.08)] transition-transform hover:scale-[1.03] active:scale-[0.97] sm:flex"
+            className="group hidden h-11 items-center gap-1.5 rounded-full bg-white px-5 text-[13px] font-semibold tracking-[-0.5px] text-ink shadow-[0_1px_3px_rgba(0,0,0,0.08)] transition-transform hover:scale-[1.03] active:scale-[0.97] sm:flex"
           >
             Sign up
             <svg

@@ -275,94 +275,98 @@ function EverydayStack() {
         ref={ref}
         className="relative mt-[clamp(96px,11vw,176px)] hidden h-[400vh] min-[900px]:block"
       >
-        <div className="sticky top-0 flex h-screen flex-col justify-center">
-          <h2 className="text-center text-[clamp(30px,3.8vw,54px)] font-medium leading-[1.1] tracking-[-1.5px] text-ink">
-            Your agents&apos; spending, in one ledger
-          </h2>
-          <p className="mx-auto mt-4 max-w-[520px] text-center text-[16px] leading-[1.5] text-sub">
-            Purchases, subscriptions, orders, and receipts, all recorded in
-            one place.
-          </p>
+        <div className="sticky top-0 flex h-screen flex-col justify-center px-6">
+          {/* the act on the ruled grid: a framed column, the head as one
+              cell, then the deck and the tab list as two cells */}
+          <div className="relative mx-auto w-full max-w-[1040px] border-x border-black/[0.08]">
+            <Rule pos="top" />
+            <Rule pos="bottom" />
+            <Cross pos="top-left" />
+            <Cross pos="bottom-right" />
 
-          <div className="mx-auto mt-10 grid w-full max-w-[1040px] grid-cols-2 items-center gap-16 px-6">
-            {/* the layer deck: each stage slides up over the previous */}
-            <div className="relative h-[min(720px,78vh)] overflow-hidden rounded-[24px]">
-              {STACK_FEATURES.map((sf, i) => (
-                <DeckLayer key={sf.title} sf={sf} i={i} t={t} />
-              ))}
+            <div className="border-y border-black/[0.08] px-6 py-[clamp(24px,3vh,40px)]">
+              <h2 className="text-center text-[clamp(30px,3.8vw,54px)] font-medium leading-[1.1] tracking-[-1.5px] text-ink">
+                Your agents&apos; spending, in one ledger
+              </h2>
+              <p className="mx-auto mt-4 max-w-[520px] text-center text-[16px] leading-[1.5] text-sub">
+                Purchases, subscriptions, orders, and receipts, all recorded in
+                one place.
+              </p>
             </div>
 
-            {/* the tab list: active title inks in and opens its copy;
-                stays vertically centered against the deck */}
-            <div className="self-center">
-              {STACK_FEATURES.map((sf, i) => (
-                <div key={sf.title} className="py-2.5">
-                  <p
-                    className={`text-[clamp(26px,2.6vw,40px)] font-semibold leading-[1.08] tracking-[-1.5px] transition-colors duration-200 ${
-                      active === i ? "text-ink" : "text-[#b8b6b1]"
-                    }`}
-                  >
-                    {sf.title}
-                  </p>
-                  <AnimatePresence initial={false}>
-                    {active === i && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{
-                          duration: 0.3,
-                          ease: [0.3, 0.9, 0.3, 1],
-                        }}
-                        className="overflow-hidden"
-                      >
-                        <p className="max-w-[380px] pt-2 text-[16px] leading-[1.5] text-ink">
-                          {sf.desc}
-                        </p>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              ))}
+            <div className="grid grid-cols-2">
+              {/* the layer deck: each stage slides up over the previous */}
+              <div className="relative h-[min(640px,66vh)] overflow-hidden">
+                {STACK_FEATURES.map((sf, i) => (
+                  <DeckLayer key={sf.title} sf={sf} i={i} t={t} />
+                ))}
+              </div>
+
+              {/* the tab list: ruled rows; the active title inks in and
+                  opens its copy */}
+              <div className="flex flex-col justify-center border-l border-black/[0.08]">
+                {STACK_FEATURES.map((sf, i) => (
+                  <div key={sf.title} className="border-t border-black/[0.08] px-6 py-[clamp(10px,1.6vh,18px)] first:border-t-0">
+                    <p
+                      className={`text-[clamp(22px,2.2vw,34px)] font-semibold leading-[1.08] tracking-[-1.5px] transition-colors duration-200 ${
+                        active === i ? "text-ink" : "text-[#b8b6b1]"
+                      }`}
+                    >
+                      {sf.title}
+                    </p>
+                    <AnimatePresence initial={false}>
+                      {active === i && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{
+                            duration: 0.3,
+                            ease: [0.3, 0.9, 0.3, 1],
+                          }}
+                          className="overflow-hidden"
+                        >
+                          <p className="max-w-[380px] pt-2 text-[15px] leading-[1.5] text-ink">
+                            {sf.desc}
+                          </p>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* mobile: the same story as a stacked list */}
-      <div className="mt-[clamp(96px,11vw,176px)] min-[900px]:hidden">
-        <h2 className="text-center text-[clamp(30px,8vw,40px)] font-medium leading-[1.1] tracking-[-1.5px] text-ink">
-          Your agents&apos; spending, in one ledger
-        </h2>
-        <p className="mx-auto mt-4 max-w-[420px] text-center text-[16px] leading-[1.5] text-sub">
-          Purchases, subscriptions, orders, and receipts, all recorded in one place.
-        </p>
-        <div className="mt-10 flex flex-col gap-10">
-          {STACK_FEATURES.map((sf) => (
-            <div key={sf.title}>
-              <div
-                className="relative h-[300px] overflow-hidden rounded-[24px]"
-                style={{ backgroundColor: sf.bg }}
-              >
-                {sf.image && (
-                  <Image
-                    src={sf.image}
-                    alt=""
-                    fill
-                    sizes="100vw"
-                    className="object-cover"
-                  />
-                )}
-              </div>
-              <p className="mt-4 text-[24px] font-semibold tracking-[-1px] text-ink">
-                {sf.title}
-              </p>
-              <p className="mt-1.5 text-[15px] leading-[1.5] text-sub">
-                {sf.desc}
-              </p>
-            </div>
-          ))}
+      {/* mobile: the same story as a stacked list of cells */}
+      <div className="relative mt-[clamp(96px,11vw,176px)] border-x border-black/[0.08] min-[900px]:hidden">
+        <Rule pos="top" />
+        <Rule pos="bottom" />
+        <Cross pos="top-left" />
+        <Cross pos="bottom-right" />
+        <div className="border-y border-black/[0.08] px-5 py-8">
+          <h2 className="text-center text-[clamp(30px,8vw,40px)] font-medium leading-[1.1] tracking-[-1.5px] text-ink">
+            Your agents&apos; spending, in one ledger
+          </h2>
+          <p className="mx-auto mt-4 max-w-[420px] text-center text-[16px] leading-[1.5] text-sub">
+            Purchases, subscriptions, orders, and receipts, all recorded in one place.
+          </p>
         </div>
+        {STACK_FEATURES.map((sf, i) => (
+          <div key={sf.title} className={i > 0 ? "border-t border-black/[0.08]" : ""}>
+            <div className="relative h-[300px] overflow-hidden" style={{ backgroundColor: sf.bg }}>
+              {sf.image && (
+                <Image src={sf.image} alt="" fill sizes="100vw" className="object-cover" />
+              )}
+            </div>
+            <div className="border-t border-black/[0.08] px-5 py-5">
+              <p className="text-[24px] font-semibold tracking-[-1px] text-ink">{sf.title}</p>
+              <p className="mt-1.5 text-[15px] leading-[1.5] text-sub">{sf.desc}</p>
+            </div>
+          </div>
+        ))}
       </div>
     </>
   );
@@ -386,7 +390,7 @@ function DeckLayer({
   );
   return (
     <motion.div
-      className="absolute inset-0 overflow-hidden rounded-[24px]"
+      className="absolute inset-0 overflow-hidden"
       style={{ y, backgroundColor: sf.bg }}
     >
       {sf.image && (
