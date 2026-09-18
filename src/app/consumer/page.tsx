@@ -40,12 +40,27 @@ const DAILY = [
 ];
 const X_LABELS = ["Jul 01", "Jul 07", "Jul 13", "Jul 20"];
 
+/* the site's ruled grid: a rule running 24px past the rails, and the
+   crosshair where a rule meets a rail */
+function Rule({ pos }: { pos: "top" | "bottom" }) {
+  return <span className={`pointer-events-none absolute -left-6 -right-6 h-px bg-black/[0.08] ${pos === "top" ? "-top-px" : "-bottom-px"}`} />;
+}
+function Cross({ pos }: { pos: "top-left" | "bottom-right" }) {
+  const at = pos === "top-left" ? "-left-[7px] -top-[7px]" : "-bottom-[7px] -right-[7px]";
+  return (
+    <span className={`pointer-events-none absolute z-10 h-[13px] w-[13px] ${at}`} aria-hidden>
+      <span className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-black/40" />
+      <span className="absolute left-0 top-1/2 h-px w-full -translate-y-1/2 bg-black/40" />
+    </span>
+  );
+}
+
 export default function ConsumerPage() {
   return (
     <main className="bg-white">
       <NavDock forceDark />
 
-      <section className="mx-auto max-w-[1200px] px-6 pb-[clamp(96px,11vw,176px)] pt-[170px]">
+      <section className="mx-auto max-w-[1200px] overflow-x-clip px-6 pb-[clamp(96px,11vw,176px)] pt-[170px]">
         {/* ---- section 1: split header + chat / analytics cards ---- */}
         <motion.p
           initial={{ opacity: 0, y: 20 }}
@@ -56,116 +71,127 @@ export default function ConsumerPage() {
           Payloat Ledger Features
         </motion.p>
 
-        <div className="mt-4 grid gap-8 min-[900px]:grid-cols-[3fr_2fr] min-[900px]:gap-16">
-          <div>
-            <motion.h1
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.55, ease: EASE, delay: 0.05 }}
-              className="text-[clamp(34px,4.2vw,58px)] font-medium leading-[1.08] tracking-[-2px] text-ink"
-            >
-              Record, match, and summarize,
-              <br />
-              all in one place
-            </motion.h1>
-            <motion.div
+        {/* the hero on the site's ruled grid: a framed column with the
+            headline and copy as two cells, then the two cards as cells */}
+        <div className="relative mt-4 border-x border-black/[0.08]">
+          {/* head row */}
+          <div className="relative grid border-y border-black/[0.08] min-[900px]:grid-cols-[3fr_2fr]">
+            <Rule pos="top" />
+            <Cross pos="top-left" />
+            <div className="p-6 min-[900px]:p-10">
+              <motion.h1
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.55, ease: EASE, delay: 0.05 }}
+                className="text-[clamp(34px,4.2vw,58px)] font-medium leading-[1.08] tracking-[-2px] text-ink"
+              >
+                Record, match, and summarize,
+                <br />
+                all in one place
+              </motion.h1>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.55, ease: EASE, delay: 0.12 }}
+              >
+                <Link
+                  href="/product"
+                  className="mt-8 inline-flex h-12 items-center rounded-full bg-[#0a0a0a] px-6 text-[15px] font-medium text-white transition-transform hover:scale-[1.03] active:scale-[0.97]"
+                >
+                  Learn more
+                </Link>
+              </motion.div>
+            </div>
+            <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.55, ease: EASE, delay: 0.12 }}
+              transition={{ duration: 0.55, ease: EASE, delay: 0.1 }}
+              className="border-t border-black/[0.08] p-6 text-[17px] leading-[1.5] text-ink min-[900px]:border-l min-[900px]:border-t-0 min-[900px]:p-10"
             >
-              <Link
-                href="/product"
-                className="mt-8 inline-flex h-12 items-center rounded-full bg-[#0a0a0a] px-6 text-[15px] font-medium text-white transition-transform hover:scale-[1.03] active:scale-[0.97]"
-              >
-                Learn more
-              </Link>
+              Payloat Ledger records what your agents buy, matches every
+              receipt, and turns agent spend into a summary you can act on.
+            </motion.p>
+          </div>
+
+          {/* the cards row */}
+          <div className="relative grid border-b border-black/[0.08] min-[900px]:grid-cols-[3fr_2fr]">
+            <Rule pos="bottom" />
+            <Cross pos="bottom-right" />
+
+            {/* chat cell: a refund, followed to the end */}
+            <motion.div
+              {...up}
+              className="relative flex h-[560px] items-center justify-center overflow-hidden min-[900px]:h-[640px]"
+            >
+              <Image
+                src="/payloat-card-gradient.png"
+                alt=""
+                fill
+                sizes="(min-width: 900px) 690px, 100vw"
+                className="object-cover"
+              />
+              <div className="relative flex w-[min(380px,84%)] -translate-y-6 flex-col gap-3">
+                <span className="self-end rounded-full border border-solid border-white/70 px-5 py-3 text-[15px] text-white">
+                  What did Procurement buy this week?
+                </span>
+                <span className="max-w-[300px] self-start rounded-[22px] bg-white px-5 py-3 text-[15px] leading-snug text-ink">
+                  Four orders, $891.34 total. One went over its cap.
+                </span>
+                <span className="self-end rounded-full border border-solid border-white/70 px-5 py-3 text-[15px] text-white">
+                  Which one?
+                </span>
+                <span className="max-w-[300px] self-start rounded-[22px] bg-white px-5 py-3 text-[15px] leading-snug text-ink">
+                  WebstaurantStore, $96.50 against an $80 cap. Receipt matched.
+                </span>
+                <span className="flex w-fit items-center gap-2.5 self-start rounded-full bg-white py-2 pl-2 pr-5 text-[15px] font-medium text-ink">
+                  <Image
+                    src="/payloat-app-icon-v2.png"
+                    alt=""
+                    width={26}
+                    height={26}
+                    className="h-[26px] w-[26px] rounded-[7px]"
+                  />
+                  Summary ready
+                </span>
+              </div>
+              <div className="absolute bottom-7 left-7 right-7">
+                <p className="text-[15px] text-white/70">Agent summaries</p>
+                <p className="mt-1 max-w-[460px] text-[16px] leading-[1.4] text-white">
+                  Ask about any agent and get the purchases, receipts, and issues
+                  behind the number.
+                </p>
+              </div>
+            </motion.div>
+
+            {/* analytics cell: the spend overview panel as an inner cell */}
+            <motion.div
+              {...up}
+              transition={{ ...up.transition, delay: 0.08 }}
+              className="flex h-[560px] flex-col border-t border-black/[0.08] p-7 min-[900px]:h-[640px] min-[900px]:border-l min-[900px]:border-t-0"
+              style={{ backgroundColor: "#eeeeee" }}
+            >
+              <div className="border border-black/[0.08] bg-white p-6">
+                <p className="text-[15px] font-semibold text-ink">
+                  Agent spend overview
+                </p>
+                <p className="font-numeral mt-1 text-[26px] font-bold tracking-[-0.5px] text-ink">
+                  $2,350
+                </p>
+                <InsightsChart
+                  daily={DAILY}
+                  xLabels={X_LABELS}
+                  className="mt-3 h-[170px]"
+                />
+              </div>
+              <div className="mt-auto">
+                <p className="text-[15px] text-sub">Insights</p>
+                <p className="mt-1 max-w-[400px] text-[16px] leading-[1.4] text-ink">
+                  Measure the month at a glance: spend by agent, renewals ahead,
+                  and receipts still missing.
+                </p>
+              </div>
             </motion.div>
           </div>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55, ease: EASE, delay: 0.1 }}
-            className="max-w-[440px] text-[17px] leading-[1.5] text-ink min-[900px]:mt-2"
-          >
-            Payloat Ledger records what your agents buy, matches every
-            receipt, and turns agent spend into a summary you can act on.
-          </motion.p>
-        </div>
-
-        <div className="mt-[clamp(48px,6vw,90px)] grid gap-5 min-[900px]:grid-cols-[3fr_2fr]">
-          {/* chat canvas: a refund, followed to the end */}
-          <motion.div
-            {...up}
-            className="relative flex h-[560px] items-center justify-center overflow-hidden rounded-[24px] min-[900px]:h-[640px]"
-          >
-            <Image
-              src="/payloat-card-gradient.png"
-              alt=""
-              fill
-              sizes="(min-width: 900px) 690px, 100vw"
-              className="object-cover"
-            />
-            <div className="relative flex w-[min(380px,84%)] -translate-y-6 flex-col gap-3">
-              <span className="self-end rounded-full border border-solid border-white/70 px-5 py-3 text-[15px] text-white">
-                What did Procurement buy this week?
-              </span>
-              <span className="max-w-[300px] self-start rounded-[22px] bg-white px-5 py-3 text-[15px] leading-snug text-ink">
-                Four orders, $891.34 total. One went over its cap.
-              </span>
-              <span className="self-end rounded-full border border-solid border-white/70 px-5 py-3 text-[15px] text-white">
-                Which one?
-              </span>
-              <span className="max-w-[300px] self-start rounded-[22px] bg-white px-5 py-3 text-[15px] leading-snug text-ink">
-                WebstaurantStore, $96.50 against an $80 cap. Receipt matched.
-              </span>
-              <span className="flex w-fit items-center gap-2.5 self-start rounded-full bg-white py-2 pl-2 pr-5 text-[15px] font-medium text-ink">
-                <Image
-                  src="/payloat-app-icon-v2.png"
-                  alt=""
-                  width={26}
-                  height={26}
-                  className="h-[26px] w-[26px] rounded-[7px]"
-                />
-                Summary ready
-              </span>
-            </div>
-            <div className="absolute bottom-7 left-7 right-7">
-              <p className="text-[15px] text-white/70">Agent summaries</p>
-              <p className="mt-1 max-w-[460px] text-[16px] leading-[1.4] text-white">
-                Ask about any agent and get the purchases, receipts, and issues
-                behind the number.
-              </p>
-            </div>
-          </motion.div>
-
-          {/* analytics card: the spend overview panel */}
-          <motion.div
-            {...up}
-            transition={{ ...up.transition, delay: 0.08 }}
-            className="flex h-[560px] flex-col rounded-[24px] p-7 min-[900px]:h-[640px]"
-            style={{ backgroundColor: "#eeeeee" }}
-          >
-            <div className="rounded-[20px] bg-white p-6">
-              <p className="text-[15px] font-semibold text-ink">
-                Agent spend overview
-              </p>
-              <p className="font-numeral mt-1 text-[26px] font-bold tracking-[-0.5px] text-ink">
-                $2,350
-              </p>
-              <InsightsChart
-                daily={DAILY}
-                xLabels={X_LABELS}
-                className="mt-3 h-[170px]"
-              />
-            </div>
-            <div className="mt-auto">
-              <p className="text-[15px] text-sub">Insights</p>
-              <p className="mt-1 max-w-[400px] text-[16px] leading-[1.4] text-ink">
-                Measure the month at a glance: spend by agent, renewals ahead,
-                and receipts still missing.
-              </p>
-            </div>
-          </motion.div>
         </div>
 
         {/* ---- section 3: the everyday stack (Klarna anatomy) — pinned
