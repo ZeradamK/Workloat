@@ -5,19 +5,14 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import {
+  animate,
   AnimatePresence,
   motion,
   useMotionTemplate,
+  useMotionValue,
   useTransform,
 } from "motion/react";
-import {
-  heroT,
-  introT,
-  marketsLight,
-  productLight,
-  slackDark,
-  splitsDark,
-} from "./introProgress";
+import { introT, productLight } from "./introProgress";
 
 /**
  * Docker-style nav: app icon cornered top-left, a floating #EEEEEE dock in
@@ -93,7 +88,6 @@ const PAGE_ROUTES: Partial<Record<PanelKey, string>> = {
 };
 
 type Rgb = [number, number, number];
-const clamp01 = (v: number) => Math.min(Math.max(v, 0), 1);
 const hex = (h: string): Rgb => {
   const n = parseInt(h.slice(1), 16);
   return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
@@ -110,17 +104,11 @@ export default function NavDock({
   logoSrc = "/payloat-app-icon-v2.png",
   logoLightSrc,
   surface,
-  heroSurface,
   ctaOutline = false,
 }: {
   /** The dock's light surface color in place of #eeeeee; the page's light
       signal still moves it between black and this. */
   surface?: string;
-  /** The dock's colors while the home hero is still dark (heroT below
-      0.4): surface, text, and the hover pill. Defaults to the black dock
-      with white text. The dock fades from this to the light surface in
-      step with the hero's own background. */
-  heroSurface?: { bg: string; fg: string; pill?: string };
   /** A 1px white border on the Get started pill, for dark grounds. */
   ctaOutline?: boolean;
   /** The app icon at the top left. */
@@ -199,36 +187,91 @@ export default function NavDock({
      while a dark-override section (feature splits, the Slack box) is
      under the dock */
   const LIGHT = surface ?? "#eeeeee";
-  const heroBg = heroSurface?.bg ?? "#0a0a0a";
-  const heroFg = heroSurface?.fg ?? "#ffffff";
-  const heroPill = heroSurface?.pill ?? "#ffffff";
+
+  /* Pages that do not pin the dock: it contrasts with whatever ground is
+     under it. The ground is sampled on scroll: on a light section the
+     dock is the logo cells' black, on a dark section it is #eeeeee. */
+  const headerRef = useRef<HTMLElement>(null);
+  const underLight = useMotionValue(1);
+  useEffect(() => {
+    if (forceDark) return;
+    const header = headerRef.current;
+    /* luminance of a computed color: rgb()/rgba(), or the color(srgb …)
+       form Chrome uses for resolved color-mix() stops */
+    const lum = (c: string): number | null => {
+      const m = c.match(/rgba?\(([\d.]+),\s*([\d.]+),\s*([\d.]+)(?:,\s*([\d.]+))?\)/);
+      if (m) {
+        if (m[4] !== undefined && Number(m[4]) < 0.5) return null;
+        return (0.2126 * Number(m[1]) + 0.7152 * Number(m[2]) + 0.0722 * Number(m[3])) / 255;
+      }
+      const k = c.match(/color\(srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*([\d.]+))?\)/);
+      if (k) {
+        if (k[4] !== undefined && Number(k[4]) < 0.5) return null;
+        return 0.2126 * Number(k[1]) + 0.7152 * Number(k[2]) + 0.0722 * Number(k[3]);
+      }
+      return null;
+    };
+    const sample = () => {
+      raf = 0;
+      const y = 44;
+      const stack = document.elementsFromPoint(window.innerWidth / 2, y).filter((el) => !header?.contains(el));
+      let el = stack[0] as HTMLElement | undefined;
+      let light: number | null = null;
+      while (el && el !== document.documentElement) {
+        const cs = getComputedStyle(el);
+        const l = lum(cs.backgroundColor);
+        if (l !== null) {
+          light = l >= 0.5 ? 1 : 0;
+          break;
+        }
+        if (cs.backgroundImage.includes("gradient")) {
+          /* a fade band: read the end it is showing at this point */
+          const stops = cs.backgroundImage.match(/(?:rgba?|color)\([^)]*\)/g) ?? [];
+          const first = stops[0] ? lum(stops[0]) : null;
+          const last = stops[stops.length - 1] ? lum(stops[stops.length - 1]) : null;
+          if (first !== null && last !== null) {
+            const r = el.getBoundingClientRect();
+            light = ((y - r.top) / r.height < 0.5 ? first : last) >= 0.5 ? 1 : 0;
+            break;
+          }
+        }
+        el = el.parentElement ?? undefined;
+      }
+      if (light !== null && light !== underLight.get()) {
+        animate(underLight, light, { duration: 0.18, ease: "easeOut" });
+      }
+    };
+    let raf = 0;
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(sample);
+    };
+    sample();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, [forceDark, underLight]);
+
   const mix = useTransform(() => {
     /* pinned-dark pages can still flash light while the dock crosses a
        black canvas (productLight, 50ms zip) */
-    if (forceDark) return { base: productLight.get(), dark: 0, pinned: true };
-    const base = clamp01((heroT.get() - 0.4) / 0.25);
-    const darkOverride = splitsDark.get() * (1 - marketsLight.get());
-    /* the Slack act's gray box: dark while it is under the dock */
-    const dark = 1 - (1 - darkOverride) * (1 - slackDark.get());
-    return { base, dark, pinned: false };
+    if (forceDark) return { base: productLight.get(), pinned: true };
+    return { base: underLight.get(), pinned: false };
   });
-  const dockBg = useTransform(mix, ({ base, dark, pinned }) =>
-    pinned
-      ? rgb(lerpHex("#0a0a0a", LIGHT, base))
-      : rgb(lerpRgb(lerpHex(heroBg, LIGHT, base), hex("#0a0a0a"), dark)),
+  /* the logo cells' black: #0a0a0a under a 3% white tint */
+  const CELL_BLACK = "#111111";
+  const dockBg = useTransform(mix, ({ base, pinned }) =>
+    pinned ? rgb(lerpHex("#0a0a0a", LIGHT, base)) : rgb(lerpHex(LIGHT, CELL_BLACK, base)),
   );
-  const navFgRgb = useTransform(mix, ({ base, dark, pinned }) =>
-    pinned
-      ? lerpHex("#ffffff", "#0a0a0a", base)
-      : lerpRgb(lerpHex(heroFg, "#0a0a0a", base), hex("#ffffff"), dark),
+  const navFgRgb = useTransform(mix, ({ base, pinned }) =>
+    pinned ? lerpHex("#ffffff", "#0a0a0a", base) : lerpHex("#0a0a0a", "#ffffff", base),
   );
   const navFg = useTransform(navFgRgb, rgb);
   const navLabel = useTransform(navFgRgb, (c) => rgba(c, 0.4));
-  const navPill = useTransform(mix, ({ base, dark, pinned }) =>
-    pinned
-      ? "#ffffff"
-      : rgb(lerpRgb(lerpHex(heroPill, "#ffffff", base), hex("#ffffff"), dark)),
-  );
+  const navPill = useMotionValue("#ffffff");
 
   const open = active !== null;
   /* the white pill rides the hovered item, or the active one while open */
@@ -252,7 +295,7 @@ export default function NavDock({
   const dims = active ? PANEL_DIMS[active] : null;
 
   return (
-    <header className="pointer-events-none fixed inset-x-0 top-0 z-50">
+    <header ref={headerRef} className="pointer-events-none fixed inset-x-0 top-0 z-50">
       <div className="relative flex items-center justify-end px-5 pt-4 sm:px-7 sm:pt-5">
         {/* ---- Left: Payloat app icon, cornered 15px top-left ---- */}
         <motion.div
