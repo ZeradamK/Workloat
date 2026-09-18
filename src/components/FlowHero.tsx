@@ -108,14 +108,14 @@ export default function FlowHero({
               <motion.p
                 {...up}
                 transition={{ duration: 0.55, ease: EASE, delay: 0.12 }}
-                className={`mt-[clamp(40px,4.5vw,86px)] max-w-[540px] border-l-[3px] ${dark ? "border-white/20" : "border-black/10"} pl-7 text-[clamp(18px,1.35vw,26px)] leading-[1.3] tracking-[-0.3px] ${ink}`}
+                className={`mt-[clamp(40px,4.5vw,86px)] max-w-[540px] ${dark ? "" : "border-l-[3px] border-black/10 pl-7"} text-[clamp(18px,1.35vw,26px)] leading-[1.3] tracking-[-0.3px] ${ink}`}
               >
                 {body}
               </motion.p>
               <motion.div
                 {...up}
                 transition={{ duration: 0.55, ease: EASE, delay: 0.18 }}
-                className="mt-[clamp(28px,2.6vw,50px)] pl-[31px]"
+                className={`mt-[clamp(28px,2.6vw,50px)] ${dark ? "" : "pl-[31px]"}`}
               >
                 <Link
                   href={cta.href}
