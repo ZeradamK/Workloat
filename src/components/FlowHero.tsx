@@ -83,7 +83,9 @@ export default function FlowHero({
 
   return (
     <section
-      className={first ? "pt-[clamp(120px,9vw,170px)]" : "pt-[clamp(32px,5vw,80px)]"}
+      /* overflow-x-clip: the card's rules run past it and would otherwise
+         add a few pixels of sideways scroll on phones */
+      className={`overflow-x-clip ${first ? "pt-[clamp(120px,9vw,170px)]" : "pt-[clamp(32px,5vw,80px)]"}`}
       style={{ backgroundColor: dark ? "#0a0a0a" : undefined }}
     >
       <div className={`${FRAME} ${rail}`}>
