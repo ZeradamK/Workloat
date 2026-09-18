@@ -150,8 +150,7 @@ const WORKFLOWS = [
 ];
 
 const CARD_W = 452;
-const CARD_GAP = 22;
-const STEP = CARD_W + CARD_GAP;
+const STEP = CARD_W; /* the cells sit flush, sharing hairlines */
 
 function Workflows() {
   const [index, setIndex] = useState(0);
@@ -173,12 +172,12 @@ function Workflows() {
         Workflows built for finance teams.
       </motion.h2>
 
-      {/* the track: 452x630 cards with 22px gaps at 1920, centered so
-          a card bleeds on both edges like Amigo's; drag it or use the
-          arrows */}
-      <div className="mt-[clamp(40px,4.3vw,84px)] flex justify-center">
+      {/* the track on the ruled grid: 452x630 cells sharing hairlines
+          between two rules that run the full width, centered so a cell
+          bleeds on both edges like Amigo's; drag it or use the arrows */}
+      <div className="relative mt-[clamp(40px,4.3vw,84px)] flex justify-center border-y border-black/[0.08]">
         <motion.div
-          className="flex cursor-grab gap-[22px] active:cursor-grabbing"
+          className="flex cursor-grab active:cursor-grabbing"
           style={{ x }}
           drag="x"
           dragConstraints={{ left: -max * STEP, right: 0 }}
@@ -253,7 +252,7 @@ function WorkflowCard({
   const dark = canvas !== "mist";
   return (
     <div
-      className="relative shrink-0 overflow-hidden rounded-[24px]"
+      className="relative shrink-0 overflow-hidden border-l border-black/[0.08] first:border-l-0"
       style={{ width: CARD_W, height: 630, backgroundColor: bg }}
     >
       <div className="absolute inset-x-[36px] top-[44px]">
