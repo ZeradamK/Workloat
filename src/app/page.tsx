@@ -7,7 +7,6 @@ import MarketsSection from "@/components/MarketsSection";
 import SecuritySection from "@/components/SecuritySection";
 import SlackSection from "@/components/SlackSection";
 import AgentPromptSection, { AgentLogoStrip } from "@/components/AgentPromptSection";
-import SpendMixSection from "@/components/SpendMixSection";
 import FAQSection from "@/components/FAQSection";
 import FooterSection from "@/components/FooterSection";
 
@@ -104,9 +103,6 @@ export default function Home() {
 
       {/* Markets closer: shader card + white $0 on black */}
       <MarketsSection />
-
-      {/* Spend mix: banks and agents in one place, three bars filling in */}
-      <SpendMixSection />
 
       {/* Security trio: live clock, alert toasts, lock toggle */}
       <SecuritySection />
