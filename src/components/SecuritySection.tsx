@@ -12,7 +12,9 @@ import Image from "next/image";
 
 export default function SecuritySection() {
   return (
-    <section className="px-6 py-[clamp(96px,15.6vw,300px)]">
+    /* the markets grid above already carries the room between them, so
+       this section pads only its foot: the gap tops out at 300px */
+    <section className="px-6 pb-[clamp(96px,15.6vw,300px)]">
       <div className="relative mx-auto max-w-[1200px] border-x border-black/[0.08]">
         {/* headline and link, centered inside the rails */}
         <div className="flex flex-col items-center px-6 py-[clamp(40px,4.5vw,72px)] text-center">
