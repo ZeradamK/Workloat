@@ -12,11 +12,11 @@ import Image from "next/image";
 
 export default function SecuritySection() {
   return (
-    <section className="mx-auto max-w-[1200px] px-6 py-[clamp(32px,5vw,80px)]">
-      <div className="grid grid-cols-12 gap-6">
-        {/* ---- Left: heading ---- */}
-        <div className="col-span-12 min-[1100px]:col-span-3">
-          <h2 className="text-[clamp(26px,2.6vw,36px)] font-medium leading-[1.15] tracking-[-1px] text-ink">
+    <section className="px-6 py-[clamp(96px,15.6vw,300px)]">
+      <div className="relative mx-auto max-w-[1200px] border-x border-black/[0.08]">
+        {/* headline and link, centered inside the rails */}
+        <div className="flex flex-col items-center px-6 py-[clamp(40px,4.5vw,72px)] text-center">
+          <h2 className="text-[clamp(28px,3vw,40px)] font-medium leading-[1.15] tracking-[-1px] text-ink">
             Agent spend tracking
             <br />
             built for security
@@ -29,84 +29,83 @@ export default function SecuritySection() {
           </Link>
         </div>
 
-        {/* ---- Right: the three cards ---- */}
-        <div className="col-span-12 grid gap-6 min-[700px]:grid-cols-[minmax(0,1fr)_calc(33.333%+50px)_minmax(0,1fr)] min-[1100px]:col-span-9">
-          {/* black: the live clock */}
-          <div>
-            <div
-              className="flex h-[290px] items-center justify-center overflow-hidden rounded-[32px]"
-              style={{ backgroundColor: "#0a0a0a" }}
-            >
-              <SpikeClock size={250} />
-            </div>
-            <p className="mt-4 text-[20px] font-medium leading-snug tracking-[-0.5px] text-ink">
-              24/7 ledger monitoring
-            </p>
-          </div>
+        {/* the grid: three square cells between rules that run past the
+            rails, crosshairs at the corners */}
+        <div className="relative">
+          <Rule pos="top" />
+          <Rule pos="bottom" />
+          <Cross pos="top-left" />
+          <Cross pos="bottom-right" />
 
-          {/* gray: transaction alert toasts */}
-          <div className="flex flex-col">
-            <div
-              className="relative flex h-[290px] items-center justify-center overflow-hidden rounded-[32px] px-5"
-              style={{ backgroundColor: "#eeeeee" }}
-            >
-              <div className="relative w-full max-w-[320px]">
-                <div className="absolute -top-8 left-1/2 h-[46px] w-[82%] -translate-x-1/2 rounded-[16px] bg-white/35" />
-                <div className="absolute -top-4 left-1/2 h-[50px] w-[91%] -translate-x-1/2 rounded-[16px] bg-white/60" />
-                <div className="relative flex items-center gap-3 rounded-[18px] bg-white py-[6px] pl-[6px] pr-2.5">
-                  <span className="flex h-[43px] w-[43px] shrink-0 items-center justify-center rounded-[11px] bg-[#eeeeee]">
-                    <Image
-                      src="/logos/apple.webp"
-                      alt="Apple"
-                      width={54}
-                      height={54}
-                      className="h-[27px] w-[27px] rounded-[5px] object-contain"
-                    />
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block text-[16px] font-semibold leading-tight text-ink">
-                      New agent purchase
+          <div className="grid min-[700px]:grid-cols-3">
+            {/* black: the live clock */}
+            <Cell caption="24/7 ledger monitoring" first>
+              <div
+                className="flex h-[290px] items-center justify-center overflow-hidden"
+                style={{ backgroundColor: "#0a0a0a" }}
+              >
+                <SpikeClock size={250} />
+              </div>
+            </Cell>
+
+            {/* gray: transaction alert toasts */}
+            <Cell caption="Real-time purchase alerts">
+              <div
+                className="relative flex h-[290px] items-center justify-center overflow-hidden px-5"
+                style={{ backgroundColor: "#eeeeee" }}
+              >
+                <div className="relative w-full max-w-[320px]">
+                  <div className="absolute -top-8 left-1/2 h-[46px] w-[82%] -translate-x-1/2 rounded-[16px] bg-white/35" />
+                  <div className="absolute -top-4 left-1/2 h-[50px] w-[91%] -translate-x-1/2 rounded-[16px] bg-white/60" />
+                  <div className="relative flex items-center gap-3 rounded-[18px] bg-white py-[6px] pl-[6px] pr-2.5">
+                    <span className="flex h-[43px] w-[43px] shrink-0 items-center justify-center rounded-[11px] bg-[#eeeeee]">
+                      <Image
+                        src="/logos/apple.webp"
+                        alt="Apple"
+                        width={54}
+                        height={54}
+                        className="h-[27px] w-[27px] rounded-[5px] object-contain"
+                      />
                     </span>
-                    <span className="block text-[13px] leading-snug text-sub">
-                      Procurement spent $350 at Apple
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-[16px] font-semibold leading-tight text-ink">
+                        New agent purchase
+                      </span>
+                      <span className="block text-[13px] leading-snug text-sub">
+                        Procurement spent $350 at Apple
+                      </span>
                     </span>
-                  </span>
+                  </div>
                 </div>
               </div>
-            </div>
-            <p className="mt-4 text-[20px] font-medium leading-snug tracking-[-0.5px] text-ink">
-              Real-time purchase alerts
-            </p>
-          </div>
+            </Cell>
 
-          {/* white with black border: lock toggle */}
-          <div>
-            <div className="flex h-[290px] flex-col items-center justify-center gap-5 rounded-[32px] border border-solid border-black bg-white">
-              <div className="relative h-[62px] w-[128px] rounded-full" style={{ backgroundColor: "#0a0a0a" }}>
-                <span className="absolute right-[6px] top-1/2 flex h-[50px] w-[50px] -translate-y-1/2 items-center justify-center rounded-full bg-white">
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="#0a0a0a"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    aria-hidden
-                  >
-                    <rect x="5" y="11" width="14" height="9" rx="2.5" />
-                    <path d="M8 11V8a4 4 0 0 1 8 0v3" />
-                  </svg>
-                </span>
+            {/* white: lock toggle */}
+            <Cell caption="Pause any agent, revoke any key">
+              <div className="flex h-[290px] flex-col items-center justify-center gap-5 bg-white">
+                <div className="relative h-[62px] w-[128px] rounded-full" style={{ backgroundColor: "#0a0a0a" }}>
+                  <span className="absolute right-[6px] top-1/2 flex h-[50px] w-[50px] -translate-y-1/2 items-center justify-center rounded-full bg-white">
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="#0a0a0a"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden
+                    >
+                      <rect x="5" y="11" width="14" height="9" rx="2.5" />
+                      <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+                    </svg>
+                  </span>
+                </div>
+                <p className="text-[20px] font-medium tracking-[-0.5px] text-ink">
+                  Pause agent
+                </p>
               </div>
-              <p className="text-[20px] font-medium tracking-[-0.5px] text-ink">
-                Pause agent
-              </p>
-            </div>
-            <p className="mt-4 text-[20px] font-medium leading-snug tracking-[-0.5px] text-ink">
-              Pause any agent, revoke any key
-            </p>
+            </Cell>
           </div>
         </div>
       </div>
@@ -114,8 +113,47 @@ export default function SecuritySection() {
   );
 }
 
-/* ---- The spike-ring clock: two rotating tick rings, live hour center,
-        bracketed minute readout — white on the black card ---- */
+/* one cell: the visual, a rule, then the caption */
+function Cell({
+  caption,
+  first = false,
+  children,
+}: {
+  caption: string;
+  first?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <div
+      className={`flex flex-col border-black/[0.08] ${first ? "" : "border-t min-[700px]:border-l min-[700px]:border-t-0"}`}
+    >
+      {children}
+      <p className="border-t border-black/[0.08] px-6 py-5 text-[20px] font-medium leading-snug tracking-[-0.5px] text-ink">
+        {caption}
+      </p>
+    </div>
+  );
+}
+
+/* a hairline that runs 24px past the rails on both sides */
+function Rule({ pos }: { pos: "top" | "bottom" }) {
+  return (
+    <div
+      className={`pointer-events-none absolute -left-6 -right-6 h-px bg-black/[0.08] ${pos === "top" ? "top-0" : "bottom-0"}`}
+    />
+  );
+}
+
+/* the small crosshair where a rule meets a rail */
+function Cross({ pos }: { pos: "top-left" | "bottom-right" }) {
+  const at = pos === "top-left" ? "-left-[6px] -top-[6px]" : "-bottom-[6px] -right-[6px]";
+  return (
+    <span className={`pointer-events-none absolute z-10 h-[13px] w-[13px] ${at}`} aria-hidden>
+      <span className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-black/40" />
+      <span className="absolute left-0 top-1/2 h-px w-full -translate-y-1/2 bg-black/40" />
+    </span>
+  );
+}
 
 function SpikeClock({ size = 250 }: { size?: number }) {
   const [now, setNow] = useState<Date | null>(null);
