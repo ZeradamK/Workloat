@@ -26,6 +26,31 @@ const LIME = "#9fe870";
 
 /* the canvas's ground and the scene colors for it */
 const CANVAS_BG = "#eeeeee";
+
+/* white rising in alpha along a smoothstep curve, so the fade shows no
+   edge at either end */
+const FADE_TO_WHITE = `linear-gradient(to bottom, ${[
+  [0, 0], [8, 1], [16, 4], [24, 9], [32, 17], [40, 27], [48, 39], [56, 52],
+  [64, 65], [72, 77], [80, 87], [88, 94], [94, 98], [100, 100],
+]
+  .map(([at, w]) => `rgba(255,255,255,${(w / 100).toFixed(2)}) ${at}%`)
+  .join(", ")})`;
+
+/* the site's ruled grid: hairlines, rules running past the frame, and a
+   crosshair where a rule meets a rail */
+const RAIL = "border-black/[0.08]";
+function Rule({ pos }: { pos: "top" | "bottom" }) {
+  return <span className={`pointer-events-none absolute -left-6 -right-6 h-px bg-black/[0.08] ${pos === "top" ? "-top-px" : "-bottom-px"}`} />;
+}
+function Cross({ pos }: { pos: "top-left" | "bottom-right" }) {
+  const at = pos === "top-left" ? "-left-[7px] -top-[7px]" : "-bottom-[7px] -right-[7px]";
+  return (
+    <span className={`pointer-events-none absolute z-10 h-[13px] w-[13px] ${at}`} aria-hidden>
+      <span className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-black/40" />
+      <span className="absolute left-0 top-1/2 h-px w-full -translate-y-1/2 bg-black/40" />
+    </span>
+  );
+}
 const CANVAS_VARS = {
   "--sc-fg": "#0a0a0a",
   "--sc-muted": "rgba(10,10,10,0.6)",
@@ -73,6 +98,8 @@ export default function ProductPage() {
       {/* the hero on the gradient, which also sits behind the nav */}
       <section className="relative overflow-hidden" style={{ backgroundColor: "#0a0a0a" }}>
         <Image src="/product-hero-gradient.jpg" alt="" fill priority sizes="100vw" className="object-cover" />
+        {/* the gradient eases into white toward the markets grid */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[clamp(220px,24vw,460px)]" style={{ background: FADE_TO_WHITE }} />
         <div className="relative mx-auto max-w-[1200px] px-6 pb-[clamp(72px,9vw,140px)] pt-[170px]">
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
@@ -126,7 +153,7 @@ export default function ProductPage() {
           and two small link columns; a white card on the right that works
           an investing agent's budget the way Wise's works a transfer, with
           a colored strip at its foot. */}
-      <section className="px-6 pt-[clamp(72px,9vw,140px)]" style={{ backgroundColor: GREEN_INK }}>
+      <section className="overflow-x-clip px-6 pt-[clamp(72px,9vw,140px)]" style={{ backgroundColor: GREEN_INK }}>
         <div className="mx-auto grid max-w-[1200px] gap-12 min-[900px]:grid-cols-[1.15fr_1fr] min-[900px]:items-center min-[900px]:gap-12">
           <div>
             <motion.h2
@@ -185,13 +212,18 @@ export default function ProductPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.6, ease: EASE, delay: 0.1 }}
-            className="relative w-full max-w-[400px] overflow-hidden rounded-[24px] bg-white pb-[14px] min-[900px]:justify-self-end"
+            className="relative w-full max-w-[400px] border border-white/15 bg-white min-[900px]:justify-self-end"
           >
+            {/* the grid's rules and crosshairs, white on the green */}
+            <span className="pointer-events-none absolute -left-6 -right-6 -top-px h-px bg-white/15" />
+            <span className="pointer-events-none absolute -bottom-px -left-6 -right-6 h-px bg-white/15" />
+            <GreenCross pos="top-left" />
+            <GreenCross pos="bottom-right" />
             <div className="p-6 text-ink">
               <p className="text-[14px]" style={{ color: "#454745" }}>
                 The agent may place up to
               </p>
-              <div className="mt-2.5 flex h-[60px] items-center justify-between gap-3 rounded-[10px] px-4" style={{ border: "1.5px solid #868685" }}>
+              <div className="mt-2.5 flex h-[60px] items-center justify-between gap-3 px-4" style={{ border: "1px solid #0a0a0a" }}>
                 <span className="font-numeral text-[22px] font-semibold tabular-nums">5,000</span>
                 <span className="flex shrink-0 items-center gap-1.5 text-[17px] font-semibold">
                   <span className="h-[20px] w-[20px] rounded-full" style={{ background: "conic-gradient(#b22234 0 33%, #ffffff 33% 66%, #3c3b6e 66%)" }} />
@@ -223,7 +255,7 @@ export default function ProductPage() {
               <p className="mt-6 text-[14px]" style={{ color: "#454745" }}>
                 The agent can still place
               </p>
-              <div className="mt-2.5 flex h-[60px] items-center justify-between gap-3 rounded-[10px] px-4" style={{ border: "1.5px solid #868685" }}>
+              <div className="mt-2.5 flex h-[60px] items-center justify-between gap-3 px-4" style={{ border: "1px solid #0a0a0a" }}>
                 <span className="font-numeral text-[22px] font-semibold tabular-nums">1,752.70</span>
                 <span className="flex shrink-0 items-center gap-1.5 text-[17px] font-semibold">
                   <span className="h-[20px] w-[20px] rounded-full" style={{ background: "conic-gradient(#b22234 0 33%, #ffffff 33% 66%, #3c3b6e 66%)" }} />
@@ -247,10 +279,6 @@ export default function ProductPage() {
                 </a>
               </div>
             </div>
-            {/* the colored strip at the card's foot */}
-            <div className="absolute inset-x-0 bottom-0 h-[14px] overflow-hidden">
-              <Image src="/slack-gradient.jpg" alt="" fill sizes="600px" className="object-cover" style={{ filter: "hue-rotate(140deg) saturate(1.4)" }} />
-            </div>
           </motion.div>
         </div>
       </section>
@@ -260,6 +288,17 @@ export default function ProductPage() {
         <FooterSection tone="light" />
       </div>
     </main>
+  );
+}
+
+/* the crosshair in white, for the card on the green */
+function GreenCross({ pos }: { pos: "top-left" | "bottom-right" }) {
+  const at = pos === "top-left" ? "-left-[7px] -top-[7px]" : "-bottom-[7px] -right-[7px]";
+  return (
+    <span className={`pointer-events-none absolute z-10 h-[13px] w-[13px] ${at}`} aria-hidden>
+      <span className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-white/60" />
+      <span className="absolute left-0 top-1/2 h-px w-full -translate-y-1/2 bg-white/60" />
+    </span>
   );
 }
 
@@ -299,14 +338,20 @@ function DefineBlock({ canvasRef }: { canvasRef: React.RefObject<HTMLDivElement 
   const [tab, setTab] = useState(0);
   const t = TABS[tab];
   return (
-    <div className="rounded-[28px] bg-white p-6 min-[900px]:p-10">
-      {/* the head: two-tone headline left, paragraph and button right */}
-      <div className="grid gap-8 min-[900px]:grid-cols-[1.2fr_1fr] min-[900px]:gap-16">
-        <h2 className="text-[clamp(32px,3.6vw,52px)] font-medium leading-[1.08] tracking-[-1.6px]">
+    <div className={`relative border bg-white ${RAIL}`}>
+      <Rule pos="top" />
+      <Rule pos="bottom" />
+      <Cross pos="top-left" />
+      <Cross pos="bottom-right" />
+
+      {/* the head: two ruled cells, the two-tone headline left, the
+          paragraph and button right */}
+      <div className="grid min-[900px]:grid-cols-[1.2fr_1fr]">
+        <h2 className="p-6 text-[clamp(32px,3.6vw,52px)] font-medium leading-[1.08] tracking-[-1.6px] min-[900px]:p-10">
           <span className="block text-ink">Control</span>
           <span className="block text-[#8a8883]">every order an investing agent places</span>
         </h2>
-        <div>
+        <div className={`border-t p-6 ${RAIL} min-[900px]:border-l min-[900px]:border-t-0 min-[900px]:p-10`}>
           <p className="text-[16px] leading-[1.55] text-ink">
             Payloat gives an investing agent a mandate, a cap, and a ledger. Every order it places
             is recorded with the task behind it, matched to the broker&apos;s confirmation, and rolled
@@ -321,22 +366,22 @@ function DefineBlock({ canvasRef }: { canvasRef: React.RefObject<HTMLDivElement 
         </div>
       </div>
 
-      {/* the tabs */}
-      <div className="mt-12 flex gap-6 overflow-x-auto text-[16px] min-[900px]:gap-8" style={{ scrollbarWidth: "none" }}>
+      {/* the tabs, a ruled row of cells */}
+      <div className={`grid grid-cols-5 border-t ${RAIL}`}>
         {TABS.map((x, i) => (
           <button
             key={x.label}
             type="button"
             onClick={() => setTab(i)}
-            className={`shrink-0 pb-3 transition-colors ${i === tab ? "text-ink" : "text-[#8a8883] hover:text-ink"}`}
+            className={`h-12 border-l text-[clamp(12px,1vw,16px)] transition-colors first:border-l-0 ${RAIL} ${i === tab ? "bg-[#eeeeee] text-ink" : "text-[#8a8883] hover:text-ink"}`}
           >
             {x.label}
           </button>
         ))}
       </div>
 
-      {/* the canvas: the copy top left, the graph right */}
-      <div ref={canvasRef} className="relative mt-4 overflow-hidden rounded-[22px] p-6 text-ink min-[900px]:p-8" style={{ backgroundColor: CANVAS_BG, ...CANVAS_VARS }}>
+      {/* the canvas cell: the copy top left, the graph right */}
+      <div ref={canvasRef} className={`relative overflow-hidden border-t p-6 text-ink ${RAIL} min-[900px]:p-8`} style={{ backgroundColor: CANVAS_BG, ...CANVAS_VARS }}>
         <div className="grid gap-10 min-[900px]:grid-cols-[1fr_1.3fr] min-[900px]:items-center">
           <AnimatePresence mode="wait" initial={false}>
             <motion.p
