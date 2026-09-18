@@ -32,7 +32,9 @@ const LOGOS = [
   { src: "/logos/openai.svg", alt: "OpenAI" },
   { src: "/logos/aws.svg", alt: "AWS" },
   { src: "/logos/stripe-wordmark.svg", alt: "Stripe" },
-  { src: "/logos/oracle.svg", alt: "Oracle" },
+  /* a wide, low wordmark: capped shorter so it sits in the same optical
+     band as the compact marks */
+  { src: "/logos/oracle.svg", alt: "Oracle", low: true },
   { src: "/logos/brex.svg", alt: "Brex" },
   { src: "/logos/claude.svg", alt: "Claude" },
 ];
@@ -138,7 +140,7 @@ export function AgentLogoStrip() {
               alt={l.alt}
               width={120}
               height={36}
-              className="h-[clamp(18px,1.5vw,28px)] w-auto opacity-85 brightness-0 invert"
+              className={`w-auto opacity-85 brightness-0 invert ${"low" in l && l.low ? "h-[clamp(10px,0.85vw,16px)]" : "h-[clamp(18px,1.5vw,28px)]"}`}
             />
           </div>
         ))}
