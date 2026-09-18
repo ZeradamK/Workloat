@@ -9,7 +9,7 @@ import { motion } from "motion/react";
  * The finance teams page's hero, shared so the home page runs the same
  * design with its own copy. Amigo's anatomy measured at 1920px: a
  * five-line headline left with a ruled paragraph and a pill, a wide dark
- * card right on the darkened cream-to-black gradient carrying the flow
+ * card right, a ruled cell in the site's grid, carrying the flow
  * "from → agent → task → to" with a self-scrolling task list, then the
  * caps label and a ruled logo strip.
  */
@@ -72,6 +72,8 @@ export default function FlowHero({
   const dark = tone === "dark";
   const ink = dark ? "text-white" : "text-ink";
   const rail = dark ? "border-white/10" : "border-black/[0.08]";
+  const line = dark ? "bg-white/10" : "bg-black/[0.08]";
+  const cross = dark ? "bg-white/50" : "bg-black/40";
   const [active, setActive] = useState(Math.floor(tasks.length / 2));
   useEffect(() => {
     const id = setInterval(
@@ -126,44 +128,20 @@ export default function FlowHero({
               </motion.div>
             </div>
 
-            {/* right: the flow card. On the dark tone it is a ruled cell
-                in the grid design: square, hairline edges, rules running
-                past it, crosshairs at two corners. */}
+            {/* right: the flow card, a ruled cell in the grid design:
+                square, hairline edges, rules running past it, crosshairs
+                at two corners. Black on both tones. */}
             <motion.div
               {...up}
               initial={{ opacity: 0, y: 40 }}
               transition={{ duration: 0.6, ease: EASE, delay: 0.2 }}
-              className={`relative mt-[clamp(0px,3.7vw,72px)] text-white ${dark ? "border border-white/10" : "overflow-hidden rounded-[16px]"}`}
-              style={{ backgroundColor: dark ? "#0a0a0a" : INK, aspectRatio: "1152 / 548" }}
+              className={`relative mt-[clamp(0px,3.7vw,72px)] border text-white ${rail}`}
+              style={{ backgroundColor: INK, aspectRatio: "1152 / 548" }}
             >
-              {dark && (
-                <>
-                  <span className="pointer-events-none absolute -left-6 -right-6 -top-px h-px bg-white/10" />
-                  <span className="pointer-events-none absolute -bottom-px -left-6 -right-6 h-px bg-white/10" />
-                  <Cross pos="top-left" />
-                  <Cross pos="bottom-right" />
-                </>
-              )}
-              {!dark && (
-                <>
-                  {/* the cream-to-black gradient, pulled down so the
-                      white type reads on its light end */}
-                  <Image
-                    src="/product-hero-gradient.jpg"
-                    alt=""
-                    fill
-                    sizes="(min-width: 1000px) 60vw, 100vw"
-                    className="object-cover"
-                  />
-                  <div
-                    className="absolute inset-0"
-                    style={{
-                      background:
-                        "linear-gradient(to right, rgba(10,10,10,0.72), rgba(10,10,10,0.5) 45%, rgba(10,10,10,0.35))",
-                    }}
-                  />
-                </>
-              )}
+              <span className={`pointer-events-none absolute -left-6 -right-6 -top-px h-px ${line}`} />
+              <span className={`pointer-events-none absolute -bottom-px -left-6 -right-6 h-px ${line}`} />
+              <Cross pos="top-left" color={cross} />
+              <Cross pos="bottom-right" color={cross} />
               <div className="absolute inset-y-0 left-[5.2%] right-[3.5%] flex items-center">
                 {/* the outer nodes step out under 700px so the card keeps
                     the agent and the list */}
@@ -244,12 +222,12 @@ export default function FlowHero({
 }
 
 /* the grid's small crosshair where a rule meets a rail */
-function Cross({ pos }: { pos: "top-left" | "bottom-right" }) {
+function Cross({ pos, color }: { pos: "top-left" | "bottom-right"; color: string }) {
   const at = pos === "top-left" ? "-left-[7px] -top-[7px]" : "-bottom-[7px] -right-[7px]";
   return (
     <span className={`pointer-events-none absolute z-10 h-[13px] w-[13px] ${at}`} aria-hidden>
-      <span className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-white/50" />
-      <span className="absolute left-0 top-1/2 h-px w-full -translate-y-1/2 bg-white/50" />
+      <span className={`absolute left-1/2 top-0 h-full w-px -translate-x-1/2 ${color}`} />
+      <span className={`absolute left-0 top-1/2 h-px w-full -translate-y-1/2 ${color}`} />
     </span>
   );
 }
