@@ -31,8 +31,8 @@ const SHINE =
 const LOGOS = [
   { src: "/logos/openai.svg", alt: "OpenAI" },
   { src: "/logos/aws.svg", alt: "AWS" },
-  { src: "/logos/stripe.svg", alt: "Stripe" },
-  { src: "/logos/vercel.svg", alt: "Vercel" },
+  { src: "/logos/stripe-wordmark.svg", alt: "Stripe" },
+  { src: "/logos/oracle.svg", alt: "Oracle" },
   { src: "/logos/brex.svg", alt: "Brex" },
   { src: "/logos/claude.svg", alt: "Claude" },
 ];
