@@ -76,6 +76,19 @@ export default function HeroShowcase() {
           </motion.h1>
         </div>
 
+        {/* right description */}
+        <div className="absolute right-0 top-1/2 flex w-[calc(50%-160px)] -translate-y-1/2 justify-center">
+          <motion.p
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.25, 0.6, 0.2, 1], delay: 0.05 }}
+            className="w-[85%] max-w-[300px] text-pretty text-[17px] leading-[1.2] text-ink"
+          >
+            Every purchase, subscription, order, and receipt your agents
+            record, in one ledger
+          </motion.p>
+        </div>
+
         {/* the wallet + spending column, centered under the dock */}
         <div className="flex min-h-screen items-center justify-center pb-10 pt-[100px]">
           <motion.div
@@ -138,6 +151,13 @@ function MobileHero() {
         <br />
         your agents spend
       </motion.h1>
+      <motion.p
+        {...up}
+        className="mx-auto mt-6 max-w-[300px] text-center text-[17px] leading-[1.25] text-ink"
+      >
+        Every purchase, subscription, order, and receipt your agents record,
+        in one ledger
+      </motion.p>
       <motion.div {...up} className="mx-auto mt-9 w-full max-w-[340px]">
         <WalletSpendBlock />
       </motion.div>
