@@ -92,7 +92,7 @@ export default function Home() {
             { src: "/logos/banks/chase.jpg", alt: "Chase", tile: true },
             { src: "/logos/banks/mercury.png", alt: "Mercury", tile: true },
             { src: "/logos/brex.svg", alt: "Brex" },
-            { src: "/logos/stripe.svg", alt: "Stripe" },
+            { src: "/logos/banks/capitalone.svg", alt: "Capital One" },
             { src: "/logos/banks/citi.png", alt: "Citi" },
             { src: "/logos/banks/wellsfargo.png", alt: "Wells Fargo", tile: true },
           ]}
