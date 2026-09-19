@@ -285,8 +285,9 @@ export function Pricing() {
 
 /* the split button: a square arrow block on the left, the label on a
    filled body */
-export function ArrowButton({ href, children, tone = "dark" }: { href: string; children: React.ReactNode; tone?: "dark" | "lime" }) {
+export function ArrowButton({ href, children, tone = "dark" }: { href: string; children: React.ReactNode; tone?: "dark" | "lime" | "light" }) {
   const lime = tone === "lime";
+  const light = tone === "light";
   return (
     <Link href={href} className="group inline-flex h-[60px] items-stretch text-[clamp(16px,1.15vw,22px)] transition-transform hover:scale-[1.02] active:scale-[0.98]">
       <span className="flex w-[60px] items-center justify-center" style={{ backgroundColor: lime ? GREEN : INK }}>
@@ -296,7 +297,7 @@ export function ArrowButton({ href, children, tone = "dark" }: { href: string; c
       </span>
       <span
         className="flex items-center px-8"
-        style={{ backgroundColor: lime ? LIME : "#2c2c2c", color: lime ? INK : "#ffffff" }}
+        style={{ backgroundColor: lime ? LIME : light ? MIST : "#2c2c2c", color: lime || light ? INK : "#ffffff" }}
       >
         {children}
       </span>

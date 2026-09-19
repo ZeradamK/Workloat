@@ -57,17 +57,17 @@ const BANKS = [
    instead of being cut */
 /* the return to blue above the footer: white for the first stretch under
    the banks' caption, then a slow ease into the gradient */
-/* the frame's outline is gone well before the fade's end: solid through
-   its upper half, then a progressive ramp that reaches nothing at 82% */
-const FRAME_FADE = "linear-gradient(to bottom, #000 0%, #000 50%, rgba(0,0,0,0.7) 62%, rgba(0,0,0,0.35) 72%, rgba(0,0,0,0.1) 79%, transparent 82%, transparent 100%)";
+/* the hero's room under the cell, which the cell's rails run through */
+const HERO_PB = "clamp(48px,5vw,96px)";
 
-/* white → black along a smoothstep curve, so neither end shows an edge */
-const WHITE_TO_BLACK = `linear-gradient(to bottom, ${[
-  [0, 0], [8, 1], [16, 4], [24, 9], [32, 17], [40, 27], [48, 39], [56, 52],
-  [64, 65], [72, 77], [80, 87], [88, 94], [94, 98], [100, 100],
-]
-  .map(([at, w]) => `color-mix(in srgb, #0a0a0a ${w}%, #ffffff) ${at}%`)
-  .join(", ")})`;
+/* the strip under the hero, in the home page's design */
+const STRIP = [
+  { src: "/logos/banks/chase.jpg", alt: "Chase", tile: true },
+  { src: "/logos/banks/mercury.png", alt: "Mercury", tile: true },
+  { src: "/logos/brex.svg", alt: "Brex" },
+  { src: "/logos/banks/capitalone.svg", alt: "Capital One", low: true },
+  { src: "/logos/banks/citi.png", alt: "Citi", tile: true },
+] as { src: string; alt: string; tile?: boolean; low?: boolean }[];
 
 /* the charges that slide into the frame on load, newest on top, and the
    figure the month starts from before they land */
@@ -141,20 +141,18 @@ export default function LedgerPage() {
     <main className="bg-white">
       <NavDock />
 
-      {/* 1. hero on the enterprise page's anatomy, on white: the headline,
-          a paragraph, and the split button left; the phone frame right,
-          outlined in black, with the month's figure and the charges that
-          slide in on load. The white fades into the black second section. */}
-      <section className="relative overflow-hidden bg-white">
-        {/* the copy and the frame sit above the fade, which begins under
-            the button and runs to the section's foot */}
-        <div className="relative z-10 mx-auto grid max-w-[1200px] gap-12 px-6 pb-[clamp(220px,24vw,400px)] pt-[150px] min-[900px]:grid-cols-[1.1fr_1fr] min-[900px]:items-center min-[900px]:gap-10 min-[900px]:pt-[170px]">
+      {/* 1. hero on the enterprise page's anatomy, on black: the headline,
+          a paragraph, and the split button left; a ruled cell right with
+          the month's figure and the charges that slide in on load. The
+          cell's rails run down behind the bank strip beneath. */}
+      <section className="relative overflow-x-clip text-white" style={{ backgroundColor: "#0a0a0a" }}>
+        <div className="relative mx-auto grid max-w-[1200px] gap-12 px-6 pt-[150px] min-[900px]:grid-cols-[1.1fr_1fr] min-[900px]:items-center min-[900px]:gap-10 min-[900px]:pt-[170px]" style={{ paddingBottom: HERO_PB }}>
           <div className="text-center min-[900px]:text-left">
             <motion.h1
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.55, ease: EASE, delay: 0.05 }}
-              className="mx-auto max-w-[640px] text-[clamp(48px,5vw,96px)] font-medium leading-[0.98] tracking-[-3px] text-ink min-[900px]:mx-0"
+              className="mx-auto max-w-[640px] text-[clamp(48px,5vw,96px)] font-medium leading-[0.98] tracking-[-3px] min-[900px]:mx-0"
             >
               Every bank,
               <br />
@@ -164,7 +162,7 @@ export default function LedgerPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.55, ease: EASE, delay: 0.12 }}
-              className="mx-auto mt-[clamp(28px,3.5vw,64px)] max-w-[560px] text-[clamp(18px,1.5vw,28px)] leading-[1.6] text-ink min-[900px]:mx-0"
+              className="mx-auto mt-[clamp(28px,3.5vw,64px)] max-w-[560px] text-[clamp(18px,1.5vw,28px)] leading-[1.6] text-white/90 min-[900px]:mx-0"
             >
               Chase, Mercury, Brex, or any bank through Teller and Plaid. Connect once, and every
               charge lands beside the agent that made it.
@@ -175,31 +173,55 @@ export default function LedgerPage() {
               transition={{ duration: 0.55, ease: EASE, delay: 0.18 }}
               className="mt-[clamp(28px,3.5vw,64px)] flex justify-center min-[900px]:justify-start"
             >
-              <ArrowButton href="/signup">Connect a bank</ArrowButton>
+              <ArrowButton href="/signup" tone="light">Connect a bank</ArrowButton>
             </motion.div>
           </div>
 
-          {/* the phone frame, outlined in black, its foot running into the fade */}
+          {/* the ruled cell: square, hairline edges, rules running past it,
+              crosshairs, and its rails dropping to the strip below */}
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: EASE, delay: 0.2 }}
-            className="relative mx-auto mb-[-160px] h-[560px] w-[min(92%,380px)] min-[900px]:mx-0 min-[900px]:mb-[-260px] min-[900px]:h-[640px] min-[900px]:w-[min(100%,460px)] min-[900px]:justify-self-end"
-            style={{ maskImage: FRAME_FADE, WebkitMaskImage: FRAME_FADE }}
+            className="relative mx-auto h-[560px] w-[min(92%,380px)] border border-white/15 min-[900px]:mx-0 min-[900px]:h-[600px] min-[900px]:w-[min(100%,460px)] min-[900px]:justify-self-end"
           >
-            <div className="absolute inset-x-0 top-0 h-[200%] rounded-[36px]" style={{ border: "2px solid #0a0a0a" }} />
-            <div className="absolute inset-x-0 top-[9%] flex flex-col items-center text-ink">
-              <p className="text-[18px] font-medium text-sub">Agent spend</p>
+            <span className="pointer-events-none absolute -left-6 -right-6 -top-px h-px bg-white/15" />
+            <span className="pointer-events-none absolute -bottom-px -left-6 -right-6 h-px bg-white/15" />
+            <span className="pointer-events-none absolute -left-px top-0 w-px bg-white/15" style={{ bottom: `calc(-1 * ${HERO_PB})` }} />
+            <span className="pointer-events-none absolute -right-px top-0 w-px bg-white/15" style={{ bottom: `calc(-1 * ${HERO_PB})` }} />
+            <GridCross pos="top-left" light />
+            <GridCross pos="bottom-right" light />
+            <div className="absolute inset-x-0 top-[9%] flex flex-col items-center">
+              <p className="text-[18px] font-medium text-white/70">Agent spend</p>
               <p className="font-numeral mt-1 text-[clamp(48px,5vw,72px)] font-bold leading-none tracking-[-2px] tabular-nums">
                 <Counted />
               </p>
-              <span className="mt-5 px-7 py-3 text-[18px] font-medium text-white" style={{ backgroundColor: "#0a0a0a" }}>Agents</span>
+              <span className="mt-5 bg-white px-7 py-3 text-[18px] font-medium text-ink">Agents</span>
             </div>
             <Notices />
           </motion.div>
         </div>
-        {/* the white eases into the black second section */}
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[clamp(200px,22vw,380px)]" style={{ background: WHITE_TO_BLACK }} />
+
+        {/* the bank strip, in the home page's design: blocked cells on one
+            row, the marks in their own colors or as white silhouettes */}
+        <div className="grid grid-cols-5 border-y border-white/10">
+          {STRIP.map((l) => (
+            <div
+              key={l.alt}
+              className="flex h-[clamp(52px,5.6vw,108px)] items-center justify-center border-l border-white/10 first:border-l-0"
+              style={{ backgroundColor: "rgba(255,255,255,0.03)" }}
+            >
+              <Image
+                src={l.src}
+                alt={l.alt}
+                width={140}
+                height={40}
+                className={l.tile ? "h-[clamp(20px,2vw,36px)] w-auto rounded-[22%]" : l.low ? "h-[clamp(10px,0.85vw,16px)] w-auto opacity-85 brightness-0 invert" : "h-[clamp(14px,1.5vw,28px)] w-auto opacity-85 brightness-0 invert"}
+                unoptimized
+              />
+            </div>
+          ))}
+        </div>
       </section>
 
       {/* 2. the spend mix, on black */}
