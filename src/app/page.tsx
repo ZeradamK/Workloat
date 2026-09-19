@@ -8,6 +8,7 @@ import SecuritySection from "@/components/SecuritySection";
 import SlackSection from "@/components/SlackSection";
 import AgentPromptSection, { AgentLogoStrip } from "@/components/AgentPromptSection";
 import FAQSection from "@/components/FAQSection";
+import { Compatible, Pricing } from "@/components/EnterpriseBlocks";
 import FooterSection from "@/components/FooterSection";
 
 export default function Home() {
@@ -106,6 +107,10 @@ export default function Home() {
       <SecuritySection />
 
       {/* FAQ accordion */}
+      {/* the compatibility grid and the plans, shared with the enterprise page */}
+      <Compatible />
+      <Pricing />
+
       <FAQSection />
 
       {/* Footer */}
