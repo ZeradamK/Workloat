@@ -785,7 +785,7 @@ const SETUP = [
 
 function SetUp() {
   return (
-    <section className="bg-white">
+    <section className="overflow-x-clip bg-white">
       <div className={FRAME}>
         <div className={`${INNER} pt-[clamp(72px,7.5vw,146px)]`}>
           <div className="grid gap-12 pb-[clamp(56px,6vw,116px)] min-[1000px]:grid-cols-[minmax(0,560px)_1fr] min-[1000px]:gap-[clamp(40px,4vw,80px)]">
@@ -1014,12 +1014,15 @@ function Field({ label, value, sub }: { label: string; value: string; sub: strin
 
 function Guides() {
   return (
-    <section className="bg-white">
+    <section className="overflow-x-clip bg-white">
       <div className={`${FRAME} border-t border-black/[0.08]`}>
         {/* the section on the ruled grid: a framed column, the head as a
             cell, the filters as a ruled row, the three guides as cells */}
         <div className={`${INNER} py-[clamp(56px,6vw,116px)]`}>
-          <div className="relative mx-auto max-w-[1200px] border-x border-black/[0.08]">
+          {/* the column is a share of the viewport, 1600px at 1920, so it
+              keeps its proportion as the screen narrows; the guides go
+              vertical under 800px */}
+          <div className="relative mx-auto w-[min(1600px,84vw)] border-x border-black/[0.08]">
             <Rule pos="top" />
             <Rule pos="bottom" />
             <Cross pos="top-left" />
@@ -1043,13 +1046,13 @@ function Guides() {
                 </span>
               ))}
             </div>
-          <div className="grid min-[900px]:grid-cols-3">
+          <div className="grid min-[800px]:grid-cols-3">
             {GUIDES.map((g, k) => (
               <motion.article
                 key={g.title}
                 {...up}
                 transition={{ ...up.transition, delay: k * 0.08 }}
-                className="border-t border-black/[0.08] p-[clamp(16px,1.6vw,31px)] min-[900px]:border-l min-[900px]:border-t-0 min-[900px]:first:border-l-0"
+                className="border-t border-black/[0.08] p-[clamp(16px,1.6vw,31px)] min-[800px]:border-l min-[800px]:border-t-0 min-[800px]:first:border-l-0"
               >
                 <GuideCover g={g} />
                 <h3 className="mt-[clamp(28px,2.9vw,56px)] text-[clamp(22px,1.65vw,32px)] font-medium leading-[1.15] tracking-[-0.8px] text-ink">
