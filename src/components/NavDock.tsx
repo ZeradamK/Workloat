@@ -11,6 +11,7 @@ import {
   useMotionTemplate,
   useMotionValue,
   useTransform,
+  type MotionValue,
 } from "motion/react";
 import { introT, productLight } from "./introProgress";
 
@@ -105,16 +106,15 @@ const SHINE =
   "linear-gradient(90deg, rgba(255,255,255,0.06) 0%, #e9d6b0 28%, #e3641f 52%, #a3200c 68%, rgba(255,255,255,0.06) 100%)";
 const SHINE_MASK =
   "linear-gradient(to bottom, black 0%, rgba(0,0,0,0.55) 18%, rgba(0,0,0,0.18) 55%, rgba(0,0,0,0.1) 100%)";
-function Shine() {
+function Shine({ opacity }: { opacity: MotionValue<number> }) {
   return (
-    <>
-      <span className="pointer-events-none absolute inset-0 border border-white/[0.12]" aria-hidden />
+    <motion.span className="pointer-events-none absolute inset-0" aria-hidden style={{ opacity }}>
+      <span className="absolute inset-0 border border-white/[0.12]" />
       <span
-        className="pointer-events-none absolute inset-0"
-        aria-hidden
+        className="absolute inset-0"
         style={{ background: SHINE, maskImage: SHINE_MASK, WebkitMaskImage: SHINE_MASK }}
       />
-    </>
+    </motion.span>
   );
 }
 
@@ -301,6 +301,9 @@ export default function NavDock({
   const navFg = useTransform(navFgRgb, rgb);
   const navLabel = useTransform(navFgRgb, (c) => rgba(c, 0.4));
   const navPill = useMotionValue("#ffffff");
+  /* the buttons' shine: on while the dock sits over a black section of
+     the home page, off elsewhere */
+  const shineO = useTransform(mix, ({ base, pinned }) => (pinned ? 0 : 1 - base));
 
   const open = active !== null;
   /* the white pill rides the hovered item, or the active one while open */
@@ -381,7 +384,6 @@ export default function NavDock({
           }}
         >
           <div className="relative w-fit">
-          <Shine />
           <motion.div
             initial={false}
             animate={{
@@ -391,7 +393,7 @@ export default function NavDock({
               height: dims ? dims.h : DOCK_H,
             }}
             transition={SPRING}
-            className="relative m-px flex flex-col items-center overflow-hidden"
+            className="relative flex flex-col items-center overflow-hidden"
             style={
               {
                 borderRadius: RADIUS,
@@ -515,7 +517,7 @@ export default function NavDock({
             href="/signup"
             className="relative hidden p-px text-[13px] font-semibold tracking-[-0.5px] transition-transform hover:scale-[1.02] active:scale-[0.98] sm:block"
           >
-            <Shine />
+            <Shine opacity={shineO} />
             <span className="relative flex h-11 items-stretch border border-[#111111]">
               <span className="flex w-11 items-center justify-center bg-[#eeeeee]">
                 <SplitArrow dark />
@@ -528,7 +530,7 @@ export default function NavDock({
             className="relative block p-px text-[13px] font-semibold tracking-[-0.5px] transition-transform hover:scale-[1.02] active:scale-[0.98]"
             style={ctaOutline ? { outline: "1px solid rgba(255,255,255,0.6)" } : undefined}
           >
-            <Shine />
+            <Shine opacity={shineO} />
             <span className="relative flex h-11 items-stretch">
               <span className="flex w-11 items-center justify-center bg-[#0a0a0a]">
                 <SplitArrow />
@@ -553,7 +555,7 @@ export default function NavDock({
               onClick={() => setMenuOpen((v) => !v)}
               aria-expanded={menuOpen}
               aria-haspopup="true"
-              className="relative flex h-12 items-center gap-2 px-5 text-[14px] font-medium outline outline-1 outline-white/[0.12]"
+              className="relative flex h-12 items-center gap-2 px-5 text-[14px] font-medium"
               style={
                 {
                   backgroundColor: dockBg,
@@ -732,7 +734,7 @@ export default function NavDock({
                       href="/signup"
                       className="relative block w-full p-px text-[13px] font-semibold tracking-[-0.5px]"
                     >
-                      <Shine />
+                      <Shine opacity={shineO} />
                       <span className="relative flex h-11 items-stretch border border-[#111111]">
                         <span className="flex w-11 items-center justify-center bg-[#eeeeee]">
                           <SplitArrow dark />
@@ -744,7 +746,7 @@ export default function NavDock({
                       href="/signup"
                       className="relative block w-full p-px text-[13px] font-semibold tracking-[-0.5px]"
                     >
-                      <Shine />
+                      <Shine opacity={shineO} />
                       <span className="relative flex h-11 items-stretch">
                         <span className="flex w-11 items-center justify-center bg-[#0a0a0a]">
                           <SplitArrow />
