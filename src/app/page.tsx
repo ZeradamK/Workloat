@@ -111,10 +111,12 @@ export default function Home() {
       <Compatible />
       <Pricing />
 
-      <FAQSection />
+      <FAQSection tone="dark" />
 
       {/* Footer */}
-      <FooterSection />
+      <div style={{ backgroundColor: "#0a0a0a" }}>
+        <FooterSection tone="light" />
+      </div>
     </main>
   );
 }

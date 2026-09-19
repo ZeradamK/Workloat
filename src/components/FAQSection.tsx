@@ -32,20 +32,24 @@ const ITEMS = [
   },
 ];
 
-export default function FAQSection() {
+export default function FAQSection({ tone = "light" }: { /** "dark": on black, with white and #eeeeee type */ tone?: "light" | "dark" }) {
+  const dark = tone === "dark";
+  const on = dark ? "#eeeeee" : "#0a0a0a";
+  const off = dark ? "rgba(238,238,238,0.4)" : "#a3a19c";
   const [open, setOpen] = useState(0);
 
   return (
-    <section id="faq" className="mx-auto max-w-[1200px] scroll-mt-[90px] px-6 pb-[clamp(64px,8vw,128px)] pt-[clamp(32px,5vw,80px)]">
-      <h2 className="pb-6 text-[clamp(24px,2.4vw,32px)] font-medium tracking-[-1px] text-ink">
+    <section id="faq" className="scroll-mt-[90px]" style={dark ? { backgroundColor: "#0a0a0a" } : undefined}>
+    <div className="mx-auto max-w-[1200px] px-6 pb-[clamp(64px,8vw,128px)] pt-[clamp(32px,5vw,80px)]">
+      <h2 className={`pb-6 text-[clamp(24px,2.4vw,32px)] font-medium tracking-[-1px] ${dark ? "text-white" : "text-ink"}`}>
         FAQ
       </h2>
 
-      <div className="border-t border-black/10">
+      <div className={`border-t ${dark ? "border-white/15" : "border-black/10"}`}>
         {ITEMS.map((item, i) => {
           const isOpen = open === i;
           return (
-            <div key={item.q} className="border-b border-black/10">
+            <div key={item.q} className={`border-b ${dark ? "border-white/15" : "border-black/10"}`}>
               <button
                 type="button"
                 onClick={() => setOpen(isOpen ? -1 : i)}
@@ -56,7 +60,7 @@ export default function FAQSection() {
               >
                 <span
                   className="text-[clamp(22px,2.4vw,34px)] font-medium tracking-[-0.5px] transition-colors duration-200"
-                  style={{ color: isOpen ? "#0a0a0a" : "#a3a19c" }}
+                  style={{ color: isOpen ? on : off }}
                 >
                   {item.q}
                 </span>
@@ -67,7 +71,7 @@ export default function FAQSection() {
                   fill="none"
                   aria-hidden
                   className="shrink-0"
-                  style={{ color: isOpen ? "#0a0a0a" : "#a3a19c" }}
+                  style={{ color: isOpen ? on : off }}
                 >
                   <path
                     d="M3 12h18"
@@ -96,7 +100,7 @@ export default function FAQSection() {
                     transition={{ duration: 0.3, ease: [0.3, 0.9, 0.3, 1] }}
                     className="overflow-hidden"
                   >
-                    <p className="max-w-[820px] pb-9 text-[16px] leading-relaxed text-sub">
+                    <p className={`max-w-[820px] pb-9 text-[16px] leading-relaxed ${dark ? "text-[#eeeeee]/70" : "text-sub"}`}>
                       {item.a}
                     </p>
                   </motion.div>
@@ -106,6 +110,7 @@ export default function FAQSection() {
           );
         })}
       </div>
+    </div>
     </section>
   );
 }
