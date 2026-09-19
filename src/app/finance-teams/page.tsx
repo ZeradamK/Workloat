@@ -17,9 +17,9 @@ import { money } from "@/components/tracker/money";
  * 1920px capture) with Payloat's type and palette. Payle is the financial
  * manager agent that runs on Payloat infrastructure.
  *
- *   1. Hero (FlowHero, shared with the home page): five-line headline,
- *      ruled paragraph, pill; the team → Payle → agents flow card with a
- *      scrolling list of finance tasks; "Trusted by" caps + logo strip.
+ *   1. Hero: "Built for how your team spends", the tab rail with the
+ *      agent scenes and three ruled stats; then the flow act (FlowHero,
+ *      shared with the home page) with the team → Payle → agents card.
  *   2. Stats band and statement on the green (StatsStatement, shared
  *      with the home page), then the green fades to white.
  *   4. Workflows: centered headline, a carousel of tall canvases with a
@@ -115,8 +115,8 @@ export default function FinanceTeamsPage() {
     <main className="bg-white">
       <NavDock forceDark />
 
+      <BuiltFor />
       <FlowHero
-        first
         lines={["The finance", "agent that", "watches every", "dollar your", "agents spend."]}
         body="Payle plans budgets, approves agent charges, and closes the month, so your team can focus on the customer."
         cta={{ label: "Book a demo", href: "/contact" }}
@@ -140,7 +140,6 @@ export default function FinanceTeamsPage() {
       <Workflows />
       <Playbook />
       <Security />
-      <BuiltFor />
       <SetUp />
       <Guides />
       <Cta />
@@ -700,11 +699,14 @@ function BuiltFor() {
   return (
     <section className="bg-white">
       <div className={FRAME}>
-        <div className="relative px-[clamp(20px,2.5vw,48px)] pt-[clamp(96px,10vw,200px)]">
-          <div className="absolute bottom-0 left-[clamp(20px,2.5vw,48px)] top-[clamp(96px,10vw,200px)] hidden w-px bg-black/10 min-[800px]:block" />
+        {/* the page opens here: room for the nav above the headline */}
+        <div className="relative px-[clamp(20px,2.5vw,48px)] pt-[clamp(140px,9vw,190px)]">
+          <div className="absolute bottom-0 left-[clamp(20px,2.5vw,48px)] top-[clamp(140px,9vw,190px)] hidden w-px bg-black/10 min-[800px]:block" />
 
-          <motion.h2
-            {...up}
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, ease: EASE, delay: 0.05 }}
             className="mx-auto max-w-[1100px] text-center text-[clamp(34px,4vw,76px)] font-medium leading-[1.06] tracking-[-2.5px] text-ink"
           >
             Built for how your team spends
@@ -712,7 +714,7 @@ function BuiltFor() {
             <span className="text-ink/45">
               A financial manager for your budgets, vendors, and agents.
             </span>
-          </motion.h2>
+          </motion.h1>
 
           <div className="mt-[clamp(56px,6.5vw,124px)] grid gap-12 min-[1000px]:grid-cols-[minmax(0,420px)_1fr] min-[1000px]:gap-8">
             {/* the tab rail */}
