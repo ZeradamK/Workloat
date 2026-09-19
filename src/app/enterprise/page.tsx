@@ -146,17 +146,16 @@ function Hero() {
    the rows come from up top, dashed lines down to the table, and the
    rows streaming in one at a time. */
 type Row = { cells: string[]; tone?: "ok" | "stop" | "new" };
-type Stage = {
-  title: string;
-  desc: string;
-  panel: string;
-  sources: { label: string; icon: "bank" | "card" | "agent" | "slack" }[];
-  columns: string[];
-  rows: Row[];
-};
+type Source = { label: string; icon: "bank" | "card" | "agent" | "slack" };
+type Notice = { logo: string; name: string; note: string; amount: string; dark?: boolean };
+type Stage =
+  | { kind: "table"; title: string; desc: string; panel: string; sources: Source[]; columns: string[]; rows: Row[] }
+  | { kind: "inbox"; title: string; desc: string; panel: string; sources: Source[]; notices: Notice[] }
+  | { kind: "cards"; title: string; desc: string; cards: ("brex" | "mercury")[]; lit: number };
 
 const STAGES: Stage[] = [
   {
+    kind: "table",
     title: "Set the mandate",
     desc: "Name what each agent is for and what it may buy.",
     panel: "Mandates",
@@ -175,6 +174,7 @@ const STAGES: Stage[] = [
     ],
   },
   {
+    kind: "table",
     title: "Give the cap",
     desc: "Per agent, per vendor, per month. Enforced on the charge.",
     panel: "Caps",
@@ -193,58 +193,37 @@ const STAGES: Stage[] = [
     ],
   },
   {
+    kind: "inbox",
     title: "Read every charge",
-    desc: "Each purchase lands with the task behind it.",
-    panel: "Charges",
+    desc: "Each purchase lands in the inbox with the task behind it.",
+    panel: "Inbox",
     sources: [
       { label: "Bank", icon: "bank" },
       { label: "Card", icon: "card" },
       { label: "Agent", icon: "agent" },
       { label: "Slack", icon: "slack" },
     ],
-    columns: ["Date", "Description", "Amount", "Task"],
-    rows: [
-      { cells: ["Sep 18", "OpenAI", "$2,500.00", "Q3 market brief"] },
-      { cells: ["Sep 18", "AWS", "$412.80", "Nightly crawl"] },
-      { cells: ["Sep 17", "WebstaurantStore", "$96.50", "Kitchen restock"] },
-      { cells: ["Sep 17", "Delta", "$438.00", "Offsite, Austin"], tone: "new" },
+    notices: [
+      { logo: "/logos/openai.svg", name: "OpenAI", note: "Research agent · Q3 market brief", amount: "$2,500.00" },
+      { logo: "/logos/aws.svg", name: "AWS", note: "Research agent · Nightly crawl", amount: "$412.80" },
+      { logo: "/logos/brex.svg", name: "Brex", note: "Ad buyer · Card issued", amount: "$0.00", dark: true },
+      { logo: "/logos/stripe.svg", name: "Stripe", note: "Procurement · Kitchen restock", amount: "$96.50" },
+      { logo: "/logos/claude.svg", name: "Claude", note: "Support agent · Ticket summaries", amount: "$180.00" },
     ],
   },
   {
+    kind: "cards",
     title: "Match the receipts",
-    desc: "Confirmations lined up against what the agent recorded.",
-    panel: "Receipts",
-    sources: [
-      { label: "Bank", icon: "bank" },
-      { label: "Card", icon: "card" },
-      { label: "Agent", icon: "agent" },
-      { label: "Slack", icon: "slack" },
-    ],
-    columns: ["Date", "Description", "Amount", "Receipt"],
-    rows: [
-      { cells: ["Sep 18", "OpenAI", "$2,500.00", "Matched"], tone: "ok" },
-      { cells: ["Sep 18", "AWS", "$412.80", "Matched"], tone: "ok" },
-      { cells: ["Sep 17", "WebstaurantStore", "$96.50", "Matched"], tone: "ok" },
-      { cells: ["Sep 17", "Instacart", "$64.20", "Missing, 3 days"], tone: "stop" },
-    ],
+    desc: "Every card charge lined up against the receipt the agent recorded.",
+    cards: ["brex"],
+    lit: 2,
   },
   {
+    kind: "cards",
     title: "Close the month",
-    desc: "One ledger, by team and by agent, before the statement.",
-    panel: "September close",
-    sources: [
-      { label: "Engineering", icon: "agent" },
-      { label: "Growth", icon: "agent" },
-      { label: "Ops", icon: "agent" },
-      { label: "Finance", icon: "slack" },
-    ],
-    columns: ["Team", "Agents", "Spent", "Status"],
-    rows: [
-      { cells: ["Engineering", "4", "$9,190.00", "Closed"], tone: "ok" },
-      { cells: ["Growth", "3", "$12,480.00", "Closed"], tone: "ok" },
-      { cells: ["Ops", "2", "$1,450.34", "Closed"], tone: "ok" },
-      { cells: ["Company", "9", "$23,120.34", "Ready to send"], tone: "new" },
-    ],
+    desc: "Every card, every team, one ledger, before the statement lands.",
+    cards: ["brex", "mercury"],
+    lit: 4,
   },
 ];
 
@@ -270,7 +249,7 @@ function Stages() {
     <section className="overflow-x-clip text-white" style={{ backgroundColor: INK }}>
       <div className={`${GUTTER} pb-[clamp(56px,4vw,76px)] pt-[clamp(56px,3.6vw,70px)]`}>
         <motion.h2 {...up} className="text-[clamp(40px,4.2vw,80px)] font-medium leading-[1.05] tracking-[-2.5px]">
-          Start strict, close sooner
+          Manage your agents&apos; spending
         </motion.h2>
         <motion.p {...up} className="mt-[clamp(20px,2.3vw,44px)] text-[clamp(16px,1.2vw,22px)] text-white/90">
           Run every agent the company uses through the same five stages, on one ledger.
@@ -317,7 +296,9 @@ function Stages() {
             <span className="pointer-events-none absolute -bottom-px -left-6 -right-6 h-px bg-white/15" />
             <Cross pos="top-left" light />
             <Cross pos="bottom-right" light />
-            <LedgerPanel key={`${i}-${tick}`} stage={stage} />
+            {stage.kind === "table" && <LedgerPanel key={`${i}-${tick}`} stage={stage} />}
+            {stage.kind === "inbox" && <InboxPanel key={`${i}-${tick}`} stage={stage} />}
+            {stage.kind === "cards" && <CardsPanel key={`${i}-${tick}`} stage={stage} />}
           </div>
         </div>
       </div>
@@ -329,7 +310,7 @@ function Stages() {
    down to the table's head, the rows streaming in, the empty rows
    ruled below. Everything animates in on mount, so a stage change
    re-mounts it. */
-function LedgerPanel({ stage }: { stage: Stage }) {
+function LedgerPanel({ stage }: { stage: Extract<Stage, { kind: "table" }> }) {
   const cols = "grid-cols-[15%_35%_22%_28%]";
   const tone = (t?: Row["tone"]) =>
     t === "stop" ? "#b3261e" : t === "ok" ? GREEN : t === "new" ? "rgba(10,10,10,0.35)" : INK;
@@ -337,46 +318,7 @@ function LedgerPanel({ stage }: { stage: Stage }) {
     <div className="px-[clamp(20px,4vw,72px)] py-[clamp(24px,3vw,56px)]">
       <p className="border-b border-black/[0.12] pb-4 text-[clamp(15px,1.05vw,19px)] font-medium">{stage.panel}</p>
 
-      {/* the sources, over the second, third, fourth, and fifth tenths of
-          the table, each with a dashed line down to the head */}
-      <div className="relative mt-[clamp(28px,3vw,56px)] h-[clamp(120px,10vw,190px)]">
-        {stage.sources.map((src, k) => {
-          const left = 22 + k * 19;
-          return (
-            <div key={src.label + k} className="absolute top-0 flex -translate-x-1/2 flex-col items-center" style={{ left: `${left}%` }}>
-              <motion.span
-                initial={{ opacity: 0, y: -6 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, ease: EASE, delay: 0.1 + k * 0.08 }}
-                className="text-[clamp(9px,0.65vw,12px)] text-ink/60"
-              >
-                {src.label}
-              </motion.span>
-              <motion.span
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.4, ease: EASE, delay: 0.15 + k * 0.08 }}
-                className="mt-1.5 flex h-[clamp(28px,2.2vw,40px)] w-[clamp(28px,2.2vw,40px)] items-center justify-center"
-                style={{ backgroundColor: MIST }}
-              >
-                <SourceIcon kind={src.icon} />
-              </motion.span>
-              {/* the dashed line, drawn down */}
-              <motion.span
-                initial={{ scaleY: 0 }}
-                animate={{ scaleY: 1 }}
-                transition={{ duration: 0.6, ease: EASE, delay: 0.4 + k * 0.08 }}
-                className="mt-1 w-px origin-top"
-                style={{
-                  height: "clamp(56px,6vw,120px)",
-                  backgroundImage: "linear-gradient(to bottom, rgba(10,10,10,0.35) 50%, transparent 50%)",
-                  backgroundSize: "1px 6px",
-                }}
-              />
-            </div>
-          );
-        })}
-      </div>
+      <Sources sources={stage.sources} />
 
       {/* the table */}
       <div className="border border-black/[0.12] text-[clamp(11px,0.8vw,15px)]">
@@ -411,6 +353,193 @@ function LedgerPanel({ stage }: { stage: Stage }) {
             ))}
           </div>
         ))}
+      </div>
+    </div>
+  );
+}
+
+/* the sources over the second, third, fourth, and fifth tenths of the
+   panel, each with a dashed line drawn down to what follows */
+function Sources({ sources }: { sources: Source[] }) {
+  return (
+    <div className="relative mt-[clamp(28px,3vw,56px)] h-[clamp(120px,10vw,190px)]">
+      {sources.map((src, k) => {
+        const left = 22 + k * 19;
+        return (
+          <div key={src.label + k} className="absolute top-0 flex -translate-x-1/2 flex-col items-center" style={{ left: `${left}%` }}>
+            <motion.span
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, ease: EASE, delay: 0.1 + k * 0.08 }}
+              className="text-[clamp(9px,0.65vw,12px)] text-ink/60"
+            >
+              {src.label}
+            </motion.span>
+            <motion.span
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.4, ease: EASE, delay: 0.15 + k * 0.08 }}
+              className="mt-1.5 flex h-[clamp(28px,2.2vw,40px)] w-[clamp(28px,2.2vw,40px)] items-center justify-center"
+              style={{ backgroundColor: MIST }}
+            >
+              <SourceIcon kind={src.icon} />
+            </motion.span>
+            <motion.span
+              initial={{ scaleY: 0 }}
+              animate={{ scaleY: 1 }}
+              transition={{ duration: 0.6, ease: EASE, delay: 0.4 + k * 0.08 }}
+              className="mt-1 w-px origin-top"
+              style={{
+                height: "clamp(56px,6vw,120px)",
+                backgroundImage: "linear-gradient(to bottom, rgba(10,10,10,0.35) 50%, transparent 50%)",
+                backgroundSize: "1px 6px",
+              }}
+            />
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+/* the inbox: the goal act's notification bars, each charge landing at
+   the top and pushing the rest down, like a bank's transaction feed */
+function InboxPanel({ stage }: { stage: Extract<Stage, { kind: "inbox" }> }) {
+  return (
+    <div className="px-[clamp(20px,4vw,72px)] py-[clamp(24px,3vw,56px)]">
+      <p className="border-b border-black/[0.12] pb-4 text-[clamp(15px,1.05vw,19px)] font-medium">{stage.panel}</p>
+      <Sources sources={stage.sources} />
+      <div className="mx-auto flex max-w-[560px] flex-col gap-3">
+        {stage.notices.map((n, k) => (
+          <motion.div
+            key={n.name + k}
+            initial={{ opacity: 0, y: -18, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ type: "spring", stiffness: 380, damping: 26, delay: 0.9 + k * 0.6 }}
+            className="flex items-center gap-3 border border-black/[0.1] py-[6px] pl-[6px] pr-3"
+            style={{ backgroundColor: n.dark ? INK : MIST, color: n.dark ? "#ffffff" : INK }}
+          >
+            <span className="flex h-[43px] w-[43px] shrink-0 items-center justify-center bg-white">
+              <Image src={n.logo} alt="" width={22} height={22} className="h-[22px] w-[22px] object-contain" />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block truncate text-[16px] font-semibold leading-tight">{n.name}</span>
+              <span className="block truncate text-[13px] leading-snug" style={{ opacity: 0.6 }}>{n.note}</span>
+            </span>
+            <span className="font-numeral text-[16px] font-semibold tabular-nums">{n.amount}</span>
+            <svg width="10" height="10" viewBox="0 0 16 16" fill="none" aria-hidden className="shrink-0" style={{ opacity: 0.5 }}>
+              <path d="M6 3l5 5-5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* Ramp's anatomy: a ruled grid of six tiles, a title and a line in each,
+   with the company's cards floating over it and drifting */
+const TILES: [string, string][] = [
+  ["Caps", "Per agent, per vendor, per month, enforced on the charge."],
+  ["Approvals", "Anything over a cap waits for the budget owner in Slack."],
+  ["Receipts", "Every card charge matched to the receipt the agent recorded."],
+  ["Vendors", "Spend by vendor across every team and every agent."],
+  ["Close", "The month drafted by Payle, reviewed by your team."],
+  ["Exports", "The ledger, receipts, and approvals, ready for the audit."],
+];
+
+function CardsPanel({ stage }: { stage: Extract<Stage, { kind: "cards" }> }) {
+  const two = stage.cards.length === 2;
+  return (
+    <div className="px-[clamp(20px,4vw,72px)] py-[clamp(24px,3vw,56px)]">
+      <div className="relative">
+        <div className="grid border border-black/[0.12] min-[700px]:grid-cols-3">
+          {TILES.map(([t, d], k) => (
+            <div
+              key={t}
+              className={`flex min-h-[clamp(150px,13vw,240px)] flex-col justify-between border-black/[0.12] p-[clamp(14px,1.3vw,24px)] ${k % 3 ? "min-[700px]:border-l" : ""} ${k >= 3 ? "min-[700px]:border-t" : ""} ${k > 0 ? "border-t min-[700px]:border-t-0" : ""} ${k >= 3 ? "min-[700px]:border-t" : ""}`}
+              style={{ backgroundColor: k === stage.lit ? "#ffffff" : MIST }}
+            >
+              <p className="text-[clamp(15px,1.1vw,20px)] font-medium text-ink">{t}</p>
+              <p className="max-w-[260px] text-[clamp(11px,0.75vw,13px)] leading-[1.4] text-ink/60">{d}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* the cards: in from below, then a slow drift; two cards swap
+            places */}
+        <motion.div
+          initial={{ opacity: 0, y: 60, rotate: -4 }}
+          animate={{ opacity: 1, y: 0, rotate: 0 }}
+          transition={{ type: "spring", stiffness: 120, damping: 18, delay: 0.3 }}
+          className="pointer-events-none absolute left-1/2 top-1/2 h-0 w-0"
+        >
+          {stage.cards.map((c, k) => (
+            <motion.div
+              key={c}
+              className="absolute"
+              animate={
+                two
+                  ? {
+                      x: k === 0 ? ["-62%", "-38%", "-62%"] : ["-38%", "-62%", "-38%"],
+                      y: k === 0 ? ["-70%", "-30%", "-70%"] : ["-30%", "-70%", "-30%"],
+                      rotate: k === 0 ? [-6, 4, -6] : [5, -3, 5],
+                    }
+                  : { x: ["-50%", "-50%", "-50%"], y: ["-52%", "-46%", "-52%"], rotate: [-2, 1.5, -2] }
+              }
+              transition={{ duration: two ? 7 : 5, ease: "easeInOut", repeat: Infinity }}
+              style={{ zIndex: k }}
+            >
+              <PayCard brand={c} />
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+    </div>
+  );
+}
+
+/* a card: the brand's mark top left, the chip, the number, the agent it
+   belongs to, the network bottom right */
+function PayCard({ brand }: { brand: "brex" | "mercury" }) {
+  const dark = brand === "brex";
+  return (
+    <div
+      className="relative h-[clamp(150px,13.6vw,214px)] w-[clamp(240px,21.6vw,340px)] overflow-hidden rounded-[14px] p-[clamp(14px,1.4vw,22px)] shadow-[0_30px_60px_rgba(10,10,10,0.35)]"
+      style={{
+        background: dark
+          ? "linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 60%, #151515 100%)"
+          : "linear-gradient(135deg, #ffffff 0%, #ececec 60%, #f7f7f7 100%)",
+        color: dark ? "#ffffff" : INK,
+        border: dark ? "1px solid rgba(255,255,255,0.12)" : "1px solid rgba(10,10,10,0.12)",
+      }}
+    >
+      {/* a soft sheen */}
+      <div className="pointer-events-none absolute inset-0" style={{ background: "linear-gradient(115deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0) 45%)" }} />
+      <div className="relative flex h-full flex-col justify-between">
+        <div className="flex items-center justify-between">
+          {dark ? (
+            <Image src="/logos/brex.svg" alt="Brex" width={64} height={20} className="h-[clamp(12px,1.1vw,18px)] w-auto brightness-0 invert" />
+          ) : (
+            <span className="flex items-center gap-2">
+              <Image src="/logos/banks/mercury.png" alt="" width={22} height={22} className="h-[clamp(16px,1.4vw,22px)] w-[clamp(16px,1.4vw,22px)] rounded-[5px]" />
+              <span className="text-[clamp(12px,1vw,16px)] font-semibold tracking-[-0.3px]">Mercury</span>
+            </span>
+          )}
+          {/* the chip */}
+          <span className="h-[clamp(18px,1.6vw,26px)] w-[clamp(24px,2.2vw,34px)] rounded-[5px]" style={{ background: "linear-gradient(135deg, #d9c48a, #a58a3f)" }} />
+        </div>
+        <div>
+          <p className="font-numeral text-[clamp(13px,1.15vw,18px)] tracking-[0.18em]">•••• •••• •••• {dark ? "3346" : "8102"}</p>
+          <div className="mt-2 flex items-end justify-between">
+            <span className="text-[clamp(9px,0.75vw,12px)] uppercase tracking-[1px]" style={{ opacity: 0.7 }}>
+              Payloat · {dark ? "Research agent" : "Ad buyer"}
+            </span>
+            <span className="text-[clamp(12px,1.1vw,17px)] font-extrabold italic tracking-[-0.5px]" style={{ opacity: 0.9 }}>
+              VISA
+            </span>
+          </div>
+        </div>
       </div>
     </div>
   );
