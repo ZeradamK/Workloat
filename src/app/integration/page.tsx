@@ -28,6 +28,17 @@ const up = {
   transition: { duration: 0.55, ease: EASE },
 } as const;
 
+/* the grid's small crosshair where a rule meets a rail */
+function GridCross({ pos }: { pos: "top-left" | "bottom-right" }) {
+  const at = pos === "top-left" ? "-left-[7px] -top-[7px]" : "-bottom-[7px] -right-[7px]";
+  return (
+    <span className={`pointer-events-none absolute z-10 h-[13px] w-[13px] ${at}`} aria-hidden>
+      <span className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-black/40" />
+      <span className="absolute left-0 top-1/2 h-px w-full -translate-y-1/2 bg-black/40" />
+    </span>
+  );
+}
+
 const BANKS = [
   { name: "Chase", src: "/logos/banks/chase.jpg" },
   { name: "Wells Fargo", src: "/logos/banks/wellsfargo.png" },
@@ -231,23 +242,42 @@ export default function LedgerPage() {
 
       {/* 3. connected banks; the page's ground begins turning blue again
           right under its last line */}
-      <section className="mx-auto max-w-[1200px] px-6 pb-0 pt-[clamp(56px,7vw,112px)]">
-        <motion.p {...up} className="text-center text-[15px] text-sub">
-          Reads from the banks and cards you already use
-        </motion.p>
-        <motion.div {...up} className="mx-auto mt-8 grid max-w-[900px] grid-cols-2 gap-3 min-[640px]:grid-cols-3">
-          {BANKS.map((b) => (
-            <div key={b.name} className="flex h-[96px] items-center justify-center gap-3 rounded-[16px] border border-black/10 bg-white">
-              <span className="flex h-[43px] w-[43px] items-center justify-center rounded-[11px] border border-black/10 bg-white">
-                <Image src={b.src} alt="" width={27} height={27} className="h-[27px] w-[27px] rounded-[5px] object-contain" unoptimized />
-              </span>
-              <span className="text-[15px] font-semibold text-ink">{b.name}</span>
-            </div>
-          ))}
+      <section className="mx-auto max-w-[1200px] overflow-x-clip px-6 pb-0 pt-[clamp(56px,7vw,112px)]">
+        {/* on the site's ruled grid: a framed column, the label as a cell,
+            the banks as a ruled row of cells, the note in the foot */}
+        <motion.div {...up} className="relative mx-auto max-w-[900px] border-x border-black/[0.08]">
+          <span className="pointer-events-none absolute -left-6 -right-6 -top-px h-px bg-black/[0.08]" />
+          <span className="pointer-events-none absolute -bottom-px -left-6 -right-6 h-px bg-black/[0.08]" />
+          <GridCross pos="top-left" />
+          <GridCross pos="bottom-right" />
+          <p className="border-y border-black/[0.08] px-6 py-5 text-center text-[15px] text-sub">
+            Reads from the banks and cards you already use
+          </p>
+          <div className="grid grid-cols-2 min-[640px]:grid-cols-3">
+            {BANKS.map((b, i) => (
+              <div
+                key={b.name}
+                className={[
+                  "flex h-[96px] items-center justify-center gap-3 border-black/[0.08] bg-white",
+                  /* two across on phones, three across from 640px; the
+                     hairlines follow the column count */
+                  i % 2 === 1 ? "border-l" : "",
+                  i >= 2 ? "border-t" : "",
+                  i % 3 === 0 ? "min-[640px]:border-l-0" : "min-[640px]:border-l",
+                  i >= 3 ? "min-[640px]:border-t" : "min-[640px]:border-t-0",
+                ].join(" ")}
+              >
+                <span className="flex h-[43px] w-[43px] items-center justify-center border border-black/10 bg-white">
+                  <Image src={b.src} alt="" width={27} height={27} className="h-[27px] w-[27px] object-contain" unoptimized />
+                </span>
+                <span className="text-[15px] font-semibold text-ink">{b.name}</span>
+              </div>
+            ))}
+          </div>
+          <p className="border-t border-black/[0.08] px-6 py-4 text-center text-[13px] text-sub">
+            Any US bank through Teller or Plaid. Cards from Brex, Ramp, and Mercury by statement.
+          </p>
         </motion.div>
-        <motion.p {...up} className="mt-6 text-center text-[13px] text-sub">
-          Any US bank through Teller or Plaid. Cards from Brex, Ramp, and Mercury by statement.
-        </motion.p>
       </section>
 
       {/* the ground loops back to the blue for the footer: the gradient
