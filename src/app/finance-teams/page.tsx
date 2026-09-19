@@ -941,11 +941,29 @@ function GuideCover({ g }: { g: (typeof GUIDES)[number] }) {
         Sample data
       </span>
 
-      {/* the UI card, inset like Mercury's and clipped at the foot */}
-      <div className="absolute inset-x-[clamp(20px,11%,60px)] top-[clamp(120px,32%,236px)] rounded-[12px] bg-white p-[clamp(20px,6.5%,36px)] text-ink shadow-[0_24px_60px_rgba(10,10,10,0.25)]">
+      {/* the UI card, inset like Mercury's and clipped at the foot, on the
+          ruled grid: square, hairline edge, rules running past it and
+          crosshairs at two corners */}
+      <div className="absolute inset-x-[clamp(20px,11%,60px)] top-[clamp(120px,32%,236px)] border border-black/[0.12] bg-white p-[clamp(20px,6.5%,36px)] text-ink shadow-[0_24px_60px_rgba(10,10,10,0.25)]">
+        <span className={`pointer-events-none absolute -left-6 -right-6 -top-px h-px ${onPhoto ? "bg-white/30" : "bg-black/[0.08]"}`} />
+        <span className={`pointer-events-none absolute -bottom-px -left-6 -right-6 h-px ${onPhoto ? "bg-white/30" : "bg-black/[0.08]"}`} />
+        <CoverCross pos="top-left" light={onPhoto} />
+        <CoverCross pos="bottom-right" light={onPhoto} />
         <UiCard kind={g.ui} />
       </div>
     </div>
+  );
+}
+
+/* the crosshair on a cover: white over a photo, dark over gray */
+function CoverCross({ pos, light }: { pos: "top-left" | "bottom-right"; light: boolean }) {
+  const at = pos === "top-left" ? "-left-[7px] -top-[7px]" : "-bottom-[7px] -right-[7px]";
+  const c = light ? "bg-white/70" : "bg-black/40";
+  return (
+    <span className={`pointer-events-none absolute z-10 h-[13px] w-[13px] ${at}`} aria-hidden>
+      <span className={`absolute left-1/2 top-0 h-full w-px -translate-x-1/2 ${c}`} />
+      <span className={`absolute left-0 top-1/2 h-px w-full -translate-y-1/2 ${c}`} />
+    </span>
   );
 }
 
@@ -1023,7 +1041,7 @@ function Field({ label, value, sub }: { label: string; value: string; sub: strin
   return (
     <div className="mt-4">
       <p className="text-[11px] text-sub">{label}</p>
-      <div className="mt-1.5 flex items-center justify-between rounded-[8px] border border-black/10 px-3 py-2.5">
+      <div className="mt-1.5 flex items-center justify-between border border-black/10 px-3 py-2.5">
         <div>
           <p className="text-[13px] font-medium leading-tight">{value}</p>
           <p className="mt-0.5 text-[11px] text-sub">{sub}</p>
