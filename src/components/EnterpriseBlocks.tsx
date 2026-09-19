@@ -285,19 +285,21 @@ export function Pricing() {
 
 /* the split button: a square arrow block on the left, the label on a
    filled body */
-export function ArrowButton({ href, children, tone = "dark" }: { href: string; children: React.ReactNode; tone?: "dark" | "lime" | "light" }) {
+export function ArrowButton({ href, children, tone = "dark" }: { href: string; children: React.ReactNode; tone?: "dark" | "lime" | "light" | "pale" }) {
   const lime = tone === "lime";
   const light = tone === "light";
+  /* pale: an #eeeeee arrow block with a dark chevron, a white body */
+  const pale = tone === "pale";
   return (
     <Link href={href} className="group inline-flex h-[60px] items-stretch text-[clamp(16px,1.15vw,22px)] transition-transform hover:scale-[1.02] active:scale-[0.98]">
-      <span className="flex w-[60px] items-center justify-center" style={{ backgroundColor: lime ? GREEN : INK }}>
+      <span className="flex w-[60px] items-center justify-center" style={{ backgroundColor: lime ? GREEN : pale ? MIST : INK }}>
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden>
-          <path d="M5 2.5 10.5 8 5 13.5" stroke="#ffffff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M5 2.5 10.5 8 5 13.5" stroke={pale ? INK : "#ffffff"} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </span>
       <span
         className="flex items-center px-8"
-        style={{ backgroundColor: lime ? LIME : light ? MIST : "#2c2c2c", color: lime || light ? INK : "#ffffff" }}
+        style={{ backgroundColor: lime ? LIME : light ? MIST : pale ? "#ffffff" : "#2c2c2c", color: lime || light || pale ? INK : "#ffffff" }}
       >
         {children}
       </span>

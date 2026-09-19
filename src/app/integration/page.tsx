@@ -173,7 +173,7 @@ export default function LedgerPage() {
               transition={{ duration: 0.55, ease: EASE, delay: 0.18 }}
               className="mt-[clamp(28px,3.5vw,64px)] flex justify-center min-[900px]:justify-start"
             >
-              <ArrowButton href="/signup" tone="light">Connect a bank</ArrowButton>
+              <ArrowButton href="/signup" tone="pale">Connect a bank</ArrowButton>
             </motion.div>
           </div>
 
