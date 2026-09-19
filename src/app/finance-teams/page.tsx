@@ -316,12 +316,6 @@ function WorkflowCard({
       >
         {label}
       </span>
-      <span
-        className={`${MONO} absolute bottom-[26px] left-[36px] text-[10px]`}
-        style={{ color: dark ? "rgba(255,255,255,0.45)" : "rgba(10,10,10,0.45)" }}
-      >
-        Sample data
-      </span>
       </div>
     </div>
   );
@@ -933,12 +927,6 @@ function GuideCover({ g }: { g: (typeof GUIDES)[number] }) {
         }}
       >
         {g.tag}
-      </span>
-      <span
-        className={`${CAPS} absolute right-[26px] top-[36px] hidden text-[10px] min-[1100px]:block`}
-        style={{ color: onPhoto ? "rgba(255,255,255,0.7)" : "rgba(10,10,10,0.45)" }}
-      >
-        Sample data
       </span>
 
       {/* the UI card, inset like Mercury's and clipped at the foot, on the
