@@ -282,15 +282,23 @@ function Stages() {
             ))}
           </ul>
 
-          {/* the ledger panel in a ruled cell */}
+          {/* the panel in a ruled cell. The cell holds its height across
+              stages: the tallest stage (the table) is laid out invisibly
+              underneath as a sizer, and the live stage sits over it,
+              centered when it is shorter. */}
           <div className="relative border border-white/15 bg-white text-ink">
             <span className="pointer-events-none absolute -left-6 -right-6 -top-px h-px bg-white/15" />
             <span className="pointer-events-none absolute -bottom-px -left-6 -right-6 h-px bg-white/15" />
             <Cross pos="top-left" light />
             <Cross pos="bottom-right" light />
-            {stage.kind === "table" && <LedgerPanel key={`${i}-${tick}`} stage={stage} />}
-            {stage.kind === "inbox" && <InboxPanel key={`${i}-${tick}`} stage={stage} />}
-            {stage.kind === "cards" && <CardsPanel key={`${i}-${tick}`} stage={stage} />}
+            <div className="invisible" aria-hidden>
+              <LedgerPanel stage={STAGES[0] as Extract<Stage, { kind: "table" }>} still />
+            </div>
+            <div className="absolute inset-0 flex flex-col justify-center">
+              {stage.kind === "table" && <LedgerPanel key={`${i}-${tick}`} stage={stage} />}
+              {stage.kind === "inbox" && <InboxPanel key={`${i}-${tick}`} stage={stage} />}
+              {stage.kind === "cards" && <CardsPanel key={`${i}-${tick}`} stage={stage} />}
+            </div>
           </div>
         </div>
       </div>
@@ -302,7 +310,35 @@ function Stages() {
    down to the table's head, the rows streaming in, the empty rows
    ruled below. Everything animates in on mount, so a stage change
    re-mounts it. */
-function LedgerPanel({ stage }: { stage: Extract<Stage, { kind: "table" }> }) {
+function LedgerPanel({ stage, still = false }: { stage: Extract<Stage, { kind: "table" }>; still?: boolean }) {
+  /* still: the sizer copy, laid out at rest with no motion */
+  if (still) {
+    return (
+      <div className="px-[clamp(20px,4vw,72px)] py-[clamp(24px,3vw,56px)]">
+        <p className="border-b border-black/[0.12] pb-4 text-[clamp(15px,1.05vw,19px)] font-medium">{stage.panel}</p>
+        <div className="mt-[clamp(28px,3vw,56px)] h-[clamp(120px,10vw,190px)]" />
+        <div className="border border-black/[0.12] text-[clamp(11px,0.8vw,15px)]">
+          <div className="grid grid-cols-[15%_35%_22%_28%] border-b border-black/[0.12]">
+            {stage.columns.map((c) => (
+              <span key={c} className="px-3 py-2.5">{c}</span>
+            ))}
+          </div>
+          {stage.rows.map((r) => (
+            <div key={r.cells.join()} className="grid grid-cols-[15%_35%_22%_28%] border-b border-black/[0.12]">
+              {r.cells.map((c, j) => (
+                <span key={j} className="truncate px-3 py-2.5">{c}</span>
+              ))}
+            </div>
+          ))}
+          {Array.from({ length: EMPTY_ROWS }).map((_, k) => (
+            <div key={k} className="border-b border-black/[0.08] last:border-b-0">
+              <span className="block h-[clamp(28px,2.2vw,40px)]" />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
   const cols = "grid-cols-[15%_35%_22%_28%]";
   const tone = (t?: Row["tone"]) =>
     t === "stop" ? "#b3261e" : t === "ok" ? GREEN : t === "new" ? "rgba(10,10,10,0.35)" : INK;
