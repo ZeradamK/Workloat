@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { motion, useMotionValueEvent, useScroll } from "motion/react";
 import InsightsChart from "./tracker/InsightsChart";
 import { money } from "./tracker/money";
@@ -28,7 +29,6 @@ const CURRENT_MONTH = 6;
 const COL_W = 320; /* center column width (350 - 30), matches the dock */
 
 /* the ground, shared with the goal act that follows */
-const HERO_GROUND = "#eeeeee";
 
 export default function HeroShowcase() {
   const ref = useRef<HTMLDivElement>(null);
@@ -57,51 +57,83 @@ export default function HeroShowcase() {
   return (
     <>
       <MobileHero />
+      {/* on white: the headline, paragraph, and buttons in a column on the
+          left, in the enterprise hero's type; the wallet column right */}
       <div
         ref={ref}
-        className="relative hidden min-h-screen min-[800px]:block"
-        style={{ backgroundColor: HERO_GROUND }}
+        className="relative hidden min-h-screen bg-white min-[800px]:block"
       >
-        {/* left headline */}
-        <div className="absolute left-0 top-1/2 flex w-[calc(50%-160px)] -translate-y-1/2 justify-center">
-          <motion.h1
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: [0.25, 0.6, 0.2, 1] }}
-            className="w-max text-[clamp(22px,3.2vw,52px)] font-normal leading-[0.95] tracking-[-1.5px] text-ink"
-          >
-            See every dollar
-            <br />
-            your agents spend
-          </motion.h1>
-        </div>
+        <div className="grid min-h-screen grid-cols-[minmax(0,1fr)_minmax(0,1fr)] items-center gap-[clamp(32px,4vw,80px)] px-[clamp(20px,2.7vw,52px)] pb-10 pt-[100px]">
+          <div>
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.55, ease: [0.25, 0.6, 0.2, 1], delay: 0.05 }}
+              className="max-w-[640px] text-[clamp(48px,5vw,96px)] font-medium leading-[0.98] tracking-[-3px] text-ink"
+            >
+              See every dollar
+              <br />
+              your agents spend
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.55, ease: [0.25, 0.6, 0.2, 1], delay: 0.12 }}
+              className="mt-[clamp(32px,4.5vw,86px)] max-w-[690px] text-[clamp(18px,1.5vw,28px)] leading-[1.6] text-ink"
+            >
+              Every purchase, subscription, order, and receipt your agents
+              record, in one ledger
+            </motion.p>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.55, ease: [0.25, 0.6, 0.2, 1], delay: 0.18 }}
+              className="mt-[clamp(32px,4vw,76px)] flex flex-wrap items-center gap-x-10 gap-y-5"
+            >
+              <HeroButtons />
+            </motion.div>
+          </div>
 
-        {/* right description */}
-        <div className="absolute right-0 top-1/2 flex w-[calc(50%-160px)] -translate-y-1/2 justify-center">
-          <motion.p
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: [0.25, 0.6, 0.2, 1], delay: 0.05 }}
-            className="w-[85%] max-w-[300px] text-pretty text-[17px] leading-[1.2] text-ink"
-          >
-            Every purchase, subscription, order, and receipt your agents
-            record, in one ledger
-          </motion.p>
-        </div>
-
-        {/* the wallet + spending column, centered under the dock */}
-        <div className="flex min-h-screen items-center justify-center pb-10 pt-[100px]">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: [0.25, 0.6, 0.2, 1], delay: 0.1 }}
-            className="w-full"
+            className="mx-auto w-full"
             style={{ maxWidth: COL_W }}
           >
             <WalletSpendBlock />
           </motion.div>
         </div>
       </div>
+    </>
+  );
+}
+
+/* the hero's two calls: the split button in the nav's Get started style
+   on #eeeeee, and the text link with an arrow */
+function HeroButtons() {
+  return (
+    <>
+      <Link
+        href="/signup"
+        className="inline-flex h-[60px] items-stretch text-[clamp(16px,1.15vw,22px)] font-medium transition-transform hover:scale-[1.02] active:scale-[0.98]"
+      >
+        <span className="flex w-[60px] items-center justify-center bg-[#0a0a0a]">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden>
+            <path d="M5 2.5 10.5 8 5 13.5" stroke="#ffffff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </span>
+        <span className="flex items-center bg-[#eeeeee] px-8 text-ink">Get started for free</span>
+      </Link>
+      <Link
+        href="/product"
+        className="group inline-flex items-center gap-2.5 border-b-[3px] border-black/25 pb-1 text-[clamp(16px,1.15vw,22px)] text-ink transition-colors hover:border-ink"
+      >
+        See how it works
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden className="transition-transform duration-200 ease-out group-hover:translate-x-[3px]">
+          <path d="M2.5 8h11m0 0L8.8 3.3M13.5 8l-4.7 4.7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </Link>
     </>
   );
 }
@@ -140,12 +172,11 @@ function MobileHero() {
   return (
     <div
       ref={ref}
-      className="px-6 pb-20 pt-[120px] min-[800px]:hidden"
-      style={{ backgroundColor: HERO_GROUND }}
+      className="bg-white px-6 pb-20 pt-[120px] min-[800px]:hidden"
     >
       <motion.h1
         {...up}
-        className="text-center text-[clamp(30px,9vw,40px)] font-normal leading-[1.0] tracking-[-1.5px] text-ink"
+        className="text-[clamp(40px,11vw,56px)] font-medium leading-[0.98] tracking-[-2px] text-ink"
       >
         See every dollar
         <br />
@@ -153,11 +184,14 @@ function MobileHero() {
       </motion.h1>
       <motion.p
         {...up}
-        className="mx-auto mt-6 max-w-[300px] text-center text-[17px] leading-[1.25] text-ink"
+        className="mt-7 max-w-[520px] text-[18px] leading-[1.55] text-ink"
       >
         Every purchase, subscription, order, and receipt your agents record,
         in one ledger
       </motion.p>
+      <motion.div {...up} className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-5">
+        <HeroButtons />
+      </motion.div>
       <motion.div {...up} className="mx-auto mt-9 w-full max-w-[340px]">
         <WalletSpendBlock />
       </motion.div>
