@@ -1,13 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { AnimatePresence, animate, motion } from "motion/react";
 import NavDock from "@/components/NavDock";
 import FooterSection from "@/components/FooterSection";
 import SpendMixSection from "@/components/SpendMixSection";
-import { productLight } from "@/components/introProgress";
+import { ArrowButton } from "@/components/EnterpriseBlocks";
 
 /**
  * The integration page: "Every bank, every agent, one place." A draft with more
@@ -29,12 +28,13 @@ const up = {
 } as const;
 
 /* the grid's small crosshair where a rule meets a rail */
-function GridCross({ pos }: { pos: "top-left" | "bottom-right" }) {
+function GridCross({ pos, light = false }: { pos: "top-left" | "bottom-right"; light?: boolean }) {
   const at = pos === "top-left" ? "-left-[7px] -top-[7px]" : "-bottom-[7px] -right-[7px]";
+  const c = light ? "bg-white/50" : "bg-black/40";
   return (
     <span className={`pointer-events-none absolute z-10 h-[13px] w-[13px] ${at}`} aria-hidden>
-      <span className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-black/40" />
-      <span className="absolute left-0 top-1/2 h-px w-full -translate-y-1/2 bg-black/40" />
+      <span className={`absolute left-1/2 top-0 h-full w-px -translate-x-1/2 ${c}`} />
+      <span className={`absolute left-0 top-1/2 h-px w-full -translate-y-1/2 ${c}`} />
     </span>
   );
 }
@@ -57,19 +57,17 @@ const BANKS = [
    instead of being cut */
 /* the return to blue above the footer: white for the first stretch under
    the banks' caption, then a slow ease into the gradient */
-const LEAD = "520px";
-const LEAD_FADE = "linear-gradient(to bottom, #ffffff 0%, rgba(255,255,255,0.98) 14%, rgba(255,255,255,0.85) 34%, rgba(255,255,255,0.5) 58%, rgba(255,255,255,0.15) 82%, rgba(255,255,255,0) 100%)";
-
-const TAIL = "420px";
-/* the next section's head starts this far above the tail's end, on the
-   last, near-white stretch of the fade */
-const GAP = "110px";
-/* the frame's outline is gone well before the next section's head: solid
-   through its upper half, then a progressive ramp that reaches nothing at
-   82%, leaving the lowest stretch fully clear */
+/* the frame's outline is gone well before the fade's end: solid through
+   its upper half, then a progressive ramp that reaches nothing at 82% */
 const FRAME_FADE = "linear-gradient(to bottom, #000 0%, #000 50%, rgba(0,0,0,0.7) 62%, rgba(0,0,0,0.35) 72%, rgba(0,0,0,0.1) 79%, transparent 82%, transparent 100%)";
-const GROUND_FADE = "linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.15) 20%, rgba(255,255,255,0.5) 42%, rgba(255,255,255,0.85) 62%, rgba(255,255,255,0.98) 82%, #ffffff 100%)";
 
+/* white → black along a smoothstep curve, so neither end shows an edge */
+const WHITE_TO_BLACK = `linear-gradient(to bottom, ${[
+  [0, 0], [8, 1], [16, 4], [24, 9], [32, 17], [40, 27], [48, 39], [56, 52],
+  [64, 65], [72, 77], [80, 87], [88, 94], [94, 98], [100, 100],
+]
+  .map(([at, w]) => `color-mix(in srgb, #0a0a0a ${w}%, #ffffff) ${at}%`)
+  .join(", ")})`;
 
 /* the charges that slide into the frame on load, newest on top, and the
    figure the month starts from before they land */
@@ -109,7 +107,7 @@ function Notices() {
   }, []);
   const list = CHARGES.slice(0, shown).slice().reverse();
   return (
-    <div className="absolute inset-x-6 top-[33%] flex flex-col gap-3">
+    <div className="absolute inset-x-6 top-[40%] flex flex-col gap-3">
       <AnimatePresence initial={false}>
         {list.map((c) => (
           <motion.div
@@ -118,10 +116,10 @@ function Notices() {
             initial={{ opacity: 0, y: 28, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ type: "spring", stiffness: 320, damping: 28 }}
-            className="flex items-center gap-4 rounded-[20px] bg-white p-3 pr-5"
+            className="flex items-center gap-4 border border-black/[0.12] bg-white p-3 pr-5"
           >
-            <span className="flex h-[56px] w-[56px] shrink-0 items-center justify-center rounded-full bg-[#eeeeee]">
-              <Image src={c.logo} alt="" width={28} height={28} className="h-[28px] w-[28px] rounded-[6px] object-contain" />
+            <span className="flex h-[56px] w-[56px] shrink-0 items-center justify-center bg-[#eeeeee]">
+              <Image src={c.logo} alt="" width={28} height={28} className="h-[28px] w-[28px] object-contain" />
             </span>
             <span className="min-w-0 flex-1">
               <span className="block text-[18px] font-semibold leading-tight text-ink min-[900px]:text-[20px]">{c.name}</span>
@@ -139,118 +137,86 @@ function Notices() {
 }
 
 export default function LedgerPage() {
-  /* the dock runs light (#eeeeee) the whole way down this page */
-  useEffect(() => {
-    productLight.set(1);
-    return () => productLight.set(0);
-  }, []);
-
   return (
     <main className="bg-white">
-      <NavDock forceDark logoLightSrc="/payloat-app-icon-blacktile.png" />
+      <NavDock />
 
-      {/* 1. hero, on Revolut's anatomy: a full-bleed ground, the headline in
-          bold caps, a line of copy and a black pill, and an outlined phone
-          frame with the month's figure and the charges that make it up.
-          The frame sits below the headline, beside the copy on desktop and
-          under the button on phones, and runs down into the ground's fade.
-          On load, two charges slide in like notifications and the figure
-          counts them in. The ground is the brand gradient until a photo lands. */}
-      <section className="relative overflow-hidden" style={{ backgroundColor: "#0a1fd2", paddingBottom: TAIL }}>
-        <Image src="/slack-gradient.jpg" alt="" fill priority sizes="100vw" className="object-cover" />
-        {/* the ground runs on under the next section's head and fades to white there */}
-        <div className="absolute inset-x-0 bottom-0" style={{ height: TAIL, background: GROUND_FADE }} />
-        <div className="relative mx-auto max-w-[1200px] px-6 pt-[150px] min-[900px]:pt-[170px]">
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55, ease: EASE }}
-            className="mx-auto max-w-[900px] text-center text-[clamp(44px,7vw,104px)] font-black uppercase leading-[0.96] tracking-[-2px] text-white min-[900px]:mx-0 min-[900px]:text-left"
-          >
-            Every bank,
-            <br />
-            every agent
-          </motion.h1>
-
-          <div className="mt-8 grid gap-12 min-[900px]:grid-cols-2 min-[900px]:items-start min-[900px]:gap-10">
-            {/* the copy: centered on phones, left on desktop */}
-            <div className="relative z-10 text-center min-[900px]:text-left">
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.55, ease: EASE, delay: 0.1 }}
-                className="mx-auto max-w-[440px] text-[clamp(17px,1.4vw,20px)] leading-[1.45] text-white/90 min-[900px]:mx-0"
-              >
-                Chase, Mercury, Brex, or any bank through Teller and Plaid. Connect once, and every
-                charge lands beside the agent that made it.
-              </motion.p>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.55, ease: EASE, delay: 0.18 }}
-                className="mt-8"
-              >
-                <Link
-                  href="/signup"
-                  className="group inline-flex h-12 items-center gap-1.5 rounded-full bg-white px-6 text-[15px] font-medium text-ink transition-transform hover:scale-[1.03] active:scale-[0.97]"
-                >
-                  Connect a bank
-                  <svg
-                    width="12"
-                    height="12"
-                    viewBox="0 0 16 16"
-                    fill="none"
-                    aria-hidden
-                    className="transition-transform duration-200 ease-out group-hover:translate-x-[3px]"
-                  >
-                    <path d="M2.5 8h11m0 0L8.8 3.3M13.5 8l-4.7 4.7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </Link>
-              </motion.div>
-            </div>
-
-            {/* the phone frame: under the button on phones, beside the copy
-                on desktop, running down into the fade */}
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
+      {/* 1. hero on the enterprise page's anatomy, on white: the headline,
+          a paragraph, and the split button left; the phone frame right,
+          outlined in black, with the month's figure and the charges that
+          slide in on load. The white fades into the black second section. */}
+      <section className="relative overflow-hidden bg-white">
+        {/* the copy and the frame sit above the fade, which begins under
+            the button and runs to the section's foot */}
+        <div className="relative z-10 mx-auto grid max-w-[1200px] gap-12 px-6 pb-[clamp(220px,24vw,400px)] pt-[150px] min-[900px]:grid-cols-[1.1fr_1fr] min-[900px]:items-center min-[900px]:gap-10 min-[900px]:pt-[170px]">
+          <div className="text-center min-[900px]:text-left">
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, ease: EASE, delay: 0.2 }}
-              className="relative mx-auto mb-[-120px] h-[640px] w-[min(92%,380px)] min-[900px]:mx-0 min-[900px]:mb-[-300px] min-[900px]:h-[760px] min-[900px]:w-[min(100%,540px)] min-[900px]:justify-self-end"
-              style={{ maskImage: FRAME_FADE, WebkitMaskImage: FRAME_FADE }}
+              transition={{ duration: 0.55, ease: EASE, delay: 0.05 }}
+              className="mx-auto max-w-[640px] text-[clamp(48px,5vw,96px)] font-medium leading-[0.98] tracking-[-3px] text-ink min-[900px]:mx-0"
             >
-              <div className="absolute inset-x-0 top-0 h-[200%] rounded-[36px]" style={{ border: "2px solid rgba(255,255,255,0.55)" }} />
-              <div className="absolute inset-x-0 top-[9%] flex flex-col items-center text-white">
-                <p className="text-[18px] font-medium text-white/90">Agent spend</p>
-                <p className="font-numeral mt-1 text-[clamp(48px,5vw,72px)] font-bold leading-none tracking-[-2px] tabular-nums">
-                  <Counted />
-                </p>
-                <span className="mt-5 rounded-full bg-white px-7 py-3 text-[18px] font-medium text-ink">Agents</span>
-              </div>
-              <Notices />
+              Every bank,
+              <br />
+              every agent
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.55, ease: EASE, delay: 0.12 }}
+              className="mx-auto mt-[clamp(28px,3.5vw,64px)] max-w-[560px] text-[clamp(18px,1.5vw,28px)] leading-[1.6] text-ink min-[900px]:mx-0"
+            >
+              Chase, Mercury, Brex, or any bank through Teller and Plaid. Connect once, and every
+              charge lands beside the agent that made it.
+            </motion.p>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.55, ease: EASE, delay: 0.18 }}
+              className="mt-[clamp(28px,3.5vw,64px)] flex justify-center min-[900px]:justify-start"
+            >
+              <ArrowButton href="/signup">Connect a bank</ArrowButton>
             </motion.div>
           </div>
+
+          {/* the phone frame, outlined in black, its foot running into the fade */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: EASE, delay: 0.2 }}
+            className="relative mx-auto mb-[-160px] h-[560px] w-[min(92%,380px)] min-[900px]:mx-0 min-[900px]:mb-[-260px] min-[900px]:h-[640px] min-[900px]:w-[min(100%,460px)] min-[900px]:justify-self-end"
+            style={{ maskImage: FRAME_FADE, WebkitMaskImage: FRAME_FADE }}
+          >
+            <div className="absolute inset-x-0 top-0 h-[200%] rounded-[36px]" style={{ border: "2px solid #0a0a0a" }} />
+            <div className="absolute inset-x-0 top-[9%] flex flex-col items-center text-ink">
+              <p className="text-[18px] font-medium text-sub">Agent spend</p>
+              <p className="font-numeral mt-1 text-[clamp(48px,5vw,72px)] font-bold leading-none tracking-[-2px] tabular-nums">
+                <Counted />
+              </p>
+              <span className="mt-5 px-7 py-3 text-[18px] font-medium text-white" style={{ backgroundColor: "#0a0a0a" }}>Agents</span>
+            </div>
+            <Notices />
+          </motion.div>
         </div>
+        {/* the white eases into the black second section */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[clamp(200px,22vw,380px)]" style={{ background: WHITE_TO_BLACK }} />
       </section>
 
-      {/* 2. the spend mix, pulled up onto the hero's fading tail */}
-      <div className="relative" style={{ marginTop: `calc(-1 * (${TAIL} - ${GAP}))` }}>
+      {/* 2. the spend mix, on black */}
       <SpendMixSection
+        tone="dark"
         title="Where the month went, by team."
         body="Agent charges grouped the way you would ask about them: the tools they run on, the cards and fees they touch, and the AI they burn. Every bar opens to the purchases behind it."
       />
-      </div>
 
-      {/* 3. connected banks; the page's ground begins turning blue again
-          right under its last line */}
-      <section className="mx-auto max-w-[1200px] overflow-x-clip px-6 pb-0 pt-[clamp(56px,7vw,112px)]">
-        {/* on the site's ruled grid: a framed column, the label as a cell,
-            the banks as a ruled row of cells, the note in the foot */}
-        <motion.div {...up} className="relative mx-auto max-w-[900px] border-x border-black/[0.08]">
-          <span className="pointer-events-none absolute -left-6 -right-6 -top-px h-px bg-black/[0.08]" />
-          <span className="pointer-events-none absolute -bottom-px -left-6 -right-6 h-px bg-black/[0.08]" />
-          <GridCross pos="top-left" />
-          <GridCross pos="bottom-right" />
-          <p className="border-y border-black/[0.08] px-6 py-5 text-center text-[15px] text-sub">
+      {/* 3. connected banks, on the same black, in the ruled grid */}
+      <section className="overflow-x-clip px-6 pb-[clamp(56px,7vw,112px)] pt-[clamp(32px,5vw,80px)]" style={{ backgroundColor: "#0a0a0a" }}>
+        <motion.div {...up} className="relative mx-auto max-w-[900px] border-x border-white/15">
+          <span className="pointer-events-none absolute -left-6 -right-6 -top-px h-px bg-white/15" />
+          <span className="pointer-events-none absolute -bottom-px -left-6 -right-6 h-px bg-white/15" />
+          <GridCross pos="top-left" light />
+          <GridCross pos="bottom-right" light />
+          <p className="border-y border-white/15 px-6 py-5 text-center text-[15px] text-white/70">
             Reads from the banks and cards you already use
           </p>
           <div className="grid grid-cols-2 min-[640px]:grid-cols-3">
@@ -258,7 +224,7 @@ export default function LedgerPage() {
               <div
                 key={b.name}
                 className={[
-                  "flex h-[96px] items-center justify-center gap-3 border-black/[0.08] bg-white",
+                  "flex h-[96px] items-center justify-center gap-3 border-white/15",
                   /* two across on phones, three across from 640px; the
                      hairlines follow the column count */
                   i % 2 === 1 ? "border-l" : "",
@@ -267,27 +233,22 @@ export default function LedgerPage() {
                   i >= 3 ? "min-[640px]:border-t" : "min-[640px]:border-t-0",
                 ].join(" ")}
               >
-                <span className="flex h-[43px] w-[43px] items-center justify-center border border-black/10 bg-white">
+                <span className="flex h-[43px] w-[43px] items-center justify-center border border-white/15 bg-white">
                   <Image src={b.src} alt="" width={27} height={27} className="h-[27px] w-[27px] object-contain" unoptimized />
                 </span>
-                <span className="text-[15px] font-semibold text-ink">{b.name}</span>
+                <span className="text-[15px] font-semibold text-white">{b.name}</span>
               </div>
             ))}
           </div>
-          <p className="border-t border-black/[0.08] px-6 py-4 text-center text-[13px] text-sub">
+          <p className="border-t border-white/15 px-6 py-4 text-center text-[13px] text-white/70">
             Any US bank through Teller or Plaid. Cards from Brex, Ramp, and Mercury by statement.
           </p>
         </motion.div>
       </section>
 
-      {/* the ground loops back to the blue for the footer: the gradient
-          returns under the banks' last line and the type goes white */}
-      <div className="relative overflow-hidden" style={{ backgroundColor: "#0a1fd2" }}>
-        <Image src="/slack-gradient.jpg" alt="" fill sizes="100vw" className="object-cover object-bottom" />
-        <div className="absolute inset-x-0 top-0" style={{ height: LEAD, background: LEAD_FADE }} />
-        <div className="relative" style={{ paddingTop: `calc(${LEAD} - 96px)` }}>
-          <FooterSection tone="light" />
-        </div>
+      {/* 4. the footer on the same black */}
+      <div style={{ backgroundColor: "#0a0a0a" }}>
+        <FooterSection tone="light" />
       </div>
     </main>
   );
