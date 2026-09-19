@@ -233,12 +233,9 @@ export default function LedgerPage() {
 
       {/* 3. connected banks, on the same black, in the ruled grid */}
       <section className="overflow-x-clip px-6 pb-[clamp(56px,7vw,112px)] pt-[clamp(32px,5vw,80px)]" style={{ backgroundColor: "#0a0a0a" }}>
-        <motion.div {...up} className="relative mx-auto max-w-[900px] border-x border-white/15">
-          <span className="pointer-events-none absolute -left-6 -right-6 -top-px h-px bg-white/15" />
-          <span className="pointer-events-none absolute -bottom-px -left-6 -right-6 h-px bg-white/15" />
-          <GridCross pos="top-left" light />
-          <GridCross pos="bottom-right" light />
-          <p className="border-y border-white/15 px-6 py-5 text-center text-[15px] text-white/70">
+        {/* no outer frame: only the hairlines between the bank cells */}
+        <motion.div {...up} className="relative mx-auto max-w-[900px]">
+          <p className="px-6 py-5 text-center text-[15px] text-white/70">
             Reads from the banks and cards you already use
           </p>
           <div className="grid grid-cols-2 min-[640px]:grid-cols-3">
@@ -262,7 +259,7 @@ export default function LedgerPage() {
               </div>
             ))}
           </div>
-          <p className="border-t border-white/15 px-6 py-4 text-center text-[13px] text-white/70">
+          <p className="px-6 py-4 text-center text-[13px] text-white/70">
             Any US bank through Teller or Plaid. Cards from Brex, Ramp, and Mercury by statement.
           </p>
         </motion.div>
