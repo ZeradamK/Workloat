@@ -57,6 +57,21 @@ const MONO =
 /* the same caps in SF Pro, for the guide covers' chips */
 const CAPS = "text-[12px] uppercase tracking-[1.8px]";
 
+/* the site's ruled grid: a rule running 24px past a frame, and the
+   crosshair where a rule meets a rail */
+function Rule({ pos }: { pos: "top" | "bottom" }) {
+  return <span className={`pointer-events-none absolute -left-6 -right-6 h-px bg-black/[0.08] ${pos === "top" ? "-top-px" : "-bottom-px"}`} />;
+}
+function Cross({ pos }: { pos: "top-left" | "bottom-right" }) {
+  const at = pos === "top-left" ? "-left-[7px] -top-[7px]" : "-bottom-[7px] -right-[7px]";
+  return (
+    <span className={`pointer-events-none absolute z-10 h-[13px] w-[13px] ${at}`} aria-hidden>
+      <span className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-black/40" />
+      <span className="absolute left-0 top-1/2 h-px w-full -translate-y-1/2 bg-black/40" />
+    </span>
+  );
+}
+
 const DAILY = [
   0, 85, 85, 210, 210, 340, 340, 495, 640, 640, 820, 980, 980, 1210, 1385,
   1500, 1500, 1830, 2100, 2350,
@@ -150,7 +165,8 @@ const WORKFLOWS = [
 ];
 
 const CARD_W = 452;
-const STEP = CARD_W; /* the cells sit flush, sharing hairlines */
+const CARD_GAP = 22;
+const STEP = CARD_W + CARD_GAP;
 
 function Workflows() {
   const [index, setIndex] = useState(0);
@@ -165,19 +181,27 @@ function Workflows() {
   };
   return (
     <section className="overflow-hidden pb-[clamp(72px,7vw,140px)] pt-[clamp(40px,4.4vw,84px)]">
-      <motion.h2
-        {...up}
-        className="px-6 text-center text-[clamp(32px,3.3vw,64px)] font-medium leading-[1.05] tracking-[-2px] text-ink"
-      >
-        Workflows built for finance teams.
-      </motion.h2>
+      {/* the headline in a framed cell of the grid */}
+      <div className="px-6">
+        <div className="relative mx-auto max-w-[1200px] border-x border-black/[0.08]">
+          <Rule pos="top" />
+          <Cross pos="top-left" />
+          <motion.h2
+            {...up}
+            className="border-t border-black/[0.08] px-6 py-[clamp(40px,4.5vw,72px)] text-center text-[clamp(32px,3.3vw,64px)] font-medium leading-[1.05] tracking-[-2px] text-ink"
+          >
+            Workflows built for finance teams.
+          </motion.h2>
+        </div>
+      </div>
 
-      {/* the track on the ruled grid: 452x630 cells sharing hairlines
-          between two rules that run the full width, centered so a cell
-          bleeds on both edges like Amigo's; drag it or use the arrows */}
-      <div className="relative mt-[clamp(40px,4.3vw,84px)] flex justify-center border-y border-black/[0.08]">
+      {/* the track on the ruled grid: 452x630 cells with room between
+          them, each cell's edges running out to the two full-width rules
+          above and below; centered so a cell bleeds on both edges like
+          Amigo's; drag it or use the arrows */}
+      <div className="relative flex justify-center border-y border-black/[0.08] py-6">
         <motion.div
-          className="flex cursor-grab active:cursor-grabbing"
+          className="flex cursor-grab gap-[22px] active:cursor-grabbing"
           style={{ x }}
           drag="x"
           dragConstraints={{ left: -max * STEP, right: 0 }}
@@ -251,10 +275,14 @@ function WorkflowCard({
   const bg = canvas === "mist" ? "#eeeeee" : canvas === "ink" ? INK : GREEN;
   const dark = canvas !== "mist";
   return (
-    <div
-      className="relative shrink-0 overflow-hidden border-l border-black/[0.08] first:border-l-0"
-      style={{ width: CARD_W, height: 630, backgroundColor: bg }}
-    >
+    <div className="relative shrink-0" style={{ width: CARD_W, height: 630 }}>
+      {/* the cell's edges run out to the rules above and below */}
+      <span className="pointer-events-none absolute -bottom-6 -top-6 left-0 w-px bg-black/[0.08]" />
+      <span className="pointer-events-none absolute -bottom-6 -top-6 right-0 w-px bg-black/[0.08]" />
+      <div
+        className="relative h-full w-full overflow-hidden border border-black/[0.08]"
+        style={{ backgroundColor: bg }}
+      >
       <div className="absolute inset-x-[36px] top-[44px]">
         <Figure kind={figure} dark={dark} />
       </div>
@@ -270,6 +298,7 @@ function WorkflowCard({
       >
         Sample data
       </span>
+      </div>
     </div>
   );
 }
@@ -778,14 +807,18 @@ function SetUp() {
             </div>
             <motion.div
               {...up}
-              className="relative rounded-[24px] p-[clamp(24px,2.5vw,48px)] text-white"
+              className="relative border border-black/[0.08] text-white"
               style={{ backgroundColor: GREEN, minHeight: "clamp(360px,37.5vw,720px)" }}
             >
-              {/* the card grows with its steps; the min height keeps
-                  Amigo's 1120x720 proportion when the steps are short */}
-              <ol className="flex h-full flex-col justify-between gap-[clamp(20px,2vw,40px)]">
+              <Rule pos="top" />
+              <Rule pos="bottom" />
+              <Cross pos="top-left" />
+              <Cross pos="bottom-right" />
+              {/* the steps as ruled rows; the card grows with them, the
+                  min height keeps Amigo's 1120x720 proportion */}
+              <ol className="flex h-full flex-col">
                 {SETUP.map(([t, b], k) => (
-                  <li key={t} className="flex gap-[clamp(16px,1.5vw,28px)] border-t border-white/20 pt-[clamp(14px,1.4vw,26px)] first:border-t-0 first:pt-0">
+                  <li key={t} className="flex flex-1 gap-[clamp(16px,1.5vw,28px)] border-t border-white/20 px-[clamp(24px,2.5vw,48px)] py-[clamp(20px,2.2vw,40px)] first:border-t-0">
                     <span className={`${MONO} pt-1.5 text-white/60`}>0{k + 1}</span>
                     <div>
                       <p className="text-[clamp(20px,1.6vw,30px)] font-medium tracking-[-0.8px]">{t}</p>
@@ -856,7 +889,7 @@ function GuideCover({ g }: { g: (typeof GUIDES)[number] }) {
   const onPhoto = Boolean(g.photo);
   return (
     <div
-      className="relative overflow-hidden rounded-[24px]"
+      className="relative overflow-hidden border border-black/[0.08]"
       style={{ aspectRatio: "558 / 740", backgroundColor: "#eeeeee" }}
     >
       {g.photo && (
@@ -983,30 +1016,40 @@ function Guides() {
   return (
     <section className="bg-white">
       <div className={`${FRAME} border-t border-black/[0.08]`}>
-        <div className={`${INNER} pt-[clamp(56px,6vw,116px)]`}>
-          <motion.h2
-            {...up}
-            className="text-center text-[clamp(34px,3.75vw,72px)] font-medium leading-[1.05] tracking-[-2.5px] text-ink"
-          >
-            Guides for finance teams.
-          </motion.h2>
-          <motion.p {...up} className="mx-auto mt-[clamp(20px,2vw,38px)] max-w-[600px] text-center text-[clamp(16px,1.15vw,22px)] leading-[1.4] text-ink">
-            How teams plan, approve, and close when agents are doing the
-            buying.
-          </motion.p>
-          <div className="mt-[clamp(56px,7vw,136px)] flex gap-8 text-[clamp(15px,0.95vw,18px)]">
-            <span className="text-ink">All guides</span>
-            <span className="text-sub">Playbooks</span>
-            <span className="text-sub">How to</span>
-            <span className="text-sub">Close</span>
-          </div>
-          <div className="mt-[clamp(32px,3.5vw,68px)] grid gap-12 pb-[clamp(56px,6vw,116px)] min-[900px]:grid-cols-3 min-[900px]:gap-0">
+        {/* the section on the ruled grid: a framed column, the head as a
+            cell, the filters as a ruled row, the three guides as cells */}
+        <div className={`${INNER} py-[clamp(56px,6vw,116px)]`}>
+          <div className="relative mx-auto max-w-[1200px] border-x border-black/[0.08]">
+            <Rule pos="top" />
+            <Rule pos="bottom" />
+            <Cross pos="top-left" />
+            <Cross pos="bottom-right" />
+            <div className="border-y border-black/[0.08] px-6 py-[clamp(40px,4.5vw,72px)]">
+              <motion.h2
+                {...up}
+                className="text-center text-[clamp(34px,3.75vw,72px)] font-medium leading-[1.05] tracking-[-2.5px] text-ink"
+              >
+                Guides for finance teams.
+              </motion.h2>
+              <motion.p {...up} className="mx-auto mt-[clamp(20px,2vw,38px)] max-w-[600px] text-center text-[clamp(16px,1.15vw,22px)] leading-[1.4] text-ink">
+                How teams plan, approve, and close when agents are doing the
+                buying.
+              </motion.p>
+            </div>
+            <div className="grid grid-cols-4 border-b border-black/[0.08] text-[clamp(13px,0.95vw,18px)]">
+              {["All guides", "Playbooks", "How to", "Close"].map((f, i) => (
+                <span key={f} className={`flex h-12 items-center justify-center border-l border-black/[0.08] first:border-l-0 ${i === 0 ? "bg-[#eeeeee] text-ink" : "text-sub"}`}>
+                  {f}
+                </span>
+              ))}
+            </div>
+          <div className="grid min-[900px]:grid-cols-3">
             {GUIDES.map((g, k) => (
               <motion.article
                 key={g.title}
                 {...up}
                 transition={{ ...up.transition, delay: k * 0.08 }}
-                className="min-[900px]:border-l min-[900px]:border-black/[0.08] min-[900px]:px-[clamp(16px,1.6vw,31px)] min-[900px]:first:border-l-0 min-[900px]:first:pl-0 min-[900px]:last:pr-0"
+                className="border-t border-black/[0.08] p-[clamp(16px,1.6vw,31px)] min-[900px]:border-l min-[900px]:border-t-0 min-[900px]:first:border-l-0"
               >
                 <GuideCover g={g} />
                 <h3 className="mt-[clamp(28px,2.9vw,56px)] text-[clamp(22px,1.65vw,32px)] font-medium leading-[1.15] tracking-[-0.8px] text-ink">
@@ -1025,6 +1068,7 @@ function Guides() {
                 </p>
               </motion.article>
             ))}
+          </div>
           </div>
         </div>
       </div>
