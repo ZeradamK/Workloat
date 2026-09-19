@@ -177,8 +177,10 @@ function MobileHero() {
   return (
     <div
       ref={ref}
-      className="bg-white px-6 pb-20 pt-[120px] min-[800px]:hidden"
+      className="flex flex-col items-center bg-white px-6 pb-20 pt-[120px] text-center min-[800px]:hidden"
     >
+      {/* stacked and centered: the headline, the wallet column, then the
+          paragraph and the buttons */}
       <motion.h1
         {...up}
         className="text-[clamp(40px,11vw,56px)] font-medium leading-[0.98] tracking-[-2px] text-ink"
@@ -187,18 +189,19 @@ function MobileHero() {
         <br />
         your agents spend
       </motion.h1>
+      {/* the wallet keeps its own left-set type inside the centered stack */}
+      <motion.div {...up} className="mt-9 w-full max-w-[340px] text-left">
+        <WalletSpendBlock />
+      </motion.div>
       <motion.p
         {...up}
-        className="mt-7 max-w-[520px] text-[18px] leading-[1.55] text-ink"
+        className="mt-9 max-w-[520px] text-[18px] leading-[1.55] text-ink"
       >
         Every purchase, subscription, order, and receipt your agents record,
         in one ledger
       </motion.p>
-      <motion.div {...up} className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-5">
+      <motion.div {...up} className="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-5">
         <HeroButtons />
-      </motion.div>
-      <motion.div {...up} className="mx-auto mt-9 w-full max-w-[340px]">
-        <WalletSpendBlock />
       </motion.div>
     </div>
   );
