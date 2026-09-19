@@ -39,6 +39,16 @@ export type SceneKey = "mandate" | "caps" | "orders" | "confirmations" | "report
 export default function AgentScene({ scene }: { scene: SceneKey }) {
   return (
     <div className="relative mx-auto w-full max-w-[600px]" style={{ aspectRatio: "4 / 3" }}>
+      {/* the site's grid, faintly, behind every scene */}
+      <div
+        className="pointer-events-none absolute inset-0"
+        aria-hidden
+        style={{
+          backgroundImage: `linear-gradient(to right, ${TRACK} 1px, transparent 1px), linear-gradient(to bottom, ${TRACK} 1px, transparent 1px)`,
+          backgroundSize: "12.5% 12.5%",
+          backgroundPosition: "-1px -1px",
+        }}
+      />
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={scene}
@@ -70,7 +80,7 @@ function Chip({ children, tone = "dark", className, style }: { children: React.R
   } as const;
   return (
     <span
-      className={`inline-flex items-center whitespace-nowrap rounded-[8px] px-3 py-2 text-[10px] font-medium tracking-[0.14em] ${className ?? ""}`}
+      className={`inline-flex items-center whitespace-nowrap px-3 py-2 text-[10px] font-medium tracking-[0.14em] ${className ?? ""}`}
       style={{ fontFamily: MONO, ...tones[tone], ...style }}
     >
       {children}
@@ -117,7 +127,7 @@ function Mandate() {
         {xs.map((x, i) => (
           <motion.path
             key={i}
-            d={`M${x} 70 C ${x} 190, 300 190, 300 300`}
+            d={`M${x} 70 V 190 H 300 V 300`}
             fill="none"
             stroke={LINE}
             strokeWidth="1"
@@ -135,7 +145,7 @@ function Mandate() {
             initial={{ offsetDistance: "0%", opacity: 0 }}
             animate={{ offsetDistance: ["0%", "100%"], opacity: [0, 1, 1, 0] }}
             transition={{ duration: 2.4, ease: "easeInOut", delay: 1.2 + i * 0.35, repeat: Infinity, repeatDelay: 2.4 }}
-            style={{ offsetPath: `path("M${x} 70 C ${x} 190, 300 190, 300 300")` }}
+            style={{ offsetPath: `path("M${x} 70 V 190 H 300 V 300")` }}
           />
         ))}
       </svg>
@@ -158,7 +168,7 @@ function Mandate() {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5, ease: EASE, delay: 0.9 }}
       >
-        <div className="rounded-[14px] px-6 py-4" style={{ backgroundColor: "var(--sc-chip-bg)", border: "1px solid var(--sc-chip-border)" }}>
+        <div className="px-6 py-4" style={{ backgroundColor: "var(--sc-chip-bg)", border: "1px solid var(--sc-chip-border)" }}>
           <Mark label="MANDATE, SIGNED" />
         </div>
       </motion.div>
@@ -186,9 +196,9 @@ function Caps() {
             <Chip tone={hot ? "amber" : "dark"} className="w-[112px] justify-center">
               {g.label}
             </Chip>
-            <div className="relative h-[10px] flex-1 overflow-hidden rounded-full" style={{ backgroundColor: TRACK }}>
+            <div className="relative h-[10px] flex-1 overflow-hidden" style={{ backgroundColor: TRACK, border: `1px solid ${LINE}` }}>
               <motion.div
-                className="absolute inset-y-0 left-0 rounded-full"
+                className="absolute inset-y-0 left-0"
                 style={{ backgroundColor: hot ? AMBER : FG }}
                 initial={{ width: 0 }}
                 animate={{ width: `${pct * 100}%` }}
@@ -241,7 +251,7 @@ function Orders() {
       {STAGES.map((s, i) => (
         <div key={s} className="absolute -translate-x-1/2" style={{ left: `${xs[i]}%`, top: "50%" }}>
           <motion.span
-            className="absolute left-1/2 top-0 h-[10px] w-[10px] -translate-x-1/2 -translate-y-1/2 rounded-full"
+            className="absolute left-1/2 top-0 h-[10px] w-[10px] -translate-x-1/2 -translate-y-1/2"
             animate={{ scale: i === at ? 1.4 : 1 }}
             style={{ border: "1px solid", backgroundColor: i <= at ? FG : "var(--sc-chip-bg)", borderColor: i <= at ? FG : LINE }}
             transition={{ duration: 0.4, ease: EASE }}
@@ -258,7 +268,7 @@ function Orders() {
         animate={{ left: `${xs[at]}%` }}
         transition={{ duration: 0.8, ease: EASE }}
       >
-        <div className="w-[236px] rounded-[12px] px-4 py-3" style={{ backgroundColor: "var(--sc-card-bg)", color: "var(--sc-card-fg)", border: "1px solid var(--sc-chip-border)" }}>
+        <div className="w-[236px] px-4 py-3" style={{ backgroundColor: "var(--sc-card-bg)", color: "var(--sc-card-fg)", border: "1px solid var(--sc-chip-border)" }}>
           <div className="flex items-center justify-between gap-3">
             <span className="whitespace-nowrap text-[13px] font-semibold">AAPL · 12 shares</span>
             <span className="font-numeral text-[13px] font-semibold tabular-nums">$2,340.50</span>
@@ -308,7 +318,7 @@ function Confirmations() {
           return (
             <motion.path
               key={i}
-              d={`M 200 ${y} C 300 ${y}, 300 ${y}, 400 ${y}`}
+              d={`M 200 ${y} H 400`}
               fill="none"
               stroke={p.ok ? FG : AMBER}
               strokeWidth="1"
@@ -367,7 +377,8 @@ function Reporting() {
   const top = 150;
   const bottom = 380;
   const pts = PTS.map((v, i) => [padL + (i * (W - padL - padR)) / (PTS.length - 1), bottom - (v / 60) * (bottom - top)] as const);
-  const d = pts.map(([x, y], i) => `${i === 0 ? "M" : "L"}${x.toFixed(1)} ${y.toFixed(1)}`).join(" ");
+  /* stepped: across on the grid, then up to the next value */
+  const d = pts.map(([x, y], i) => (i === 0 ? `M${x.toFixed(1)} ${y.toFixed(1)}` : `H${x.toFixed(1)} V${y.toFixed(1)}`)).join(" ");
   return (
     <div className="absolute inset-0">
       <div className="absolute left-[4%] top-[6%] flex gap-8">
@@ -388,11 +399,11 @@ function Reporting() {
       </div>
       <svg viewBox={`0 0 ${W} ${H}`} className="absolute inset-0 h-full w-full" aria-hidden>
         {[top, (top + bottom) / 2, bottom].map((y) => (
-          <line key={y} x1={padL} x2={W - padR} y1={y} y2={y} stroke={TRACK} strokeDasharray="2 5" />
+          <line key={y} x1={padL} x2={W - padR} y1={y} y2={y} stroke={LINE} strokeWidth="1" />
         ))}
         <motion.path d={`${d} L${W - padR} ${bottom} L${padL} ${bottom} Z`} fill={FILL} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 1.2 }} />
-        <motion.path d={d} fill="none" stroke={FG} strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.6, ease: EASE, delay: 0.2 }} />
-        <motion.circle cx={pts[pts.length - 1][0]} cy={pts[pts.length - 1][1]} r="5" fill={FG} initial={{ opacity: 0, scale: 0 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3, delay: 1.8 }} />
+        <motion.path d={d} fill="none" stroke={FG} strokeWidth="2" strokeLinejoin="miter" strokeLinecap="square" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.6, ease: EASE, delay: 0.2 }} />
+        <motion.rect x={pts[pts.length - 1][0] - 5} y={pts[pts.length - 1][1] - 5} width="10" height="10" fill={FG} initial={{ opacity: 0, scale: 0 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3, delay: 1.8 }} />
       </svg>
       <div className="absolute bottom-[4%] left-[4%] right-[4%] flex flex-wrap gap-2">
         {["BY AGENT", "BY TICKER", "COST BASIS", "EXPORT CSV"].map((c, i) => (
