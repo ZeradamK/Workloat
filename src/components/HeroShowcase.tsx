@@ -121,21 +121,21 @@ function HeroButtons() {
     <>
       <Link
         href="/signup"
-        className="inline-flex h-[60px] items-stretch text-[clamp(16px,1.15vw,22px)] font-medium transition-transform hover:scale-[1.02] active:scale-[0.98]"
+        className="inline-flex h-11 items-stretch text-[13px] font-semibold tracking-[-0.5px] transition-transform hover:scale-[1.02] active:scale-[0.98]"
       >
-        <span className="flex w-[60px] items-center justify-center bg-[#0a0a0a]">
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden>
+        <span className="flex w-11 items-center justify-center bg-[#0a0a0a]">
+          <svg width="11" height="11" viewBox="0 0 16 16" fill="none" aria-hidden>
             <path d="M5 2.5 10.5 8 5 13.5" stroke="#ffffff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </span>
-        <span className="flex items-center bg-[#eeeeee] px-8 text-ink">Get started for free</span>
+        <span className="flex items-center bg-[#eeeeee] px-5 text-ink">Get started for free</span>
       </Link>
       <Link
         href="/product"
-        className="group inline-flex items-center gap-2.5 border-b-[3px] border-black/25 pb-1 text-[clamp(16px,1.15vw,22px)] text-ink transition-colors hover:border-ink"
+        className="group inline-flex items-center gap-2 border-b-2 border-black/25 pb-0.5 text-[13px] font-semibold tracking-[-0.5px] text-ink transition-colors hover:border-ink"
       >
         See how it works
-        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden className="transition-transform duration-200 ease-out group-hover:translate-x-[3px]">
+        <svg width="11" height="11" viewBox="0 0 16 16" fill="none" aria-hidden className="transition-transform duration-200 ease-out group-hover:translate-x-[3px]">
           <path d="M2.5 8h11m0 0L8.8 3.3M13.5 8l-4.7 4.7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </Link>

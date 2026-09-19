@@ -31,7 +31,7 @@ const SPRING = {
 } as const;
 
 const DOCK_H = 48;
-const RADIUS = 0;
+const RADIUS = 24;
 
 type PanelKey = "Product" | "Features" | "Pricing" | "Contact";
 
@@ -433,14 +433,14 @@ export default function NavDock({
                   }}
                   aria-expanded={active === item}
                   aria-haspopup="true"
-                  className="relative flex h-[38px] items-center gap-1.5 px-4 text-[14px] font-medium tracking-[-0.2px] transition-colors duration-150"
+                  className="relative flex h-[38px] items-center gap-1.5 rounded-full px-4 text-[14px] font-medium tracking-[-0.2px] transition-colors duration-150"
                 style={{ color: highlight === item ? "#0a0a0a" : "var(--nav-fg)" }}
                 >
                   <AnimatePresence>
                     {highlight === item && (
                       <motion.span
                         layoutId="dockHover"
-                        className="absolute inset-0"
+                        className="absolute inset-0 rounded-full"
                         style={{ backgroundColor: "var(--nav-pill)" }}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -555,7 +555,7 @@ export default function NavDock({
               onClick={() => setMenuOpen((v) => !v)}
               aria-expanded={menuOpen}
               aria-haspopup="true"
-              className="relative flex h-12 items-center gap-2 px-5 text-[14px] font-medium"
+              className="relative flex h-12 items-center gap-2 rounded-full px-5 text-[14px] font-medium"
               style={
                 {
                   backgroundColor: dockBg,
@@ -591,7 +591,7 @@ export default function NavDock({
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10, transition: { duration: 0.15 } }}
                   transition={{ type: "spring", stiffness: 320, damping: 30 }}
-                  className="no-scrollbar absolute right-0 top-[58px] w-[min(340px,calc(100vw-40px))] overflow-y-auto p-5"
+                  className="no-scrollbar absolute right-0 top-[58px] w-[min(340px,calc(100vw-40px))] overflow-y-auto rounded-[24px] p-5"
                   style={
                     {
                       backgroundColor: dockBg,
