@@ -61,7 +61,9 @@ export default function EnterprisePage() {
       <Stages />
       <Compatible />
       <Pricing />
-      <FooterSection />
+      <div style={{ backgroundColor: "#0a0a0a" }}>
+        <FooterSection tone="light" />
+      </div>
     </main>
   );
 }
