@@ -63,23 +63,38 @@ export default function HeroShowcase() {
         ref={ref}
         className="relative hidden min-h-screen bg-white min-[800px]:block"
       >
-        <div className="grid min-h-screen grid-cols-[minmax(0,1fr)_minmax(0,1fr)] items-center gap-[clamp(32px,4vw,80px)] px-[clamp(20px,2.7vw,52px)] pb-10 pt-[100px]">
-          <div>
-            <motion.h1
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.55, ease: [0.25, 0.6, 0.2, 1], delay: 0.05 }}
-              className="max-w-[640px] text-[clamp(48px,5vw,96px)] font-medium leading-[0.98] tracking-[-3px] text-ink"
-            >
-              See every dollar
-              <br />
-              your agents spend
-            </motion.h1>
+        {/* three columns: the headline left, the wallet column centered
+            under the dock, the paragraph and buttons right */}
+        <div className="grid min-h-screen grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-[clamp(24px,3vw,60px)] px-[clamp(20px,2.7vw,52px)] pb-10 pt-[100px]">
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, ease: [0.25, 0.6, 0.2, 1], delay: 0.05 }}
+            className="text-[clamp(40px,4.4vw,96px)] font-medium leading-[0.98] tracking-[-3px] text-ink"
+          >
+            See every
+            <br />
+            dollar your
+            <br />
+            agents spend
+          </motion.h1>
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.25, 0.6, 0.2, 1], delay: 0.1 }}
+            className="w-full"
+            style={{ width: COL_W }}
+          >
+            <WalletSpendBlock />
+          </motion.div>
+
+          <div className="justify-self-end">
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.55, ease: [0.25, 0.6, 0.2, 1], delay: 0.12 }}
-              className="mt-[clamp(32px,4.5vw,86px)] max-w-[690px] text-[clamp(18px,1.5vw,28px)] leading-[1.6] text-ink"
+              className="max-w-[440px] text-[clamp(18px,1.5vw,28px)] leading-[1.6] text-ink"
             >
               Every purchase, subscription, order, and receipt your agents
               record, in one ledger
@@ -88,21 +103,11 @@ export default function HeroShowcase() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.55, ease: [0.25, 0.6, 0.2, 1], delay: 0.18 }}
-              className="mt-[clamp(32px,4vw,76px)] flex flex-wrap items-center gap-x-10 gap-y-5"
+              className="mt-[clamp(28px,3vw,56px)] flex flex-wrap items-center gap-x-8 gap-y-5"
             >
               <HeroButtons />
             </motion.div>
           </div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: [0.25, 0.6, 0.2, 1], delay: 0.1 }}
-            className="mx-auto w-full"
-            style={{ maxWidth: COL_W }}
-          >
-            <WalletSpendBlock />
-          </motion.div>
         </div>
       </div>
     </>

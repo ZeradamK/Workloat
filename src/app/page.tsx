@@ -37,7 +37,7 @@ export default function Home() {
         name="Payloat Ledger"
         role="One ledger for every agent's spend"
         to="#0a0a0a"
-        ground="#eeeeee"
+        ground="#ffffff"
         ink="dark"
       />
 
