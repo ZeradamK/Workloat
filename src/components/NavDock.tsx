@@ -98,11 +98,31 @@ const lerpHex = (a: string, b: string, t: number) => lerpRgb(hex(a), hex(b), t);
 const rgb = (c: Rgb) => `rgb(${c[0]},${c[1]},${c[2]})`;
 const rgba = (c: Rgb, a: number) => `rgba(${c[0]},${c[1]},${c[2]},${a})`;
 
+/* the prompt card's shine: the cream-to-orange gradient along the top
+   edge, dying out down the sides, over a hairline. Two layers laid
+   behind a box whose content sits 1px inside them. */
+const SHINE =
+  "linear-gradient(90deg, rgba(255,255,255,0.06) 0%, #e9d6b0 28%, #e3641f 52%, #a3200c 68%, rgba(255,255,255,0.06) 100%)";
+const SHINE_MASK =
+  "linear-gradient(to bottom, black 0%, rgba(0,0,0,0.55) 18%, rgba(0,0,0,0.18) 55%, rgba(0,0,0,0.1) 100%)";
+function Shine() {
+  return (
+    <>
+      <span className="pointer-events-none absolute inset-0 border border-white/[0.12]" aria-hidden />
+      <span
+        className="pointer-events-none absolute inset-0"
+        aria-hidden
+        style={{ background: SHINE, maskImage: SHINE_MASK, WebkitMaskImage: SHINE_MASK }}
+      />
+    </>
+  );
+}
+
 /* the arrow in a split button's block */
-function SplitArrow() {
+function SplitArrow({ dark = false }: { dark?: boolean }) {
   return (
     <svg width="11" height="11" viewBox="0 0 16 16" fill="none" aria-hidden>
-      <path d="M5 2.5 10.5 8 5 13.5" stroke="#ffffff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M5 2.5 10.5 8 5 13.5" stroke={dark ? "#0a0a0a" : "#ffffff"} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -360,6 +380,8 @@ export default function NavDock({
             setActive(null);
           }}
         >
+          <div className="relative w-fit">
+          <Shine />
           <motion.div
             initial={false}
             animate={{
@@ -369,7 +391,7 @@ export default function NavDock({
               height: dims ? dims.h : DOCK_H,
             }}
             transition={SPRING}
-            className="flex flex-col items-center overflow-hidden"
+            className="relative m-px flex flex-col items-center overflow-hidden"
             style={
               {
                 borderRadius: RADIUS,
@@ -472,6 +494,7 @@ export default function NavDock({
               )}
             </AnimatePresence>
           </motion.div>
+          </div>
         </motion.nav>
         )}
 
@@ -490,22 +513,28 @@ export default function NavDock({
               the body, square, in the grid design */}
           <Link
             href="/signup"
-            className="hidden h-11 items-stretch text-[13px] font-semibold tracking-[-0.5px] transition-transform hover:scale-[1.02] active:scale-[0.98] sm:flex"
+            className="relative hidden p-px text-[13px] font-semibold tracking-[-0.5px] transition-transform hover:scale-[1.02] active:scale-[0.98] sm:block"
           >
-            <span className="flex w-11 items-center justify-center bg-[#0a0a0a]">
-              <SplitArrow />
+            <Shine />
+            <span className="relative flex h-11 items-stretch border border-[#111111]">
+              <span className="flex w-11 items-center justify-center bg-[#eeeeee]">
+                <SplitArrow dark />
+              </span>
+              <span className="flex items-center bg-white px-5 text-ink">Sign up</span>
             </span>
-            <span className="flex items-center border border-l-0 border-black/[0.12] bg-white px-5 text-ink">Sign up</span>
           </Link>
           <Link
             href="/signup"
-            className="flex h-11 items-stretch text-[13px] font-semibold tracking-[-0.5px] transition-transform hover:scale-[1.02] active:scale-[0.98]"
-            style={ctaOutline ? { outline: "1px solid #ffffff" } : undefined}
+            className="relative block p-px text-[13px] font-semibold tracking-[-0.5px] transition-transform hover:scale-[1.02] active:scale-[0.98]"
+            style={ctaOutline ? { outline: "1px solid rgba(255,255,255,0.6)" } : undefined}
           >
-            <span className="flex w-11 items-center justify-center bg-[#0a0a0a]">
-              <SplitArrow />
+            <Shine />
+            <span className="relative flex h-11 items-stretch">
+              <span className="flex w-11 items-center justify-center bg-[#0a0a0a]">
+                <SplitArrow />
+              </span>
+              <span className="flex items-center bg-[#2c2c2c] px-5 text-white">Get started</span>
             </span>
-            <span className="flex items-center bg-[#2c2c2c] px-5 text-white">Get started</span>
           </Link>
         </motion.div>
         )}
@@ -524,7 +553,7 @@ export default function NavDock({
               onClick={() => setMenuOpen((v) => !v)}
               aria-expanded={menuOpen}
               aria-haspopup="true"
-              className="relative flex h-12 items-center gap-2 px-5 text-[14px] font-medium"
+              className="relative flex h-12 items-center gap-2 px-5 text-[14px] font-medium outline outline-1 outline-white/[0.12]"
               style={
                 {
                   backgroundColor: dockBg,
@@ -701,21 +730,27 @@ export default function NavDock({
                   <div className="mt-3 flex flex-col gap-2.5 border-t border-[color:var(--nav-label)] pt-4">
                     <Link
                       href="/signup"
-                      className="flex h-11 w-full items-stretch text-[13px] font-semibold tracking-[-0.5px]"
+                      className="relative block w-full p-px text-[13px] font-semibold tracking-[-0.5px]"
                     >
-                      <span className="flex w-11 items-center justify-center bg-[#0a0a0a]">
-                        <SplitArrow />
+                      <Shine />
+                      <span className="relative flex h-11 items-stretch border border-[#111111]">
+                        <span className="flex w-11 items-center justify-center bg-[#eeeeee]">
+                          <SplitArrow dark />
+                        </span>
+                        <span className="flex flex-1 items-center justify-center bg-white text-ink">Sign up</span>
                       </span>
-                      <span className="flex flex-1 items-center justify-center border border-l-0 border-black/[0.12] bg-white text-ink">Sign up</span>
                     </Link>
                     <Link
                       href="/signup"
-                      className="flex h-11 w-full items-stretch text-[13px] font-semibold tracking-[-0.5px]"
+                      className="relative block w-full p-px text-[13px] font-semibold tracking-[-0.5px]"
                     >
-                      <span className="flex w-11 items-center justify-center bg-[#0a0a0a]">
-                        <SplitArrow />
+                      <Shine />
+                      <span className="relative flex h-11 items-stretch">
+                        <span className="flex w-11 items-center justify-center bg-[#0a0a0a]">
+                          <SplitArrow />
+                        </span>
+                        <span className="flex flex-1 items-center justify-center bg-[#2c2c2c] text-white">Get started</span>
                       </span>
-                      <span className="flex flex-1 items-center justify-center bg-[#2c2c2c] text-white">Get started</span>
                     </Link>
                   </div>
                 </motion.div>

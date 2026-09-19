@@ -169,20 +169,42 @@ function MobileHero() {
         Yearly activity stacked left with Payment due full-height right,
         then Total spending — the app's exact anatomy ---- */
 
+/* the grid's small crosshair where a rule meets a rail */
+function GridCross({ pos }: { pos: "top-left" | "bottom-right" }) {
+  const at = pos === "top-left" ? "-left-[7px] -top-[7px]" : "-bottom-[7px] -right-[7px]";
+  return (
+    <span className={`pointer-events-none absolute z-10 h-[13px] w-[13px] ${at}`} aria-hidden>
+      <span className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-black/40" />
+      <span className="absolute left-0 top-1/2 h-px w-full -translate-y-1/2 bg-black/40" />
+    </span>
+  );
+}
+
 function WalletSpendBlock() {
   return (
     <div className="flex w-full flex-col gap-2.5">
       <WalletStack open />
-      <div className="flex items-stretch gap-2.5">
-        <div className="flex flex-1 flex-col gap-2.5">
-          <CardExpenses />
-          <YearlyActivity />
+      {/* the spend tiles and the total, on the site's ruled grid: one
+          framed block, cells sharing hairlines, rules running past the
+          frame with crosshairs at two corners */}
+      <div className="relative mt-1.5 border border-black/[0.12]">
+        <span className="pointer-events-none absolute -left-6 -right-6 -top-px h-px bg-black/[0.12]" />
+        <span className="pointer-events-none absolute -bottom-px -left-6 -right-6 h-px bg-black/[0.12]" />
+        <GridCross pos="top-left" />
+        <GridCross pos="bottom-right" />
+        <div className="grid grid-cols-2">
+          <div className="flex flex-col">
+            <CardExpenses />
+            <YearlyActivity />
+          </div>
+          <div className="flex border-l border-black/[0.12]">
+            <PaymentDue />
+          </div>
         </div>
-        <div className="flex flex-1">
-          <PaymentDue />
+        <div className="border-t border-black/[0.12]">
+          <TotalSpending />
         </div>
       </div>
-      <TotalSpending />
     </div>
   );
 }
@@ -300,7 +322,7 @@ function WalletStack({ open }: { open: boolean }) {
 
 function CardExpenses() {
   return (
-    <div className="flex flex-1 flex-col rounded-[18px] bg-white p-3">
+    <div className="flex flex-1 flex-col bg-white p-3">
       <span className="text-[11px] font-medium text-sub">Agent spend</span>
       <span className="font-numeral mt-1 text-[21px] font-semibold tracking-[-0.5px] text-ink">
         {money(1240.6)}
@@ -311,7 +333,7 @@ function CardExpenses() {
 
 function PaymentDue() {
   return (
-    <div className="flex w-full flex-col rounded-[18px] bg-white p-3">
+    <div className="flex w-full flex-col bg-white p-3">
       <span className="text-[11px] font-medium text-sub">Renewing soon</span>
       <span className="font-numeral mt-1 text-[21px] font-semibold tracking-[-0.5px] text-ink">
         $120
@@ -329,7 +351,7 @@ function PaymentDue() {
       {/* white pill, the app's Pay Early treatment */}
       <button
         type="button"
-        className="mt-auto h-9 w-full rounded-full bg-mist text-[12px] font-semibold text-ink"
+        className="mt-auto h-9 w-full border border-black/[0.12] bg-mist text-[12px] font-semibold text-ink"
       >
         See plans
       </button>
@@ -339,7 +361,7 @@ function PaymentDue() {
 
 function YearlyActivity() {
   return (
-    <div className="flex flex-1 flex-col rounded-[18px] bg-white p-3">
+    <div className="flex flex-1 flex-col border-t border-black/[0.12] bg-white p-3">
       <span className="text-[11px] font-medium text-sub">Yearly activity</span>
       <div className="mt-2 flex flex-1 items-end justify-between">
         {YEARLY.map((v, i) => (
@@ -367,12 +389,12 @@ function YearlyActivity() {
 
 function TotalSpending() {
   return (
-    <div className="rounded-[18px] p-3" style={{ backgroundColor: "#0a0a0a" }}>
+    <div className="p-3" style={{ backgroundColor: "#0a0a0a" }}>
       <div className="flex items-center justify-between">
         <span className="text-[11px] font-medium text-white/60">
           Total agent spend
         </span>
-        <span className="flex items-center gap-1 rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold text-ink">
+        <span className="flex items-center gap-1 bg-white px-2.5 py-1 text-[11px] font-semibold text-ink">
           Jul 2026
           <svg width="8" height="8" viewBox="0 0 16 16" fill="none" aria-hidden>
             <path
