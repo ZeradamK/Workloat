@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, animate, motion, useMotionValue } from "motion/react";
@@ -166,19 +166,43 @@ const WORKFLOWS = [
 
 const CARD_W = 452;
 const CARD_GAP = 22;
-const STEP = CARD_W + CARD_GAP;
 
 function Workflows() {
   const [index, setIndex] = useState(0);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  /* measured: the row's inner width, from which the card width (452px,
+     or narrower on small screens), the edge room (100px, less on small
+     screens), and how far the track may travel all follow. The first
+     card starts at the edge room; the last card ends at the same room
+     from the right, and the track stops there. */
+  const [m, setM] = useState({ card: CARD_W, pad: 100, travel: 0 });
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    const measure = () => {
+      const w = el.clientWidth;
+      const pad = Math.min(100, Math.max(20, w * 0.06));
+      const card = Math.min(CARD_W, w - 2 * pad);
+      const track = WORKFLOWS.length * card + (WORKFLOWS.length - 1) * CARD_GAP;
+      setM({ card, pad, travel: Math.max(0, track + 2 * pad - w) });
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  const step = m.card + CARD_GAP;
   const max = WORKFLOWS.length - 1;
   /* the track's x: the arrows animate it, a drag moves it live and then
-     snaps to the nearest card by position and fling */
+     snaps to the nearest card by position and fling, never past the
+     ends */
   const x = useMotionValue(0);
   const go = (i: number) => {
     const next = Math.min(max, Math.max(0, i));
     setIndex(next);
-    animate(x, -next * STEP, { type: "spring", stiffness: 140, damping: 26 });
+    animate(x, -Math.min(next * step, m.travel), { type: "spring", stiffness: 140, damping: 26 });
   };
+  const atEnd = index === max || index * step >= m.travel;
   return (
     <section className="overflow-hidden pb-[clamp(72px,7vw,140px)] pt-[clamp(40px,4.4vw,84px)]">
       {/* the headline in a framed cell of the grid */}
@@ -195,28 +219,27 @@ function Workflows() {
         </div>
       </div>
 
-      {/* the track on the ruled grid: 452x630 cells with room between
-          them, each cell's edges running out to the two full-width rules
-          above and below; centered so a cell bleeds on both edges like
-          Amigo's; drag it or use the arrows */}
-      <div className="relative flex justify-center border-y border-black/[0.08] py-6">
+      {/* the track on the ruled grid: cells with room between them, each
+          cell's edges running out to the two full-width rules above and
+          below; drag it or use the arrows */}
+      <div ref={wrapRef} className="relative border-y border-black/[0.08] py-6">
         <motion.div
           className="flex cursor-grab gap-[22px] active:cursor-grabbing"
-          style={{ x }}
+          style={{ x, paddingLeft: m.pad }}
           drag="x"
-          dragConstraints={{ left: -max * STEP, right: 0 }}
+          dragConstraints={{ left: -m.travel, right: 0 }}
           dragElastic={0.12}
           dragMomentum={false}
           onDragEnd={(_, info) => {
             const fling = info.velocity.x;
-            const at = -x.get() / STEP;
+            const at = -x.get() / step;
             const target =
               Math.abs(fling) > 400 ? (fling < 0 ? Math.ceil(at) : Math.floor(at)) : Math.round(at);
             go(target);
           }}
         >
           {WORKFLOWS.map((w) => (
-            <WorkflowCard key={w.label} {...w} />
+            <WorkflowCard key={w.label} {...w} width={m.card} />
           ))}
         </motion.div>
       </div>
@@ -236,7 +259,7 @@ function Workflows() {
           aria-label="Next"
           onClick={() => go(index + 1)}
           className="flex h-[34px] w-[34px] items-center justify-center rounded-full bg-mist text-ink transition-transform hover:scale-105 disabled:opacity-40"
-          disabled={index === max}
+          disabled={atEnd}
         >
           <ArrowIcon dir="right" />
         </button>
@@ -271,11 +294,12 @@ function WorkflowCard({
   label,
   canvas,
   figure,
-}: (typeof WORKFLOWS)[number]) {
+  width,
+}: (typeof WORKFLOWS)[number] & { width: number }) {
   const bg = canvas === "mist" ? "#eeeeee" : canvas === "ink" ? INK : GREEN;
   const dark = canvas !== "mist";
   return (
-    <div className="relative shrink-0" style={{ width: CARD_W, height: 630 }}>
+    <div className="relative shrink-0" style={{ width, height: Math.round(width * (630 / 452)) }}>
       {/* the cell's edges run out to the rules above and below */}
       <span className="pointer-events-none absolute -bottom-6 -top-6 left-0 w-px bg-black/[0.08]" />
       <span className="pointer-events-none absolute -bottom-6 -top-6 right-0 w-px bg-black/[0.08]" />
@@ -911,7 +935,7 @@ function GuideCover({ g }: { g: (typeof GUIDES)[number] }) {
         {g.tag}
       </span>
       <span
-        className={`${CAPS} absolute right-[26px] top-[36px] text-[10px]`}
+        className={`${CAPS} absolute right-[26px] top-[36px] hidden text-[10px] min-[1100px]:block`}
         style={{ color: onPhoto ? "rgba(255,255,255,0.7)" : "rgba(10,10,10,0.45)" }}
       >
         Sample data
