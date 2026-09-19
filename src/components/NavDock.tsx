@@ -30,7 +30,7 @@ const SPRING = {
 } as const;
 
 const DOCK_H = 48;
-const RADIUS = 24;
+const RADIUS = 0;
 
 type PanelKey = "Product" | "Features" | "Pricing" | "Contact";
 
@@ -97,6 +97,15 @@ const lerpRgb = (a: Rgb, b: Rgb, t: number): Rgb =>
 const lerpHex = (a: string, b: string, t: number) => lerpRgb(hex(a), hex(b), t);
 const rgb = (c: Rgb) => `rgb(${c[0]},${c[1]},${c[2]})`;
 const rgba = (c: Rgb, a: number) => `rgba(${c[0]},${c[1]},${c[2]},${a})`;
+
+/* the arrow in a split button's block */
+function SplitArrow() {
+  return (
+    <svg width="11" height="11" viewBox="0 0 16 16" fill="none" aria-hidden>
+      <path d="M5 2.5 10.5 8 5 13.5" stroke="#ffffff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
 
 export default function NavDock({
   introChoreo = false,
@@ -400,14 +409,14 @@ export default function NavDock({
                   }}
                   aria-expanded={active === item}
                   aria-haspopup="true"
-                  className="relative flex h-[38px] items-center gap-1.5 rounded-full px-4 text-[14px] font-medium tracking-[-0.2px] transition-colors duration-150"
+                  className="relative flex h-[38px] items-center gap-1.5 px-4 text-[14px] font-medium tracking-[-0.2px] transition-colors duration-150"
                 style={{ color: highlight === item ? "#0a0a0a" : "var(--nav-fg)" }}
                 >
                   <AnimatePresence>
                     {highlight === item && (
                       <motion.span
                         layoutId="dockHover"
-                        className="absolute inset-0 rounded-full"
+                        className="absolute inset-0"
                         style={{ backgroundColor: "var(--nav-pill)" }}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -477,34 +486,26 @@ export default function NavDock({
               : undefined
           }
         >
+          {/* the split buttons: an arrow block on the left, the label on
+              the body, square, in the grid design */}
           <Link
             href="/signup"
-            className="group hidden h-11 items-center gap-1.5 rounded-full bg-white px-5 text-[13px] font-semibold tracking-[-0.5px] text-ink shadow-[0_1px_3px_rgba(0,0,0,0.08)] transition-transform hover:scale-[1.03] active:scale-[0.97] sm:flex"
+            className="hidden h-11 items-stretch text-[13px] font-semibold tracking-[-0.5px] transition-transform hover:scale-[1.02] active:scale-[0.98] sm:flex"
           >
-            Sign up
-            <svg
-              width="11"
-              height="11"
-              viewBox="0 0 16 16"
-              fill="none"
-              aria-hidden
-              className="transition-transform duration-200 ease-out group-hover:translate-x-[3px]"
-            >
-              <path
-                d="M2.5 8h11m0 0L8.8 3.3M13.5 8l-4.7 4.7"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            <span className="flex w-11 items-center justify-center bg-[#0a0a0a]">
+              <SplitArrow />
+            </span>
+            <span className="flex items-center border border-l-0 border-black/[0.12] bg-white px-5 text-ink">Sign up</span>
           </Link>
           <Link
             href="/signup"
-            className="flex h-11 items-center rounded-full bg-[#0a0a0a] px-5 text-[13px] font-semibold tracking-[-0.5px] text-white transition-transform hover:scale-[1.03] active:scale-[0.97]"
-            style={ctaOutline ? { border: "1px solid #ffffff" } : undefined}
+            className="flex h-11 items-stretch text-[13px] font-semibold tracking-[-0.5px] transition-transform hover:scale-[1.02] active:scale-[0.98]"
+            style={ctaOutline ? { outline: "1px solid #ffffff" } : undefined}
           >
-            Get started
+            <span className="flex w-11 items-center justify-center bg-[#0a0a0a]">
+              <SplitArrow />
+            </span>
+            <span className="flex items-center bg-[#2c2c2c] px-5 text-white">Get started</span>
           </Link>
         </motion.div>
         )}
@@ -523,7 +524,7 @@ export default function NavDock({
               onClick={() => setMenuOpen((v) => !v)}
               aria-expanded={menuOpen}
               aria-haspopup="true"
-              className="relative flex h-12 items-center gap-2 rounded-full px-5 text-[14px] font-medium"
+              className="relative flex h-12 items-center gap-2 px-5 text-[14px] font-medium"
               style={
                 {
                   backgroundColor: dockBg,
@@ -559,7 +560,7 @@ export default function NavDock({
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10, transition: { duration: 0.15 } }}
                   transition={{ type: "spring", stiffness: 320, damping: 30 }}
-                  className="no-scrollbar absolute right-0 top-[58px] w-[min(340px,calc(100vw-40px))] overflow-y-auto rounded-[24px] p-5"
+                  className="no-scrollbar absolute right-0 top-[58px] w-[min(340px,calc(100vw-40px))] overflow-y-auto p-5"
                   style={
                     {
                       backgroundColor: dockBg,
@@ -700,19 +701,21 @@ export default function NavDock({
                   <div className="mt-3 flex flex-col gap-2.5 border-t border-[color:var(--nav-label)] pt-4">
                     <Link
                       href="/signup"
-                      className="flex h-11 w-full items-center justify-center rounded-full border border-solid border-black bg-white text-[13px] font-semibold tracking-[-0.5px] text-ink"
+                      className="flex h-11 w-full items-stretch text-[13px] font-semibold tracking-[-0.5px]"
                     >
-                      Sign up
+                      <span className="flex w-11 items-center justify-center bg-[#0a0a0a]">
+                        <SplitArrow />
+                      </span>
+                      <span className="flex flex-1 items-center justify-center border border-l-0 border-black/[0.12] bg-white text-ink">Sign up</span>
                     </Link>
                     <Link
                       href="/signup"
-                      className="flex h-11 w-full items-center justify-center rounded-full text-[13px] font-semibold tracking-[-0.5px]"
-                      style={{
-                        backgroundColor: "var(--nav-fg)",
-                        color: "var(--nav-bg)",
-                      }}
+                      className="flex h-11 w-full items-stretch text-[13px] font-semibold tracking-[-0.5px]"
                     >
-                      Get started
+                      <span className="flex w-11 items-center justify-center bg-[#0a0a0a]">
+                        <SplitArrow />
+                      </span>
+                      <span className="flex flex-1 items-center justify-center bg-[#2c2c2c] text-white">Get started</span>
                     </Link>
                   </div>
                 </motion.div>
