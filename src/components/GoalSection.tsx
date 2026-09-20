@@ -135,8 +135,8 @@ export default function GoalSection() {
                       : { opacity: 0, y: 34 }
                 }
                 transition={{ type: "spring", stiffness: 320, damping: 26 }}
-                className="absolute inset-x-0 top-0 flex items-center gap-3 rounded-[18px] py-[6px] pl-[6px] pr-2.5"
-                style={{ backgroundColor: n.bg }}
+                className="absolute inset-x-0 top-0 flex items-center gap-3 py-[6px] pl-[6px] pr-2.5"
+                style={{ backgroundColor: n.bg, border: `1px solid ${n.dark ? "rgba(255,255,255,0.15)" : "rgba(10,10,10,0.12)"}` }}
               >
                 <NotifInner n={n} />
               </motion.div>
@@ -168,13 +168,13 @@ export default function GoalSection() {
 function NotifInner({ n }: { n: (typeof NOTIFS)[number] }) {
   return (
     <>
-      <span className="flex h-[43px] w-[43px] shrink-0 items-center justify-center rounded-[11px] bg-white">
+      <span className="flex h-[43px] w-[43px] shrink-0 items-center justify-center border border-black/[0.12] bg-white">
         <Image
           src={n.logo}
           alt={n.name}
           width={54}
           height={54}
-          className="h-[27px] w-[27px] rounded-[5px] object-contain"
+          className="h-[27px] w-[27px] object-contain"
         />
       </span>
       <span className="min-w-0 flex-1">
