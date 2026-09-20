@@ -100,6 +100,9 @@ export default function Home() {
         />
       </div>
 
+      {/* the compatibility grid, shared with the enterprise page */}
+      <Compatible />
+
       {/* Markets closer: shader card + white $0 on black */}
       <MarketsSection />
 
@@ -107,8 +110,7 @@ export default function Home() {
       <SecuritySection />
 
       {/* FAQ accordion */}
-      {/* the compatibility grid and the plans, shared with the enterprise page */}
-      <Compatible />
+      {/* the plans, shared with the enterprise page */}
       <Pricing />
 
       <FAQSection tone="dark" />
