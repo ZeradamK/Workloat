@@ -15,8 +15,8 @@ import { AnimatePresence, motion } from "motion/react";
  * viewport as the screen narrows; once its contents no longer fit, the
  * compact Menu nav takes over.
  *
- * The bar reads the ground under it and takes the opposite: #eeeeee on
- * white, white on #eeeeee, black on black.
+ * The bar is white, and turns black only while it sits over an #eeeeee
+ * ground.
  */
 
 const SPRING = { type: "spring", stiffness: 380, damping: 34, mass: 0.8 } as const;
@@ -76,9 +76,9 @@ const PAGE_ROUTES: Partial<Record<PanelKey, string>> = {
    each: the opposite of the ground */
 type Ground = "white" | "mist" | "black";
 const SURFACE: Record<Ground, { bg: string; fg: string; rule: string; hover: string }> = {
-  white: { bg: "#eeeeee", fg: "#0a0a0a", rule: "rgba(10,10,10,0.12)", hover: "#ffffff" },
-  mist: { bg: "#ffffff", fg: "#0a0a0a", rule: "rgba(10,10,10,0.12)", hover: "#eeeeee" },
-  black: { bg: "#0a0a0a", fg: "#ffffff", rule: "rgba(255,255,255,0.18)", hover: "#1a1a1a" },
+  white: { bg: "#ffffff", fg: "#0a0a0a", rule: "rgba(10,10,10,0.12)", hover: "#eeeeee" },
+  mist: { bg: "#0a0a0a", fg: "#ffffff", rule: "rgba(255,255,255,0.18)", hover: "#1a1a1a" },
+  black: { bg: "#ffffff", fg: "#0a0a0a", rule: "rgba(10,10,10,0.12)", hover: "#eeeeee" },
 };
 
 /* the arrow in a split button's block */
@@ -211,11 +211,12 @@ export default function NavDock(_props: {
 
   /* the Sign up split button: on the light surfaces the nav's black and
      dark gray; on the black surface an #eeeeee block and a white body */
-  const signupBlock = ground === "black" ? "#eeeeee" : "#0a0a0a";
-  const signupBody = ground === "black" ? "#ffffff" : "#2c2c2c";
-  const signupFg = ground === "black" ? "#0a0a0a" : "#ffffff";
-  const wordmark = ground === "black" ? "/payloat-wordmark-white.svg" : "/payloat-wordmark-black.svg";
-  const label = ground === "black" ? "rgba(255,255,255,0.4)" : "rgba(10,10,10,0.4)";
+  const darkBar = S.bg === "#0a0a0a";
+  const signupBlock = darkBar ? "#eeeeee" : "#0a0a0a";
+  const signupBody = darkBar ? "#ffffff" : "#2c2c2c";
+  const signupFg = darkBar ? "#0a0a0a" : "#ffffff";
+  const wordmark = darkBar ? "/payloat-wordmark-white.svg" : "/payloat-wordmark-black.svg";
+  const label = darkBar ? "rgba(255,255,255,0.4)" : "rgba(10,10,10,0.4)";
 
   return (
     <header ref={headerRef} className="pointer-events-none fixed inset-x-0 top-0 z-50">
@@ -306,7 +307,7 @@ export default function NavDock(_props: {
                   className="flex h-11 items-stretch text-[13px] font-semibold tracking-[-0.5px] transition-opacity hover:opacity-90"
                 >
                   <span className="flex w-11 items-center justify-center" style={{ backgroundColor: signupBlock }}>
-                    <SplitArrow dark={ground === "black"} />
+                    <SplitArrow dark={darkBar} />
                   </span>
                   <span className="flex items-center px-5" style={{ backgroundColor: signupBody, color: signupFg }}>
                     Sign up
@@ -477,7 +478,7 @@ export default function NavDock(_props: {
                     <div className="mt-3 border-t pt-4" style={{ borderColor: S.rule }}>
                       <Link href="/signup" className="flex w-full items-stretch text-[13px] font-semibold tracking-[-0.5px]">
                         <span className="flex w-11 items-center justify-center" style={{ backgroundColor: signupBlock }}>
-                          <SplitArrow dark={ground === "black"} />
+                          <SplitArrow dark={darkBar} />
                         </span>
                         <span className="flex flex-1 items-center justify-center" style={{ backgroundColor: signupBody, color: signupFg }}>
                           Sign up
