@@ -143,7 +143,24 @@ export default function GoalSection() {
             );
           })}
         </div>
-        <h2 className="relative z-10 max-w-[860px] px-6 text-center text-[clamp(28px,4.1vw,59px)] font-semibold leading-[1.15] tracking-[-1.5px]">
+        {/* the headline in a ruled cell: rails, rules running past them,
+            crosshairs at two corners, and a faint grid behind the words */}
+        <div className="relative z-10 mx-auto w-[min(920px,calc(100vw-48px))] border-x border-black/[0.08]">
+          <span className="pointer-events-none absolute -left-6 -right-6 -top-px h-px bg-black/[0.08]" />
+          <span className="pointer-events-none absolute -bottom-px -left-6 -right-6 h-px bg-black/[0.08]" />
+          <GoalCross pos="top-left" />
+          <GoalCross pos="bottom-right" />
+          <div
+            className="pointer-events-none absolute inset-0"
+            aria-hidden
+            style={{
+              backgroundImage:
+                "linear-gradient(to right, rgba(10,10,10,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(10,10,10,0.05) 1px, transparent 1px)",
+              backgroundSize: "12.5% 25%",
+              backgroundPosition: "-1px -1px",
+            }}
+          />
+        <h2 className="relative border-y border-black/[0.08] px-[clamp(20px,4vw,56px)] py-[clamp(28px,4vw,64px)] text-center text-[clamp(28px,4.1vw,59px)] font-semibold leading-[1.15] tracking-[-1.5px]">
           {WORDS.map((word, i) => {
             const filled = i < wordsFilled;
             return (
@@ -159,8 +176,20 @@ export default function GoalSection() {
           })}
         </h2>
         </div>
+        </div>
       </div>
     </div>
+  );
+}
+
+/* the grid's small crosshair where a rule meets a rail */
+function GoalCross({ pos }: { pos: "top-left" | "bottom-right" }) {
+  const at = pos === "top-left" ? "-left-[7px] -top-[7px]" : "-bottom-[7px] -right-[7px]";
+  return (
+    <span className={`pointer-events-none absolute z-10 h-[13px] w-[13px] ${at}`} aria-hidden>
+      <span className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-black/40" />
+      <span className="absolute left-0 top-1/2 h-px w-full -translate-y-1/2 bg-black/40" />
+    </span>
   );
 }
 
