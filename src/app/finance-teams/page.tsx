@@ -772,7 +772,7 @@ function BuiltFor() {
                     {step.body}
                   </p>
                   <div className="mt-[clamp(28px,2.9vw,56px)]">
-                    <Pill href="/product">Explore the platform</Pill>
+                    <ArrowButton href="/product" tone="light">Explore the platform</ArrowButton>
                   </div>
                 </motion.div>
               </AnimatePresence>
@@ -838,7 +838,7 @@ function SetUp() {
                 install on the agents themselves.
               </motion.p>
               <motion.div {...up} className="mt-[clamp(24px,2.4vw,46px)]">
-                <Pill href="/integration">See the integration</Pill>
+                <ArrowButton href="/integration" tone="light">See the integration</ArrowButton>
               </motion.div>
             </div>
             <motion.div
@@ -1147,9 +1147,9 @@ function Cta() {
               The financial manager your agents report to.
             </h2>
             <div className="mt-[clamp(28px,3vw,58px)]">
-              <Pill href="/contact" light>
+              <ArrowButton href="/contact" tone="pale">
                 Book a demo
-              </Pill>
+              </ArrowButton>
             </div>
           </motion.div>
         </div>
@@ -1162,35 +1162,3 @@ function Cta() {
 /* Shared                                                              */
 /* ------------------------------------------------------------------ */
 
-function Pill({
-  href,
-  children,
-  dark = false,
-  light = false,
-  ghost = false,
-}: {
-  href: string;
-  children: React.ReactNode;
-  /** black pill, white text */
-  dark?: boolean;
-  /** white pill, ink text */
-  light?: boolean;
-  /** translucent white pill on dark grounds */
-  ghost?: boolean;
-}) {
-  const cls = dark
-    ? "bg-[#0a0a0a] text-white"
-    : light
-      ? "bg-white text-ink"
-      : ghost
-        ? "bg-white/15 text-white"
-        : "bg-mist text-ink";
-  return (
-    <Link
-      href={href}
-      className={`inline-flex h-12 items-center rounded-full px-6 text-[15px] font-medium transition-transform hover:scale-[1.03] active:scale-[0.97] ${cls}`}
-    >
-      {children}
-    </Link>
-  );
-}

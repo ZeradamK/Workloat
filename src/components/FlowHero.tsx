@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { motion } from "motion/react";
+import { ArrowButton } from "./EnterpriseBlocks";
 
 /**
  * The finance teams page's hero, shared so the home page runs the same
@@ -119,12 +119,11 @@ export default function FlowHero({
                 transition={{ duration: 0.55, ease: EASE, delay: 0.18 }}
                 className={`mt-[clamp(28px,2.6vw,50px)] ${dark ? "" : "pl-[31px]"}`}
               >
-                <Link
-                  href={cta.href}
-                  className={`inline-flex h-12 items-center rounded-full px-6 text-[15px] font-medium transition-transform hover:scale-[1.03] active:scale-[0.97] ${dark ? "bg-white text-ink" : "bg-[#0a0a0a] text-white"}`}
-                >
+                {/* the split button: black and #eeeeee on white, #eeeeee
+                    and white on black */}
+                <ArrowButton href={cta.href} tone={dark ? "pale" : "light"}>
                   {cta.label}
-                </Link>
+                </ArrowButton>
               </motion.div>
             </div>
 
