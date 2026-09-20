@@ -8,6 +8,7 @@ import NavDock from "@/components/NavDock";
 import FooterSection from "@/components/FooterSection";
 import StatsStatement from "@/components/StatsStatement";
 import FlowHero from "@/components/FlowHero";
+import { ArrowButton } from "@/components/EnterpriseBlocks";
 import InsightsChart from "@/components/tracker/InsightsChart";
 import AgentScene, { type SceneKey } from "@/components/AgentScenes";
 import { money } from "@/components/tracker/money";
@@ -248,7 +249,7 @@ function Workflows() {
           type="button"
           aria-label="Previous"
           onClick={() => go(index - 1)}
-          className="flex h-[34px] w-[34px] items-center justify-center rounded-full bg-mist text-ink transition-transform hover:scale-105 disabled:opacity-40"
+          className="flex h-[34px] w-[34px] items-center justify-center border border-black/[0.12] bg-white text-ink transition-transform hover:scale-105 disabled:opacity-40"
           disabled={index === 0}
         >
           <ArrowIcon dir="left" />
@@ -257,7 +258,7 @@ function Workflows() {
           type="button"
           aria-label="Next"
           onClick={() => go(index + 1)}
-          className="flex h-[34px] w-[34px] items-center justify-center rounded-full bg-mist text-ink transition-transform hover:scale-105 disabled:opacity-40"
+          className="flex h-[34px] w-[34px] items-center justify-center border border-black/[0.12] bg-white text-ink transition-transform hover:scale-105 disabled:opacity-40"
           disabled={atEnd}
         >
           <ArrowIcon dir="right" />
@@ -309,10 +310,7 @@ function WorkflowCard({
       <div className="absolute inset-x-[36px] top-[44px]">
         <Figure kind={figure} dark={dark} />
       </div>
-      <span
-        className="absolute left-1/2 top-1/2 flex h-[50px] -translate-x-1/2 -translate-y-1/2 items-center rounded-[10px] px-[26px] text-[18px] text-white backdrop-blur-md"
-        style={{ backgroundColor: dark ? "rgba(255,255,255,0.18)" : "rgba(10,10,10,0.55)" }}
-      >
+      <span className="absolute left-1/2 top-1/2 flex h-[50px] -translate-x-1/2 -translate-y-1/2 items-center border border-[#0a0a0a] bg-white px-[26px] text-[18px] text-ink">
         {label}
       </span>
       </div>
@@ -331,6 +329,7 @@ function Figure({
   const muted = dark ? "rgba(255,255,255,0.55)" : "rgba(10,10,10,0.5)";
   const track = dark ? "rgba(255,255,255,0.14)" : "rgba(10,10,10,0.08)";
   const card = dark ? "rgba(255,255,255,0.08)" : "#ffffff";
+  const line = dark ? "rgba(255,255,255,0.2)" : "rgba(10,10,10,0.12)";
   if (kind === "budgets") {
     const rows = [
       ["Engineering agents", 0.72, 8400],
@@ -345,9 +344,9 @@ function Figure({
               <span>{name}</span>
               <span className="font-numeral">{money(amt)}</span>
             </div>
-            <div className="mt-2 h-[6px] rounded-full" style={{ backgroundColor: track }}>
+            <div className="mt-2 h-[6px] border" style={{ backgroundColor: track, borderColor: line }}>
               <motion.div
-                className="h-full rounded-full"
+                className="h-full"
                 style={{ backgroundColor: pct > 0.85 ? "#9fe870" : fg }}
                 initial={{ width: 0 }}
                 whileInView={{ width: `${pct * 100}%` }}
@@ -362,7 +361,7 @@ function Figure({
   }
   if (kind === "approval") {
     return (
-      <div className="rounded-[16px] p-4" style={{ backgroundColor: card }}>
+      <div className="border p-4" style={{ backgroundColor: card, borderColor: line }}>
         <div className="flex items-center justify-between text-[12px]" style={{ color: muted }}>
           <span>OpenAI · research agent</span>
           <span>2:14 PM</span>
@@ -374,10 +373,10 @@ function Figure({
           Under the $3,000 monthly cap. Approved by Payle.
         </p>
         <div className="mt-3 flex gap-2">
-          <span className="rounded-full px-3 py-1 text-[12px] font-medium" style={{ backgroundColor: "#9fe870", color: INK }}>
+          <span className="border px-3 py-1 text-[12px] font-medium" style={{ backgroundColor: "#9fe870", color: INK, borderColor: line }}>
             Approved
           </span>
-          <span className="rounded-full px-3 py-1 text-[12px] font-medium" style={{ backgroundColor: track, color: fg }}>
+          <span className="border px-3 py-1 text-[12px] font-medium" style={{ backgroundColor: track, color: fg, borderColor: line }}>
             Task: Q3 market brief
           </span>
         </div>
@@ -391,8 +390,8 @@ function Figure({
         {items.map((it, i) => (
           <div key={it} className="flex items-center gap-3 text-[14px]" style={{ color: fg }}>
             <span
-              className="flex h-5 w-5 items-center justify-center rounded-full"
-              style={{ backgroundColor: i < 3 ? "#9fe870" : track }}
+              className="flex h-5 w-5 items-center justify-center border"
+              style={{ backgroundColor: i < 3 ? "#9fe870" : track, borderColor: line }}
             >
               {i < 3 && (
                 <svg width="10" height="10" viewBox="0 0 16 16" fill="none" aria-hidden>
@@ -415,8 +414,8 @@ function Figure({
     return (
       <div className="flex flex-col gap-2.5">
         {v.map(([src, name, amt]) => (
-          <div key={name} className="flex items-center gap-3 rounded-[14px] px-3 py-2.5" style={{ backgroundColor: card }}>
-            <span className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-white">
+          <div key={name} className="flex items-center gap-3 border px-3 py-2.5" style={{ backgroundColor: card, borderColor: line }}>
+            <span className="flex h-8 w-8 items-center justify-center border border-black/[0.12] bg-white">
               <Image src={src} alt={name} width={18} height={18} className="h-[18px] w-[18px]" />
             </span>
             <span className="flex-1 text-[13px]" style={{ color: fg }}>{name}</span>
@@ -427,7 +426,7 @@ function Figure({
     );
   }
   return (
-    <div className="rounded-[16px] p-4" style={{ backgroundColor: card }}>
+    <div className="border p-4" style={{ backgroundColor: card, borderColor: line }}>
       <p className="text-[12px]" style={{ color: muted }}>Projected agent spend, July</p>
       <p className="font-numeral mt-1 text-[24px] font-semibold tracking-[-1px]" style={{ color: fg }}>
         {money(2350)}
@@ -468,6 +467,17 @@ const PLAYS = [
   },
 ];
 
+/* the crosshair in white, for the exchange card on black */
+function PlayCross({ pos }: { pos: "top-left" | "bottom-right" }) {
+  const at = pos === "top-left" ? "-left-[7px] -top-[7px]" : "-bottom-[7px] -right-[7px]";
+  return (
+    <span className={`pointer-events-none absolute z-10 h-[13px] w-[13px] ${at}`} aria-hidden>
+      <span className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-white/60" />
+      <span className="absolute left-0 top-1/2 h-px w-full -translate-y-1/2 bg-white/60" />
+    </span>
+  );
+}
+
 function Playbook() {
   const [i, setI] = useState(0);
   const play = PLAYS[i];
@@ -491,9 +501,9 @@ function Playbook() {
               </span>
             </motion.h2>
             <motion.div {...up} className="mt-[clamp(48px,6vw,116px)]">
-              <Pill href="/product" ghost>
+              <ArrowButton href="/product" tone="inverse">
                 Explore the platform
-              </Pill>
+              </ArrowButton>
             </motion.div>
 
             {/* tabs, mono caps with the active bar on the rule */}
@@ -545,38 +555,44 @@ function Playbook() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10, transition: { duration: 0.15 } }}
                   transition={{ duration: 0.35, ease: EASE, delay: 0.05 }}
-                  className="max-w-[560px] rounded-[16px] bg-white p-5 text-ink"
+                  className="relative max-w-[560px] border border-white/25 text-white"
+                  style={{ backgroundColor: INK }}
                 >
-                  <div className="flex items-start gap-3">
+                  {/* the grid's rules and crosshairs, in white */}
+                  <span className="pointer-events-none absolute -left-6 -right-6 -top-px h-px bg-white/25" />
+                  <span className="pointer-events-none absolute -bottom-px -left-6 -right-6 h-px bg-white/25" />
+                  <PlayCross pos="top-left" />
+                  <PlayCross pos="bottom-right" />
+                  <div className="flex items-start gap-3 p-5">
                     <Image
                       src="/zeradam.jpg"
                       alt=""
                       width={32}
                       height={32}
-                      className="mt-0.5 h-8 w-8 shrink-0 rounded-[8px] object-cover"
+                      className="mt-0.5 h-8 w-8 shrink-0 border border-white/25 object-cover"
                     />
                     <div>
                       <p className="text-[13px] font-semibold">Zeradam</p>
                       <p className="mt-0.5 text-[15px] leading-[1.4]">{play.ask}</p>
                     </div>
                   </div>
-                  <div className="mt-4 flex items-start gap-3">
+                  <div className="flex items-start gap-3 border-t border-white/25 p-5">
                     <Image
                       src="/payloat-app-icon-blacktile.png"
                       alt=""
                       width={32}
                       height={32}
-                      className="mt-0.5 h-8 w-8 shrink-0 rounded-[8px]"
+                      className="mt-0.5 h-8 w-8 shrink-0 border border-white/25"
                     />
                     <div className="flex-1">
                       <p className="text-[13px] font-semibold">
-                        Payle <span className="ml-1 rounded-[4px] bg-mist px-1.5 py-px text-[10px] font-medium text-sub">APP</span>
+                        Payle <span className="ml-1 border border-white/25 px-1.5 py-px text-[10px] font-medium text-white/70">APP</span>
                       </p>
                       <p className="mt-0.5 text-[15px] leading-[1.4]">{play.reply}</p>
-                      <div className="mt-3 h-[6px] rounded-full bg-mist">
+                      <div className="mt-3 h-[6px] border border-white/25">
                         <motion.div
-                          className="h-full rounded-full"
-                          style={{ backgroundColor: INK }}
+                          className="h-full"
+                          style={{ backgroundColor: "#ffffff" }}
                           initial={{ width: 0 }}
                           animate={{ width: `${play.bar * 100}%` }}
                           transition={{ duration: 0.9, ease: EASE, delay: 0.2 }}
