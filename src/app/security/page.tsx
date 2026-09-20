@@ -51,7 +51,7 @@ export default function SecurityPage() {
     <main className="bg-white">
       <NavDock forceDark />
 
-      <section className="mx-auto max-w-[1200px] px-6 pb-[clamp(96px,11vw,176px)] pt-[200px]">
+      <section className="mx-auto max-w-[1200px] px-6 pb-[clamp(96px,11vw,176px)] pt-[180px]">
         {/* ---- act 1: Built-in security ---- */}
         <motion.h1
           initial={{ opacity: 0, y: 30 }}

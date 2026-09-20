@@ -146,7 +146,7 @@ export default function LedgerPage() {
           the month's figure and the charges that slide in on load. The
           cell's rails run down behind the bank strip beneath. */}
       <section className="relative overflow-x-clip text-white" style={{ backgroundColor: "#0a0a0a" }}>
-        <div className="relative mx-auto grid max-w-[1200px] gap-12 px-6 pt-[150px] min-[900px]:grid-cols-[1.1fr_1fr] min-[900px]:items-center min-[900px]:gap-10 min-[900px]:pt-[200px]" style={{ paddingBottom: HERO_PB }}>
+        <div className="relative mx-auto grid max-w-[1200px] gap-12 px-6 pt-[150px] min-[900px]:grid-cols-[1.1fr_1fr] min-[900px]:items-center min-[900px]:gap-10 min-[900px]:pt-[180px]" style={{ paddingBottom: HERO_PB }}>
           <div className="text-center min-[900px]:text-left">
             <motion.h1
               initial={{ opacity: 0, y: 30 }}

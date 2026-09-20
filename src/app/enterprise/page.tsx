@@ -74,7 +74,7 @@ export default function EnterprisePage() {
 
 function Hero() {
   return (
-    <section className="overflow-x-clip bg-white pt-[150px]">
+    <section className="overflow-x-clip bg-white pt-[136px]">
       <div className="grid min-[1000px]:grid-cols-[52.6fr_47.4fr]">
         <div className={`${GUTTER} flex flex-col justify-center py-[clamp(48px,6vw,120px)]`}>
           {/* Mural's five-color bar: ours, black and lime */}

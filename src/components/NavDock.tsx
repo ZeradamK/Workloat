@@ -8,8 +8,8 @@ import { AnimatePresence, motion } from "motion/react";
 
 /**
  * The nav: one bordered row in the site's grid, taller than its buttons.
- * The mark and the wordmark float left, the items sit centered, Demo and
- * the Sign up split button float right. Items are plain until hovered,
+ * The mark and the wordmark float left, the items sit centered, the
+ * Sign up split button floats right. Items are plain until hovered,
  * when a box appears behind the item and its panel drops 10px below the
  * bar. The row is 1200px wide at 1920 and keeps that share of the
  * viewport as the screen narrows; once its contents no longer fit, the
@@ -20,7 +20,7 @@ import { AnimatePresence, motion } from "motion/react";
  */
 
 const SPRING = { type: "spring", stiffness: 380, damping: 34, mass: 0.8 } as const;
-const BAR_H = 89;
+const BAR_H = 64;
 
 type PanelKey = "Product" | "Features" | "Pricing" | "Contact";
 
@@ -248,8 +248,8 @@ export default function NavDock(_props: {
                 aria-label="Payloat home"
                 className="flex w-fit items-center gap-3 px-2 transition-opacity hover:opacity-80"
               >
-                <Image src="/payloat-app-icon-v2.png" alt="" width={28} height={28} priority className="h-[28px] w-[28px] rounded-[7px]" />
-                <Image src={wordmark} alt="Payloat" width={501} height={166} priority className="h-[15px] w-auto" />
+                <Image src="/payloat-app-icon-v2.png" alt="" width={34} height={34} priority className="h-[34px] w-[34px] rounded-[8px]" />
+                <Image src={wordmark} alt="Payloat" width={501} height={166} priority className="h-[18px] w-auto" />
               </Link>
 
               {/* the items, centered */}
@@ -299,15 +299,8 @@ export default function NavDock(_props: {
                 ))}
               </div>
 
-              {/* Demo and Sign up, floated right */}
-              <div className="flex items-center justify-end gap-2.5" data-cell>
-                <Link
-                  href="/contact"
-                  className="flex h-11 items-center px-5 text-[13px] font-semibold tracking-[-0.5px] text-white transition-opacity hover:opacity-90"
-                  style={{ backgroundColor: "#0a0a0a", border: `1px solid ${ground === "black" ? "rgba(255,255,255,0.25)" : "#0a0a0a"}` }}
-                >
-                  Demo
-                </Link>
+              {/* Sign up, floated right */}
+              <div className="flex items-center justify-end" data-cell>
                 <Link
                   href="/signup"
                   className="flex h-11 items-stretch text-[13px] font-semibold tracking-[-0.5px] transition-opacity hover:opacity-90"
