@@ -77,7 +77,7 @@ export default function ProductPage() {
       <section className="relative overflow-hidden" style={{ backgroundColor: "#eeeeee" }}>
         {/* the ground eases into white toward the markets grid */}
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[clamp(220px,24vw,460px)]" style={{ background: FADE_TO_WHITE }} />
-        <div className="relative mx-auto max-w-[1200px] px-6 pb-[clamp(72px,9vw,140px)] pt-[170px]">
+        <div className="relative mx-auto max-w-[1200px] px-6 pb-[clamp(72px,9vw,140px)] pt-[200px]">
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}

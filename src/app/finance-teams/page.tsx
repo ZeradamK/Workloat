@@ -716,7 +716,7 @@ function BuiltFor() {
     <section className="bg-white">
       <div className={FRAME}>
         {/* the page opens here: room for the nav above the headline */}
-        <div className="relative px-[clamp(20px,2.5vw,48px)] pt-[clamp(140px,9vw,190px)]">
+        <div className="relative px-[clamp(20px,2.5vw,48px)] pt-[clamp(140px,9vw,220px)]">
           <div className="absolute bottom-0 left-[clamp(20px,2.5vw,48px)] top-[clamp(140px,9vw,190px)] hidden w-px bg-black/10 min-[800px]:block" />
 
           <motion.h1

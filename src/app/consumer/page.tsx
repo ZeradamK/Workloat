@@ -60,7 +60,7 @@ export default function ConsumerPage() {
     <main className="bg-white">
       <NavDock forceDark />
 
-      <section className="mx-auto max-w-[1200px] overflow-x-clip px-6 pb-[clamp(96px,11vw,176px)] pt-[170px]">
+      <section className="mx-auto max-w-[1200px] overflow-x-clip px-6 pb-[clamp(96px,11vw,176px)] pt-[200px]">
         {/* ---- section 1: split header + chat / analytics cards ---- */}
         <motion.p
           initial={{ opacity: 0, y: 20 }}
