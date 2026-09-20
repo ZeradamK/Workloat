@@ -285,13 +285,15 @@ export function Pricing() {
 
 /* the split button: a square arrow block on the left, the label on a
    filled body */
-export function ArrowButton({ href, children, tone = "dark" }: { href: string; children: React.ReactNode; tone?: "dark" | "lime" | "light" | "pale" | "inverse" }) {
+export function ArrowButton({ href, children, tone = "dark" }: { href: string; children: React.ReactNode; tone?: "dark" | "lime" | "light" | "pale" | "inverse" | "white" }) {
   const lime = tone === "lime";
   const light = tone === "light";
   /* pale: an #eeeeee arrow block with a dark chevron, a white body;
      inverse: a white arrow block with a dark chevron, an #eeeeee body */
   const pale = tone === "pale";
   const inverse = tone === "inverse";
+  /* white: a black arrow block, a white body, for #eeeeee grounds */
+  const white = tone === "white";
   return (
     <Link href={href} className="group inline-flex h-[60px] items-stretch text-[clamp(16px,1.15vw,22px)] transition-transform hover:scale-[1.02] active:scale-[0.98]">
       <span className="flex w-[60px] items-center justify-center" style={{ backgroundColor: lime ? GREEN : pale ? MIST : inverse ? "#ffffff" : INK }}>
@@ -301,7 +303,7 @@ export function ArrowButton({ href, children, tone = "dark" }: { href: string; c
       </span>
       <span
         className="flex items-center px-8"
-        style={{ backgroundColor: lime ? LIME : light || inverse ? MIST : pale ? "#ffffff" : "#2c2c2c", color: lime || light || pale || inverse ? INK : "#ffffff" }}
+        style={{ backgroundColor: lime ? LIME : light || inverse ? MIST : pale || white ? "#ffffff" : "#2c2c2c", color: lime || light || pale || inverse || white ? INK : "#ffffff" }}
       >
         {children}
       </span>

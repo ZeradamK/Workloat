@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
-import { AnimatePresence, animate, motion } from "motion/react";
+import { useRef, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import NavDock from "@/components/NavDock";
 import FooterSection from "@/components/FooterSection";
 import MarketsSection from "@/components/MarketsSection";
-import { productLight } from "@/components/introProgress";
+import { ArrowButton } from "@/components/EnterpriseBlocks";
 import AgentScene, { type SceneKey } from "@/components/AgentScenes";
 
 /**
@@ -33,7 +32,7 @@ const FADE_TO_WHITE = `linear-gradient(to bottom, ${[
   [0, 0], [8, 1], [16, 4], [24, 9], [32, 17], [40, 27], [48, 39], [56, 52],
   [64, 65], [72, 77], [80, 87], [88, 94], [94, 98], [100, 100],
 ]
-  .map(([at, w]) => `rgba(255,255,255,${(w / 100).toFixed(2)}) ${at}%`)
+  .map(([at, w]) => `color-mix(in srgb, #ffffff ${w}%, #eeeeee) ${at}%`)
   .join(", ")})`;
 
 /* the site's ruled grid: hairlines, rules running past the frame, and a
@@ -68,44 +67,22 @@ const CANVAS_VARS = {
 } as React.CSSProperties;
 
 export default function ProductPage() {
-  /* the dock runs in the canvas's color, and goes black while the canvas
-     (the same color) is under it, so it never disappears into it */
   const canvasRef = useRef<HTMLDivElement>(null);
-  const overRef = useRef(false);
-  useEffect(() => {
-    productLight.set(1);
-    const onScroll = () => {
-      const r = canvasRef.current?.getBoundingClientRect();
-      if (!r) return;
-      const over = r.top < 68 && r.bottom > 15;
-      if (over !== overRef.current) {
-        overRef.current = over;
-        animate(productLight, over ? 0 : 1, { duration: 0.25, ease: "easeOut" });
-      }
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      productLight.set(0);
-    };
-  }, []);
 
   return (
     <main className="bg-white">
-      <NavDock forceDark logoSrc="/payloat-app-icon-blacktile.png" surface="#f7f2eb" ctaOutline />
+      <NavDock />
 
-      {/* the hero on the gradient, which also sits behind the nav */}
-      <section className="relative overflow-hidden" style={{ backgroundColor: "#0a0a0a" }}>
-        <Image src="/product-hero-gradient.jpg" alt="" fill priority sizes="100vw" className="object-cover" />
-        {/* the gradient eases into white toward the markets grid */}
+      {/* the hero on #eeeeee, in the enterprise hero's type */}
+      <section className="relative overflow-hidden" style={{ backgroundColor: "#eeeeee" }}>
+        {/* the ground eases into white toward the markets grid */}
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[clamp(220px,24vw,460px)]" style={{ background: FADE_TO_WHITE }} />
         <div className="relative mx-auto max-w-[1200px] px-6 pb-[clamp(72px,9vw,140px)] pt-[170px]">
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, ease: EASE, delay: 0.05 }}
-            className="mx-auto max-w-[1000px] text-center text-[clamp(44px,7vw,104px)] font-black uppercase leading-[0.96] tracking-[-2px] text-white"
+            className="mx-auto max-w-[900px] text-center text-[clamp(48px,5vw,96px)] font-medium leading-[0.98] tracking-[-3px] text-ink"
             style={{ textWrap: "balance" }}
           >
             The one ledger for every agent&apos;s spend.
@@ -114,7 +91,7 @@ export default function ProductPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, ease: EASE, delay: 0.12 }}
-            className="mx-auto mt-8 max-w-[560px] text-center text-[17px] leading-[1.5] text-white/90"
+            className="mx-auto mt-[clamp(28px,3.5vw,64px)] max-w-[640px] text-center text-[clamp(18px,1.5vw,28px)] leading-[1.6] text-ink"
           >
             Tell us what your agents may buy. We&apos;ll record the rest.
           </motion.p>
@@ -122,14 +99,11 @@ export default function ProductPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, ease: EASE, delay: 0.18 }}
-            className="mt-8 flex justify-center"
+            className="mt-[clamp(28px,3.5vw,64px)] flex justify-center"
           >
-            <a
-              href="/signup"
-              className="inline-flex h-12 items-center rounded-[12px] bg-white px-6 text-[15px] font-medium text-ink shadow-[0_1px_2px_rgba(10,10,10,0.12)] transition-transform hover:scale-[1.03] active:scale-[0.97]"
-            >
+            <ArrowButton href="/signup" tone="white">
               Get started
-            </a>
+            </ArrowButton>
           </motion.div>
 
           <motion.div
@@ -357,12 +331,11 @@ function DefineBlock({ canvasRef }: { canvasRef: React.RefObject<HTMLDivElement 
             is recorded with the task behind it, matched to the broker&apos;s confirmation, and rolled
             into a position you can read before the statement lands.
           </p>
-          <a
-            href="/integration"
-            className="mt-6 inline-flex h-11 items-center rounded-[10px] bg-[#f2f2f0] px-5 text-[14px] font-medium text-ink transition-transform hover:scale-[1.03] active:scale-[0.97]"
-          >
-            See the API
-          </a>
+          <div className="mt-6">
+            <ArrowButton href="/integration" tone="light">
+              See the API
+            </ArrowButton>
+          </div>
         </div>
       </div>
 
