@@ -16,7 +16,7 @@ import { AnimatePresence, motion } from "motion/react";
  * compact Menu nav takes over.
  *
  * The bar is liquid glass, 5px rounded, in one color on every ground:
- * #A1BC98 at 50%, magnifying what passes under it, with no shadow.
+ * #E5EEE4 at 70%, magnifying what passes under it, with no shadow.
  */
 
 const SPRING = { type: "spring", stiffness: 380, damping: 34, mass: 0.8 } as const;
@@ -75,11 +75,11 @@ const PAGE_ROUTES: Partial<Record<PanelKey, string>> = {
 /* the three grounds the bar can sit over, and the surface it takes on
    each: the opposite of the ground */
 type Ground = "white" | "mist" | "black";
-/* liquid glass in one color on every ground: #A1BC98 at 50%, over a
+/* liquid glass in one color on every ground: #E5EEE4 at 70%, over a
    backdrop blur that magnifies what passes under it, with a hairline and
    a soft inner highlight */
 const GLASS = {
-  bg: "rgba(161,188,152,0.5)",
+  bg: "rgba(229,238,228,0.7)",
   fg: "#0a0a0a",
   rule: "rgba(10,10,10,0.12)",
   hover: "rgba(10,10,10,0.06)",
@@ -309,8 +309,8 @@ export default function NavDock(_props: {
               <div className="flex items-center justify-end" data-cell>
                 <Link
                   href="/signup"
-                  className="flex h-11 items-center px-6 text-[15px] font-semibold tracking-[-0.5px] text-white transition-opacity hover:opacity-90"
-                  style={{ borderRadius: 5, backgroundColor: "#0a0a0a" }}
+                  className="flex h-11 items-center px-6 text-[15px] font-semibold tracking-[-0.5px] text-ink transition-opacity hover:opacity-90"
+                  style={{ borderRadius: 5, backgroundColor: "#ffffff", border: `1px solid ${S.rule}` }}
                 >
                   Sign up
                 </Link>
@@ -484,7 +484,7 @@ export default function NavDock(_props: {
                     ))}
 
                     <div className="mt-3 border-t pt-4" style={{ borderColor: S.rule }}>
-                      <Link href="/signup" className="flex h-11 w-full items-center justify-center text-[15px] font-semibold tracking-[-0.5px] text-white" style={{ borderRadius: 5, backgroundColor: "#0a0a0a" }}>
+                      <Link href="/signup" className="flex h-11 w-full items-center justify-center text-[15px] font-semibold tracking-[-0.5px] text-ink" style={{ borderRadius: 5, backgroundColor: "#ffffff", border: `1px solid ${S.rule}` }}>
                         Sign up
                       </Link>
                     </div>
