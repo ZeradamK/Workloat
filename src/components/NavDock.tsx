@@ -7,29 +7,56 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 
 /**
- * The nav: one bordered row in the site's grid, taller than its buttons.
- * The mark and the wordmark float left, the items sit centered, the
- * Sign up split button floats right. Items are plain until hovered,
- * when a box appears behind the item and its panel drops 10px below the
- * bar. The row is 1200px wide at 1920 and keeps that share of the
- * viewport as the screen narrows; once its contents no longer fit, the
- * compact Menu nav takes over.
+ * The nav, on the Mews anatomy: one full-bleed row flush to the top of
+ * every page. The Payloat mark and wordmark float hard left, the items
+ * sit immediately beside them, and Sign up floats right. Items are
+ * plain until hovered, when a box appears behind the item and its panel
+ * drops 10px below the bar.
  *
- * The bar is liquid glass, 5px rounded, in one color on every ground:
- * #E5EEE4 at 70%, magnifying what passes under it, with no shadow.
+ * The bar has no ground of its own: #eeeeee at 30% over a backdrop
+ * blur, with an SVG displacement map bending that backdrop at the top
+ * and bottom edges, so sections refract as they pass under it. It sits
+ * above every section on every page.
+ *
+ * The previous floating liquid-glass bar is parked at
+ * design-archive/NavDock-liquid-glass-bar.tsx.txt.
  */
 
 const SPRING = { type: "spring", stiffness: 380, damping: 34, mass: 0.8 } as const;
-const BAR_H = 64;
+
+/* one row, flush to the top of the page */
+const BAR_H = 76;
+const COMPACT_H = 64;
+
+/* the glass: #eeeeee at 30%, the same on every ground */
+const TINT = "rgba(238,238,238,0.30)";
+const BLUR = "blur(14px) saturate(1.7) brightness(1.02)";
+const PANEL_BLUR = "blur(22px) saturate(1.7)";
+
+/* the displacement map behind the refraction: neutral through the
+   middle, pushing the backdrop down at the top edge and up at the foot,
+   the way light bends at the rim of a pane of glass */
+const MAP_SVG =
+  '<svg xmlns="http://www.w3.org/2000/svg" width="8" height="76" viewBox="0 0 8 76">' +
+  '<defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">' +
+  '<stop offset="0" stop-color="rgb(128,255,128)"/>' +
+  '<stop offset="0.14" stop-color="rgb(128,176,128)"/>' +
+  '<stop offset="0.34" stop-color="rgb(128,128,128)"/>' +
+  '<stop offset="0.66" stop-color="rgb(128,128,128)"/>' +
+  '<stop offset="0.86" stop-color="rgb(128,80,128)"/>' +
+  '<stop offset="1" stop-color="rgb(128,0,128)"/>' +
+  "</linearGradient></defs>" +
+  '<rect width="8" height="76" fill="url(#g)"/></svg>';
+const MAP = `data:image/svg+xml;utf8,${encodeURIComponent(MAP_SVG)}`;
 
 type PanelKey = "Product" | "Features" | "Pricing" | "Contact";
 
 /* key order is the bar's item order */
-const PANEL_DIMS: Record<PanelKey, { w: number; h: number }> = {
-  Features: { w: 400, h: 206 },
-  Product: { w: 356, h: 246 },
-  Pricing: { w: 380, h: 286 },
-  Contact: { w: 380, h: 286 },
+const PANEL_DIMS: Record<PanelKey, { w: number }> = {
+  Features: { w: 400 },
+  Product: { w: 356 },
+  Pricing: { w: 380 },
+  Contact: { w: 380 },
 };
 
 /** Product sub-items: one per page. */
@@ -63,7 +90,9 @@ const CONTACT_ITEMS = [
    but hidden from every screen size. Flip to true to restore it. */
 const SHOW_PRICING = false;
 
-const NAV = (Object.keys(PANEL_DIMS) as PanelKey[]).filter((k) => SHOW_PRICING || k !== "Pricing");
+const NAV = (Object.keys(PANEL_DIMS) as PanelKey[]).filter(
+  (k) => SHOW_PRICING || k !== "Pricing",
+);
 
 /** main nav items with a page of their own */
 const PAGE_ROUTES: Partial<Record<PanelKey, string>> = {
@@ -72,22 +101,46 @@ const PAGE_ROUTES: Partial<Record<PanelKey, string>> = {
   Contact: "/contact",
 };
 
-/* the three grounds the bar can sit over, and the surface it takes on
-   each: the opposite of the ground */
-type Ground = "white" | "mist" | "black";
-/* liquid glass in one color on every ground: #E5EEE4 at 70%, over a
-   backdrop blur that magnifies what passes under it, with a hairline and
-   a soft inner highlight */
-const GLASS = {
-  bg: "rgba(229,238,228,0.7)",
-  fg: "#0a0a0a",
-  rule: "rgba(10,10,10,0.12)",
-  hover: "rgba(10,10,10,0.06)",
-  glow: "rgba(255,255,255,0.7)",
-  filter: "blur(18px) saturate(1.5) contrast(1.08) brightness(1.04)",
+/* the bar takes no color from the ground, only its ink: black type and
+   hairlines over light sections, white over dark ones */
+type Ground = "light" | "dark";
+const INK: Record<Ground, {
+  fg: string;
+  dim: string;
+  rule: string;
+  hover: string;
+  glow: string;
+  panel: string;
+  cta: string;
+  ctaFg: string;
+}> = {
+  light: {
+    fg: "#0a0a0a",
+    dim: "rgba(10,10,10,0.6)",
+    rule: "rgba(10,10,10,0.12)",
+    hover: "rgba(10,10,10,0.05)",
+    glow: "rgba(255,255,255,0.55)",
+    panel: "rgba(240,240,238,0.86)",
+    cta: "#0a0a0a",
+    ctaFg: "#eeeeee",
+  },
+  dark: {
+    fg: "#ffffff",
+    dim: "rgba(255,255,255,0.7)",
+    rule: "rgba(255,255,255,0.16)",
+    hover: "rgba(255,255,255,0.1)",
+    glow: "rgba(255,255,255,0.2)",
+    panel: "rgba(18,18,18,0.82)",
+    cta: "#eeeeee",
+    ctaFg: "#0a0a0a",
+  },
 };
-const SURFACE: Record<Ground, typeof GLASS> = { white: GLASS, mist: GLASS, black: GLASS };
 
+/* the page frame, so the mark lands on the same rail every section's
+   content starts from */
+const FRAME = "mx-auto w-full max-w-[1860px]";
+const INNER = "px-[clamp(20px,1.7vw,32px)]";
+const TONE = "transition-[color,background-color,border-color] duration-200 ease-out";
 
 export default function NavDock(_props: {
   /** older call sites pass these; the bar reads its ground on every page
@@ -104,9 +157,16 @@ export default function NavDock(_props: {
   const [active, setActive] = useState<PanelKey | null>(null);
   const [hovered, setHovered] = useState<PanelKey | null>(null);
 
-  /* ---- the ground under the bar, sampled on scroll ---- */
+  /* ---- the ground under the bar, sampled on scroll. The bar has no
+     ground of its own and spans the full width, so a section that is
+     light on one side and dark on the other would flip the whole row
+     off one reading. It takes two: one under the items, one under
+     Sign up. ---- */
   const headerRef = useRef<HTMLElement>(null);
-  const [ground, setGround] = useState<Ground>("white");
+  const rowRef = useRef<HTMLDivElement>(null);
+  const barH = useRef(BAR_H);
+  const [ground, setGround] = useState<Ground>("light");
+  const [ctaGround, setCtaGround] = useState<Ground>("light");
   useEffect(() => {
     const header = headerRef.current;
     const lum = (c: string): number | null => {
@@ -122,35 +182,43 @@ export default function NavDock(_props: {
       }
       return null;
     };
-    /* #eeeeee is 0.93; the off-whites the cards use sit above 0.95 */
-    const toGround = (l: number): Ground => (l >= 0.95 ? "white" : l >= 0.5 ? "mist" : "black");
-    let raf = 0;
-    const sample = () => {
-      raf = 0;
-      const y = 44;
-      const stack = document.elementsFromPoint(window.innerWidth / 2, y).filter((el) => !header?.contains(el));
+    const toGround = (l: number): Ground => (l >= 0.5 ? "light" : "dark");
+    /* the ground at one point under the bar */
+    const read = (x: number, y: number): Ground | null => {
+      const stack = document.elementsFromPoint(x, y).filter((el) => !header?.contains(el));
       let el = stack[0] as HTMLElement | undefined;
-      let g: Ground | null = null;
       while (el && el !== document.documentElement) {
         const cs = getComputedStyle(el);
         const l = lum(cs.backgroundColor);
-        if (l !== null) {
-          g = toGround(l);
-          break;
-        }
+        if (l !== null) return toGround(l);
         if (cs.backgroundImage.includes("gradient")) {
           const stops = cs.backgroundImage.match(/(?:rgba?|color)\([^)]*\)/g) ?? [];
           const first = stops[0] ? lum(stops[0]) : null;
           const last = stops[stops.length - 1] ? lum(stops[stops.length - 1]) : null;
           if (first !== null && last !== null) {
             const r = el.getBoundingClientRect();
-            g = toGround((y - r.top) / r.height < 0.5 ? first : last);
-            break;
+            return toGround((y - r.top) / r.height < 0.5 ? first : last);
           }
         }
         el = el.parentElement ?? undefined;
       }
-      if (g !== null) setGround((cur) => (cur === g ? cur : g));
+      return null;
+    };
+    let raf = 0;
+    const sample = () => {
+      raf = 0;
+      const y = barH.current / 2;
+      const row = rowRef.current;
+      const mid = (sel: string, fallback: number) => {
+        const cell = row?.querySelector<HTMLElement>(sel);
+        if (!cell) return window.innerWidth * fallback;
+        const r = cell.getBoundingClientRect();
+        return r.left + r.width / 2;
+      };
+      const gl = read(mid("[data-item]", 0.18), y);
+      if (gl !== null) setGround((cur) => (cur === gl ? cur : gl));
+      const gr = read(mid("[data-cta]", 0.9), y);
+      if (gr !== null) setCtaGround((cur) => (cur === gr ? cur : gr));
     };
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(sample);
@@ -164,11 +232,12 @@ export default function NavDock(_props: {
       if (raf) cancelAnimationFrame(raf);
     };
   }, []);
-  const S = SURFACE[ground];
+  const I = INK[ground];
+  const C = INK[ctaGround];
+  const dark = ground === "dark";
 
-  /* ---- collapse: the bar is min(1400px, 72.9vw); once its cells need
-     more than that, the compact Menu nav takes over ---- */
-  const rowRef = useRef<HTMLDivElement>(null);
+  /* ---- collapse: once the row's cells no longer fit the frame, the
+     compact Menu nav takes over ---- */
   const needW = useRef(0);
   const [collapsed, setCollapsed] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -177,18 +246,19 @@ export default function NavDock(_props: {
     const check = () => {
       const row = rowRef.current;
       if (row) {
-        /* the cells' natural width: everything but the open spacer cell */
         let w = 0;
         row.querySelectorAll<HTMLElement>("[data-cell]").forEach((c) => (w += c.offsetWidth));
-        if (w > 0) needW.current = w + 80;
+        if (w > 0) needW.current = w + 96;
       }
-      const avail = Math.min(1200, window.innerWidth * 0.625);
-      setCollapsed(needW.current > avail || window.innerWidth < 900);
+      const gutter = Math.min(32, Math.max(20, window.innerWidth * 0.017));
+      const avail = Math.min(1860, window.innerWidth) - gutter * 2;
+      setCollapsed(needW.current > avail || window.innerWidth < 1000);
     };
     check();
     window.addEventListener("resize", check);
     return () => window.removeEventListener("resize", check);
   }, []);
+  barH.current = collapsed ? COMPACT_H : BAR_H;
   useEffect(() => {
     if (!collapsed) {
       setMenuOpen(false);
@@ -208,58 +278,114 @@ export default function NavDock(_props: {
 
   const highlight = hovered ?? active;
   const dims = active ? PANEL_DIMS[active] : null;
-
-  /* the Sign up split button: on the light surfaces the nav's black and
-     dark gray; on the black surface an #eeeeee block and a white body */
-  const wordmark = "/payloat-wordmark-black.svg";
-  const label = "rgba(10,10,10,0.4)";
+  const wordmark = dark ? "/payloat-wordmark-white.svg" : "/payloat-wordmark-black.svg";
+  const H = collapsed ? COMPACT_H : BAR_H;
 
   return (
-    <header ref={headerRef} className="pointer-events-none fixed inset-x-0 top-0 z-50">
-      <div className="flex justify-center px-5 pt-4 sm:pt-5">
-        {/* ---- the bar: a bordered row, taller than its buttons; the logo
-            floats left, the items sit centered, Demo and Sign up float
-            right. Items are plain until hovered, when a box appears
-            behind the item and its panel drops 10px below the bar. ---- */}
-        {!collapsed && (
-          <nav
-            aria-label="Primary"
-            className="pointer-events-auto relative"
-            style={{ width: "min(1200px, 62.5vw)" }}
-            onMouseLeave={() => {
-              setHovered(null);
-              setActive(null);
-            }}
-          >
-            <motion.div
-              ref={rowRef}
-              className="grid grid-cols-[1fr_auto_1fr] items-center px-3"
-              animate={{ backgroundColor: S.bg, color: S.fg, borderColor: S.rule }}
-              transition={{ duration: 0.18, ease: "easeOut" }}
-              style={{
-                height: BAR_H,
-                borderWidth: 1,
-                borderStyle: "solid",
-                borderRadius: 5,
-                backdropFilter: S.filter,
-                WebkitBackdropFilter: S.filter,
-                boxShadow: `inset 0 1px 0 ${S.glow}, inset 0 -1px 0 rgba(10,10,10,0.04)`,
-              }}
-            >
+    <header
+      ref={headerRef}
+      className="fixed inset-x-0 top-0"
+      style={{ height: H, zIndex: 9999 }}
+      onMouseLeave={() => {
+        setHovered(null);
+        setActive(null);
+      }}
+    >
+      {/* ---- the glass plate: a tint with no ground of its own, the
+          backdrop blurred under it, then bent at the bar's two edges so
+          sections refract as they scroll past ---- */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundColor: TINT,
+            backdropFilter: BLUR,
+            WebkitBackdropFilter: BLUR,
+          }}
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            backdropFilter: "url(#navRefract)",
+            WebkitBackdropFilter: "url(#navRefract)",
+          }}
+        />
+        {/* the rim: a bright line along the top, a hairline at the foot */}
+        <div
+          className={`absolute inset-0 ${TONE}`}
+          style={{ boxShadow: `inset 0 1px 0 ${I.glow}, inset 0 -1px 0 ${I.rule}` }}
+        />
+      </div>
 
-              {/* the logo, floated left */}
+      {/* the displacement map the refraction reads */}
+      <svg aria-hidden focusable="false" className="pointer-events-none absolute h-0 w-0">
+        <filter
+          id="navRefract"
+          x="0%"
+          y="0%"
+          width="100%"
+          height="100%"
+          colorInterpolationFilters="sRGB"
+        >
+          <feImage
+            href={MAP}
+            result="map"
+            preserveAspectRatio="none"
+            x="0"
+            y="0"
+            width="100%"
+            height="100%"
+          />
+          <feDisplacementMap
+            in="SourceGraphic"
+            in2="map"
+            scale="26"
+            xChannelSelector="R"
+            yChannelSelector="G"
+          />
+        </filter>
+      </svg>
+
+      <div className={`relative ${FRAME}`} style={{ color: I.fg }}>
+        {/* ---- the full bar ---- */}
+        {!collapsed && (
+          <>
+            {/* the row: mark and wordmark hard left, the items
+                immediately beside them, Sign up floated right */}
+            <div
+              ref={rowRef}
+              className={`${INNER} flex items-center`}
+              style={{ height: BAR_H }}
+            >
               <Link
                 href="/"
                 data-cell
                 aria-label="Payloat home"
-                className="flex w-fit items-center gap-3 px-2 transition-opacity hover:opacity-80"
+                className="mr-[clamp(28px,3.4vw,64px)] flex shrink-0 items-center gap-[11px] transition-opacity hover:opacity-80"
               >
-                <Image src="/payloat-app-icon-v2.png" alt="" width={41} height={41} priority className="h-[41px] w-[41px] rounded-[9px]" />
-                <Image src={wordmark} alt="Payloat" width={501} height={166} priority className="h-[25px] w-auto" />
+                <Image
+                  src="/payloat-app-icon-v2.png"
+                  alt=""
+                  width={36}
+                  height={36}
+                  priority
+                  className="h-[34px] w-[34px] rounded-[8px]"
+                />
+                <Image
+                  src={wordmark}
+                  alt="Payloat"
+                  width={501}
+                  height={166}
+                  priority
+                  className="h-[21px] w-auto"
+                />
               </Link>
 
-              {/* the items, centered */}
-              <div className="flex items-center gap-1" data-cell>
+              <nav
+                aria-label="Primary"
+                data-cell
+                className="flex shrink-0 items-center gap-[clamp(2px,0.5vw,10px)]"
+              >
                 {NAV.map((item) => (
                   <button
                     key={item}
@@ -281,7 +407,7 @@ export default function NavDock(_props: {
                     }}
                     aria-expanded={active === item}
                     aria-haspopup="true"
-                    className="relative flex h-11 items-center gap-1.5 px-5 text-[16px] font-medium tracking-[-0.2px]"
+                    className="relative flex h-10 items-center gap-1.5 px-[clamp(10px,1.1vw,18px)] text-[16px] font-medium tracking-[-0.2px] whitespace-nowrap"
                   >
                     {/* the box, only while hovered */}
                     <AnimatePresence>
@@ -289,7 +415,10 @@ export default function NavDock(_props: {
                         <motion.span
                           layoutId="navHoverBox"
                           className="absolute inset-0"
-                          style={{ backgroundColor: S.hover, border: `1px solid ${S.rule}`, borderRadius: 5 }}
+                          style={{
+                            backgroundColor: I.hover,
+                            border: `1px solid ${I.rule}`,
+                          }}
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           exit={{ opacity: 0, transition: { duration: 0.12 } }}
@@ -298,24 +427,39 @@ export default function NavDock(_props: {
                       )}
                     </AnimatePresence>
                     <span className="relative z-10">{item}</span>
-                    <motion.svg className="relative z-10" width="10" height="10" viewBox="0 0 16 16" fill="none" aria-hidden initial={false} animate={{ rotate: highlight === item ? 180 : 0 }} transition={SPRING}>
-                      <path d="M3 5.5 8 10.5l5-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                    <motion.svg
+                      className="relative z-10"
+                      width="10"
+                      height="10"
+                      viewBox="0 0 16 16"
+                      fill="none"
+                      aria-hidden
+                      initial={false}
+                      animate={{ rotate: highlight === item ? 180 : 0 }}
+                      transition={SPRING}
+                    >
+                      <path
+                        d="M3 5.5 8 10.5l5-5"
+                        stroke="currentColor"
+                        strokeWidth="1.8"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
                     </motion.svg>
                   </button>
                 ))}
-              </div>
+              </nav>
 
-              {/* Sign up, floated right */}
-              <div className="flex items-center justify-end" data-cell>
+              <div className="ml-auto flex shrink-0 items-center pl-6" data-cell data-cta>
                 <Link
                   href="/signup"
-                  className="flex h-11 items-center px-6 text-[15px] font-semibold tracking-[-0.5px] text-ink transition-opacity hover:opacity-90"
-                  style={{ borderRadius: 5, backgroundColor: "#ffffff", border: `1px solid ${S.rule}` }}
+                  className={`flex h-[42px] items-center px-[26px] text-[14px] font-semibold tracking-[-0.3px] ${TONE} hover:opacity-85`}
+                  style={{ backgroundColor: C.cta, color: C.ctaFg }}
                 >
                   Sign up
                 </Link>
               </div>
-            </motion.div>
+            </div>
 
             {/* the item's panel, dropping 10px under the bar, its left
                 edge under the item */}
@@ -333,15 +477,14 @@ export default function NavDock(_props: {
                       top: BAR_H + 10,
                       left: panelLeft(rowRef.current, active),
                       width: dims.w,
-                      backgroundColor: S.bg,
-                      color: S.fg,
-                      border: `1px solid ${S.rule}`,
-                      borderRadius: 5,
-                      backdropFilter: S.filter,
-                      WebkitBackdropFilter: S.filter,
-                      boxShadow: `inset 0 1px 0 ${S.glow}`,
-                      "--nav-fg": S.fg,
-                      "--nav-label": label,
+                      backgroundColor: I.panel,
+                      color: I.fg,
+                      border: `1px solid ${I.rule}`,
+                      backdropFilter: PANEL_BLUR,
+                      WebkitBackdropFilter: PANEL_BLUR,
+                      boxShadow: `inset 0 1px 0 ${I.glow}`,
+                      "--nav-fg": I.fg,
+                      "--nav-label": I.dim,
                     } as React.CSSProperties
                   }
                 >
@@ -353,30 +496,59 @@ export default function NavDock(_props: {
               )}
             </AnimatePresence>
             {/* a bridge so the pointer can cross the 10px gap to the panel */}
-            {active && <span className="absolute inset-x-0 h-[12px]" style={{ top: BAR_H }} />}
-          </nav>
+            {active && (
+              <span className="absolute inset-x-0 h-[12px]" style={{ top: BAR_H }} />
+            )}
+          </>
         )}
 
         {/* ---- collapsed: the mark left, the Menu trigger right ---- */}
         {collapsed && (
-          <div className="pointer-events-auto flex w-full items-center justify-between">
+          <div
+            className={`${INNER} flex items-center justify-between`}
+            style={{ height: COMPACT_H }}
+          >
             {/* the mark alone; the wordmark rides only in the full bar */}
             <Link href="/" aria-label="Payloat home" className="flex items-center">
-              <Image src="/payloat-app-icon-v2.png" alt="Payloat" width={41} height={41} priority className="h-[41px] w-[41px] rounded-[9px]" />
+              <Image
+                src="/payloat-app-icon-v2.png"
+                alt="Payloat"
+                width={36}
+                height={36}
+                priority
+                className="h-[34px] w-[34px] rounded-[8px]"
+              />
             </Link>
             <div className="relative">
-              {menuOpen && <div className="fixed inset-0 cursor-default" onClick={() => setMenuOpen(false)} />}
+              {menuOpen && (
+                <div className="fixed inset-0 cursor-default" onClick={() => setMenuOpen(false)} />
+              )}
               <button
                 type="button"
                 onClick={() => setMenuOpen((v) => !v)}
                 aria-expanded={menuOpen}
                 aria-haspopup="true"
-                className="relative flex h-12 items-center gap-2 px-5 text-[16px] font-medium"
-                style={{ backgroundColor: S.bg, color: S.fg, border: `1px solid ${S.rule}`, borderRadius: 5, backdropFilter: S.filter, WebkitBackdropFilter: S.filter }}
+                className={`relative flex h-[42px] items-center gap-2 px-5 text-[15px] font-medium ${TONE}`}
+                style={{ border: `1px solid ${C.rule}`, color: C.fg }}
               >
                 Menu
-                <motion.svg width="11" height="11" viewBox="0 0 16 16" fill="none" aria-hidden initial={false} animate={{ rotate: menuOpen ? 180 : 0 }} transition={SPRING}>
-                  <path d="M3 5.5 8 10.5l5-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                <motion.svg
+                  width="11"
+                  height="11"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  aria-hidden
+                  initial={false}
+                  animate={{ rotate: menuOpen ? 180 : 0 }}
+                  transition={SPRING}
+                >
+                  <path
+                    d="M3 5.5 8 10.5l5-5"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 </motion.svg>
               </button>
 
@@ -387,18 +559,17 @@ export default function NavDock(_props: {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10, transition: { duration: 0.15 } }}
                     transition={{ type: "spring", stiffness: 320, damping: 30 }}
-                    className="no-scrollbar absolute right-0 top-[58px] w-[min(340px,calc(100vw-40px))] overflow-y-auto p-5"
+                    className="no-scrollbar absolute right-0 top-[54px] w-[min(340px,calc(100vw-40px))] overflow-y-auto p-5"
                     style={
                       {
-                        backgroundColor: S.bg,
-                        color: S.fg,
-                        border: `1px solid ${S.rule}`,
-                        borderRadius: 5,
-                        backdropFilter: S.filter,
-                        WebkitBackdropFilter: S.filter,
-                        maxHeight: "calc(100vh - 110px)",
-                        "--nav-fg": S.fg,
-                        "--nav-label": label,
+                        backgroundColor: I.panel,
+                        color: I.fg,
+                        border: `1px solid ${I.rule}`,
+                        backdropFilter: PANEL_BLUR,
+                        WebkitBackdropFilter: PANEL_BLUR,
+                        maxHeight: "calc(100vh - 100px)",
+                        "--nav-fg": I.fg,
+                        "--nav-label": I.dim,
                       } as React.CSSProperties
                     }
                   >
@@ -427,8 +598,23 @@ export default function NavDock(_props: {
                             aria-label={`Toggle ${item} list`}
                             className="flex h-9 w-9 items-center justify-center"
                           >
-                            <motion.svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden initial={false} animate={{ rotate: openSection === item ? 180 : 0 }} transition={SPRING}>
-                              <path d="M3 5.5 8 10.5l5-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                            <motion.svg
+                              width="12"
+                              height="12"
+                              viewBox="0 0 16 16"
+                              fill="none"
+                              aria-hidden
+                              initial={false}
+                              animate={{ rotate: openSection === item ? 180 : 0 }}
+                              transition={SPRING}
+                            >
+                              <path
+                                d="M3 5.5 8 10.5l5-5"
+                                stroke="currentColor"
+                                strokeWidth="1.8"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
                             </motion.svg>
                           </button>
                         </div>
@@ -445,7 +631,11 @@ export default function NavDock(_props: {
                                 {item === "Product" &&
                                   PRODUCT_ITEMS.map((f) => (
                                     <li key={f.label}>
-                                      <Link href={f.href} onClick={() => setMenuOpen(false)} className="block py-1 text-[15px] opacity-80 transition-opacity hover:opacity-100">
+                                      <Link
+                                        href={f.href}
+                                        onClick={() => setMenuOpen(false)}
+                                        className="block py-1 text-[15px] opacity-80 transition-opacity hover:opacity-100"
+                                      >
                                         {f.label}
                                       </Link>
                                     </li>
@@ -453,7 +643,11 @@ export default function NavDock(_props: {
                                 {item === "Features" &&
                                   SOLUTION_ITEMS.map((f) => (
                                     <li key={f.label}>
-                                      <Link href={f.href} onClick={() => setMenuOpen(false)} className="block py-1 text-[15px] opacity-80 transition-opacity hover:opacity-100">
+                                      <Link
+                                        href={f.href}
+                                        onClick={() => setMenuOpen(false)}
+                                        className="block py-1 text-[15px] opacity-80 transition-opacity hover:opacity-100"
+                                      >
                                         {f.label}
                                       </Link>
                                     </li>
@@ -461,16 +655,25 @@ export default function NavDock(_props: {
                                 {item === "Pricing" &&
                                   PRICING_ITEMS.map((t) => (
                                     <li key={t.title}>
-                                      <a href="#" className="flex items-baseline justify-between py-1 opacity-80 transition-opacity hover:opacity-100">
+                                      <a
+                                        href="#"
+                                        className="flex items-baseline justify-between py-1 opacity-80 transition-opacity hover:opacity-100"
+                                      >
                                         <span className="text-[15px]">{t.title}</span>
-                                        <span className="text-[13px] font-semibold tabular-nums">{t.price}</span>
+                                        <span className="text-[13px] font-semibold tabular-nums">
+                                          {t.price}
+                                        </span>
                                       </a>
                                     </li>
                                   ))}
                                 {item === "Contact" &&
                                   CONTACT_ITEMS.map((c) => (
                                     <li key={c.title}>
-                                      <Link href={c.href} onClick={() => setMenuOpen(false)} className="flex items-baseline justify-between py-1 opacity-80 transition-opacity hover:opacity-100">
+                                      <Link
+                                        href={c.href}
+                                        onClick={() => setMenuOpen(false)}
+                                        className="flex items-baseline justify-between py-1 opacity-80 transition-opacity hover:opacity-100"
+                                      >
                                         <span className="text-[15px]">{c.title}</span>
                                         {c.detail && <span className="text-[12px]">{c.detail}</span>}
                                       </Link>
@@ -483,8 +686,12 @@ export default function NavDock(_props: {
                       </div>
                     ))}
 
-                    <div className="mt-3 border-t pt-4" style={{ borderColor: S.rule }}>
-                      <Link href="/signup" className="flex h-11 w-full items-center justify-center text-[15px] font-semibold tracking-[-0.5px] text-ink" style={{ borderRadius: 5, backgroundColor: "#ffffff", border: `1px solid ${S.rule}` }}>
+                    <div className="mt-3 border-t pt-4" style={{ borderColor: I.rule }}>
+                      <Link
+                        href="/signup"
+                        className="flex h-11 w-full items-center justify-center text-[15px] font-semibold tracking-[-0.5px]"
+                        style={{ backgroundColor: I.cta, color: I.ctaFg }}
+                      >
                         Sign up
                       </Link>
                     </div>
@@ -513,7 +720,8 @@ function PanelLabel({ children }: { children: React.ReactNode }) {
   return <p className="text-[13px] [color:var(--nav-label)]">{children}</p>;
 }
 
-const bigLink = "block text-[26px] font-medium leading-[1.55] tracking-[-0.02em] [color:var(--nav-fg)] transition-opacity hover:opacity-60";
+const bigLink =
+  "block text-[26px] font-medium leading-[1.55] tracking-[-0.02em] [color:var(--nav-fg)] transition-opacity hover:opacity-60";
 
 function ProductPanel() {
   return (
@@ -556,8 +764,13 @@ function ContactPanel() {
       <ul className="mt-2">
         {CONTACT_ITEMS.map((c) => (
           <li key={c.title}>
-            <Link href={c.href} className="flex items-baseline justify-between transition-opacity hover:opacity-50">
-              <span className="text-[26px] font-medium leading-[1.55] tracking-[-0.02em] [color:var(--nav-fg)]">{c.title}</span>
+            <Link
+              href={c.href}
+              className="flex items-baseline justify-between transition-opacity hover:opacity-50"
+            >
+              <span className="text-[26px] font-medium leading-[1.55] tracking-[-0.02em] [color:var(--nav-fg)]">
+                {c.title}
+              </span>
               {c.detail && <span className="text-[13px] [color:var(--nav-label)]">{c.detail}</span>}
             </Link>
           </li>
@@ -575,8 +788,12 @@ function PricingPanel() {
         {PRICING_ITEMS.map((t) => (
           <li key={t.title}>
             <a href="#" className="flex items-baseline justify-between transition-opacity hover:opacity-50">
-              <span className="text-[26px] font-medium leading-[1.55] tracking-[-0.02em] [color:var(--nav-fg)]">{t.title}</span>
-              <span className="text-[15px] font-semibold tabular-nums [color:var(--nav-fg)]">{t.price}</span>
+              <span className="text-[26px] font-medium leading-[1.55] tracking-[-0.02em] [color:var(--nav-fg)]">
+                {t.title}
+              </span>
+              <span className="text-[15px] font-semibold tabular-nums [color:var(--nav-fg)]">
+                {t.price}
+              </span>
             </a>
           </li>
         ))}
