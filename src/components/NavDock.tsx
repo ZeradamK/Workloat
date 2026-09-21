@@ -16,7 +16,7 @@ import { AnimatePresence, motion } from "motion/react";
  * compact Menu nav takes over.
  *
  * The bar is liquid glass, 5px rounded, in one color on every ground:
- * #F7F2EB at 50%, magnifying what passes under it.
+ * #A1BC98 at 50%, magnifying what passes under it, with no shadow.
  */
 
 const SPRING = { type: "spring", stiffness: 380, damping: 34, mass: 0.8 } as const;
@@ -75,11 +75,11 @@ const PAGE_ROUTES: Partial<Record<PanelKey, string>> = {
 /* the three grounds the bar can sit over, and the surface it takes on
    each: the opposite of the ground */
 type Ground = "white" | "mist" | "black";
-/* liquid glass in one color on every ground: #F7F2EB at 50%, over a
+/* liquid glass in one color on every ground: #A1BC98 at 50%, over a
    backdrop blur that magnifies what passes under it, with a hairline and
    a soft inner highlight */
 const GLASS = {
-  bg: "rgba(247,242,235,0.5)",
+  bg: "rgba(161,188,152,0.5)",
   fg: "#0a0a0a",
   rule: "rgba(10,10,10,0.12)",
   hover: "rgba(10,10,10,0.06)",
@@ -243,7 +243,7 @@ export default function NavDock(_props: {
                 borderRadius: 5,
                 backdropFilter: S.filter,
                 WebkitBackdropFilter: S.filter,
-                boxShadow: `inset 0 1px 0 ${S.glow}, inset 0 -1px 0 rgba(10,10,10,0.04), 0 8px 30px rgba(10,10,10,0.08)`,
+                boxShadow: `inset 0 1px 0 ${S.glow}, inset 0 -1px 0 rgba(10,10,10,0.04)`,
               }}
             >
 
@@ -339,7 +339,7 @@ export default function NavDock(_props: {
                       borderRadius: 5,
                       backdropFilter: S.filter,
                       WebkitBackdropFilter: S.filter,
-                      boxShadow: `inset 0 1px 0 ${S.glow}, 0 8px 30px rgba(10,10,10,0.08)`,
+                      boxShadow: `inset 0 1px 0 ${S.glow}`,
                       "--nav-fg": S.fg,
                       "--nav-label": label,
                     } as React.CSSProperties
