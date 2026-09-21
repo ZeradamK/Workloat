@@ -15,8 +15,8 @@ import { AnimatePresence, motion } from "motion/react";
  * viewport as the screen narrows; once its contents no longer fit, the
  * compact Menu nav takes over.
  *
- * The bar is white, and turns black only while it sits over an #eeeeee
- * ground.
+ * The bar is liquid glass, 5px rounded: white glass by default, black
+ * glass only while it sits over an #eeeeee ground.
  */
 
 const SPRING = { type: "spring", stiffness: 380, damping: 34, mass: 0.8 } as const;
@@ -75,10 +75,13 @@ const PAGE_ROUTES: Partial<Record<PanelKey, string>> = {
 /* the three grounds the bar can sit over, and the surface it takes on
    each: the opposite of the ground */
 type Ground = "white" | "mist" | "black";
-const SURFACE: Record<Ground, { bg: string; fg: string; rule: string; hover: string }> = {
-  white: { bg: "#ffffff", fg: "#0a0a0a", rule: "rgba(10,10,10,0.12)", hover: "#eeeeee" },
-  mist: { bg: "#0a0a0a", fg: "#ffffff", rule: "rgba(255,255,255,0.18)", hover: "#1a1a1a" },
-  black: { bg: "#ffffff", fg: "#0a0a0a", rule: "rgba(10,10,10,0.12)", hover: "#eeeeee" },
+/* liquid glass: a translucent tint over a heavy backdrop blur, with a
+   hairline and a soft inner highlight; white glass by default, black
+   glass over #eeeeee */
+const SURFACE: Record<Ground, { bg: string; fg: string; rule: string; hover: string; solid: string; glow: string }> = {
+  white: { bg: "rgba(255,255,255,0.62)", fg: "#0a0a0a", rule: "rgba(10,10,10,0.12)", hover: "rgba(10,10,10,0.06)", solid: "#ffffff", glow: "rgba(255,255,255,0.7)" },
+  mist: { bg: "rgba(10,10,10,0.72)", fg: "#ffffff", rule: "rgba(255,255,255,0.18)", hover: "rgba(255,255,255,0.1)", solid: "#0a0a0a", glow: "rgba(255,255,255,0.12)" },
+  black: { bg: "rgba(255,255,255,0.7)", fg: "#0a0a0a", rule: "rgba(10,10,10,0.12)", hover: "rgba(10,10,10,0.06)", solid: "#ffffff", glow: "rgba(255,255,255,0.7)" },
 };
 
 /* the arrow in a split button's block */
@@ -123,7 +126,8 @@ export default function NavDock(_props: {
       }
       return null;
     };
-    const toGround = (l: number): Ground => (l >= 0.97 ? "white" : l >= 0.5 ? "mist" : "black");
+    /* #eeeeee is 0.93; the off-whites the cards use sit above 0.95 */
+    const toGround = (l: number): Ground => (l >= 0.95 ? "white" : l >= 0.5 ? "mist" : "black");
     let raf = 0;
     const sample = () => {
       raf = 0;
@@ -211,7 +215,7 @@ export default function NavDock(_props: {
 
   /* the Sign up split button: on the light surfaces the nav's black and
      dark gray; on the black surface an #eeeeee block and a white body */
-  const darkBar = S.bg === "#0a0a0a";
+  const darkBar = S.solid === "#0a0a0a";
   const signupBlock = darkBar ? "#eeeeee" : "#0a0a0a";
   const signupBody = darkBar ? "#ffffff" : "#2c2c2c";
   const signupFg = darkBar ? "#0a0a0a" : "#ffffff";
@@ -240,7 +244,15 @@ export default function NavDock(_props: {
               className="grid grid-cols-[1fr_auto_1fr] items-center px-3"
               animate={{ backgroundColor: S.bg, color: S.fg, borderColor: S.rule }}
               transition={{ duration: 0.18, ease: "easeOut" }}
-              style={{ height: BAR_H, borderWidth: 1, borderStyle: "solid" }}
+              style={{
+                height: BAR_H,
+                borderWidth: 1,
+                borderStyle: "solid",
+                borderRadius: 5,
+                backdropFilter: "blur(24px) saturate(1.6)",
+                WebkitBackdropFilter: "blur(24px) saturate(1.6)",
+                boxShadow: `inset 0 1px 0 ${S.glow}, 0 8px 30px rgba(10,10,10,0.08)`,
+              }}
             >
               {/* the logo, floated left */}
               <Link
@@ -249,8 +261,8 @@ export default function NavDock(_props: {
                 aria-label="Payloat home"
                 className="flex w-fit items-center gap-3 px-2 transition-opacity hover:opacity-80"
               >
-                <Image src="/payloat-app-icon-v2.png" alt="" width={34} height={34} priority className="h-[34px] w-[34px] rounded-[8px]" />
-                <Image src={wordmark} alt="Payloat" width={501} height={166} priority className="h-[18px] w-auto" />
+                <Image src="/payloat-app-icon-v2.png" alt="" width={41} height={41} priority className="h-[41px] w-[41px] rounded-[9px]" />
+                <Image src={wordmark} alt="Payloat" width={501} height={166} priority className="h-[25px] w-auto" />
               </Link>
 
               {/* the items, centered */}
@@ -276,7 +288,7 @@ export default function NavDock(_props: {
                     }}
                     aria-expanded={active === item}
                     aria-haspopup="true"
-                    className="relative flex h-11 items-center gap-1.5 px-5 text-[14px] font-medium tracking-[-0.2px]"
+                    className="relative flex h-11 items-center gap-1.5 px-5 text-[16px] font-medium tracking-[-0.2px]"
                   >
                     {/* the box, only while hovered */}
                     <AnimatePresence>
@@ -284,7 +296,7 @@ export default function NavDock(_props: {
                         <motion.span
                           layoutId="navHoverBox"
                           className="absolute inset-0"
-                          style={{ backgroundColor: S.hover, border: `1px solid ${S.rule}` }}
+                          style={{ backgroundColor: S.hover, border: `1px solid ${S.rule}`, borderRadius: 5 }}
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           exit={{ opacity: 0, transition: { duration: 0.12 } }}
@@ -304,7 +316,8 @@ export default function NavDock(_props: {
               <div className="flex items-center justify-end" data-cell>
                 <Link
                   href="/signup"
-                  className="flex h-11 items-stretch text-[13px] font-semibold tracking-[-0.5px] transition-opacity hover:opacity-90"
+                  className="flex h-11 items-stretch overflow-hidden text-[15px] font-semibold tracking-[-0.5px] transition-opacity hover:opacity-90"
+                  style={{ borderRadius: 5 }}
                 >
                   <span className="flex w-11 items-center justify-center" style={{ backgroundColor: signupBlock }}>
                     <SplitArrow dark={darkBar} />
@@ -335,6 +348,10 @@ export default function NavDock(_props: {
                       backgroundColor: S.bg,
                       color: S.fg,
                       border: `1px solid ${S.rule}`,
+                      borderRadius: 5,
+                      backdropFilter: "blur(24px) saturate(1.6)",
+                      WebkitBackdropFilter: "blur(24px) saturate(1.6)",
+                      boxShadow: `inset 0 1px 0 ${S.glow}, 0 8px 30px rgba(10,10,10,0.08)`,
                       "--nav-fg": S.fg,
                       "--nav-label": label,
                     } as React.CSSProperties
@@ -356,8 +373,8 @@ export default function NavDock(_props: {
         {collapsed && (
           <div className="pointer-events-auto flex w-full items-center justify-between">
             <Link href="/" aria-label="Payloat home" className="flex items-center gap-2.5">
-              <Image src="/payloat-app-icon-v2.png" alt="" width={36} height={36} priority className="h-[36px] w-[36px] rounded-[9px]" />
-              <Image src={wordmark} alt="Payloat" width={501} height={166} className="h-[14px] w-auto" />
+              <Image src="/payloat-app-icon-v2.png" alt="" width={41} height={41} priority className="h-[41px] w-[41px] rounded-[9px]" />
+              <Image src={wordmark} alt="Payloat" width={501} height={166} className="h-[20px] w-auto" />
             </Link>
             <div className="relative">
               {menuOpen && <div className="fixed inset-0 cursor-default" onClick={() => setMenuOpen(false)} />}
@@ -366,8 +383,8 @@ export default function NavDock(_props: {
                 onClick={() => setMenuOpen((v) => !v)}
                 aria-expanded={menuOpen}
                 aria-haspopup="true"
-                className="relative flex h-12 items-center gap-2 px-5 text-[14px] font-medium"
-                style={{ backgroundColor: S.bg, color: S.fg, border: `1px solid ${S.rule}` }}
+                className="relative flex h-12 items-center gap-2 px-5 text-[16px] font-medium"
+                style={{ backgroundColor: S.bg, color: S.fg, border: `1px solid ${S.rule}`, borderRadius: 5, backdropFilter: "blur(24px) saturate(1.6)", WebkitBackdropFilter: "blur(24px) saturate(1.6)" }}
               >
                 Menu
                 <motion.svg width="11" height="11" viewBox="0 0 16 16" fill="none" aria-hidden initial={false} animate={{ rotate: menuOpen ? 180 : 0 }} transition={SPRING}>
@@ -388,6 +405,9 @@ export default function NavDock(_props: {
                         backgroundColor: S.bg,
                         color: S.fg,
                         border: `1px solid ${S.rule}`,
+                        borderRadius: 5,
+                        backdropFilter: "blur(24px) saturate(1.6)",
+                        WebkitBackdropFilter: "blur(24px) saturate(1.6)",
                         maxHeight: "calc(100vh - 110px)",
                         "--nav-fg": S.fg,
                         "--nav-label": label,
@@ -476,7 +496,7 @@ export default function NavDock(_props: {
                     ))}
 
                     <div className="mt-3 border-t pt-4" style={{ borderColor: S.rule }}>
-                      <Link href="/signup" className="flex w-full items-stretch text-[13px] font-semibold tracking-[-0.5px]">
+                      <Link href="/signup" className="flex w-full items-stretch overflow-hidden text-[15px] font-semibold tracking-[-0.5px]" style={{ borderRadius: 5 }}>
                         <span className="flex w-11 items-center justify-center" style={{ backgroundColor: signupBlock }}>
                           <SplitArrow dark={darkBar} />
                         </span>
