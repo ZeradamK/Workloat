@@ -15,8 +15,8 @@ import { AnimatePresence, motion } from "motion/react";
  * viewport as the screen narrows; once its contents no longer fit, the
  * compact Menu nav takes over.
  *
- * The bar is liquid glass, 5px rounded: white glass by default, black
- * glass only while it sits over an #eeeeee ground.
+ * The bar is liquid glass, 5px rounded, in one color on every ground:
+ * #F7F2EB at 50%, magnifying what passes under it.
  */
 
 const SPRING = { type: "spring", stiffness: 380, damping: 34, mass: 0.8 } as const;
@@ -75,23 +75,19 @@ const PAGE_ROUTES: Partial<Record<PanelKey, string>> = {
 /* the three grounds the bar can sit over, and the surface it takes on
    each: the opposite of the ground */
 type Ground = "white" | "mist" | "black";
-/* liquid glass: a translucent tint over a heavy backdrop blur, with a
-   hairline and a soft inner highlight; white glass by default, black
-   glass over #eeeeee */
-const SURFACE: Record<Ground, { bg: string; fg: string; rule: string; hover: string; solid: string; glow: string }> = {
-  white: { bg: "rgba(255,255,255,0.62)", fg: "#0a0a0a", rule: "rgba(10,10,10,0.12)", hover: "rgba(10,10,10,0.06)", solid: "#ffffff", glow: "rgba(255,255,255,0.7)" },
-  mist: { bg: "rgba(10,10,10,0.72)", fg: "#ffffff", rule: "rgba(255,255,255,0.18)", hover: "rgba(255,255,255,0.1)", solid: "#0a0a0a", glow: "rgba(255,255,255,0.12)" },
-  black: { bg: "rgba(255,255,255,0.7)", fg: "#0a0a0a", rule: "rgba(10,10,10,0.12)", hover: "rgba(10,10,10,0.06)", solid: "#ffffff", glow: "rgba(255,255,255,0.7)" },
+/* liquid glass in one color on every ground: #F7F2EB at 50%, over a
+   backdrop blur that magnifies what passes under it, with a hairline and
+   a soft inner highlight */
+const GLASS = {
+  bg: "rgba(247,242,235,0.5)",
+  fg: "#0a0a0a",
+  rule: "rgba(10,10,10,0.12)",
+  hover: "rgba(10,10,10,0.06)",
+  glow: "rgba(255,255,255,0.7)",
+  filter: "blur(18px) saturate(1.5) contrast(1.08) brightness(1.04)",
 };
+const SURFACE: Record<Ground, typeof GLASS> = { white: GLASS, mist: GLASS, black: GLASS };
 
-/* the arrow in a split button's block */
-function SplitArrow({ dark = false }: { dark?: boolean }) {
-  return (
-    <svg width="11" height="11" viewBox="0 0 16 16" fill="none" aria-hidden>
-      <path d="M5 2.5 10.5 8 5 13.5" stroke={dark ? "#0a0a0a" : "#ffffff"} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
 
 export default function NavDock(_props: {
   /** older call sites pass these; the bar reads its ground on every page
@@ -215,12 +211,8 @@ export default function NavDock(_props: {
 
   /* the Sign up split button: on the light surfaces the nav's black and
      dark gray; on the black surface an #eeeeee block and a white body */
-  const darkBar = S.solid === "#0a0a0a";
-  const signupBlock = darkBar ? "#eeeeee" : "#0a0a0a";
-  const signupBody = darkBar ? "#ffffff" : "#2c2c2c";
-  const signupFg = darkBar ? "#0a0a0a" : "#ffffff";
-  const wordmark = darkBar ? "/payloat-wordmark-white.svg" : "/payloat-wordmark-black.svg";
-  const label = darkBar ? "rgba(255,255,255,0.4)" : "rgba(10,10,10,0.4)";
+  const wordmark = "/payloat-wordmark-black.svg";
+  const label = "rgba(10,10,10,0.4)";
 
   return (
     <header ref={headerRef} className="pointer-events-none fixed inset-x-0 top-0 z-50">
@@ -249,11 +241,12 @@ export default function NavDock(_props: {
                 borderWidth: 1,
                 borderStyle: "solid",
                 borderRadius: 5,
-                backdropFilter: "blur(24px) saturate(1.6)",
-                WebkitBackdropFilter: "blur(24px) saturate(1.6)",
-                boxShadow: `inset 0 1px 0 ${S.glow}, 0 8px 30px rgba(10,10,10,0.08)`,
+                backdropFilter: S.filter,
+                WebkitBackdropFilter: S.filter,
+                boxShadow: `inset 0 1px 0 ${S.glow}, inset 0 -1px 0 rgba(10,10,10,0.04), 0 8px 30px rgba(10,10,10,0.08)`,
               }}
             >
+
               {/* the logo, floated left */}
               <Link
                 href="/"
@@ -316,15 +309,10 @@ export default function NavDock(_props: {
               <div className="flex items-center justify-end" data-cell>
                 <Link
                   href="/signup"
-                  className="flex h-11 items-stretch overflow-hidden text-[15px] font-semibold tracking-[-0.5px] transition-opacity hover:opacity-90"
-                  style={{ borderRadius: 5 }}
+                  className="flex h-11 items-center px-6 text-[15px] font-semibold tracking-[-0.5px] text-white transition-opacity hover:opacity-90"
+                  style={{ borderRadius: 5, backgroundColor: "#0a0a0a" }}
                 >
-                  <span className="flex w-11 items-center justify-center" style={{ backgroundColor: signupBlock }}>
-                    <SplitArrow dark={darkBar} />
-                  </span>
-                  <span className="flex items-center px-5" style={{ backgroundColor: signupBody, color: signupFg }}>
-                    Sign up
-                  </span>
+                  Sign up
                 </Link>
               </div>
             </motion.div>
@@ -349,8 +337,8 @@ export default function NavDock(_props: {
                       color: S.fg,
                       border: `1px solid ${S.rule}`,
                       borderRadius: 5,
-                      backdropFilter: "blur(24px) saturate(1.6)",
-                      WebkitBackdropFilter: "blur(24px) saturate(1.6)",
+                      backdropFilter: S.filter,
+                      WebkitBackdropFilter: S.filter,
                       boxShadow: `inset 0 1px 0 ${S.glow}, 0 8px 30px rgba(10,10,10,0.08)`,
                       "--nav-fg": S.fg,
                       "--nav-label": label,
@@ -384,7 +372,7 @@ export default function NavDock(_props: {
                 aria-expanded={menuOpen}
                 aria-haspopup="true"
                 className="relative flex h-12 items-center gap-2 px-5 text-[16px] font-medium"
-                style={{ backgroundColor: S.bg, color: S.fg, border: `1px solid ${S.rule}`, borderRadius: 5, backdropFilter: "blur(24px) saturate(1.6)", WebkitBackdropFilter: "blur(24px) saturate(1.6)" }}
+                style={{ backgroundColor: S.bg, color: S.fg, border: `1px solid ${S.rule}`, borderRadius: 5, backdropFilter: S.filter, WebkitBackdropFilter: S.filter }}
               >
                 Menu
                 <motion.svg width="11" height="11" viewBox="0 0 16 16" fill="none" aria-hidden initial={false} animate={{ rotate: menuOpen ? 180 : 0 }} transition={SPRING}>
@@ -406,8 +394,8 @@ export default function NavDock(_props: {
                         color: S.fg,
                         border: `1px solid ${S.rule}`,
                         borderRadius: 5,
-                        backdropFilter: "blur(24px) saturate(1.6)",
-                        WebkitBackdropFilter: "blur(24px) saturate(1.6)",
+                        backdropFilter: S.filter,
+                        WebkitBackdropFilter: S.filter,
                         maxHeight: "calc(100vh - 110px)",
                         "--nav-fg": S.fg,
                         "--nav-label": label,
@@ -496,13 +484,8 @@ export default function NavDock(_props: {
                     ))}
 
                     <div className="mt-3 border-t pt-4" style={{ borderColor: S.rule }}>
-                      <Link href="/signup" className="flex w-full items-stretch overflow-hidden text-[15px] font-semibold tracking-[-0.5px]" style={{ borderRadius: 5 }}>
-                        <span className="flex w-11 items-center justify-center" style={{ backgroundColor: signupBlock }}>
-                          <SplitArrow dark={darkBar} />
-                        </span>
-                        <span className="flex flex-1 items-center justify-center" style={{ backgroundColor: signupBody, color: signupFg }}>
-                          Sign up
-                        </span>
+                      <Link href="/signup" className="flex h-11 w-full items-center justify-center text-[15px] font-semibold tracking-[-0.5px] text-white" style={{ borderRadius: 5, backgroundColor: "#0a0a0a" }}>
+                        Sign up
                       </Link>
                     </div>
                   </motion.div>
