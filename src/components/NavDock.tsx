@@ -360,9 +360,9 @@ export default function NavDock(_props: {
         {/* ---- collapsed: the mark left, the Menu trigger right ---- */}
         {collapsed && (
           <div className="pointer-events-auto flex w-full items-center justify-between">
-            <Link href="/" aria-label="Payloat home" className="flex items-center gap-2.5">
-              <Image src="/payloat-app-icon-v2.png" alt="" width={41} height={41} priority className="h-[41px] w-[41px] rounded-[9px]" />
-              <Image src={wordmark} alt="Payloat" width={501} height={166} className="h-[20px] w-auto" />
+            {/* the mark alone; the wordmark rides only in the full bar */}
+            <Link href="/" aria-label="Payloat home" className="flex items-center">
+              <Image src="/payloat-app-icon-v2.png" alt="Payloat" width={41} height={41} priority className="h-[41px] w-[41px] rounded-[9px]" />
             </Link>
             <div className="relative">
               {menuOpen && <div className="fixed inset-0 cursor-default" onClick={() => setMenuOpen(false)} />}
