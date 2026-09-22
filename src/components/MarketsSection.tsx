@@ -82,7 +82,7 @@ export default function MarketsSection() {
             {/* ---- Cell 2: commission-free stocks, white $0 on black ---- */}
             <div
               className="flex min-h-[540px] flex-col border-t border-black/[0.08] p-8 min-[900px]:border-l min-[900px]:border-t-0"
-              style={{ backgroundColor: "#1e1e1e" }}
+              style={{ backgroundColor: "#0a0a0a" }}
             >
               <p className="text-[10px] font-medium uppercase tracking-[0.12em] text-white/85">
                 Agents

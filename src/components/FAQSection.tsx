@@ -39,7 +39,7 @@ export default function FAQSection({ tone = "light" }: { /** "dark": on black, w
   const [open, setOpen] = useState(0);
 
   return (
-    <section id="faq" className="scroll-mt-[90px]" style={dark ? { backgroundColor: "#1e1e1e" } : undefined}>
+    <section id="faq" className="scroll-mt-[90px]" style={dark ? { backgroundColor: "#0a0a0a" } : undefined}>
     <div className="mx-auto max-w-[1200px] px-6 pb-[clamp(64px,8vw,128px)] pt-[clamp(32px,5vw,80px)]">
       <h2 className={`pb-6 text-[clamp(24px,2.4vw,32px)] font-medium tracking-[-1px] ${dark ? "text-white" : "text-ink"}`}>
         FAQ

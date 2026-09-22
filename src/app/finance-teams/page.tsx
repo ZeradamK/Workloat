@@ -39,9 +39,6 @@ import { money } from "@/components/tracker/money";
 const EASE = [0.25, 0.6, 0.2, 1] as const;
 const GREEN = "#163300";
 const INK = "#0a0a0a";
-/* the ground a full-width dark act sits on, a shade above the ink the
-   type and the filled controls use */
-const ACT = "#1e1e1e";
 
 const up = {
   initial: { opacity: 0, y: 40 },
@@ -485,7 +482,7 @@ function Playbook() {
   const [i, setI] = useState(0);
   const play = PLAYS[i];
   return (
-    <section className="text-white" style={{ backgroundColor: ACT }}>
+    <section className="text-white" style={{ backgroundColor: INK }}>
       <div className={`${FRAME} border-white/10`}>
         <div className="relative px-[clamp(20px,2.5vw,48px)]">
           {/* Amigo's long vertical rule at x 78 */}
@@ -628,7 +625,7 @@ const INTEGRATIONS = [
 
 function Security() {
   return (
-    <section className="text-white" style={{ backgroundColor: ACT }}>
+    <section className="text-white" style={{ backgroundColor: INK }}>
       <div className={`${FRAME} border-white/10`}>
         <div className={`${INNER} pt-[clamp(72px,7vw,136px)]`}>
           <div className="grid gap-8 pb-[clamp(48px,5vw,96px)] min-[900px]:grid-cols-[minmax(0,720px)_1fr] min-[900px]:items-end">

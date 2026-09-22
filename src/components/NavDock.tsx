@@ -30,16 +30,20 @@ const COMPACT_H = 64;
    items ignore it and centre on the screen instead */
 const LOGO_PAD = 50;
 
+/* the grid line closing the bar's foot: the site's 1px hairline, in
+   #1e1e1e mixed 20% toward white */
+const GRID = "#4b4b4b";
+
 /* the two grounds the bar can sit over, and the skin it takes on each:
    white with black type, or pure black with white type. The dark skin
-   sits a shade below the #1e1e1e sections it rides over, so the bar
-   reads as its own band by tone and needs no rule to separate it. Sign up
+   sits just below the black sections it rides over, so a grid line at
+   its foot is what draws the bar's bottom edge. Sign up
    reverses whichever skin is up, so the one filled thing in the row
    always carries the weight. */
 type Ground = "light" | "dark";
 const SKIN: Record<Ground, {
   bg: string; fg: string; dim: string; rule: string; hover: string;
-  cta: string; ctaFg: string; mark: string;
+  cta: string; ctaFg: string; mark: string; line: string | null;
 }> = {
   light: {
     bg: "#ffffff",
@@ -50,6 +54,7 @@ const SKIN: Record<Ground, {
     cta: "#0a0a0a",
     ctaFg: "#eeeeee",
     mark: "/payloat-mark.svg",
+    line: null,
   },
   dark: {
     bg: "#000000",
@@ -60,6 +65,7 @@ const SKIN: Record<Ground, {
     cta: "#ffffff",
     ctaFg: "#0a0a0a",
     mark: "/payloat-mark-white.svg",
+    line: GRID,
   },
 };
 const TONE = "transition-[color,background-color,border-color] duration-200 ease-out";
@@ -278,6 +284,14 @@ export default function NavDock(_props: {
         setActive(null);
       }}
     >
+      {S.line && (
+        <span
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-px"
+          style={{ backgroundColor: S.line }}
+          aria-hidden
+        />
+      )}
+
       <div className={`relative ${FRAME}`}>
         {/* ---- the full bar ---- */}
         {!collapsed && (

@@ -145,7 +145,7 @@ export default function LedgerPage() {
           a paragraph, and the split button left; a ruled cell right with
           the month's figure and the charges that slide in on load. The
           cell's rails run down behind the bank strip beneath. */}
-      <section className="relative overflow-x-clip text-white" style={{ backgroundColor: "#1e1e1e" }}>
+      <section className="relative overflow-x-clip text-white" style={{ backgroundColor: "#0a0a0a" }}>
         <div className="relative mx-auto grid max-w-[1200px] gap-12 px-6 pt-[150px] min-[900px]:grid-cols-[1.1fr_1fr] min-[900px]:items-center min-[900px]:gap-10 min-[900px]:pt-[180px]" style={{ paddingBottom: HERO_PB }}>
           <div className="text-center min-[900px]:text-left">
             <motion.h1
@@ -232,7 +232,7 @@ export default function LedgerPage() {
       />
 
       {/* 3. connected banks, on the same black, in the ruled grid */}
-      <section className="overflow-x-clip px-6 pb-[clamp(56px,7vw,112px)] pt-[clamp(32px,5vw,80px)]" style={{ backgroundColor: "#1e1e1e" }}>
+      <section className="overflow-x-clip px-6 pb-[clamp(56px,7vw,112px)] pt-[clamp(32px,5vw,80px)]" style={{ backgroundColor: "#0a0a0a" }}>
         {/* no outer frame: only the hairlines between the bank cells */}
         <motion.div {...up} className="relative mx-auto max-w-[900px]">
           <p className="px-6 py-5 text-center text-[15px] text-white/70">
@@ -266,7 +266,7 @@ export default function LedgerPage() {
       </section>
 
       {/* 4. the footer on the same black */}
-      <div style={{ backgroundColor: "#1e1e1e" }}>
+      <div style={{ backgroundColor: "#0a0a0a" }}>
         <FooterSection tone="light" />
       </div>
     </main>

@@ -61,7 +61,7 @@ export default function SpendMixSection({
   const on = inView || reduced;
 
   return (
-    <section className="px-6 py-[clamp(32px,5vw,80px)]" style={dark ? { backgroundColor: "#1e1e1e" } : undefined}>
+    <section className="px-6 py-[clamp(32px,5vw,80px)]" style={dark ? { backgroundColor: "#0a0a0a" } : undefined}>
       <div className="mx-auto grid max-w-[1200px] gap-14 min-[900px]:grid-cols-[1fr_1.25fr] min-[900px]:gap-16">
         {/* the copy */}
         <div>
