@@ -31,8 +31,11 @@ const COMPACT_H = 64;
    items ignore it and centre on the screen instead */
 const LOGO_PAD = 50;
 
-/* the glass: #eeeeee at 30%, the same on every ground */
+/* the glass: #eeeeee at 30%, the same on every ground it shows on. Over
+   a black section it shows on no ground at all: the bar drops the glass
+   and goes opaque in the section's own black. */
 const TINT = "rgba(238,238,238,0.30)";
+const BLACK = "#0a0a0a";
 const BLUR = "blur(14px) saturate(1.7) brightness(1.02)";
 const PANEL_BLUR = "blur(22px) saturate(1.7)";
 
@@ -134,7 +137,7 @@ const INK: Record<Ground, {
     hover: "rgba(255,255,255,0.1)",
     glow: "rgba(255,255,255,0.2)",
     panel: "rgba(18,18,18,0.82)",
-    cta: "#eeeeee",
+    cta: "#ffffff",
     ctaFg: "#0a0a0a",
   },
 };
@@ -244,6 +247,11 @@ export default function NavDock(_props: {
   /* the wordmark reads against the ground under the logo, which the
      items' reading no longer covers now they sit centred */
   const dark = logoGround === "dark";
+  /* the bar goes opaque black only when all three readings agree it is
+     over black. A section that is black under one part of the row and
+     light under another keeps the glass, so no part of the bar paints
+     a ground the section behind it does not have. */
+  const solid = logoGround === "dark" && ground === "dark" && ctaGround === "dark";
 
   /* ---- collapse: once the row's cells no longer fit the frame, the
      compact Menu nav takes over ---- */
@@ -305,30 +313,39 @@ export default function NavDock(_props: {
         setActive(null);
       }}
     >
-      {/* ---- the glass plate: a tint with no ground of its own, the
-          backdrop blurred under it, then bent at the bar's two edges so
-          sections refract as they scroll past ---- */}
+      {/* ---- the plate. Over a light section: a tint with no ground of
+          its own, the backdrop blurred under it, then bent at the bar's
+          two edges so sections refract as they scroll past. Over a black
+          section: the section's own black, opaque, with no glass and no
+          rim, so the bar reads as part of the ground it sits on and
+          hides whatever scrolls behind it. ---- */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundColor: TINT,
-            backdropFilter: BLUR,
-            WebkitBackdropFilter: BLUR,
-          }}
-        />
-        <div
-          className="absolute inset-0"
-          style={{
-            backdropFilter: "url(#navRefract)",
-            WebkitBackdropFilter: "url(#navRefract)",
-          }}
-        />
-        {/* the rim: a bright line along the top, a hairline at the foot */}
-        <div
-          className={`absolute inset-0 ${TONE}`}
-          style={{ boxShadow: `inset 0 1px 0 ${I.glow}, inset 0 -1px 0 ${I.rule}` }}
-        />
+        {solid ? (
+          <div className="absolute inset-0" style={{ backgroundColor: BLACK }} />
+        ) : (
+          <>
+            <div
+              className="absolute inset-0"
+              style={{
+                backgroundColor: TINT,
+                backdropFilter: BLUR,
+                WebkitBackdropFilter: BLUR,
+              }}
+            />
+            <div
+              className="absolute inset-0"
+              style={{
+                backdropFilter: "url(#navRefract)",
+                WebkitBackdropFilter: "url(#navRefract)",
+              }}
+            />
+            {/* the rim: a bright line along the top, a hairline at the foot */}
+            <div
+              className={`absolute inset-0 ${TONE}`}
+              style={{ boxShadow: `inset 0 1px 0 ${I.glow}, inset 0 -1px 0 ${I.rule}` }}
+            />
+          </>
+        )}
       </div>
 
       {/* the displacement map the refraction reads */}
@@ -492,11 +509,11 @@ export default function NavDock(_props: {
                       top: BAR_H + 10,
                       left: panelLeft(rowRef.current, active),
                       width: dims.w,
-                      backgroundColor: I.panel,
+                      backgroundColor: solid ? BLACK : I.panel,
                       color: I.fg,
                       border: `1px solid ${I.rule}`,
-                      backdropFilter: PANEL_BLUR,
-                      WebkitBackdropFilter: PANEL_BLUR,
+                      backdropFilter: solid ? undefined : PANEL_BLUR,
+                      WebkitBackdropFilter: solid ? undefined : PANEL_BLUR,
                       boxShadow: `inset 0 1px 0 ${I.glow}`,
                       "--nav-fg": I.fg,
                       "--nav-label": I.dim,
