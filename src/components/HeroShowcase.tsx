@@ -61,7 +61,7 @@ export default function HeroShowcase() {
           left, in the enterprise hero's type; the wallet column right */}
       <div
         ref={ref}
-        className="relative hidden min-h-screen bg-white min-[800px]:block"
+        className="relative hidden min-h-screen bg-[#eeeeee] min-[800px]:block"
       >
         {/* three columns: the headline left, the wallet column centered
             under the dock, the paragraph and buttons right */}
@@ -177,7 +177,7 @@ function MobileHero() {
   return (
     <div
       ref={ref}
-      className="flex flex-col items-center bg-white px-6 pb-20 pt-[120px] text-center min-[800px]:hidden"
+      className="flex flex-col items-center bg-[#eeeeee] px-6 pb-20 pt-[120px] text-center min-[800px]:hidden"
     >
       {/* stacked and centered: the headline, the wallet column, then the
           paragraph and the buttons */}

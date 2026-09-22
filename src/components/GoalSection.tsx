@@ -112,7 +112,7 @@ export default function GoalSection() {
 
   return (
     <div ref={ref} className="relative h-[360vh]">
-      <div className="sticky top-0 flex h-screen items-center justify-center overflow-hidden bg-white">
+      <div className="sticky top-0 flex h-screen items-center justify-center overflow-hidden bg-[#eeeeee]">
         {/* the headline: every word fades from #EEEEEE to ink in turn */}
         <div className="relative">
         {/* one notice at a time, at least 80px ABOVE the headline; each new
@@ -167,7 +167,7 @@ export default function GoalSection() {
               <span
                 key={i}
                 className="transition-colors duration-100"
-                style={{ color: filled ? "#0a0a0a" : "#eeeeee" }}
+                style={{ color: filled ? "#0a0a0a" : "#dddddd" }}
               >
                 {word}
                 {i < WORDS.length - 1 ? " " : ""}

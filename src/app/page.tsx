@@ -13,7 +13,7 @@ import FooterSection from "@/components/FooterSection";
 
 export default function Home() {
   return (
-    <main>
+    <main style={{ backgroundColor: "#eeeeee" }}>
       <NavDock />
 
       {/* Pinned hero act: still section, parallaxed middle column
@@ -37,7 +37,7 @@ export default function Home() {
         name="Payloat Ledger"
         role="One ledger for every agent's spend"
         to="#0a0a0a"
-        ground="#ffffff"
+        ground="#eeeeee"
         ink="dark"
       />
 
