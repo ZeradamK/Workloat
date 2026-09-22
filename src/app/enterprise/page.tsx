@@ -27,6 +27,9 @@ import { ArrowButton, Compatible, Pricing } from "@/components/EnterpriseBlocks"
 
 const EASE = [0.25, 0.6, 0.2, 1] as const;
 const INK = "#0a0a0a";
+/* the ground a full-width dark act sits on, a shade above the ink the
+   type and the filled controls use */
+const ACT = "#1e1e1e";
 const MIST = "#eeeeee";
 const GREEN = "#163300";
 const LIME = "#9fe870";
@@ -61,7 +64,7 @@ export default function EnterprisePage() {
       <Stages />
       <Compatible />
       <Pricing />
-      <div style={{ backgroundColor: "#0a0a0a" }}>
+      <div style={{ backgroundColor: "#1e1e1e" }}>
         <FooterSection tone="light" />
       </div>
     </main>
@@ -241,7 +244,7 @@ function Stages() {
   const stage = STAGES[i];
 
   return (
-    <section className="overflow-x-clip text-white" style={{ backgroundColor: INK }}>
+    <section className="overflow-x-clip text-white" style={{ backgroundColor: ACT }}>
       <div className={`${GUTTER} pb-[clamp(56px,4vw,76px)] pt-[clamp(56px,3.6vw,70px)]`}>
         <motion.h2 {...up} className="text-[clamp(40px,4.2vw,80px)] font-medium leading-[1.05] tracking-[-2.5px]">
           Manage your agents&apos; spending

@@ -15,8 +15,8 @@ import { AnimatePresence, motion } from "motion/react";
  * bar. The bar rides above every section on every page.
  *
  * It is opaque on every ground, never glass: white with black type over
- * a light section, and #1e1e1e with white type and a white Sign up pill
- * over a black one.
+ * a light section, and pure black with white type and a white Sign up
+ * pill over a dark one.
  * The liquid-glass bar that read its ground is parked at
  * design-archive/NavDock-liquid-glass-bar.tsx.txt.
  */
@@ -31,9 +31,9 @@ const COMPACT_H = 64;
 const LOGO_PAD = 50;
 
 /* the two grounds the bar can sit over, and the skin it takes on each:
-   white with black type, or #1e1e1e with white type. The dark skin sits
-   a shade above the #0a0a0a sections it rides over, so the bar reads as
-   its own band by tone and needs no rule to separate it. Sign up
+   white with black type, or pure black with white type. The dark skin
+   sits a shade below the #1e1e1e sections it rides over, so the bar
+   reads as its own band by tone and needs no rule to separate it. Sign up
    reverses whichever skin is up, so the one filled thing in the row
    always carries the weight. */
 type Ground = "light" | "dark";
@@ -52,7 +52,7 @@ const SKIN: Record<Ground, {
     mark: "/payloat-mark.svg",
   },
   dark: {
-    bg: "#1e1e1e",
+    bg: "#000000",
     fg: "#ffffff",
     dim: "rgba(255,255,255,0.65)",
     rule: "rgba(255,255,255,0.16)",

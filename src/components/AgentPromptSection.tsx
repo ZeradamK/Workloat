@@ -41,7 +41,7 @@ const LOGOS = [
 
 export default function AgentPromptSection() {
   return (
-    <section className="text-white" style={{ backgroundColor: "#0a0a0a" }}>
+    <section className="text-white" style={{ backgroundColor: "#1e1e1e" }}>
       {/* the rails: 97px in at 1920 */}
       <div className="mx-auto max-w-[1726px] border-x border-white/10">
         {/* headline block: 150px down to the rule at 443 */}

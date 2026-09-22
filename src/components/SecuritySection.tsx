@@ -44,7 +44,7 @@ export default function SecuritySection() {
             <Cell caption="24/7 ledger monitoring" first>
               <div
                 className="flex h-[290px] items-center justify-center overflow-hidden"
-                style={{ backgroundColor: "#0a0a0a" }}
+                style={{ backgroundColor: "#1e1e1e" }}
               >
                 <SpikeClock size={250} />
               </div>

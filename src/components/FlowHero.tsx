@@ -88,7 +88,7 @@ export default function FlowHero({
       /* overflow-x-clip: the card's rules run past it and would otherwise
          add a few pixels of sideways scroll on phones */
       className={`overflow-x-clip ${first ? "pt-[clamp(120px,9vw,180px)]" : "pt-[clamp(32px,5vw,80px)]"}`}
-      style={{ backgroundColor: dark ? "#0a0a0a" : undefined }}
+      style={{ backgroundColor: dark ? "#1e1e1e" : undefined }}
     >
       <div className={`${FRAME} ${rail}`}>
         <div className={`${INNER} pb-[clamp(40px,3.5vw,64px)] pt-[clamp(48px,5vw,96px)]`}>

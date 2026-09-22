@@ -36,7 +36,7 @@ export default function Home() {
         quote="Agents do not announce what they buy. Payloat Ledger records every purchase the moment it lands, with the task behind it, so you know what was bought and why before the receipt arrives."
         name="Payloat Ledger"
         role="One ledger for every agent's spend"
-        to="#0a0a0a"
+        to="#1e1e1e"
         ground="#ffffff"
         ink="dark"
       />
@@ -47,7 +47,7 @@ export default function Home() {
       <AgentPromptSection />
 
       {/* the act's logo strip, on the same black */}
-      <div style={{ backgroundColor: "#0a0a0a" }}>
+      <div style={{ backgroundColor: "#1e1e1e" }}>
         <AgentLogoStrip />
       </div>
 
@@ -115,7 +115,7 @@ export default function Home() {
       <FAQSection tone="dark" />
 
       {/* Footer */}
-      <div style={{ backgroundColor: "#0a0a0a" }}>
+      <div style={{ backgroundColor: "#1e1e1e" }}>
         <FooterSection tone="light" />
       </div>
     </main>
