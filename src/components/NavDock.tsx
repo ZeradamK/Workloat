@@ -41,12 +41,12 @@ const GRID_LIGHT = "#bebebe";  /* #eeeeee, 20% toward black */
    #eeeeee with black type, or pure black with white type. The dark skin
    sits just below the black sections it rides over, so a grid line at
    its foot is what draws the bar's bottom edge. Sign up
-   reverses whichever skin is up, so the one filled thing in the row
-   always carries the weight. */
+   is the hero's split button, an arrow block against a body, reversed
+   on the dark skin so it still reads there. */
 type Ground = "light" | "dark";
 const SKIN: Record<Ground, {
   bg: string; fg: string; dim: string; rule: string; hover: string;
-  cta: string; ctaFg: string; mark: string; line: string;
+  arrow: string; arrowFg: string; cta: string; ctaFg: string; mark: string; line: string;
 }> = {
   light: {
     bg: "#eeeeee",
@@ -54,8 +54,12 @@ const SKIN: Record<Ground, {
     dim: "rgba(10,10,10,0.6)",
     rule: "rgba(10,10,10,0.12)",
     hover: "rgba(10,10,10,0.05)",
-    cta: "#0a0a0a",
-    ctaFg: "#eeeeee",
+    /* Sign up is the hero's Get started for free: an #0a0a0a arrow
+       block against an #1e1e1e body */
+    arrow: "#0a0a0a",
+    arrowFg: "#ffffff",
+    cta: "#1e1e1e",
+    ctaFg: "#ffffff",
     mark: "/payloat-mark.svg",
     line: GRID_LIGHT,
   },
@@ -65,6 +69,9 @@ const SKIN: Record<Ground, {
     dim: "rgba(255,255,255,0.65)",
     rule: "rgba(255,255,255,0.16)",
     hover: "rgba(255,255,255,0.1)",
+    /* the same button reversed, so it still reads on the black bar */
+    arrow: "#eeeeee",
+    arrowFg: "#0a0a0a",
     cta: "#ffffff",
     ctaFg: "#0a0a0a",
     mark: "/payloat-mark-white.svg",
@@ -392,10 +399,22 @@ export default function NavDock(_props: {
               <div className="ml-auto flex shrink-0 items-center pl-6" data-cell="cta">
                 <Link
                   href="/signup"
-                  className={`flex h-[42px] items-center px-[28px] text-[14px] font-semibold tracking-[-0.3px] ${TONE} hover:opacity-85`}
-                  style={{ backgroundColor: S.cta, color: S.ctaFg, borderRadius: 999 }}
+                  className="inline-flex h-[42px] items-stretch text-[14px] font-semibold tracking-[-0.3px] transition-transform hover:scale-[1.02] active:scale-[0.98]"
                 >
-                  Sign up
+                  <span
+                    className={`flex w-[42px] items-center justify-center ${TONE}`}
+                    style={{ backgroundColor: S.arrow }}
+                  >
+                    <svg width="11" height="11" viewBox="0 0 16 16" fill="none" aria-hidden>
+                      <path d="M5 2.5 10.5 8 5 13.5" stroke={S.arrowFg} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </span>
+                  <span
+                    className={`flex items-center px-5 ${TONE}`}
+                    style={{ backgroundColor: S.cta, color: S.ctaFg }}
+                  >
+                    Sign up
+                  </span>
                 </Link>
               </div>
             </div>
@@ -622,10 +641,16 @@ export default function NavDock(_props: {
                     <div className="mt-3 border-t pt-4" style={{ borderColor: S.rule }}>
                       <Link
                         href="/signup"
-                        className="flex h-11 w-full items-center justify-center text-[15px] font-semibold tracking-[-0.5px]"
-                        style={{ backgroundColor: S.cta, color: S.ctaFg, borderRadius: 999 }}
+                        className="flex h-11 w-full items-stretch text-[15px] font-semibold tracking-[-0.5px]"
                       >
-                        Sign up
+                        <span className="flex w-11 items-center justify-center" style={{ backgroundColor: S.arrow }}>
+                          <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden>
+                            <path d="M5 2.5 10.5 8 5 13.5" stroke={S.arrowFg} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        </span>
+                        <span className="flex flex-1 items-center justify-center" style={{ backgroundColor: S.cta, color: S.ctaFg }}>
+                          Sign up
+                        </span>
                       </Link>
                     </div>
                   </motion.div>
