@@ -23,7 +23,7 @@ const up = {
 
 export default function ContactPage() {
   return (
-    <main className="bg-white">
+    <main className="bg-[#eeeeee]">
       <NavDock forceDark />
 
       <section className="mx-auto max-w-[1200px] px-6 pb-[clamp(96px,11vw,176px)] pt-[180px]">
@@ -50,7 +50,7 @@ export default function ContactPage() {
             {...up}
             id="support"
             className="flex min-h-[340px] scroll-mt-[100px] flex-col rounded-[24px] p-8"
-            style={{ backgroundColor: "#eeeeee" }}
+            style={{ backgroundColor: "#ffffff" }}
           >
             <span className="flex h-[43px] w-[43px] items-center justify-center rounded-[11px] bg-white">
               <svg

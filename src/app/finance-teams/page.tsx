@@ -113,7 +113,7 @@ const BANK_LOGOS = [
 
 export default function FinanceTeamsPage() {
   return (
-    <main className="bg-white">
+    <main className="bg-[#eeeeee]">
       <NavDock forceDark />
 
       <BuiltFor />
@@ -713,7 +713,7 @@ function BuiltFor() {
   const [i, setI] = useState(0);
   const step = STEPS[i];
   return (
-    <section className="bg-white">
+    <section className="bg-[#eeeeee]">
       <div className={FRAME}>
         {/* the page opens here: room for the nav above the headline */}
         <div className="relative px-[clamp(20px,2.5vw,48px)] pt-[clamp(140px,9vw,200px)]">
@@ -821,7 +821,7 @@ const SETUP = [
 
 function SetUp() {
   return (
-    <section className="overflow-x-clip bg-white">
+    <section className="overflow-x-clip bg-[#eeeeee]">
       <div className={FRAME}>
         <div className={`${INNER} pt-[clamp(72px,7.5vw,146px)]`}>
           <div className="grid gap-12 pb-[clamp(56px,6vw,116px)] min-[1000px]:grid-cols-[minmax(0,560px)_1fr] min-[1000px]:gap-[clamp(40px,4vw,80px)]">
@@ -1062,7 +1062,7 @@ function Field({ label, value, sub }: { label: string; value: string; sub: strin
 
 function Guides() {
   return (
-    <section className="overflow-x-clip bg-white">
+    <section className="overflow-x-clip bg-[#eeeeee]">
       <div className={`${FRAME} border-t border-black/[0.08]`}>
         {/* the section on the ruled grid: a framed column, the head as a
             cell, the filters as a ruled row, the three guides as cells */}
@@ -1089,7 +1089,7 @@ function Guides() {
             </div>
             <div className="grid grid-cols-4 border-b border-black/[0.08] text-[clamp(13px,0.95vw,18px)]">
               {["All guides", "Playbooks", "How to", "Close"].map((f, i) => (
-                <span key={f} className={`flex h-12 items-center justify-center border-l border-black/[0.08] first:border-l-0 ${i === 0 ? "bg-[#eeeeee] text-ink" : "text-sub"}`}>
+                <span key={f} className={`flex h-12 items-center justify-center border-l border-black/[0.08] first:border-l-0 ${i === 0 ? "bg-white text-ink" : "text-sub"}`}>
                   {f}
                 </span>
               ))}

@@ -114,8 +114,9 @@ export default function HeroShowcase() {
   );
 }
 
-/* the hero's two calls: the split button in the nav's Get started style
-   on #eeeeee, and the text link with an arrow */
+/* the hero's two calls: the split button, an #0a0a0a arrow block against
+   an #1e1e1e body the way the site's dark buttons are built, and the
+   text link with an arrow */
 function HeroButtons() {
   return (
     <>
@@ -128,7 +129,7 @@ function HeroButtons() {
             <path d="M5 2.5 10.5 8 5 13.5" stroke="#ffffff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </span>
-        <span className="flex items-center bg-[#eeeeee] px-5 text-ink">Get started for free</span>
+        <span className="flex items-center bg-[#1e1e1e] px-5 text-white">Get started for free</span>
       </Link>
       <Link
         href="/product"

@@ -303,7 +303,7 @@ export function ArrowButton({ href, children, tone = "dark" }: { href: string; c
       </span>
       <span
         className="flex items-center px-8"
-        style={{ backgroundColor: lime ? LIME : light || inverse ? MIST : pale || white ? "#ffffff" : "#2c2c2c", color: lime || light || pale || inverse || white ? INK : "#ffffff" }}
+        style={{ backgroundColor: lime ? LIME : light ? "#1e1e1e" : inverse ? MIST : pale || white ? "#ffffff" : "#2c2c2c", color: lime || pale || inverse || white ? INK : "#ffffff" }}
       >
         {children}
       </span>

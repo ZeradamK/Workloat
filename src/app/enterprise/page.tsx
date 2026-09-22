@@ -55,7 +55,7 @@ function Cross({ pos, light = false }: { pos: "top-left" | "bottom-right"; light
 
 export default function EnterprisePage() {
   return (
-    <main className="bg-white">
+    <main className="bg-[#eeeeee]">
       <NavDock forceDark />
       <Hero />
       <Stages />
@@ -74,7 +74,7 @@ export default function EnterprisePage() {
 
 function Hero() {
   return (
-    <section className="overflow-x-clip bg-white pt-[136px]">
+    <section className="overflow-x-clip bg-[#eeeeee] pt-[136px]">
       <div className="grid min-[1000px]:grid-cols-[52.6fr_47.4fr]">
         <div className={`${GUTTER} flex flex-col justify-center py-[clamp(48px,6vw,120px)]`}>
           {/* Mural's five-color bar: ours, black and lime */}

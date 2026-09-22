@@ -13,7 +13,7 @@ import FooterSection from "@/components/FooterSection";
 
 export default function Home() {
   return (
-    <main style={{ backgroundColor: "#eeeeee" }}>
+    <main className="bg-[#eeeeee]">
       <NavDock />
 
       {/* Pinned hero act: still section, parallaxed middle column

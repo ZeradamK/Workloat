@@ -70,7 +70,7 @@ export default function ProductPage() {
   const canvasRef = useRef<HTMLDivElement>(null);
 
   return (
-    <main className="bg-white">
+    <main className="bg-[#eeeeee]">
       <NavDock />
 
       {/* the hero on #eeeeee, in the enterprise hero's type */}
@@ -118,7 +118,7 @@ export default function ProductPage() {
       </section>
 
       {/* the home page's markets closer, on white */}
-      <div className="bg-white">
+      <div className="bg-[#eeeeee]">
         <MarketsSection />
       </div>
 

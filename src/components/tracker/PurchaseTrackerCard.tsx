@@ -15,7 +15,6 @@ import { money } from "./money";
 
 const CARD_INK = "#14171f";
 const STAT_LIME = "#d9f268";
-const MIST = "#eeeeee";
 
 /* SwiftUI spring(response: 0.7, dampingFraction: 0.9) */
 const ENTRANCE = { type: "spring", stiffness: 81, damping: 16 } as const;
@@ -87,7 +86,7 @@ export default function PurchaseTrackerCard({
     <div
       className={`w-full rounded-[24px] p-3 ${className}`}
       style={{
-        backgroundColor: dark ? "#0a0a0a" : MIST,
+        backgroundColor: dark ? "#0a0a0a" : "#ffffff",
         ...(bgImage
           ? {
               backgroundImage: `url(${bgImage})`,

@@ -28,7 +28,7 @@ const TRACKER_BASE_W = 560;
 
 export default function PurchasesPage() {
   return (
-    <main className="bg-white">
+    <main className="bg-[#eeeeee]">
       <NavDock forceDark />
 
       <section className="mx-auto max-w-[1200px] px-6 pb-[clamp(96px,11vw,176px)] pt-[170px]">
@@ -110,7 +110,7 @@ export default function PurchasesPage() {
             >
               <div
                 className="relative h-[420px] overflow-hidden rounded-[24px] min-[900px]:h-[500px]"
-                style={{ backgroundColor: "#eeeeee" }}
+                style={{ backgroundColor: "#ffffff" }}
               >
                 <span className="absolute left-[8%] top-[16%] -rotate-[38deg] rounded-full bg-[#dcdcda] px-8 py-4 text-[clamp(16px,1.6vw,22px)] font-medium text-ink">
                   Receipt matching

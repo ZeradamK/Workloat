@@ -57,7 +57,7 @@ function Cross({ pos }: { pos: "top-left" | "bottom-right" }) {
 
 export default function ConsumerPage() {
   return (
-    <main className="bg-white">
+    <main className="bg-[#eeeeee]">
       <NavDock forceDark />
 
       <section className="mx-auto max-w-[1200px] overflow-x-clip px-6 pb-[clamp(96px,11vw,176px)] pt-[180px]">

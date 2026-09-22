@@ -12,7 +12,6 @@ import { money } from "./money";
  */
 
 const CARD_INK = "#14171f";
-const MIST = "#eeeeee";
 
 const ENTRANCE = { type: "spring", stiffness: 81, damping: 16 } as const;
 
@@ -46,7 +45,7 @@ export default function SubscriptionTrackerCard({
   return (
     <div
       className={`flex h-[260px] ${fluid ? "w-full" : "w-[296px]"} flex-col rounded-[24px] p-4 ${className}`}
-      style={{ backgroundColor: dark ? "#0a0a0a" : MIST }}
+      style={{ backgroundColor: dark ? "#0a0a0a" : "#ffffff" }}
     >
       <div className="flex items-start justify-between">
         <div>

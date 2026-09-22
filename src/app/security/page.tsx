@@ -48,7 +48,7 @@ export default function SecurityPage() {
   const [open, setOpen] = useState(2);
 
   return (
-    <main className="bg-white">
+    <main className="bg-[#eeeeee]">
       <NavDock forceDark />
 
       <section className="mx-auto max-w-[1200px] px-6 pb-[clamp(96px,11vw,176px)] pt-[180px]">
@@ -237,7 +237,7 @@ export default function SecurityPage() {
           <motion.div
             {...up}
             className="relative mt-8 h-[420px] overflow-hidden rounded-[24px] min-[900px]:h-[600px]"
-            style={{ backgroundColor: "#eeeeee" }}
+            style={{ backgroundColor: "#ffffff" }}
           >
             <Image
               src="/security-charge.jpg"
@@ -329,7 +329,7 @@ export default function SecurityPage() {
                   className={`relative aspect-square w-full overflow-hidden rounded-[24px] ${
                     e.border ? "border border-solid border-black" : ""
                   }`}
-                  style={{ backgroundColor: "#eeeeee" }}
+                  style={{ backgroundColor: "#ffffff" }}
                 >
                   {e.image && (
                     <Image

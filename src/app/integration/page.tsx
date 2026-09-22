@@ -138,7 +138,7 @@ function Notices() {
 
 export default function LedgerPage() {
   return (
-    <main className="bg-white">
+    <main className="bg-[#eeeeee]">
       <NavDock />
 
       {/* 1. hero on the enterprise page's anatomy, on black: the headline,

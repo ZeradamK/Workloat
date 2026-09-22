@@ -280,7 +280,7 @@ export default function SignupPage() {
         : { title: "What's your full name?", sub: "Let's get to know you" };
 
   return (
-    <main className="grid min-h-screen bg-white min-[900px]:grid-cols-2">
+    <main className="grid min-h-screen bg-[#eeeeee] min-[900px]:grid-cols-2">
       {/* ---- Left: the form column ---- */}
       <div className="relative flex flex-col items-center px-6">
         <button

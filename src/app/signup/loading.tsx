@@ -5,7 +5,7 @@
 export default function SignupLoading() {
   const dots = ["#0a0a0a", "#0a0a0a", "#cfcdc8", "#cfcdc8", "#cfcdc8", "#0a0a0a"];
   return (
-    <main className="grid min-h-screen bg-white min-[900px]:grid-cols-2">
+    <main className="grid min-h-screen bg-[#eeeeee] min-[900px]:grid-cols-2">
       <div className="flex justify-center pt-[60px]">
         <div className="relative h-8 w-8 animate-spin [animation-duration:0.9s]">
           {dots.map((c, i) => {

@@ -8,7 +8,7 @@
     "SF Pro Text", "Helvetica Neue", "Segoe UI", Roboto, Arial, sans-serif;
 
   /* Page canvas: white nudged 5% toward #EEEEEE (≈ #FEFEFE) */
-  --background: color-mix(in srgb, #eeeeee 5%, #ffffff);
+  --background: #eeeeee;
   --foreground: #0a0a0a;
 
   --ink: #0a0a0a;          /* near-black text, matches logo fill */
