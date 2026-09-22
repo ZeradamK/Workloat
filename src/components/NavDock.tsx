@@ -23,6 +23,15 @@ import { AnimatePresence, motion } from "motion/react";
 
 const SPRING = { type: "spring", stiffness: 380, damping: 34, mass: 0.8 } as const;
 
+/* the hamburger's three bars: where each sits, and where it travels and
+   turns to when the menu opens. The middle one has no turn, so it is the
+   one that fades. Square ends throughout, no radius anywhere. */
+const BARS = [
+  { at: 0, shut: 7, turn: 45 },
+  { at: 7, shut: 0, turn: 0 },
+  { at: 14, shut: -7, turn: -45 },
+] as const;
+
 /* one row, flush to the top of the page */
 const BAR_H = 76;
 const COMPACT_H = 64;
@@ -467,33 +476,32 @@ export default function NavDock(_props: {
               {menuOpen && (
                 <div className="fixed inset-0 cursor-default" onClick={() => setMenuOpen(false)} />
               )}
+              {/* the hamburger: three square-ended bars, no box. Open,
+                  the outer two close into a cross and the middle goes. */}
               <button
                 type="button"
                 onClick={() => setMenuOpen((v) => !v)}
                 aria-expanded={menuOpen}
                 aria-haspopup="true"
-                className={`relative flex h-[42px] items-center gap-2 px-5 text-[15px] font-medium ${TONE}`}
-                style={{ border: `1px solid ${S.rule}`, color: S.fg }}
+                aria-label={menuOpen ? "Close menu" : "Open menu"}
+                className="relative -mr-1 flex h-[42px] w-[42px] items-center justify-center"
               >
-                Menu
-                <motion.svg
-                  width="11"
-                  height="11"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  aria-hidden
-                  initial={false}
-                  animate={{ rotate: menuOpen ? 180 : 0 }}
-                  transition={SPRING}
-                >
-                  <path
-                    d="M3 5.5 8 10.5l5-5"
-                    stroke="currentColor"
-                    strokeWidth="1.8"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </motion.svg>
+                <span className="relative block h-[16px] w-[24px]" aria-hidden>
+                  {BARS.map((b) => (
+                    <motion.span
+                      key={b.at}
+                      className={`absolute left-0 block h-[2px] w-full ${TONE}`}
+                      style={{ top: b.at, backgroundColor: S.fg, borderRadius: 0 }}
+                      initial={false}
+                      animate={
+                        menuOpen
+                          ? { y: b.shut, rotate: b.turn, opacity: b.turn === 0 ? 0 : 1 }
+                          : { y: 0, rotate: 0, opacity: 1 }
+                      }
+                      transition={SPRING}
+                    />
+                  ))}
+                </span>
               </button>
 
               <AnimatePresence>
