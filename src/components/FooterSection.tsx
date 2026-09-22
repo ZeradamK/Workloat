@@ -61,12 +61,11 @@ export default function FooterSection({ tone = "dark" }: { /** "light" sets whit
         {/* the mark, centered in its own cell */}
         <div className="flex justify-center py-[clamp(40px,4.5vw,72px)]">
           <Image
-            src="/payloat-mark.svg"
+            src={light ? "/payloat-mark-white.svg" : "/payloat-mark.svg"}
             alt="Payloat"
-            width={90}
-            height={90}
+            width={622}
+            height={910}
             className="h-[clamp(64px,6vw,90px)] w-auto"
-            style={light ? { filter: "invert(1)" } : undefined}
           />
         </div>
 

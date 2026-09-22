@@ -14,8 +14,9 @@ import { AnimatePresence, motion } from "motion/react";
  * when a box appears behind the item and its panel drops 10px below the
  * bar. The bar rides above every section on every page.
  *
- * It is solid white on every ground, with black type throughout: no
- * glass, no refraction, and nothing sampled from the section behind.
+ * It is opaque on every ground, never glass: white with black type over
+ * a light section, and the section's own black with white type and a
+ * white Sign up pill over a black one.
  * The liquid-glass bar that read its ground is parked at
  * design-archive/NavDock-liquid-glass-bar.tsx.txt.
  */
@@ -29,17 +30,39 @@ const COMPACT_H = 64;
    items ignore it and centre on the screen instead */
 const LOGO_PAD = 50;
 
-/* the bar's one palette, the same at every scroll position on every
-   page: white, with black type over it */
-const WHITE = "#ffffff";
-const FG = "#0a0a0a";
-const DIM = "rgba(10,10,10,0.6)";
-const RULE = "rgba(10,10,10,0.12)";
-const HOVER = "rgba(10,10,10,0.05)";
-/* Sign up reverses it, so the one filled thing in the row carries the
-   weight */
-const CTA_BG = "#0a0a0a";
-const CTA_FG = "#eeeeee";
+/* the two grounds the bar can sit over, and the skin it takes on each:
+   white with black type, or the section's own black with white type.
+   Sign up reverses whichever skin is up, so the one filled thing in the
+   row always carries the weight. */
+type Ground = "light" | "dark";
+const SKIN: Record<Ground, {
+  bg: string; fg: string; dim: string; rule: string; hover: string;
+  cta: string; ctaFg: string; mark: string;
+}> = {
+  light: {
+    bg: "#ffffff",
+    fg: "#0a0a0a",
+    dim: "rgba(10,10,10,0.6)",
+    rule: "rgba(10,10,10,0.12)",
+    hover: "rgba(10,10,10,0.05)",
+    cta: "#0a0a0a",
+    ctaFg: "#eeeeee",
+    mark: "/payloat-mark.svg",
+  },
+  dark: {
+    bg: "#0a0a0a",
+    fg: "#ffffff",
+    dim: "rgba(255,255,255,0.65)",
+    rule: "rgba(255,255,255,0.16)",
+    hover: "rgba(255,255,255,0.1)",
+    cta: "#ffffff",
+    ctaFg: "#0a0a0a",
+    mark: "/payloat-mark-white.svg",
+  },
+};
+const TONE = "transition-[color,background-color,border-color] duration-200 ease-out";
+/* the 1px strip closing the bar at its foot, the same on either skin */
+const FOOT = "#eeeeee";
 
 type PanelKey = "Product" | "Features" | "Pricing" | "Contact";
 
@@ -113,9 +136,91 @@ export default function NavDock(_props: {
   const [active, setActive] = useState<PanelKey | null>(null);
   const [hovered, setHovered] = useState<PanelKey | null>(null);
 
+  /* ---- the ground under the bar, sampled on scroll. The bar spans the
+     full width, so a section that is black under one part of the row and
+     light under another would flip the whole thing off one reading. It
+     takes three, one under each part: the mark at the left, the items at
+     the centre, Sign up at the right. ---- */
+  const headerRef = useRef<HTMLElement>(null);
+  const rowRef = useRef<HTMLDivElement>(null);
+  const barH = useRef(BAR_H);
+  const [logoGround, setLogoGround] = useState<Ground>("light");
+  const [itemsGround, setItemsGround] = useState<Ground>("light");
+  const [ctaGround, setCtaGround] = useState<Ground>("light");
+  useEffect(() => {
+    const header = headerRef.current;
+    const lum = (c: string): number | null => {
+      const m = c.match(/rgba?\(([\d.]+),\s*([\d.]+),\s*([\d.]+)(?:,\s*([\d.]+))?\)/);
+      if (m) {
+        if (m[4] !== undefined && Number(m[4]) < 0.5) return null;
+        return (0.2126 * Number(m[1]) + 0.7152 * Number(m[2]) + 0.0722 * Number(m[3])) / 255;
+      }
+      const k = c.match(/color\(srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*([\d.]+))?\)/);
+      if (k) {
+        if (k[4] !== undefined && Number(k[4]) < 0.5) return null;
+        return 0.2126 * Number(k[1]) + 0.7152 * Number(k[2]) + 0.0722 * Number(k[3]);
+      }
+      return null;
+    };
+    const toGround = (l: number): Ground => (l >= 0.5 ? "light" : "dark");
+    /* the ground at one point under the bar */
+    const read = (x: number, y: number): Ground | null => {
+      const stack = document.elementsFromPoint(x, y).filter((el) => !header?.contains(el));
+      let el = stack[0] as HTMLElement | undefined;
+      while (el && el !== document.documentElement) {
+        const cs = getComputedStyle(el);
+        const l = lum(cs.backgroundColor);
+        if (l !== null) return toGround(l);
+        if (cs.backgroundImage.includes("gradient")) {
+          const stops = cs.backgroundImage.match(/(?:rgba?|color)\([^)]*\)/g) ?? [];
+          const first = stops[0] ? lum(stops[0]) : null;
+          const last = stops[stops.length - 1] ? lum(stops[stops.length - 1]) : null;
+          if (first !== null && last !== null) {
+            const r = el.getBoundingClientRect();
+            return toGround((y - r.top) / r.height < 0.5 ? first : last);
+          }
+        }
+        el = el.parentElement ?? undefined;
+      }
+      return null;
+    };
+    let raf = 0;
+    const sample = () => {
+      raf = 0;
+      const y = barH.current / 2;
+      const row = rowRef.current;
+      const mid = (sel: string, fallback: number) => {
+        const cell = row?.querySelector<HTMLElement>(sel);
+        if (!cell) return window.innerWidth * fallback;
+        const r = cell.getBoundingClientRect();
+        return r.left + r.width / 2;
+      };
+      const go = read(mid('[data-cell="logo"]', 0.05), y);
+      if (go !== null) setLogoGround((c) => (c === go ? c : go));
+      const gi = read(mid('[data-cell="nav"]', 0.5), y);
+      if (gi !== null) setItemsGround((c) => (c === gi ? c : gi));
+      const gc = read(mid('[data-cell="cta"]', 0.92), y);
+      if (gc !== null) setCtaGround((c) => (c === gc ? c : gc));
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(sample);
+    };
+    sample();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+  /* the bar turns black only when all three readings agree it is over
+     black, so it never paints a ground the section behind it lacks */
+  const solid = logoGround === "dark" && itemsGround === "dark" && ctaGround === "dark";
+  const S = SKIN[solid ? "dark" : "light"];
+
   /* ---- collapse: once the row's cells no longer fit the frame, the
      compact Menu nav takes over ---- */
-  const rowRef = useRef<HTMLDivElement>(null);
   const needW = useRef(0);
   const [collapsed, setCollapsed] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -161,21 +266,25 @@ export default function NavDock(_props: {
   const highlight = hovered ?? active;
   const dims = active ? PANEL_DIMS[active] : null;
   const H = collapsed ? COMPACT_H : BAR_H;
+  barH.current = H;
 
   return (
     <header
-      className="fixed inset-x-0 top-0"
-      style={{ height: H, zIndex: 9999, backgroundColor: WHITE, color: FG }}
+      ref={headerRef}
+      className={`fixed inset-x-0 top-0 ${TONE}`}
+      style={{ height: H, zIndex: 9999, backgroundColor: S.bg, color: S.fg }}
       onMouseLeave={() => {
         setHovered(null);
         setActive(null);
       }}
     >
-      {/* a hairline at the foot, so the white bar still reads as a bar
-          where the section under it is also white */}
+      {/* a 1px strip of #eeeeee along the foot on both skins: it keeps
+          the white bar reading as a bar where the section under it is
+          also white, and draws the black bar's edge against the black
+          section it sits on */}
       <span
         className="pointer-events-none absolute inset-x-0 bottom-0 h-px"
-        style={{ backgroundColor: RULE }}
+        style={{ backgroundColor: FOOT }}
         aria-hidden
       />
 
@@ -198,7 +307,7 @@ export default function NavDock(_props: {
                 style={{ marginLeft: LOGO_PAD }}
               >
                 <Image
-                  src="/payloat-mark.svg"
+                  src={S.mark}
                   alt="Payloat"
                   width={622}
                   height={910}
@@ -243,7 +352,7 @@ export default function NavDock(_props: {
                         <motion.span
                           layoutId="navHoverBox"
                           className="absolute inset-0"
-                          style={{ backgroundColor: HOVER, border: `1px solid ${RULE}` }}
+                          style={{ backgroundColor: S.hover, border: `1px solid ${S.rule}` }}
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           exit={{ opacity: 0, transition: { duration: 0.12 } }}
@@ -278,8 +387,8 @@ export default function NavDock(_props: {
               <div className="ml-auto flex shrink-0 items-center pl-6" data-cell="cta">
                 <Link
                   href="/signup"
-                  className="flex h-[42px] items-center px-[28px] text-[14px] font-semibold tracking-[-0.3px] transition-opacity hover:opacity-85"
-                  style={{ backgroundColor: CTA_BG, color: CTA_FG, borderRadius: 999 }}
+                  className={`flex h-[42px] items-center px-[28px] text-[14px] font-semibold tracking-[-0.3px] ${TONE} hover:opacity-85`}
+                  style={{ backgroundColor: S.cta, color: S.ctaFg, borderRadius: 999 }}
                 >
                   Sign up
                 </Link>
@@ -302,11 +411,11 @@ export default function NavDock(_props: {
                       top: BAR_H + 10,
                       left: panelLeft(rowRef.current, active),
                       width: dims.w,
-                      backgroundColor: WHITE,
-                      color: FG,
-                      border: `1px solid ${RULE}`,
-                      "--nav-fg": FG,
-                      "--nav-label": DIM,
+                      backgroundColor: S.bg,
+                      color: S.fg,
+                      border: `1px solid ${S.rule}`,
+                      "--nav-fg": S.fg,
+                      "--nav-label": S.dim,
                     } as React.CSSProperties
                   }
                 >
@@ -332,7 +441,7 @@ export default function NavDock(_props: {
           >
             <Link href="/" aria-label="Payloat home" className="flex items-center">
               <Image
-                src="/payloat-mark.svg"
+                src={S.mark}
                 alt="Payloat"
                 width={622}
                 height={910}
@@ -349,8 +458,8 @@ export default function NavDock(_props: {
                 onClick={() => setMenuOpen((v) => !v)}
                 aria-expanded={menuOpen}
                 aria-haspopup="true"
-                className="relative flex h-[42px] items-center gap-2 px-5 text-[15px] font-medium"
-                style={{ border: `1px solid ${RULE}`, color: FG }}
+                className={`relative flex h-[42px] items-center gap-2 px-5 text-[15px] font-medium ${TONE}`}
+                style={{ border: `1px solid ${S.rule}`, color: S.fg }}
               >
                 Menu
                 <motion.svg
@@ -383,12 +492,12 @@ export default function NavDock(_props: {
                     className="no-scrollbar absolute right-0 top-[54px] w-[min(340px,calc(100vw-40px))] overflow-y-auto p-5"
                     style={
                       {
-                        backgroundColor: WHITE,
-                        color: FG,
-                        border: `1px solid ${RULE}`,
+                        backgroundColor: S.bg,
+                        color: S.fg,
+                        border: `1px solid ${S.rule}`,
                         maxHeight: "calc(100vh - 100px)",
-                        "--nav-fg": FG,
-                        "--nav-label": DIM,
+                        "--nav-fg": S.fg,
+                        "--nav-label": S.dim,
                       } as React.CSSProperties
                     }
                   >
@@ -505,11 +614,11 @@ export default function NavDock(_props: {
                       </div>
                     ))}
 
-                    <div className="mt-3 border-t pt-4" style={{ borderColor: RULE }}>
+                    <div className="mt-3 border-t pt-4" style={{ borderColor: S.rule }}>
                       <Link
                         href="/signup"
                         className="flex h-11 w-full items-center justify-center text-[15px] font-semibold tracking-[-0.5px]"
-                        style={{ backgroundColor: CTA_BG, color: CTA_FG, borderRadius: 999 }}
+                        style={{ backgroundColor: S.cta, color: S.ctaFg, borderRadius: 999 }}
                       >
                         Sign up
                       </Link>
