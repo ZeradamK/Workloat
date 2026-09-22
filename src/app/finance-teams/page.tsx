@@ -578,7 +578,7 @@ function Playbook() {
                   </div>
                   <div className="flex items-start gap-3 border-t border-white/25 p-5">
                     <Image
-                      src="/payloat-app-icon-blacktile.png"
+                      src="/payloat-mark-tile.svg"
                       alt=""
                       width={32}
                       height={32}
@@ -1109,7 +1109,7 @@ function Guides() {
                 <p className="mt-[clamp(20px,2.2vw,42px)] text-[clamp(14px,0.95vw,18px)] leading-[1.45] text-ink/70">{g.sub}</p>
                 <p className="mt-[clamp(16px,1.7vw,32px)] flex items-center gap-2.5 text-[clamp(13px,0.85vw,16px)] text-sub">
                   <Image
-                    src="/payloat-app-icon-blacktile.png"
+                    src="/payloat-mark-tile.svg"
                     alt=""
                     width={24}
                     height={24}

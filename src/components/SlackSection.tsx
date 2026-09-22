@@ -472,7 +472,7 @@ function SlackWindow({ layout, stage, typed }: { layout: Layout; stage: Stage; t
         {!phone && (
           <div className="flex w-[68px] shrink-0 flex-col items-center gap-4 pt-4" style={{ backgroundColor: RAIL, borderRight: `1px solid ${LINE}` }}>
             <span className="flex h-[36px] w-[36px] items-center justify-center rounded-[9px] bg-white">
-              <Image src="/payloat-app-icon-v2.png" alt="Payloat" width={36} height={36} className="h-[36px] w-[36px] rounded-[9px]" />
+              <Image src="/payloat-mark-tile.svg" alt="Payloat" width={36} height={36} className="h-[36px] w-[36px] rounded-[9px]" />
             </span>
             {(
               [
@@ -518,10 +518,10 @@ function SlackWindow({ layout, stage, typed }: { layout: Layout; stage: Stage; t
                 <SideRow key={c} label={c} hash />
               ))}
               <SideHead>Direct messages</SideHead>
-              <SideRow label="Payloat" avatar="/payloat-app-icon-v2.png" active />
+              <SideRow label="Payloat" avatar="/payloat-mark-tile.svg" active />
               <SideRow label="Zeradam" avatar="/zeradam.jpg" you />
               <SideHead>Apps</SideHead>
-              <SideRow label="Payloat" avatar="/payloat-app-icon-v2.png" />
+              <SideRow label="Payloat" avatar="/payloat-mark-tile.svg" />
             </div>
           </div>
         )}
@@ -537,7 +537,7 @@ function SlackWindow({ layout, stage, typed }: { layout: Layout; stage: Stage; t
                   <SlackIcon name="star-o" size={15} bold />
                 </span>
                 <span className="relative">
-                  <Image src="/payloat-app-icon-v2.png" alt="" width={24} height={24} className="h-[24px] w-[24px] rounded-[6px]" />
+                  <Image src="/payloat-mark-tile.svg" alt="" width={24} height={24} className="h-[24px] w-[24px] rounded-[6px]" />
                   <span className="absolute -bottom-0.5 -right-0.5 h-[9px] w-[9px] rounded-full border-2 border-white bg-[#2bac76]" />
                 </span>
                 Payloat
@@ -582,7 +582,7 @@ function SlackWindow({ layout, stage, typed }: { layout: Layout; stage: Stage; t
             {/* the DM's intro: Slack's "this conversation is just between" block */}
             <div className="mb-4">
               <div className="flex items-end gap-4">
-                <Image src="/payloat-app-icon-v2.png" alt="Payloat" width={96} height={96} className="h-[96px] w-[96px] rounded-[10px]" />
+                <Image src="/payloat-mark-tile.svg" alt="Payloat" width={96} height={96} className="h-[96px] w-[96px] rounded-[10px]" />
                 <div className="pb-1">
                   <p className="flex items-center gap-2 text-[18px] font-bold leading-[1.2]">
                     Payloat
@@ -635,7 +635,7 @@ function SlackWindow({ layout, stage, typed }: { layout: Layout; stage: Stage; t
             <AnimatePresence initial={false}>
               {stage === 2 && (
                 <motion.div key="dots" {...rowIn} exit={{ opacity: 0, transition: { duration: 0.15 } }} className="mt-3 flex items-center gap-3">
-                  <Image src="/payloat-app-icon-v2.png" alt="Payloat" width={36} height={36} className="h-[36px] w-[36px] shrink-0 rounded-[8px]" />
+                  <Image src="/payloat-mark-tile.svg" alt="Payloat" width={36} height={36} className="h-[36px] w-[36px] shrink-0 rounded-[8px]" />
                   <span className="flex items-center gap-1 rounded-[10px] px-3 py-2.5" style={{ backgroundColor: "#f4f4f4" }}>
                     {[0, 1, 2].map((i) => (
                       <motion.span
@@ -655,7 +655,7 @@ function SlackWindow({ layout, stage, typed }: { layout: Layout; stage: Stage; t
             <AnimatePresence initial={false}>
               {stage >= 3 && (
                 <motion.div key="a" {...rowIn} className="mt-3 flex items-start gap-3">
-                  <Image src="/payloat-app-icon-v2.png" alt="Payloat" width={36} height={36} className="h-[36px] w-[36px] shrink-0 rounded-[8px]" />
+                  <Image src="/payloat-mark-tile.svg" alt="Payloat" width={36} height={36} className="h-[36px] w-[36px] shrink-0 rounded-[8px]" />
                   <div className="min-w-0 flex-1">
                     <p className="text-[14px] leading-[1.2]">
                       <span className="font-bold">Payloat</span>
@@ -863,7 +863,7 @@ function SlackPhone({ active }: { active: boolean }) {
         <span className="flex items-center gap-3">
           <SlackIcon name="chevron-large-left" size={20} bold />
           <span className="relative">
-            <Image src="/payloat-app-icon-v2.png" alt="Payloat" width={30} height={30} className="h-[30px] w-[30px] rounded-[7px]" />
+            <Image src="/payloat-mark-tile.svg" alt="Payloat" width={30} height={30} className="h-[30px] w-[30px] rounded-[7px]" />
             <span className="absolute -bottom-0.5 -right-0.5 h-[10px] w-[10px] rounded-full border-2 border-white bg-[#2bac76]" />
           </span>
           <span className="text-[17px] font-bold">Payloat</span>
@@ -877,7 +877,7 @@ function SlackPhone({ active }: { active: boolean }) {
       {/* conversation */}
       <div className="flex min-h-0 flex-1 flex-col justify-end overflow-hidden px-4">
         {/* profile block */}
-        <Image src="/payloat-app-icon-v2.png" alt="Payloat" width={64} height={64} className="h-[64px] w-[64px] rounded-[14px]" />
+        <Image src="/payloat-mark-tile.svg" alt="Payloat" width={64} height={64} className="h-[64px] w-[64px] rounded-[14px]" />
         <p className="mt-3 text-[22px] font-bold leading-tight">Payloat</p>
         <p className="text-[15px]" style={{ color: IOS_MUTED }}>Chief Financial Agent</p>
         <p className="mt-3 text-[15px] leading-[1.4]" style={{ color: IOS_MUTED }}>
@@ -914,7 +914,7 @@ function SlackPhone({ active }: { active: boolean }) {
         <AnimatePresence initial={false}>
           {stage >= 3 && (
             <motion.div key="a" {...rowIn} className="mt-3 flex items-start gap-2.5">
-              <Image src="/payloat-app-icon-v2.png" alt="Payloat" width={36} height={36} className="h-[36px] w-[36px] shrink-0 rounded-[8px]" />
+              <Image src="/payloat-mark-tile.svg" alt="Payloat" width={36} height={36} className="h-[36px] w-[36px] shrink-0 rounded-[8px]" />
               <div className="min-w-0 flex-1">
                 <p className="text-[15px] leading-[1.2]">
                   <span className="font-bold">Payloat</span>
@@ -959,7 +959,7 @@ function SlackPhone({ active }: { active: boolean }) {
         <AnimatePresence initial={false}>
           {stage === 2 && (
             <motion.div key="typing" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }} className="flex h-[26px] items-center gap-2 rounded-t-[10px] px-3 text-[12px]" style={{ backgroundColor: "#f4f4f4", color: IOS_MUTED }}>
-              <Image src="/payloat-app-icon-v2.png" alt="" width={16} height={16} className="h-[16px] w-[16px] rounded-[4px]" />
+              <Image src="/payloat-mark-tile.svg" alt="" width={16} height={16} className="h-[16px] w-[16px] rounded-[4px]" />
               <span className="font-semibold" style={{ color: IOS_INK }}>Payloat</span> is typing…
             </motion.div>
           )}

@@ -145,7 +145,7 @@ export default function ConsumerPage() {
                 </span>
                 <span className="flex w-fit items-center gap-2.5 self-start rounded-full bg-white py-2 pl-2 pr-5 text-[15px] font-medium text-ink">
                   <Image
-                    src="/payloat-app-icon-v2.png"
+                    src="/payloat-mark-tile.svg"
                     alt=""
                     width={26}
                     height={26}

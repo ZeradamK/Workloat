@@ -315,7 +315,7 @@ function Panel({ children, className }: { children: React.ReactNode; className?:
 function LogoRow() {
   return (
     <div className="flex items-center gap-2 px-1">
-      <Image src="/payloat-app-icon-v2.png" alt="" width={22} height={22} className="h-[22px] w-[22px] rounded-[6px]" />
+      <Image src="/payloat-mark-tile.svg" alt="" width={22} height={22} className="h-[22px] w-[22px] rounded-[6px]" />
       <span className="text-[15px] font-semibold" style={{ color: INK }}>
         Payloat
       </span>

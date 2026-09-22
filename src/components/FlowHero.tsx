@@ -240,11 +240,11 @@ function Node({ label, kind }: { label: string; kind: "from" | "agent" | "to" })
       {kind === "agent" && (
         <span className={`${size} flex items-center justify-center rounded-full bg-white`}>
           <Image
-            src="/payloat-icon-dark.svg"
+            src="/payloat-mark.svg"
             alt=""
             width={18}
             height={18}
-            className="h-[62%] w-[62%]"
+            className="h-[62%] w-auto"
           />
         </span>
       )}

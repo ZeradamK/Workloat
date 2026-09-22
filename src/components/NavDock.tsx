@@ -8,8 +8,8 @@ import { AnimatePresence, motion } from "motion/react";
 
 /**
  * The nav, on the Mews anatomy: one full-bleed row flush to the top of
- * every page. The Payloat mark and wordmark float left a step in from
- * the page's content rail, the items sit centred on the screen, and
+ * every page. The Payloat mark floats left a step in from the page's
+ * content rail, the items sit centred on the screen, and
  * Sign up floats right as a black pill. Items are plain until hovered,
  * when a box appears behind the item and its panel drops 10px below the
  * bar. The bar rides above every section on every page.
@@ -194,24 +194,16 @@ export default function NavDock(_props: {
                 href="/"
                 data-cell="logo"
                 aria-label="Payloat home"
-                className="flex shrink-0 items-center gap-[11px] transition-opacity hover:opacity-80"
+                className="flex shrink-0 items-center transition-opacity hover:opacity-80"
                 style={{ marginLeft: LOGO_PAD }}
               >
                 <Image
-                  src="/payloat-app-icon-v2.png"
-                  alt=""
-                  width={36}
-                  height={36}
-                  priority
-                  className="h-[34px] w-[34px] rounded-[8px]"
-                />
-                <Image
-                  src="/payloat-wordmark-black.svg"
+                  src="/payloat-mark.svg"
                   alt="Payloat"
-                  width={501}
-                  height={166}
+                  width={622}
+                  height={910}
                   priority
-                  className="h-[26px] w-auto"
+                  className="h-[34px] w-auto"
                 />
               </Link>
 
@@ -338,15 +330,14 @@ export default function NavDock(_props: {
             className={`${INNER} flex items-center justify-between`}
             style={{ height: COMPACT_H }}
           >
-            {/* the mark alone; the wordmark rides only in the full bar */}
             <Link href="/" aria-label="Payloat home" className="flex items-center">
               <Image
-                src="/payloat-app-icon-v2.png"
+                src="/payloat-mark.svg"
                 alt="Payloat"
-                width={36}
-                height={36}
+                width={622}
+                height={910}
                 priority
-                className="h-[34px] w-[34px] rounded-[8px]"
+                className="h-[30px] w-auto"
               />
             </Link>
             <div className="relative">

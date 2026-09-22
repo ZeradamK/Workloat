@@ -116,7 +116,7 @@ export default function StatsStatement({
           className={`relative grid gap-10 px-[clamp(24px,5.7vw,110px)] pb-[clamp(56px,8vw,160px)] pt-[clamp(24px,5vw,96px)] ${fg} min-[900px]:grid-cols-[clamp(120px,22%,444px)_1fr]`}
         >
           <Image
-            src="/payloat-icon-dark.svg"
+            src="/payloat-mark.svg"
             alt="Payloat"
             width={56}
             height={56}

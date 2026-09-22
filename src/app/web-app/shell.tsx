@@ -461,7 +461,7 @@ export default function WebAppShell({ children }: { children: React.ReactNode })
         <aside className="sticky top-0 hidden h-screen flex-col border-r border-solid border-black/[0.06] px-4 py-7 min-[900px]:flex">
           <Link href="/" className="flex items-center gap-2.5 px-2" aria-label="Payloat Ledger home">
             <Image
-              src="/payloat-app-icon-v2.png"
+              src="/payloat-mark-tile.svg"
               alt="Payloat"
               width={84}
               height={84}
@@ -535,7 +535,7 @@ export default function WebAppShell({ children }: { children: React.ReactNode })
           <div className="flex items-center justify-between px-6 pt-7 min-[900px]:hidden">
             <Link href="/" aria-label="Payloat Ledger home">
               <Image
-                src="/payloat-app-icon-v2.png"
+                src="/payloat-mark-tile.svg"
                 alt="Payloat"
                 width={72}
                 height={72}

@@ -570,7 +570,7 @@ export default function SignupPage() {
 
         <div className="absolute bottom-9">
           <Image
-            src="/payloat-logo-dark.svg"
+            src="/payloat-mark.svg"
             alt="Payloat"
             width={132}
             height={26}

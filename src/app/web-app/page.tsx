@@ -125,7 +125,7 @@ export default function OverviewPage() {
               transition={{ duration: 0.45, ease: EASE, delay: 0.05 }}
               className={`${CARD} flex flex-col items-center rounded-[20px] px-8 py-20 text-center`}
             >
-              <Image src="/payloat-icon-black.svg" alt="" width={44} height={44} className="h-11 w-11" />
+              <Image src="/payloat-mark.svg" alt="" width={44} height={44} className="h-11 w-auto" />
               <h2 className="mt-6 text-[22px] font-semibold tracking-[-0.4px] text-ink">
                 {hasRealData ? "Your agents haven't recorded a purchase yet" : "Your ledger is ready for its first agent"}
               </h2>
@@ -394,7 +394,7 @@ function CreateOrg({ onCreated, onPreview }: { onCreated: () => Promise<void>; o
         transition={{ duration: 0.45, ease: EASE, delay: 0.05 }}
         className={`${CARD} mx-auto flex max-w-[560px] flex-col items-center rounded-[20px] px-8 py-16 text-center`}
       >
-        <Image src="/payloat-icon-black.svg" alt="" width={44} height={44} className="h-11 w-11" />
+        <Image src="/payloat-mark.svg" alt="" width={44} height={44} className="h-11 w-auto" />
         <h2 className="mt-6 text-[22px] font-semibold tracking-[-0.4px] text-ink">Name the company this ledger is for</h2>
         <p className="mt-2 max-w-[400px] text-[15px] leading-[1.55] text-sub">
           Agents get keys under this organization. Everyone you add can see what those agents spend.

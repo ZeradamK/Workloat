@@ -91,7 +91,7 @@ function Chip({ children, tone = "dark", className, style }: { children: React.R
 function Mark({ label }: { label: string }) {
   return (
     <div className="flex flex-col items-center gap-2">
-      <Image src="/payloat-icon-dark.svg" alt="" width={30} height={30} className="h-[30px] w-[30px]" style={{ filter: "var(--sc-icon)" }} />
+      <Image src="/payloat-mark.svg" alt="" width={30} height={30} className="h-[30px] w-auto" style={{ filter: "var(--sc-icon)" }} />
       <span className="text-[10px] font-medium tracking-[0.16em]" style={{ fontFamily: MONO, color: FG }}>
         {label}
       </span>
