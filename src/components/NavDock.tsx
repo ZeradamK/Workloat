@@ -31,12 +31,15 @@ const COMPACT_H = 64;
    items ignore it and centre on the screen instead */
 const LOGO_PAD = 50;
 
-/* the glass: #eeeeee at 30%, the same on every ground it shows on. Over
-   a black section it shows on no ground at all: the bar drops the glass
-   and goes opaque in the section's own black. */
-const TINT = "rgba(238,238,238,0.30)";
+/* The tint: #eeeeee, now at 72%. It was 30%, so 60% of what was still
+   seeing through has been taken out and the bar reads close to white.
+   Over a black section it shows on no ground at all: the bar drops the
+   glass and goes opaque in the section's own black. */
+const TINT = "rgba(238,238,238,0.72)";
 const BLACK = "#0a0a0a";
-const BLUR = "blur(14px) saturate(1.7) brightness(1.02)";
+/* every glass property at 40% of what it was: the blur, the saturation
+   lift and the brightness lift each keep four tenths of their strength */
+const BLUR = "blur(6px) saturate(1.28) brightness(1.008)";
 const PANEL_BLUR = "blur(22px) saturate(1.7)";
 
 /* the displacement map behind the refraction: neutral through the
@@ -370,7 +373,7 @@ export default function NavDock(_props: {
           <feDisplacementMap
             in="SourceGraphic"
             in2="map"
-            scale="26"
+            scale="10"
             xChannelSelector="R"
             yChannelSelector="G"
           />
@@ -409,7 +412,7 @@ export default function NavDock(_props: {
                   width={501}
                   height={166}
                   priority
-                  className="h-[21px] w-auto"
+                  className="h-[36px] w-auto"
                 />
               </Link>
 
