@@ -318,24 +318,7 @@ export default function NavDock(_props: {
                 className="flex shrink-0 items-center gap-[11px] transition-opacity hover:opacity-80"
                 style={{ marginLeft: LOGO_PAD }}
               >
-                <Image
-                  src={S.mark}
-                  alt=""
-                  width={622}
-                  height={910}
-                  priority
-                  className="h-[34px] w-auto"
-                />
-                {/* the wordmark beside the mark. 26px semibold with the
-                    tracking pulled in sets its cap height at about 55%
-                    of the mark's, the ratio the mark-plus-name lockups
-                    on Vercel, Linear, Cursor and Aboard all sit at. */}
-                <span
-                  className={`text-[26px] font-semibold leading-none tracking-[-0.6px] ${TONE}`}
-                  style={{ color: S.fg }}
-                >
-                  payloat
-                </span>
+                <Lockup skin={S} />
               </Link>
 
               {/* the frame is centred and its padding symmetric, so the
@@ -473,15 +456,12 @@ export default function NavDock(_props: {
             className={`${INNER} flex items-center justify-between`}
             style={{ height: COMPACT_H }}
           >
-            <Link href="/" aria-label="Payloat home" className="flex items-center">
-              <Image
-                src={S.mark}
-                alt="Payloat"
-                width={622}
-                height={910}
-                priority
-                className="h-[30px] w-auto"
-              />
+            <Link
+              href="/"
+              aria-label="Payloat home"
+              className="flex items-center gap-[11px] transition-opacity hover:opacity-80"
+            >
+              <Lockup skin={S} />
             </Link>
             <div className="relative">
               {menuOpen && (
@@ -671,6 +651,32 @@ export default function NavDock(_props: {
         )}
       </div>
     </header>
+  );
+}
+
+/* The mark and its wordmark, one component so the full bar and the
+   compact one render exactly the same lockup. 26px semibold with the
+   tracking pulled in sets the wordmark's cap height at about 55% of the
+   mark's, the ratio the mark-plus-name lockups on Vercel, Linear,
+   Cursor and Aboard all sit at. */
+function Lockup({ skin }: { skin: (typeof SKIN)[Ground] }) {
+  return (
+    <>
+      <Image
+        src={skin.mark}
+        alt=""
+        width={622}
+        height={910}
+        priority
+        className="h-[34px] w-auto"
+      />
+      <span
+        className={`text-[26px] font-semibold leading-none tracking-[-0.6px] ${TONE}`}
+        style={{ color: skin.fg }}
+      >
+        payloat
+      </span>
+    </>
   );
 }
 
