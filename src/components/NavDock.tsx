@@ -15,8 +15,8 @@ import { AnimatePresence, motion } from "motion/react";
  * bar. The bar rides above every section on every page.
  *
  * It is opaque on every ground, never glass: white with black type over
- * a light section, and the section's own black with white type and a
- * white Sign up pill over a black one.
+ * a light section, and #1e1e1e with white type and a white Sign up pill
+ * over a black one.
  * The liquid-glass bar that read its ground is parked at
  * design-archive/NavDock-liquid-glass-bar.tsx.txt.
  */
@@ -31,9 +31,11 @@ const COMPACT_H = 64;
 const LOGO_PAD = 50;
 
 /* the two grounds the bar can sit over, and the skin it takes on each:
-   white with black type, or the section's own black with white type.
-   Sign up reverses whichever skin is up, so the one filled thing in the
-   row always carries the weight. */
+   white with black type, or #1e1e1e with white type. The dark skin sits
+   a shade above the #0a0a0a sections it rides over, so the bar reads as
+   its own band by tone and needs no rule to separate it. Sign up
+   reverses whichever skin is up, so the one filled thing in the row
+   always carries the weight. */
 type Ground = "light" | "dark";
 const SKIN: Record<Ground, {
   bg: string; fg: string; dim: string; rule: string; hover: string;
@@ -50,7 +52,7 @@ const SKIN: Record<Ground, {
     mark: "/payloat-mark.svg",
   },
   dark: {
-    bg: "#0a0a0a",
+    bg: "#1e1e1e",
     fg: "#ffffff",
     dim: "rgba(255,255,255,0.65)",
     rule: "rgba(255,255,255,0.16)",
@@ -61,8 +63,6 @@ const SKIN: Record<Ground, {
   },
 };
 const TONE = "transition-[color,background-color,border-color] duration-200 ease-out";
-/* the 1px strip closing the bar at its foot, the same on either skin */
-const FOOT = "#eeeeee";
 
 type PanelKey = "Product" | "Features" | "Pricing" | "Contact";
 
@@ -278,16 +278,6 @@ export default function NavDock(_props: {
         setActive(null);
       }}
     >
-      {/* a 1px strip of #eeeeee along the foot on both skins: it keeps
-          the white bar reading as a bar where the section under it is
-          also white, and draws the black bar's edge against the black
-          section it sits on */}
-      <span
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-px"
-        style={{ backgroundColor: FOOT }}
-        aria-hidden
-      />
-
       <div className={`relative ${FRAME}`}>
         {/* ---- the full bar ---- */}
         {!collapsed && (
