@@ -72,7 +72,9 @@ export default function HeroShowcase() {
             transition={{ duration: 0.55, ease: [0.25, 0.6, 0.2, 1], delay: 0.05 }}
             className="text-[clamp(40px,4.4vw,96px)] font-medium leading-[0.98] tracking-[-3px] text-ink"
           >
-            See every
+            Payloat lets you
+            <br />
+            manage every
             <br />
             dollar your
             <br />
@@ -186,9 +188,11 @@ function MobileHero() {
         {...up}
         className="text-[clamp(40px,11vw,56px)] font-medium leading-[0.98] tracking-[-2px] text-ink"
       >
-        See every dollar
+        Payloat lets you manage
         <br />
-        your agents spend
+        every dollar your
+        <br />
+        agents spend
       </motion.h1>
       {/* the wallet keeps its own left-set type inside the centered stack */}
       <motion.div {...up} className="mt-9 w-full max-w-[340px] text-left">

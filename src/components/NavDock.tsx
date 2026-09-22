@@ -8,8 +8,8 @@ import { AnimatePresence, motion } from "motion/react";
 
 /**
  * The nav, on the Mews anatomy: one full-bleed row flush to the top of
- * every page. The Payloat mark floats left a step in from the page's
- * content rail, the items sit centred on the screen, and
+ * every page. The Payloat mark and its wordmark float left a step in
+ * from the page's content rail, the items sit centred on the screen, and
  * Sign up floats right as a black pill. Items are plain until hovered,
  * when a box appears behind the item and its panel drops 10px below the
  * bar. The bar rides above every section on every page.
@@ -315,17 +315,27 @@ export default function NavDock(_props: {
                 href="/"
                 data-cell="logo"
                 aria-label="Payloat home"
-                className="flex shrink-0 items-center transition-opacity hover:opacity-80"
+                className="flex shrink-0 items-center gap-[11px] transition-opacity hover:opacity-80"
                 style={{ marginLeft: LOGO_PAD }}
               >
                 <Image
                   src={S.mark}
-                  alt="Payloat"
+                  alt=""
                   width={622}
                   height={910}
                   priority
                   className="h-[34px] w-auto"
                 />
+                {/* the wordmark beside the mark. 26px semibold with the
+                    tracking pulled in sets its cap height at about 55%
+                    of the mark's, the ratio the mark-plus-name lockups
+                    on Vercel, Linear, Cursor and Aboard all sit at. */}
+                <span
+                  className={`text-[26px] font-semibold leading-none tracking-[-0.6px] ${TONE}`}
+                  style={{ color: S.fg }}
+                >
+                  payloat
+                </span>
               </Link>
 
               {/* the frame is centred and its padding symmetric, so the
