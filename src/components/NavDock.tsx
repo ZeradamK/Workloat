@@ -27,6 +27,9 @@ const SPRING = { type: "spring", stiffness: 380, damping: 34, mass: 0.8 } as con
 /* one row, flush to the top of the page */
 const BAR_H = 76;
 const COMPACT_H = 64;
+/* the logo steps this far in past the page's own content rail; the
+   items ignore it and centre on the screen instead */
+const LOGO_PAD = 50;
 
 /* the glass: #eeeeee at 30%, the same on every ground */
 const TINT = "rgba(238,238,238,0.30)";
@@ -160,11 +163,13 @@ export default function NavDock(_props: {
   /* ---- the ground under the bar, sampled on scroll. The bar has no
      ground of its own and spans the full width, so a section that is
      light on one side and dark on the other would flip the whole row
-     off one reading. It takes two: one under the items, one under
-     Sign up. ---- */
+     off one reading. It takes three, one under each of the row's parts:
+     the logo at the left, the items at the centre, Sign up at the
+     right. ---- */
   const headerRef = useRef<HTMLElement>(null);
   const rowRef = useRef<HTMLDivElement>(null);
   const barH = useRef(BAR_H);
+  const [logoGround, setLogoGround] = useState<Ground>("light");
   const [ground, setGround] = useState<Ground>("light");
   const [ctaGround, setCtaGround] = useState<Ground>("light");
   useEffect(() => {
@@ -215,9 +220,11 @@ export default function NavDock(_props: {
         const r = cell.getBoundingClientRect();
         return r.left + r.width / 2;
       };
-      const gl = read(mid("[data-item]", 0.18), y);
+      const go = read(mid('[data-cell="logo"]', 0.06), y);
+      if (go !== null) setLogoGround((cur) => (cur === go ? cur : go));
+      const gl = read(mid('[data-cell="nav"]', 0.5), y);
       if (gl !== null) setGround((cur) => (cur === gl ? cur : gl));
-      const gr = read(mid("[data-cta]", 0.9), y);
+      const gr = read(mid('[data-cell="cta"]', 0.92), y);
       if (gr !== null) setCtaGround((cur) => (cur === gr ? cur : gr));
     };
     const onScroll = () => {
@@ -234,7 +241,9 @@ export default function NavDock(_props: {
   }, []);
   const I = INK[ground];
   const C = INK[ctaGround];
-  const dark = ground === "dark";
+  /* the wordmark reads against the ground under the logo, which the
+     items' reading no longer covers now they sit centred */
+  const dark = logoGround === "dark";
 
   /* ---- collapse: once the row's cells no longer fit the frame, the
      compact Menu nav takes over ---- */
@@ -245,10 +254,15 @@ export default function NavDock(_props: {
   useLayoutEffect(() => {
     const check = () => {
       const row = rowRef.current;
-      if (row) {
-        let w = 0;
-        row.querySelectorAll<HTMLElement>("[data-cell]").forEach((c) => (w += c.offsetWidth));
-        if (w > 0) needW.current = w + 96;
+      const cell = (n: string) => row?.querySelector<HTMLElement>(`[data-cell="${n}"]`);
+      const logo = cell("logo");
+      const items = cell("nav");
+      const cta = cell("cta");
+      if (logo && items && cta) {
+        /* the items sit centred, so the wider flank sets the width the
+           row needs: that flank's own width on both sides of them */
+        const flank = Math.max(logo.offsetWidth + LOGO_PAD, cta.offsetWidth);
+        needW.current = items.offsetWidth + flank * 2 + 96;
       }
       const gutter = Math.min(32, Math.max(20, window.innerWidth * 0.017));
       const avail = Math.min(1860, window.innerWidth) - gutter * 2;
@@ -354,14 +368,15 @@ export default function NavDock(_props: {
                 immediately beside them, Sign up floated right */}
             <div
               ref={rowRef}
-              className={`${INNER} flex items-center`}
+              className={`${INNER} relative flex items-center`}
               style={{ height: BAR_H }}
             >
               <Link
                 href="/"
-                data-cell
+                data-cell="logo"
                 aria-label="Payloat home"
-                className="mr-[clamp(28px,3.4vw,64px)] flex shrink-0 items-center gap-[11px] transition-opacity hover:opacity-80"
+                className="flex shrink-0 items-center gap-[11px] transition-opacity hover:opacity-80"
+                style={{ marginLeft: LOGO_PAD }}
               >
                 <Image
                   src="/payloat-app-icon-v2.png"
@@ -383,8 +398,8 @@ export default function NavDock(_props: {
 
               <nav
                 aria-label="Primary"
-                data-cell
-                className="flex shrink-0 items-center gap-[clamp(2px,0.5vw,10px)]"
+                data-cell="nav"
+                className="absolute left-1/2 flex shrink-0 -translate-x-1/2 items-center gap-[clamp(2px,0.5vw,10px)]"
               >
                 {NAV.map((item) => (
                   <button
@@ -450,11 +465,11 @@ export default function NavDock(_props: {
                 ))}
               </nav>
 
-              <div className="ml-auto flex shrink-0 items-center pl-6" data-cell data-cta>
+              <div className="ml-auto flex shrink-0 items-center pl-6" data-cell="cta">
                 <Link
                   href="/signup"
-                  className={`flex h-[42px] items-center px-[26px] text-[14px] font-semibold tracking-[-0.3px] ${TONE} hover:opacity-85`}
-                  style={{ backgroundColor: C.cta, color: C.ctaFg }}
+                  className={`flex h-[42px] items-center px-[28px] text-[14px] font-semibold tracking-[-0.3px] ${TONE} hover:opacity-85`}
+                  style={{ backgroundColor: C.cta, color: C.ctaFg, borderRadius: 999 }}
                 >
                   Sign up
                 </Link>
@@ -690,7 +705,7 @@ export default function NavDock(_props: {
                       <Link
                         href="/signup"
                         className="flex h-11 w-full items-center justify-center text-[15px] font-semibold tracking-[-0.5px]"
-                        style={{ backgroundColor: I.cta, color: I.ctaFg }}
+                        style={{ backgroundColor: I.cta, color: I.ctaFg, borderRadius: 999 }}
                       >
                         Sign up
                       </Link>
