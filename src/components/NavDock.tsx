@@ -30,12 +30,15 @@ const COMPACT_H = 64;
    items ignore it and centre on the screen instead */
 const LOGO_PAD = 50;
 
-/* the grid line closing the bar's foot: the site's 1px hairline, in
-   #1e1e1e mixed 20% toward white */
-const GRID = "#4b4b4b";
+/* the grid line closing the bar's foot: the site's 1px hairline, each
+   skin's own ground carried 20% toward its opposite. The bar sits on a
+   ground close to the section's on both skins, so this rule is what
+   draws its bottom edge. */
+const GRID_DARK = "#4b4b4b";   /* #1e1e1e, 20% toward white */
+const GRID_LIGHT = "#bebebe";  /* #eeeeee, 20% toward black */
 
 /* the two grounds the bar can sit over, and the skin it takes on each:
-   white with black type, or pure black with white type. The dark skin
+   #eeeeee with black type, or pure black with white type. The dark skin
    sits just below the black sections it rides over, so a grid line at
    its foot is what draws the bar's bottom edge. Sign up
    reverses whichever skin is up, so the one filled thing in the row
@@ -43,10 +46,10 @@ const GRID = "#4b4b4b";
 type Ground = "light" | "dark";
 const SKIN: Record<Ground, {
   bg: string; fg: string; dim: string; rule: string; hover: string;
-  cta: string; ctaFg: string; mark: string; line: string | null;
+  cta: string; ctaFg: string; mark: string; line: string;
 }> = {
   light: {
-    bg: "#ffffff",
+    bg: "#eeeeee",
     fg: "#0a0a0a",
     dim: "rgba(10,10,10,0.6)",
     rule: "rgba(10,10,10,0.12)",
@@ -54,7 +57,7 @@ const SKIN: Record<Ground, {
     cta: "#0a0a0a",
     ctaFg: "#eeeeee",
     mark: "/payloat-mark.svg",
-    line: null,
+    line: GRID_LIGHT,
   },
   dark: {
     bg: "#000000",
@@ -65,7 +68,7 @@ const SKIN: Record<Ground, {
     cta: "#ffffff",
     ctaFg: "#0a0a0a",
     mark: "/payloat-mark-white.svg",
-    line: GRID,
+    line: GRID_DARK,
   },
 };
 const TONE = "transition-[color,background-color,border-color] duration-200 ease-out";
@@ -284,13 +287,11 @@ export default function NavDock(_props: {
         setActive(null);
       }}
     >
-      {S.line && (
-        <span
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-px"
-          style={{ backgroundColor: S.line }}
-          aria-hidden
-        />
-      )}
+      <span
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-px"
+        style={{ backgroundColor: S.line }}
+        aria-hidden
+      />
 
       <div className={`relative ${FRAME}`}>
         {/* ---- the full bar ---- */}
