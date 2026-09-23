@@ -110,7 +110,7 @@ const PANEL_ORDER: Record<PanelKey, true> = {
 /** What each menu holds: an entry per page, each with the line that
     says what it is, the way Swap and Intercom set their menus out. */
 type Entry = { label: string; href: string; blurb: string; glyph: Glyph };
-type Glyph = "bank" | "agent" | "person" | "team" | "tower" | "chat" | "sales" | "press" | "help";
+type Glyph = "bank" | "agent" | "person" | "team" | "tower" | "shield" | "chat" | "sales" | "press" | "help";
 
 const PRODUCT_ITEMS: Entry[] = [
   {
@@ -145,6 +145,12 @@ const SOLUTION_ITEMS: Entry[] = [
     href: "/enterprise",
     blurb: "Controls, audit and scale for companies running many agents.",
     glyph: "tower",
+  },
+  {
+    label: "Security",
+    href: "/security",
+    blurb: "Where the ledger holds your data, and who can reach it.",
+    glyph: "shield",
   },
 ];
 
@@ -909,6 +915,13 @@ function Glyph({ name }: { name: Glyph }) {
         <svg {...common}>
           <path d="M4 20V6l7-2v16M11 20V9l9 3v8M3 20h18" />
           <path d="M7 9h0M7 13h0M15 14h0M15 17h0" />
+        </svg>
+      );
+    case "shield":
+      return (
+        <svg {...common}>
+          <path d="M12 3.2 19.5 6v6c0 4.2-3 7.4-7.5 8.8C7.5 19.4 4.5 16.2 4.5 12V6Z" />
+          <path d="m9 12 2.2 2.2L15.2 10" />
         </svg>
       );
     case "chat":
