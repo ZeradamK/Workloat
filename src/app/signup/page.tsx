@@ -756,7 +756,7 @@ function NotifBar({
 }) {
   return (
     <div
-      className="flex w-[320px] items-center gap-3 rounded-[18px] py-[6px] pl-[6px] pr-2.5"
+      className="flex w-max max-w-[min(420px,86%)] items-center gap-3 rounded-[18px] py-[6px] pl-[6px] pr-3"
       style={{
         backgroundColor: bg,
         border: `1px solid ${dark ? "rgba(255,255,255,0.15)" : "rgba(10,10,10,0.12)"}`,
@@ -774,11 +774,17 @@ function NotifBar({
           className="h-[27px] w-[27px] rounded-[5px] object-contain"
         />
       </span>
-      <span className="min-w-0 flex-1">
-        <span className={`block text-[16px] font-semibold ${dark ? "text-white" : "text-ink"}`}>{name}</span>
-        <span className={`block text-[13px] leading-snug ${dark ? "text-white/70" : "text-sub"}`}>{note}</span>
+      <span className="min-w-0">
+        <span className={`block whitespace-nowrap text-[16px] font-semibold ${dark ? "text-white" : "text-ink"}`}>
+          {name}
+        </span>
+        <span className={`block whitespace-nowrap text-[13px] leading-snug ${dark ? "text-white/70" : "text-sub"}`}>
+          {note}
+        </span>
       </span>
-      <span className={`text-[17px] font-semibold tracking-[-0.43px] ${dark ? "text-white" : "text-ink"}`}>
+      <span
+        className={`ml-5 whitespace-nowrap text-[17px] font-semibold tracking-[-0.43px] ${dark ? "text-white" : "text-ink"}`}
+      >
         {amount}
       </span>
       <svg width="11" height="11" viewBox="0 0 16 16" fill="none" aria-hidden>
