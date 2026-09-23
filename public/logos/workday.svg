@@ -1,0 +1,6 @@
+<!-- Reconstruction, not the supplied artwork: the arc and the W redrawn
+     to the mark's proportions. Drop the real file here to replace it. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Workday">
+  <path d="M26 64A34 34 0 0 1 94 64" fill="none" stroke="#ff5c00" stroke-width="15" stroke-linecap="round"/>
+  <path d="M24 77 40 111 60 81 80 111 96 77" fill="none" stroke="#ffffff" stroke-width="14" stroke-linecap="round" stroke-linejoin="miter"/>
+</svg>

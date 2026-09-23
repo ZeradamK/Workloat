@@ -38,35 +38,25 @@ const TRACKER_DAILY = [
 ];
 const TRACKER_X_LABELS = ["Jul 01", "Jul 07", "Jul 13", "Jul 20"];
 
+/* Nine vendors, three on screen at a time. Each slot steps by three, so
+   a slot keeps its own third of the list and two slots never show the
+   same name. `tile` is the square behind the logo, for the marks that
+   cannot sit on white. */
 const BARS = [
-  {
-    name: "OpenAI",
-    logo: "/logos/openai.svg",
-    amount: "$2,500.00",
-    note: "API usage this month",
-    bg: "#546b41",
-    dark: true,
-    pos: "left-[14%] top-[26%]",
-  },
-  {
-    name: "Stripe",
-    logo: "/logos/stripe.png",
-    amount: "$600.00",
-    note: "Platform fees, monthly",
-    bg: "#c5b3d3",
-    dark: false,
-    pos: "right-[10%] top-[42%]",
-  },
-  {
-    name: "Brex",
-    logo: "/logos/brex.svg",
-    amount: "$12,480.00",
-    note: "14 charges matched",
-    bg: "#2c2c2c",
-    dark: true,
-    pos: "left-[20%] top-[58%]",
-  },
+  { name: "OpenAI", logo: "/logos/openai.svg", amount: "$2,500.00", note: "API usage this month", bg: "#546b41", dark: true },
+  { name: "Workday", logo: "/logos/workday.svg", amount: "$4,180.00", note: "Seats renewed, Ops agent", bg: "#24406e", dark: true, tile: "#0b2a5b" },
+  { name: "Ramp", logo: "/logos/ramp.svg", amount: "$960.00", note: "Card top-up this week", bg: "#d7e9a0", dark: false, tile: "#dfff3c" },
+  { name: "Stripe", logo: "/logos/stripe.png", amount: "$600.00", note: "Platform fees, monthly", bg: "#c5b3d3", dark: false },
+  { name: "WorkOS", logo: "/logos/workos.svg", amount: "$310.00", note: "Directory sync, per seat", bg: "#3d3d45", dark: true, tile: "#1e1e1e" },
+  { name: "AWS", logo: "/logos/aws.svg", amount: "$850.00", note: "Storage, Ops agent", bg: "#2e6fa0", dark: true },
+  { name: "Brex", logo: "/logos/brex.svg", amount: "$12,480.00", note: "14 charges matched", bg: "#2c2c2c", dark: true },
+  { name: "Vercel", logo: "/logos/vercel.svg", amount: "$350.00", note: "Hosting, Ops agent", bg: "#0a0a0a", dark: true },
+  { name: "Claude", logo: "/logos/claude.svg", amount: "$4,000.00", note: "Renews tomorrow", bg: "#eae2d6", dark: false },
 ];
+
+/* where the three sit in the panel */
+const BAR_SLOTS = ["left-[14%] top-[26%]", "right-[10%] top-[42%]", "left-[20%] top-[58%]"];
+const BAR_MS = 1500;
 
 const CAPTIONS: Record<Step, [string, string] | null> = {
   email: null,
@@ -89,6 +79,19 @@ export default function SignupPage() {
     null,
   );
   const [consent, setConsent] = useState(false);
+  /* the panel's three notices. Each slot steps by three, so a slot keeps
+     its own third of the list; one turns over at a time, which reads as a
+     cascade rather than three cards blinking together. */
+  const [cursor, setCursor] = useState([0, 1, 2]);
+  useEffect(() => {
+    let turn = 0;
+    const id = window.setInterval(() => {
+      const slot = turn % 3;
+      turn += 1;
+      setCursor((c) => c.map((v, i) => (i === slot ? (v + 3) % BARS.length : v)));
+    }, BAR_MS);
+    return () => window.clearInterval(id);
+  }, []);
   const [emailTaken, setEmailTaken] = useState(false);
   const checkSeq = useRef(0);
   const oauthHandled = useRef(false);
@@ -300,7 +303,7 @@ export default function SignupPage() {
         : { title: "What's your full name?", sub: "Let's get to know you" };
 
   return (
-    <main className="grid min-h-screen bg-[#eeeeee] min-[900px]:grid-cols-2">
+    <main className="grid min-h-screen bg-white min-[900px]:grid-cols-2">
       {/* ---- Left: the form column ---- */}
       <div className="relative flex flex-col items-center px-6">
         <button
@@ -613,11 +616,24 @@ export default function SignupPage() {
             className="absolute inset-0"
           >
             {step === "email" &&
-              BARS.map((n) => (
-                <div key={n.name} className={`absolute ${n.pos}`}>
-                  <NotifBar {...n} />
-                </div>
-              ))}
+              BAR_SLOTS.map((pos, i) => {
+                const n = BARS[cursor[i] % BARS.length];
+                return (
+                  <div key={pos} className={`absolute ${pos}`}>
+                    <AnimatePresence mode="wait">
+                      <motion.div
+                        key={n.name}
+                        initial={{ opacity: 0, y: 14 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -14 }}
+                        transition={{ duration: 0.34, ease: [0.25, 0.6, 0.2, 1] }}
+                      >
+                        <NotifBar {...n} />
+                      </motion.div>
+                    </AnimatePresence>
+                  </div>
+                );
+              })}
 
             {step === "password" && (
               <div className="absolute left-1/2 top-[32%] flex h-[220px] w-[300px] -translate-x-1/2 items-center justify-center bg-white">
@@ -727,6 +743,7 @@ function NotifBar({
   note,
   bg,
   dark,
+  tile,
 }: {
   name: string;
   logo: string;
@@ -734,6 +751,8 @@ function NotifBar({
   note: string;
   bg: string;
   dark: boolean;
+  /** the square behind the logo, for marks that cannot sit on white */
+  tile?: string;
 }) {
   return (
     <div
@@ -743,7 +762,10 @@ function NotifBar({
         border: `1px solid ${dark ? "rgba(255,255,255,0.15)" : "rgba(10,10,10,0.12)"}`,
       }}
     >
-      <span className="flex h-[43px] w-[43px] shrink-0 items-center justify-center rounded-[11px] border border-black/[0.12] bg-white">
+      <span
+        className="flex h-[43px] w-[43px] shrink-0 items-center justify-center rounded-[11px] border border-black/[0.12]"
+        style={{ backgroundColor: tile ?? "#ffffff" }}
+      >
         <Image
           src={logo}
           alt={name}
