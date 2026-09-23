@@ -146,9 +146,12 @@ const PAGE_ROUTES: Partial<Record<PanelKey, string>> = {
 const FRAME = "mx-auto w-full max-w-[1860px]";
 const INNER = "px-[clamp(20px,1.7vw,32px)]";
 
-export default function NavDock(_props: {
-  /** older call sites pass these; the bar is white on every page now,
-      so they are accepted and ignored */
+export default function NavDock({ skin: pinned, ..._props }: {
+  /** pin the bar to one skin and ignore the section behind it. Without
+      it the bar reads its ground and flips on its own. */
+  skin?: Ground;
+  /** older call sites pass these; the bar reads its ground now, so they
+      are accepted and ignored */
   forceDark?: boolean;
   introChoreo?: boolean;
   logoSrc?: string;
@@ -240,8 +243,10 @@ export default function NavDock(_props: {
     };
   }, []);
   /* the bar turns black only when all three readings agree it is over
-     black, so it never paints a ground the section behind it lacks */
-  const solid = logoGround === "dark" && itemsGround === "dark" && ctaGround === "dark";
+     black, so it never paints a ground the section behind it lacks. A
+     pinned skin overrides the readings outright. */
+  const sampled = logoGround === "dark" && itemsGround === "dark" && ctaGround === "dark";
+  const solid = pinned ? pinned === "dark" : sampled;
   const S = SKIN[solid ? "dark" : "light"];
 
   /* ---- collapse: once the row's cells no longer fit the frame, the

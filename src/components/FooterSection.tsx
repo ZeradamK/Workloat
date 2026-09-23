@@ -9,33 +9,36 @@ import Link from "next/link";
 
 const COLS: { label: string; links: { label: string; href: string }[] }[] = [
   {
-    label: "Information",
+    label: "Product",
     links: [
-      { label: "How it works", href: "/product" },
-      { label: "Features", href: "/finance-teams" },
-      { label: "Sign up", href: "/signup" },
+      { label: "Bank integration", href: "/integration" },
+      { label: "Investing with agents", href: "/product" },
+      { label: "Personal finance", href: "/consumer" },
+      { label: "Agent tracker", href: "/purchases" },
     ],
   },
   {
-    label: "Customer service",
+    label: "Features",
     links: [
-      { label: "FAQ", href: "/#faq" },
+      { label: "Financial teams", href: "/finance-teams" },
+      { label: "Enterprise", href: "/enterprise" },
+    ],
+  },
+  {
+    label: "Company",
+    links: [
       { label: "Contact", href: "/contact" },
       { label: "Security", href: "/security" },
+      { label: "FAQ", href: "/#faq" },
       { label: "Privacy and data", href: "/privacy.html" },
     ],
   },
   {
-    label: "Policies",
-    links: [{ label: "Privacy Policy", href: "/privacy.html" }],
-  },
-  {
-    label: "Follow Payloat",
+    label: "Get started",
     links: [
-      {
-        label: "LinkedIn",
-        href: "https://www.linkedin.com/company/107224097/",
-      },
+      { label: "Sign up", href: "/signup" },
+      { label: "Web app", href: "/web-app" },
+      { label: "LinkedIn", href: "https://www.linkedin.com/company/107224097/" },
       { label: "Mail", href: "mailto:hello@payloat.com" },
     ],
   },

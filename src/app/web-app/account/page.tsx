@@ -142,7 +142,7 @@ export default function AccountPage() {
               </>
             }
             label="Privacy and data"
-            href="/product#privacy-and-data"
+            href="/privacy.html"
           />
           <Row
             icon={
