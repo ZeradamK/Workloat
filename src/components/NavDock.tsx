@@ -109,27 +109,23 @@ const PANEL_ORDER: Record<PanelKey, true> = {
 
 /** What each menu holds: an entry per page, each with the line that
     says what it is, the way Swap and Intercom set their menus out. */
-type Entry = { label: string; href: string; blurb: string; glyph: Glyph };
-type Glyph = "bank" | "agent" | "person" | "team" | "tower" | "shield" | "chat" | "sales" | "press" | "help";
+type Entry = { label: string; href: string; blurb: string };
 
 const PRODUCT_ITEMS: Entry[] = [
   {
     label: "Bank Integration",
     href: "/integration",
     blurb: "Every account and card your agents draw from, in one ledger.",
-    glyph: "bank",
   },
   {
     label: "Investing with agents",
     href: "/product",
     blurb: "Caps, approvals and receipts for the money agents move.",
-    glyph: "agent",
   },
   {
     label: "Personal finance",
     href: "/consumer",
     blurb: "The same ledger for one person and the agents they run.",
-    glyph: "person",
   },
 ];
 
@@ -138,19 +134,16 @@ const SOLUTION_ITEMS: Entry[] = [
     label: "Financial teams",
     href: "/finance-teams",
     blurb: "Payle reads every charge and decides before the money moves.",
-    glyph: "team",
   },
   {
     label: "Enterprise",
     href: "/enterprise",
     blurb: "Controls, audit and scale for companies running many agents.",
-    glyph: "tower",
   },
   {
     label: "Security",
     href: "/security",
     blurb: "Where the ledger holds your data, and who can reach it.",
-    glyph: "shield",
   },
 ];
 
@@ -159,25 +152,21 @@ const CONTACT_ITEMS: Entry[] = [
     label: "Support",
     href: "/contact#support",
     blurb: "A person reads every message.",
-    glyph: "chat",
   },
   {
     label: "Sales",
     href: "/contact#sales",
     blurb: "For companies with many agents, many locations, or both.",
-    glyph: "sales",
   },
   {
     label: "Press",
     href: "/contact#press",
     blurb: "Writing about Payloat Ledger? We are happy to talk.",
-    glyph: "press",
   },
   {
     label: "Help center",
     href: "/#faq",
     blurb: "Short answers to the questions we hear most.",
-    glyph: "help",
   },
 ];
 
@@ -564,7 +553,7 @@ export default function NavDock({ skin: pinned, ..._props }: {
                               <Link
                                 href={e.href}
                                 onClick={() => setActive(null)}
-                                className="group flex items-start gap-3.5 rounded-[10px] p-3 transition-colors"
+                                className="group block rounded-[10px] p-3 transition-colors"
                                 style={{ color: S.fg }}
                                 onMouseEnter={(ev) => {
                                   ev.currentTarget.style.backgroundColor = S.hover;
@@ -573,12 +562,6 @@ export default function NavDock({ skin: pinned, ..._props }: {
                                   ev.currentTarget.style.backgroundColor = "transparent";
                                 }}
                               >
-                                <span
-                                  className="mt-[2px] flex h-9 w-9 shrink-0 items-center justify-center rounded-[9px]"
-                                  style={{ border: `1px solid ${S.panelRule}` }}
-                                >
-                                  <Glyph name={e.glyph} />
-                                </span>
                                 <span className="min-w-0">
                                   <span className="block text-[15px] font-semibold tracking-[-0.3px]">
                                     {e.label}
@@ -866,90 +849,3 @@ const ENTRIES: Record<PanelKey, Entry[]> = {
   Contact: CONTACT_ITEMS,
 };
 
-/* the small line drawings in each entry's tile, one stroke weight
-   throughout so they sit as a set */
-function Glyph({ name }: { name: Glyph }) {
-  const common = {
-    width: 16,
-    height: 16,
-    viewBox: "0 0 24 24",
-    fill: "none",
-    stroke: "currentColor",
-    strokeWidth: 1.6,
-    strokeLinecap: "round" as const,
-    strokeLinejoin: "round" as const,
-    "aria-hidden": true,
-  };
-  switch (name) {
-    case "bank":
-      return (
-        <svg {...common}>
-          <path d="M3 9.5 12 4l9 5.5" />
-          <path d="M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 20h18" />
-        </svg>
-      );
-    case "agent":
-      return (
-        <svg {...common}>
-          <rect x="4" y="7" width="16" height="12" rx="2" />
-          <path d="M12 3v4M8.5 12h1M14.5 12h1M9 16h6" />
-        </svg>
-      );
-    case "person":
-      return (
-        <svg {...common}>
-          <circle cx="12" cy="8.5" r="3.5" />
-          <path d="M5 20a7 7 0 0 1 14 0" />
-        </svg>
-      );
-    case "team":
-      return (
-        <svg {...common}>
-          <circle cx="9" cy="9" r="3" />
-          <path d="M3 19a6 6 0 0 1 12 0" />
-          <path d="M16 7.5a3 3 0 0 1 0 5.8M17.5 19a6 6 0 0 0-1.6-4" />
-        </svg>
-      );
-    case "tower":
-      return (
-        <svg {...common}>
-          <path d="M4 20V6l7-2v16M11 20V9l9 3v8M3 20h18" />
-          <path d="M7 9h0M7 13h0M15 14h0M15 17h0" />
-        </svg>
-      );
-    case "shield":
-      return (
-        <svg {...common}>
-          <path d="M12 3.2 19.5 6v6c0 4.2-3 7.4-7.5 8.8C7.5 19.4 4.5 16.2 4.5 12V6Z" />
-          <path d="m9 12 2.2 2.2L15.2 10" />
-        </svg>
-      );
-    case "chat":
-      return (
-        <svg {...common}>
-          <path d="M20 12a7.5 7.5 0 0 1-11 6.6L4 20l1.4-4.4A7.5 7.5 0 1 1 20 12Z" />
-        </svg>
-      );
-    case "sales":
-      return (
-        <svg {...common}>
-          <path d="M4 18V9M9.5 18V5M15 18v-6M20.5 18V7" />
-          <path d="M3 21h18" />
-        </svg>
-      );
-    case "press":
-      return (
-        <svg {...common}>
-          <rect x="3.5" y="5.5" width="17" height="13" rx="2" />
-          <path d="M7 9.5h6M7 13h10M7 15.5h7" />
-        </svg>
-      );
-    default:
-      return (
-        <svg {...common}>
-          <circle cx="12" cy="12" r="8.5" />
-          <path d="M9.6 9.6a2.5 2.5 0 1 1 2.9 3.9v1M12 17h0" />
-        </svg>
-      );
-  }
-}
