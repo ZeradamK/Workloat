@@ -68,15 +68,15 @@ export default function SecurityPage() {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, ease: EASE, delay: 0.1 }}
-            className="relative h-[520px] overflow-hidden rounded-[24px] min-[900px]:h-[620px]"
+            className="relative h-[520px] overflow-hidden border border-black/[0.12] min-[900px]:h-[620px]"
           >
             <ShaderBackground />
             <div className="absolute inset-x-0 bottom-0 flex justify-center">
-              <div className="w-[min(420px,78%)] translate-y-6 rounded-[28px] bg-white p-7 pb-12">
+              <div className="w-[min(420px,78%)] translate-y-6 border border-black/[0.12] bg-white p-7 pb-12">
                 <p className="text-[24px] font-bold tracking-[-0.5px] text-ink">
                   How can we help?
                 </p>
-                <div className="mt-4 flex h-11 items-center gap-2.5 rounded-full bg-[#eeeeee] px-4">
+                <div className="mt-4 flex h-11 items-center gap-2.5 border border-black/[0.12] bg-[#eeeeee] px-4">
                   <svg
                     width="15"
                     height="15"
@@ -236,7 +236,7 @@ export default function SecurityPage() {
           </motion.h2>
           <motion.div
             {...up}
-            className="relative mt-8 h-[420px] overflow-hidden rounded-[24px] min-[900px]:h-[600px]"
+            className="relative mt-8 h-[420px] overflow-hidden border border-black/[0.12] min-[900px]:h-[600px]"
             style={{ backgroundColor: "#ffffff" }}
           >
             <Image
@@ -257,11 +257,11 @@ export default function SecurityPage() {
           >
             We help keep your data secure
           </motion.h2>
-          <div className="mt-8 grid gap-5 min-[900px]:grid-cols-2">
+          <div className="mt-8 grid border-y border-black/[0.12] min-[900px]:grid-cols-2">
             {/* black card: encryption, the ref's asterisk cursor glyph */}
             <motion.div
               {...up}
-              className="flex h-[480px] flex-col rounded-[24px] bg-[#0a0a0a] p-8 min-[900px]:h-[560px]"
+              className="flex h-[480px] flex-col bg-[#0a0a0a] p-8 min-[900px]:h-[560px]"
             >
               <p className="text-[12px] font-medium uppercase tracking-[0.1em] text-white/70">
                 Encryption
@@ -272,7 +272,7 @@ export default function SecurityPage() {
               <div className="mt-auto flex items-end gap-4 pb-2">
                 <AsteriskGlyph />
                 <AsteriskGlyph />
-                <span className="h-[150px] w-[12px] rounded-[3px] bg-white" />
+                <span className="h-[150px] w-[12px] bg-white" />
               </div>
             </motion.div>
 
@@ -280,7 +280,7 @@ export default function SecurityPage() {
             <motion.div
               {...up}
               transition={{ ...up.transition, delay: 0.08 }}
-              className="flex h-[480px] flex-col rounded-[24px] border border-solid border-black/10 bg-white p-8 min-[900px]:h-[560px]"
+              className="flex h-[480px] flex-col border-t border-black/[0.12] bg-white p-8 min-[900px]:h-[560px] min-[900px]:border-l min-[900px]:border-t-0"
             >
               <p className="text-[12px] font-medium uppercase tracking-[0.1em] text-sub">
                 Privacy
@@ -316,19 +316,17 @@ export default function SecurityPage() {
           >
             Explore more
           </motion.h2>
-          <div className="mt-8 grid gap-10 min-[900px]:grid-cols-3">
+          <div className="mt-8 grid border-t border-black/[0.12] min-[900px]:grid-cols-3">
             {EXPLORE.map((e, i) => (
               <motion.div
                 key={e.href}
                 {...up}
                 transition={{ ...up.transition, delay: i * 0.08 }}
-                className="flex flex-col items-start"
+                className="flex flex-col items-start border-b border-black/[0.12] p-[clamp(20px,2vw,34px)] min-[900px]:border-b-0 min-[900px]:border-l min-[900px]:first:border-l-0"
               >
                 {/* imagery lands per column as supplied */}
                 <div
-                  className={`relative aspect-square w-full overflow-hidden rounded-[24px] ${
-                    e.border ? "border border-solid border-black" : ""
-                  }`}
+                  className="relative aspect-square w-full overflow-hidden border border-black/[0.12]"
                   style={{ backgroundColor: "#ffffff" }}
                 >
                   {e.image && (
@@ -351,7 +349,7 @@ export default function SecurityPage() {
                 </h3>
                 <Link
                   href={e.href}
-                  className="mt-5 inline-flex h-11 items-center rounded-full border border-solid border-black bg-white px-5 text-[13px] font-semibold tracking-[-0.5px] text-ink transition-transform hover:scale-[1.03] active:scale-[0.97]"
+                  className="mt-5 inline-flex h-11 items-center border border-black bg-white px-5 text-[13px] font-semibold tracking-[-0.5px] text-ink transition-colors hover:bg-ink hover:text-white"
                 >
                   {e.cta}
                 </Link>
@@ -379,7 +377,6 @@ const EXPLORE: {
     cta: "Explore the product",
     href: "/product",
     image: "/explore-product-v2.jpg",
-    border: true,
   },
   {
     title: "Agent purchases, from intent to receipt",
