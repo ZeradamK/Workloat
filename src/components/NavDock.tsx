@@ -194,7 +194,15 @@ export default function NavDock({ skin: pinned, ..._props }: {
     /* the ground at one point under the bar */
     const read = (x: number, y: number): Ground | null => {
       const stack = document.elementsFromPoint(x, y).filter((el) => !header?.contains(el));
-      let el = stack[0] as HTMLElement | undefined;
+      const top = stack[0] as HTMLElement | undefined;
+      /* a section can name the skin it wants the bar to wear over it, for
+         grounds whose luminance reads the wrong way: the green statement
+         band is dark but wants the light bar. Asked before any colour is
+         read, because that band ends in a fade whose gradient would
+         otherwise answer first. */
+      const asked = top?.closest<HTMLElement>("[data-nav-skin]")?.dataset.navSkin;
+      if (asked === "light" || asked === "dark") return asked;
+      let el = top;
       while (el && el !== document.documentElement) {
         const cs = getComputedStyle(el);
         const l = lum(cs.backgroundColor);

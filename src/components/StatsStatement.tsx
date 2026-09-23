@@ -48,6 +48,7 @@ export default function StatsStatement({
   image,
   ground = GREEN,
   ink = "light",
+  navSkin,
 }: {
   /** three columns: a short label above a large figure */
   stats: Stat[];
@@ -65,6 +66,9 @@ export default function StatsStatement({
   ground?: string;
   /** "light": white type and rules (for dark grounds); "dark": black */
   ink?: "light" | "dark";
+  /** the skin the nav should wear over this band, when its ground's own
+      luminance would put the bar on the wrong one */
+  navSkin?: "light" | "dark";
 }) {
   const dark = ink === "dark";
   const fg = dark ? "text-ink" : "text-white";
@@ -73,7 +77,7 @@ export default function StatsStatement({
   const colRule = dark ? "min-[800px]:border-black/15" : "min-[800px]:border-white/25";
   const rail = dark ? "border-black/[0.08]" : "border-white/10";
   return (
-    <section className="relative" style={{ backgroundColor: ground }}>
+    <section className="relative" data-nav-skin={navSkin} style={{ backgroundColor: ground }}>
       {image && (
         <>
           <Image src={image} alt="" fill sizes="100vw" className="object-cover" />

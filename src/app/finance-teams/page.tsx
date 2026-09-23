@@ -137,6 +137,8 @@ export default function FinanceTeamsPage() {
         quote="The expensive mistakes in finance are the ones nobody saw coming. Payle sees every agent charge the moment it lands, so the team decides before the money moves, and spends its time on the customer instead of the spreadsheet."
         name="Payle"
         role="Financial manager agent, running on Payloat infrastructure"
+        to="#eeeeee"
+        navSkin="light"
       />
       <Workflows />
       <Playbook />
