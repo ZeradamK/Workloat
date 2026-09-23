@@ -16,7 +16,7 @@ import ShaderBackground from "@/components/ShaderBackground";
  *   2. Claim headline + full-width media canvas (imagery to come).
  *   3. "We help keep your data secure": black + white cards with the
  *      ref's giant glyphs (asterisk cursor / shield check).
- *   4. "Explore more": three columns routing to /product, /purchases,
+ *   4. "Explore more": three columns routing to /product, /finance-teams,
  *      /signup (imagery to come).
  */
 
@@ -384,7 +384,7 @@ const EXPLORE: {
   {
     title: "Agent purchases, from intent to receipt",
     cta: "See agent purchases",
-    href: "/purchases",
+    href: "/finance-teams",
     image: "/explore-purchases.jpg",
   },
   {

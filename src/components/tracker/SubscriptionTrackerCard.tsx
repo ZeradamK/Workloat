@@ -69,7 +69,7 @@ export default function SubscriptionTrackerCard({
           </p>
         </div>
         <a
-          href={href ?? "/purchases"}
+          href={href ?? "/product"}
           aria-label="See subscriptions"
           className="flex h-[38px] w-[38px] items-center justify-center rounded-full bg-white transition-transform hover:scale-105"
         >

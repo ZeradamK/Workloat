@@ -14,7 +14,6 @@ const COLS: { label: string; links: { label: string; href: string }[] }[] = [
       { label: "Bank integration", href: "/integration" },
       { label: "Investing with agents", href: "/product" },
       { label: "Personal finance", href: "/consumer" },
-      { label: "Agent tracker", href: "/purchases" },
     ],
   },
   {
