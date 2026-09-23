@@ -1,17 +1,10 @@
 import type { NextConfig } from "next";
 
-/* While building (NEXT_PUBLIC_DEV_BYPASS_AUTH=1 in .env.local), the auth
-   screens are out of the way: /signup lands on the ledger, which opens with
-   no sign-in. / stays the landing page. The flag is never committed. */
-const DEV_BYPASS = process.env.NEXT_PUBLIC_DEV_BYPASS_AUTH === "1";
-
+/* The auth screens are live. While the site was being built a dev flag
+   sent /signup straight to the ledger so the sign-in gate stayed out of
+   the way; the ledger is parked and that redirect is gone, so /signup
+   serves the real sign-up again. */
 const nextConfig: NextConfig = {
-  async redirects() {
-    if (!DEV_BYPASS) return [];
-    return [
-      { source: "/signup", destination: "/web-app", permanent: false },
-    ];
-  },
   async headers() {
     return [
       {

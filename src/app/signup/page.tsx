@@ -5,6 +5,19 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import { supabase } from "@/lib/supabase";
+
+/* Where every finished sign-in and sign-up lands now the web app is
+   parked. The address rides along so the page can show the person which
+   one it recorded, and `state` says whether they still owe us a click
+   in their inbox. */
+function confirmedHref(
+  email?: string | null,
+  state: "live" | "confirm" | "login" = "live",
+) {
+  const q = new URLSearchParams({ state });
+  if (email) q.set("email", email.trim().toLowerCase());
+  return `/signup/confirmed?${q.toString()}`;
+}
 import PurchaseTrackerCard from "@/components/tracker/PurchaseTrackerCard";
 
 /**
@@ -110,14 +123,14 @@ export default function SignupPage() {
       }
       setDone("login");
       redirectTimer.current = window.setTimeout(
-        () => router.push("/web-app"),
+        () => router.push(confirmedHref(u.email)),
         2000,
       );
     };
     supabase.auth.getSession().then(({ data }) => {
       if (!data.session) return;
       if (fromGoogle) settleOAuth(data.session);
-      else router.replace("/web-app");
+      else router.replace(confirmedHref(data.session.user.email));
     });
     if (fromGoogle) {
       const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
@@ -212,12 +225,13 @@ export default function SignupPage() {
       console.warn("website_signups insert failed:", rowErr.message);
     }
 
-    /* the keep-you-in-the-loop moment, then home */
+    /* the keep-you-in-the-loop moment, then the confirmation */
     setSubmitting(false);
     setDone(signUpData?.session ? "signup-live" : "signup");
-    /* a live session opens the web-app; confirm-first accounts go home */
-    const dest = signUpData?.session ? "/web-app" : "/";
-    redirectTimer.current = window.setTimeout(() => router.push(dest), 3200);
+    redirectTimer.current = window.setTimeout(
+      () => router.push(confirmedHref(email, signUpData?.session ? "live" : "confirm")),
+      3200,
+    );
   };
 
   const finishLogin = async () => {
@@ -241,7 +255,7 @@ export default function SignupPage() {
     setSubmitting(false);
     setDone("login");
     redirectTimer.current = window.setTimeout(
-      () => router.push("/web-app"),
+      () => router.push(confirmedHref(email, "login")),
       2000,
     );
   };
@@ -401,12 +415,12 @@ export default function SignupPage() {
                       autoComplete="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="w-full rounded-[16px] border border-solid border-black/10 bg-white px-6 py-[17px] text-[16px] text-ink outline-none transition-colors placeholder:text-[#b3b1ac] focus:border-black/30"
+                      className="w-full border border-solid border-black/[0.12] bg-white px-6 py-[17px] text-[16px] text-ink outline-none transition-colors placeholder:text-[#b3b1ac] focus:border-black/30"
                     />
                     {mode === "signup" && emailTaken && (
                       <div
                         id="email-taken-note"
-                        className="mt-3 flex items-center justify-between gap-3 rounded-[14px] bg-[#fdf2f1] px-4 py-3"
+                        className="mt-3 flex items-center justify-between gap-3 border border-solid border-black/[0.12] bg-[#fdf2f1] px-4 py-3"
                       >
                         <p className="text-[13px] leading-snug text-[#c2402a]">
                           There is an account with this email.
@@ -428,7 +442,7 @@ export default function SignupPage() {
                           onChange={(e) => setConsent(e.target.checked)}
                           className="peer sr-only"
                         />
-                        <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-[6px] border border-solid border-black/25 bg-white transition-colors peer-checked:border-[#0a0a0a] peer-checked:bg-[#0a0a0a]">
+                        <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center border border-solid border-black/25 bg-white transition-colors peer-checked:border-[#0a0a0a] peer-checked:bg-[#0a0a0a]">
                           {consent && (
                             <svg
                               width="11"
@@ -473,7 +487,7 @@ export default function SignupPage() {
                       autoComplete={mode === "login" ? "current-password" : "new-password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="w-full rounded-[16px] border border-solid border-black/10 bg-white py-[17px] pl-6 pr-14 text-[16px] text-ink outline-none transition-colors placeholder:text-[#b3b1ac] focus:border-black/30"
+                      className="w-full border border-solid border-black/[0.12] bg-white py-[17px] pl-6 pr-14 text-[16px] text-ink outline-none transition-colors placeholder:text-[#b3b1ac] focus:border-black/30"
                     />
                     <button
                       type="button"
@@ -494,17 +508,17 @@ export default function SignupPage() {
                     autoComplete="name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full rounded-[16px] border border-solid border-black/10 bg-white px-6 py-[17px] text-[16px] text-ink outline-none transition-colors placeholder:text-[#b3b1ac] focus:border-black/30"
+                    className="w-full border border-solid border-black/[0.12] bg-white px-6 py-[17px] text-[16px] text-ink outline-none transition-colors placeholder:text-[#b3b1ac] focus:border-black/30"
                   />
                 )}
 
                 <button
                   type="submit"
                   disabled={!valid || busy}
-                  className={`mt-4 h-[56px] w-full rounded-full text-[16px] font-medium transition-colors duration-200 ${
+                  className={`mt-4 h-[56px] w-full text-[16px] font-medium transition-colors duration-200 ${
                     valid && !busy
-                      ? "bg-[#0a0a0a] text-white"
-                      : "bg-[#f1f0ee] text-[#b3b1ac]"
+                      ? "bg-[#1e1e1e] text-white"
+                      : "bg-[#e2e2e0] text-[#a8a6a1]"
                   }`}
                 >
                   {step === "name" || (mode === "login" && step === "password")
@@ -527,7 +541,7 @@ export default function SignupPage() {
                       type="button"
                       onClick={googleSignIn}
                       disabled={mode === "signup" && !consent}
-                      className="mt-5 flex h-[56px] w-full items-center justify-center gap-3 rounded-full border border-solid border-black/15 bg-white text-[16px] font-medium text-ink transition-transform hover:scale-[1.01] active:scale-[0.99] disabled:opacity-40"
+                      className="mt-5 flex h-[56px] w-full items-center justify-center gap-3 border border-solid border-black/[0.12] bg-white text-[16px] font-medium text-ink transition-transform hover:scale-[1.01] active:scale-[0.99] disabled:opacity-40"
                     >
                       <svg width="19" height="19" viewBox="0 0 48 48" aria-hidden>
                         <path
@@ -581,7 +595,7 @@ export default function SignupPage() {
 
       {/* ---- Right: living shader showcase, one scene per step ---- */}
       <aside className="hidden p-[20px] min-[900px]:block">
-        <div className="relative h-full w-full overflow-hidden rounded-[20px]">
+        <div className="relative h-full w-full overflow-hidden border border-solid border-white/10">
         <GlareBackdrop />
         <AnimatePresence mode="wait">
           <motion.div
@@ -600,7 +614,7 @@ export default function SignupPage() {
               ))}
 
             {step === "password" && (
-              <div className="absolute left-1/2 top-[32%] flex h-[220px] w-[300px] -translate-x-1/2 items-center justify-center rounded-[28px] bg-white">
+              <div className="absolute left-1/2 top-[32%] flex h-[220px] w-[300px] -translate-x-1/2 items-center justify-center bg-white">
                 <LockIcon />
               </div>
             )}
@@ -714,8 +728,8 @@ function NotifBar({
   note: string;
 }) {
   return (
-    <div className="flex w-[320px] items-center gap-3 rounded-[18px] bg-white py-[6px] pl-[6px] pr-2.5">
-      <span className="flex h-[43px] w-[43px] shrink-0 items-center justify-center rounded-[11px] bg-[#eeeeee]">
+    <div className="flex w-[320px] items-center gap-3 border border-solid border-black/[0.12] bg-white py-[6px] pl-[6px] pr-2.5">
+      <span className="flex h-[43px] w-[43px] shrink-0 items-center justify-center bg-[#eeeeee]">
         <Image
           src={logo}
           alt={name}
