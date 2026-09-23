@@ -40,24 +40,30 @@ const TRACKER_X_LABELS = ["Jul 01", "Jul 07", "Jul 13", "Jul 20"];
 
 const BARS = [
   {
-    name: "DoorDash",
-    logo: "/logos/doordash.webp",
-    amount: "$9.99",
-    note: "Delivery plan renews tomorrow",
+    name: "OpenAI",
+    logo: "/logos/openai.svg",
+    amount: "$2,500.00",
+    note: "API usage this month",
+    bg: "#546b41",
+    dark: true,
     pos: "left-[14%] top-[26%]",
   },
   {
-    name: "Spotify",
-    logo: "/logos/spotify.webp",
-    amount: "$11.99",
-    note: "In-store music, renews tomorrow",
+    name: "Stripe",
+    logo: "/logos/stripe.png",
+    amount: "$600.00",
+    note: "Platform fees, monthly",
+    bg: "#c5b3d3",
+    dark: false,
     pos: "right-[10%] top-[42%]",
   },
   {
-    name: "Netflix",
-    logo: "/logos/netflix.webp",
-    amount: "$15.49",
-    note: "Lounge screen plan, Friday",
+    name: "Brex",
+    logo: "/logos/brex.svg",
+    amount: "$12,480.00",
+    note: "14 charges matched",
+    bg: "#2c2c2c",
+    dark: true,
     pos: "left-[20%] top-[58%]",
   },
 ];
@@ -595,7 +601,7 @@ export default function SignupPage() {
 
       {/* ---- Right: living shader showcase, one scene per step ---- */}
       <aside className="hidden p-[20px] min-[900px]:block">
-        <div className="relative h-full w-full overflow-hidden border border-solid border-white/10">
+        <div className="relative h-full w-full overflow-hidden rounded-[10px] border border-solid border-white/10">
         <GlareBackdrop />
         <AnimatePresence mode="wait">
           <motion.div
@@ -650,24 +656,22 @@ export default function SignupPage() {
 
 /* ---------- pieces ---------- */
 
-/** The blue gradient still, with soft light roaming over it the way the
+/** The warm gradient still, with soft light roaming over it the way the
     living shader moved. Two counter-drifting glare blobs on screen blend. */
 function GlareBackdrop() {
   return (
-    <div className="absolute inset-0 bg-[#0a1a8a]">
-      <Image
-        src="/signup-gradient.jpg"
-        alt=""
-        fill
-        priority
-        sizes="50vw"
-        className="object-cover"
-      />
+    <div
+      className="absolute inset-0"
+      style={{
+        background:
+          "linear-gradient(101deg, #f0e3c9 0%, #e7d0a6 16%, #dea75e 30%, #d4701f 41%, #c8421a 50%, #96300f 59%, #55190a 70%, #220a03 83%, #070201 100%)",
+      }}
+    >
       <motion.div
         className="pointer-events-none absolute left-0 top-0 h-[75%] w-[75%] mix-blend-screen blur-3xl"
         style={{
           background:
-            "radial-gradient(closest-side, rgba(255,255,255,0.5), rgba(150,180,255,0.16) 55%, transparent 72%)",
+            "radial-gradient(closest-side, rgba(255,241,214,0.45), rgba(255,170,90,0.16) 55%, transparent 72%)",
         }}
         animate={{ x: ["-15%", "70%", "45%", "-15%"], y: ["70%", "-10%", "55%", "70%"] }}
         transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
@@ -676,7 +680,7 @@ function GlareBackdrop() {
         className="pointer-events-none absolute left-0 top-0 h-[55%] w-[55%] mix-blend-screen blur-3xl"
         style={{
           background:
-            "radial-gradient(closest-side, rgba(120,160,255,0.35), transparent 70%)",
+            "radial-gradient(closest-side, rgba(255,140,60,0.3), transparent 70%)",
         }}
         animate={{ x: ["85%", "5%", "60%", "85%"], y: ["5%", "65%", "85%", "5%"] }}
         transition={{ duration: 21, repeat: Infinity, ease: "easeInOut" }}
@@ -721,15 +725,25 @@ function NotifBar({
   logo,
   amount,
   note,
+  bg,
+  dark,
 }: {
   name: string;
   logo: string;
   amount: string;
   note: string;
+  bg: string;
+  dark: boolean;
 }) {
   return (
-    <div className="flex w-[320px] items-center gap-3 border border-solid border-black/[0.12] bg-white py-[6px] pl-[6px] pr-2.5">
-      <span className="flex h-[43px] w-[43px] shrink-0 items-center justify-center bg-[#eeeeee]">
+    <div
+      className="flex w-[320px] items-center gap-3 rounded-[18px] py-[6px] pl-[6px] pr-2.5"
+      style={{
+        backgroundColor: bg,
+        border: `1px solid ${dark ? "rgba(255,255,255,0.15)" : "rgba(10,10,10,0.12)"}`,
+      }}
+    >
+      <span className="flex h-[43px] w-[43px] shrink-0 items-center justify-center rounded-[11px] border border-black/[0.12] bg-white">
         <Image
           src={logo}
           alt={name}
@@ -739,16 +753,16 @@ function NotifBar({
         />
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block text-[16px] font-semibold text-ink">{name}</span>
-        <span className="block text-[13px] leading-snug text-sub">{note}</span>
+        <span className={`block text-[16px] font-semibold ${dark ? "text-white" : "text-ink"}`}>{name}</span>
+        <span className={`block text-[13px] leading-snug ${dark ? "text-white/70" : "text-sub"}`}>{note}</span>
       </span>
-      <span className="text-[17px] font-semibold tracking-[-0.43px] text-ink">
+      <span className={`text-[17px] font-semibold tracking-[-0.43px] ${dark ? "text-white" : "text-ink"}`}>
         {amount}
       </span>
       <svg width="11" height="11" viewBox="0 0 16 16" fill="none" aria-hidden>
         <path
           d="m6 3.5 5 4.5-5 4.5"
-          stroke="#b3b1ac"
+          stroke={dark ? "rgba(255,255,255,0.75)" : "#b3b1ac"}
           strokeWidth="1.8"
           strokeLinecap="round"
           strokeLinejoin="round"
