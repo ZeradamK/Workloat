@@ -56,6 +56,7 @@ type Ground = "light" | "dark";
 const SKIN: Record<Ground, {
   bg: string; fg: string; dim: string; rule: string; hover: string;
   arrow: string; arrowFg: string; cta: string; ctaFg: string; mark: string; line: string;
+  pill: string; pillFg: string; panelRule: string;
 }> = {
   light: {
     bg: "#eeeeee",
@@ -71,6 +72,9 @@ const SKIN: Record<Ground, {
     ctaFg: "#ffffff",
     mark: "/payloat-mark.svg",
     line: GRID_LIGHT,
+    pill: "#1e1e1e",
+    pillFg: "#ffffff",
+    panelRule: "rgba(10,10,10,0.1)",
   },
   dark: {
     bg: "#000000",
@@ -85,6 +89,9 @@ const SKIN: Record<Ground, {
     ctaFg: "#0a0a0a",
     mark: "/payloat-mark-white.svg",
     line: GRID_DARK,
+    pill: "#eeeeee",
+    pillFg: "#0a0a0a",
+    panelRule: "rgba(255,255,255,0.14)",
   },
 };
 const TONE = "transition-[color,background-color,border-color] duration-200 ease-out";
@@ -92,24 +99,80 @@ const TONE = "transition-[color,background-color,border-color] duration-200 ease
 type PanelKey = "Product" | "Features" | "Pricing" | "Contact";
 
 /* key order is the bar's item order */
-const PANEL_DIMS: Record<PanelKey, { w: number }> = {
-  Features: { w: 400 },
-  Product: { w: 356 },
-  Pricing: { w: 380 },
-  Contact: { w: 380 },
+/* key order is the bar's item order */
+const PANEL_ORDER: Record<PanelKey, true> = {
+  Features: true,
+  Product: true,
+  Pricing: true,
+  Contact: true,
 };
 
-/** Product sub-items: one per page. */
-const PRODUCT_ITEMS = [
-  { label: "Bank Integration", href: "/integration" },
-  { label: "Investing with agents", href: "/product" },
-  { label: "Personal finance", href: "/consumer" },
+/** What each menu holds: an entry per page, each with the line that
+    says what it is, the way Swap and Intercom set their menus out. */
+type Entry = { label: string; href: string; blurb: string; glyph: Glyph };
+type Glyph = "bank" | "agent" | "person" | "team" | "tower" | "chat" | "sales" | "press" | "help";
+
+const PRODUCT_ITEMS: Entry[] = [
+  {
+    label: "Bank Integration",
+    href: "/integration",
+    blurb: "Every account and card your agents draw from, in one ledger.",
+    glyph: "bank",
+  },
+  {
+    label: "Investing with agents",
+    href: "/product",
+    blurb: "Caps, approvals and receipts for the money agents move.",
+    glyph: "agent",
+  },
+  {
+    label: "Personal finance",
+    href: "/consumer",
+    blurb: "The same ledger for one person and the agents they run.",
+    glyph: "person",
+  },
 ];
 
-/** Features sub-items: one per audience page. */
-const SOLUTION_ITEMS = [
-  { label: "Financial teams", href: "/finance-teams" },
-  { label: "Enterprise", href: "/enterprise" },
+const SOLUTION_ITEMS: Entry[] = [
+  {
+    label: "Financial teams",
+    href: "/finance-teams",
+    blurb: "Payle reads every charge and decides before the money moves.",
+    glyph: "team",
+  },
+  {
+    label: "Enterprise",
+    href: "/enterprise",
+    blurb: "Controls, audit and scale for companies running many agents.",
+    glyph: "tower",
+  },
+];
+
+const CONTACT_ITEMS: Entry[] = [
+  {
+    label: "Support",
+    href: "/contact#support",
+    blurb: "A person reads every message.",
+    glyph: "chat",
+  },
+  {
+    label: "Sales",
+    href: "/contact#sales",
+    blurb: "For companies with many agents, many locations, or both.",
+    glyph: "sales",
+  },
+  {
+    label: "Press",
+    href: "/contact#press",
+    blurb: "Writing about Payloat Ledger? We are happy to talk.",
+    glyph: "press",
+  },
+  {
+    label: "Help center",
+    href: "/#faq",
+    blurb: "Short answers to the questions we hear most.",
+    glyph: "help",
+  },
 ];
 
 const PRICING_ITEMS = [
@@ -119,18 +182,43 @@ const PRICING_ITEMS = [
   { title: "Enterprise", price: "Custom" },
 ];
 
-const CONTACT_ITEMS = [
-  { title: "Support", detail: "hello@payloat.com", href: "/contact#support" },
-  { title: "Sales", detail: "", href: "/contact#sales" },
-  { title: "Press", detail: "", href: "/contact#press" },
-  { title: "Help center", detail: "", href: "/#faq" },
-];
+/** The panel's right-hand column: one thing worth doing per menu. */
+const FEATURED: Record<PanelKey, { eyebrow: string; head: string; body: string; cta: string; href: string }> = {
+  Product: {
+    eyebrow: "Start here",
+    head: "Give your first agent a card.",
+    body: "Create an agent, set its cap, and every purchase it makes lands in the ledger with the task behind it.",
+    cta: "Sign up",
+    href: "/signup",
+  },
+  Features: {
+    eyebrow: "See it on your own spend",
+    head: "Bring us a month of agent charges.",
+    body: "We will read them back to you with the task, the cap and the receipt against each one.",
+    cta: "Book a demo",
+    href: "/contact#sales",
+  },
+  Pricing: {
+    eyebrow: "Start free",
+    head: "Nothing to pay until agents spend.",
+    body: "Every plan records the same ledger. What changes is how many agents write to it.",
+    cta: "Sign up",
+    href: "/signup",
+  },
+  Contact: {
+    eyebrow: "Before you write",
+    head: "The questions we hear most.",
+    body: "What the ledger records, how purchases reach it, what it costs, and when you can have it.",
+    cta: "Read the FAQ",
+    href: "/#faq",
+  },
+};
 
 /* Pricing is LOCKED for now: fully built (panel, items, collapsed tree)
    but hidden from every screen size. Flip to true to restore it. */
 const SHOW_PRICING = false;
 
-const NAV = (Object.keys(PANEL_DIMS) as PanelKey[]).filter(
+const NAV = (Object.keys(PANEL_ORDER) as PanelKey[]).filter(
   (k) => SHOW_PRICING || k !== "Pricing",
 );
 
@@ -302,7 +390,6 @@ export default function NavDock({ skin: pinned, ..._props }: {
   }, []);
 
   const highlight = hovered ?? active;
-  const dims = active ? PANEL_DIMS[active] : null;
   const H = collapsed ? COMPACT_H : BAR_H;
   barH.current = H;
 
@@ -373,13 +460,14 @@ export default function NavDock({ skin: pinned, ..._props }: {
                     aria-haspopup="true"
                     className="relative flex h-10 items-center gap-1.5 whitespace-nowrap px-[clamp(10px,1.1vw,18px)] text-[16px] font-medium tracking-[-0.2px]"
                   >
-                    {/* the box, only while hovered */}
+                    {/* the box, only while open: a 10px block in the
+                        skin's filled tone, with the item reversed out */}
                     <AnimatePresence>
                       {highlight === item && (
                         <motion.span
                           layoutId="navHoverBox"
                           className="absolute inset-0"
-                          style={{ backgroundColor: S.hover, border: `1px solid ${S.rule}` }}
+                          style={{ backgroundColor: S.pill, borderRadius: 10 }}
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           exit={{ opacity: 0, transition: { duration: 0.12 } }}
@@ -387,7 +475,12 @@ export default function NavDock({ skin: pinned, ..._props }: {
                         />
                       )}
                     </AnimatePresence>
-                    <span className="relative z-10">{item}</span>
+                    <span
+                      className="relative z-10 transition-colors duration-150"
+                      style={{ color: highlight === item ? S.pillFg : S.fg }}
+                    >
+                      {item}
+                    </span>
                     <motion.svg
                       className="relative z-10"
                       width="10"
@@ -398,6 +491,7 @@ export default function NavDock({ skin: pinned, ..._props }: {
                       initial={false}
                       animate={{ rotate: highlight === item ? 180 : 0 }}
                       transition={SPRING}
+                      style={{ color: highlight === item ? S.pillFg : S.fg }}
                     >
                       <path
                         d="M3 5.5 8 10.5l5-5"
@@ -434,41 +528,99 @@ export default function NavDock({ skin: pinned, ..._props }: {
               </div>
             </div>
 
-            {/* the item's panel, dropping 10px under the bar, its left
-                edge under the item */}
+            {/* the menu: the bar's own colour carried on down the full
+                width, opening by growing rather than dropping a card */}
             <AnimatePresence>
-              {active && dims && (
+              {active && (
                 <motion.div
-                  key={active}
-                  initial={{ opacity: 0, y: -6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -6, transition: { duration: 0.12 } }}
-                  transition={{ duration: 0.22, ease: [0.25, 0.6, 0.2, 1] }}
-                  className="absolute px-4 pb-4 pt-2"
-                  style={
-                    {
-                      top: BAR_H + 10,
-                      left: panelLeft(rowRef.current, active),
-                      width: dims.w,
-                      backgroundColor: S.bg,
-                      color: S.fg,
-                      border: `1px solid ${S.rule}`,
-                      "--nav-fg": S.fg,
-                      "--nav-label": S.dim,
-                    } as React.CSSProperties
-                  }
+                  key="navPanel"
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.28, ease: [0.25, 0.6, 0.2, 1] }}
+                  className="absolute inset-x-0 overflow-hidden"
+                  style={{ top: BAR_H, backgroundColor: S.bg, color: S.fg }}
                 >
-                  {active === "Product" && <ProductPanel />}
-                  {active === "Features" && <SolutionsPanel />}
-                  {active === "Pricing" && <PricingPanel />}
-                  {active === "Contact" && <ContactPanel />}
+                  <span
+                    className="pointer-events-none absolute inset-x-0 bottom-0 h-px"
+                    style={{ backgroundColor: S.line }}
+                    aria-hidden
+                  />
+                  <div className={`${INNER} pb-[clamp(28px,3vw,52px)] pt-[clamp(22px,2.4vw,40px)]`}>
+                    <div className="grid gap-[clamp(24px,3vw,56px)] min-[1100px]:grid-cols-[1.35fr_1fr]">
+                      <div>
+                        <p className="font-numeral text-[11px] uppercase tracking-[1.8px]" style={{ color: S.dim }}>
+                          {active}
+                        </p>
+                        <ul className="mt-[clamp(12px,1.2vw,20px)] grid gap-1 min-[760px]:grid-cols-2">
+                          {ENTRIES[active].map((e) => (
+                            <li key={e.label}>
+                              <Link
+                                href={e.href}
+                                onClick={() => setActive(null)}
+                                className="group flex items-start gap-3.5 rounded-[10px] p-3 transition-colors"
+                                style={{ color: S.fg }}
+                                onMouseEnter={(ev) => {
+                                  ev.currentTarget.style.backgroundColor = S.hover;
+                                }}
+                                onMouseLeave={(ev) => {
+                                  ev.currentTarget.style.backgroundColor = "transparent";
+                                }}
+                              >
+                                <span
+                                  className="mt-[2px] flex h-9 w-9 shrink-0 items-center justify-center rounded-[9px]"
+                                  style={{ border: `1px solid ${S.panelRule}` }}
+                                >
+                                  <Glyph name={e.glyph} />
+                                </span>
+                                <span className="min-w-0">
+                                  <span className="block text-[15px] font-semibold tracking-[-0.3px]">
+                                    {e.label}
+                                  </span>
+                                  <span className="mt-0.5 block text-[13px] leading-[1.45]" style={{ color: S.dim }}>
+                                    {e.blurb}
+                                  </span>
+                                </span>
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      {/* the one thing worth doing from this menu */}
+                      <div
+                        className="rounded-[10px] p-[clamp(18px,1.8vw,30px)]"
+                        style={{ border: `1px solid ${S.panelRule}`, backgroundColor: S.hover }}
+                      >
+                        <p className="font-numeral text-[11px] uppercase tracking-[1.8px]" style={{ color: S.dim }}>
+                          {FEATURED[active].eyebrow}
+                        </p>
+                        <p className="mt-2.5 text-[clamp(18px,1.5vw,24px)] font-medium leading-[1.2] tracking-[-0.6px]">
+                          {FEATURED[active].head}
+                        </p>
+                        <p className="mt-2.5 max-w-[46ch] text-[13px] leading-[1.5]" style={{ color: S.dim }}>
+                          {FEATURED[active].body}
+                        </p>
+                        <Link
+                          href={FEATURED[active].href}
+                          onClick={() => setActive(null)}
+                          className="mt-5 inline-flex h-[42px] items-stretch text-[13px] font-semibold tracking-[-0.3px] transition-transform hover:scale-[1.02]"
+                        >
+                          <span className="flex w-[42px] items-center justify-center" style={{ backgroundColor: S.arrow }}>
+                            <svg width="11" height="11" viewBox="0 0 16 16" fill="none" aria-hidden>
+                              <path d="M5 2.5 10.5 8 5 13.5" stroke={S.arrowFg} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                          </span>
+                          <span className="flex items-center px-5" style={{ backgroundColor: S.cta, color: S.ctaFg }}>
+                            {FEATURED[active].cta}
+                          </span>
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>
-            {/* a bridge so the pointer can cross the 10px gap to the panel */}
-            {active && (
-              <span className="absolute inset-x-0 h-[12px]" style={{ top: BAR_H }} />
-            )}
           </>
         )}
 
@@ -631,14 +783,13 @@ export default function NavDock({ skin: pinned, ..._props }: {
                                   ))}
                                 {item === "Contact" &&
                                   CONTACT_ITEMS.map((c) => (
-                                    <li key={c.title}>
+                                    <li key={c.label}>
                                       <Link
                                         href={c.href}
                                         onClick={() => setMenuOpen(false)}
-                                        className="flex items-baseline justify-between py-1 opacity-80 transition-opacity hover:opacity-100"
+                                        className="block py-1 text-[15px] opacity-80 transition-opacity hover:opacity-100"
                                       >
-                                        <span className="text-[15px]">{c.title}</span>
-                                        {c.detail && <span className="text-[12px]">{c.detail}</span>}
+                                        {c.label}
                                       </Link>
                                     </li>
                                   ))}
@@ -701,98 +852,91 @@ function Lockup({ skin }: { skin: (typeof SKIN)[Ground] }) {
   );
 }
 
-/* where an item's panel opens: under that item's cell, so the panel's
-   left edge lines up with the cell's left edge */
-function panelLeft(row: HTMLDivElement | null, item: PanelKey): number {
-  const cell = row?.querySelector<HTMLElement>(`[data-item="${item}"]`);
-  if (!cell || !row) return 0;
-  return cell.getBoundingClientRect().left - row.getBoundingClientRect().left;
-}
+/* what each menu holds */
+const ENTRIES: Record<PanelKey, Entry[]> = {
+  Product: PRODUCT_ITEMS,
+  Features: SOLUTION_ITEMS,
+  Pricing: [],
+  Contact: CONTACT_ITEMS,
+};
 
-/* ---------- the panels ---------- */
-
-function PanelLabel({ children }: { children: React.ReactNode }) {
-  return <p className="text-[13px] [color:var(--nav-label)]">{children}</p>;
-}
-
-const bigLink =
-  "block text-[26px] font-medium leading-[1.55] tracking-[-0.02em] [color:var(--nav-fg)] transition-opacity hover:opacity-60";
-
-function ProductPanel() {
-  return (
-    <div className="w-full px-1 pt-3">
-      <PanelLabel>Product</PanelLabel>
-      <ul className="mt-2">
-        {PRODUCT_ITEMS.map((f) => (
-          <li key={f.label}>
-            <Link href={f.href} className={bigLink}>
-              {f.label}
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-function SolutionsPanel() {
-  return (
-    <div className="w-full px-1 pt-3">
-      <PanelLabel>Features</PanelLabel>
-      <ul className="mt-2">
-        {SOLUTION_ITEMS.map((s) => (
-          <li key={s.label}>
-            <Link href={s.href} className={bigLink}>
-              {s.label}
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-function ContactPanel() {
-  return (
-    <div className="w-full px-1 pt-3">
-      <PanelLabel>Contact</PanelLabel>
-      <ul className="mt-2">
-        {CONTACT_ITEMS.map((c) => (
-          <li key={c.title}>
-            <Link
-              href={c.href}
-              className="flex items-baseline justify-between transition-opacity hover:opacity-50"
-            >
-              <span className="text-[26px] font-medium leading-[1.55] tracking-[-0.02em] [color:var(--nav-fg)]">
-                {c.title}
-              </span>
-              {c.detail && <span className="text-[13px] [color:var(--nav-label)]">{c.detail}</span>}
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-function PricingPanel() {
-  return (
-    <div className="w-full px-1 pt-3">
-      <PanelLabel>Pricing</PanelLabel>
-      <ul className="mt-2">
-        {PRICING_ITEMS.map((t) => (
-          <li key={t.title}>
-            <a href="#" className="flex items-baseline justify-between transition-opacity hover:opacity-50">
-              <span className="text-[26px] font-medium leading-[1.55] tracking-[-0.02em] [color:var(--nav-fg)]">
-                {t.title}
-              </span>
-              <span className="text-[15px] font-semibold tabular-nums [color:var(--nav-fg)]">
-                {t.price}
-              </span>
-            </a>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
+/* the small line drawings in each entry's tile, one stroke weight
+   throughout so they sit as a set */
+function Glyph({ name }: { name: Glyph }) {
+  const common = {
+    width: 16,
+    height: 16,
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: 1.6,
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+    "aria-hidden": true,
+  };
+  switch (name) {
+    case "bank":
+      return (
+        <svg {...common}>
+          <path d="M3 9.5 12 4l9 5.5" />
+          <path d="M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 20h18" />
+        </svg>
+      );
+    case "agent":
+      return (
+        <svg {...common}>
+          <rect x="4" y="7" width="16" height="12" rx="2" />
+          <path d="M12 3v4M8.5 12h1M14.5 12h1M9 16h6" />
+        </svg>
+      );
+    case "person":
+      return (
+        <svg {...common}>
+          <circle cx="12" cy="8.5" r="3.5" />
+          <path d="M5 20a7 7 0 0 1 14 0" />
+        </svg>
+      );
+    case "team":
+      return (
+        <svg {...common}>
+          <circle cx="9" cy="9" r="3" />
+          <path d="M3 19a6 6 0 0 1 12 0" />
+          <path d="M16 7.5a3 3 0 0 1 0 5.8M17.5 19a6 6 0 0 0-1.6-4" />
+        </svg>
+      );
+    case "tower":
+      return (
+        <svg {...common}>
+          <path d="M4 20V6l7-2v16M11 20V9l9 3v8M3 20h18" />
+          <path d="M7 9h0M7 13h0M15 14h0M15 17h0" />
+        </svg>
+      );
+    case "chat":
+      return (
+        <svg {...common}>
+          <path d="M20 12a7.5 7.5 0 0 1-11 6.6L4 20l1.4-4.4A7.5 7.5 0 1 1 20 12Z" />
+        </svg>
+      );
+    case "sales":
+      return (
+        <svg {...common}>
+          <path d="M4 18V9M9.5 18V5M15 18v-6M20.5 18V7" />
+          <path d="M3 21h18" />
+        </svg>
+      );
+    case "press":
+      return (
+        <svg {...common}>
+          <rect x="3.5" y="5.5" width="17" height="13" rx="2" />
+          <path d="M7 9.5h6M7 13h10M7 15.5h7" />
+        </svg>
+      );
+    default:
+      return (
+        <svg {...common}>
+          <circle cx="12" cy="12" r="8.5" />
+          <path d="M9.6 9.6a2.5 2.5 0 1 1 2.9 3.9v1M12 17h0" />
+        </svg>
+      );
+  }
 }
