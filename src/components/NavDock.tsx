@@ -56,7 +56,7 @@ type Ground = "light" | "dark";
 const SKIN: Record<Ground, {
   bg: string; fg: string; dim: string; rule: string; hover: string;
   arrow: string; arrowFg: string; cta: string; ctaFg: string; mark: string; line: string;
-  pill: string; pillFg: string; panelRule: string;
+  panelRule: string;
 }> = {
   light: {
     bg: "#eeeeee",
@@ -72,8 +72,6 @@ const SKIN: Record<Ground, {
     ctaFg: "#ffffff",
     mark: "/payloat-mark.svg",
     line: GRID_LIGHT,
-    pill: "#1e1e1e",
-    pillFg: "#ffffff",
     panelRule: "rgba(10,10,10,0.1)",
   },
   dark: {
@@ -89,8 +87,6 @@ const SKIN: Record<Ground, {
     ctaFg: "#0a0a0a",
     mark: "/payloat-mark-white.svg",
     line: GRID_DARK,
-    pill: "#eeeeee",
-    pillFg: "#0a0a0a",
     panelRule: "rgba(255,255,255,0.14)",
   },
 };
@@ -455,14 +451,14 @@ export default function NavDock({ skin: pinned, ..._props }: {
                     aria-haspopup="true"
                     className="relative flex h-10 items-center gap-1.5 whitespace-nowrap px-[clamp(10px,1.1vw,18px)] text-[16px] font-medium tracking-[-0.2px]"
                   >
-                    {/* the box, only while open: a 10px block in the
-                        skin's filled tone, with the item reversed out */}
+                    {/* the box, only while open: a 10px block in the same
+                        tint the menu's own entries take on hover */}
                     <AnimatePresence>
                       {highlight === item && (
                         <motion.span
                           layoutId="navHoverBox"
                           className="absolute inset-0"
-                          style={{ backgroundColor: S.pill, borderRadius: 10 }}
+                          style={{ backgroundColor: S.hover, borderRadius: 10 }}
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           exit={{ opacity: 0, transition: { duration: 0.12 } }}
@@ -470,12 +466,7 @@ export default function NavDock({ skin: pinned, ..._props }: {
                         />
                       )}
                     </AnimatePresence>
-                    <span
-                      className="relative z-10 transition-colors duration-150"
-                      style={{ color: highlight === item ? S.pillFg : S.fg }}
-                    >
-                      {item}
-                    </span>
+                    <span className="relative z-10">{item}</span>
                     <motion.svg
                       className="relative z-10"
                       width="10"
@@ -486,7 +477,6 @@ export default function NavDock({ skin: pinned, ..._props }: {
                       initial={false}
                       animate={{ rotate: highlight === item ? 180 : 0 }}
                       transition={SPRING}
-                      style={{ color: highlight === item ? S.pillFg : S.fg }}
                     >
                       <path
                         d="M3 5.5 8 10.5l5-5"
