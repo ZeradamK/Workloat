@@ -118,11 +118,6 @@ const PRODUCT_ITEMS: Entry[] = [
     href: "/product",
     blurb: "Caps, approvals and receipts for the money agents move.",
   },
-  {
-    label: "Personal finance",
-    href: "/consumer",
-    blurb: "The same ledger for one person and the agents they run.",
-  },
 ];
 
 const SOLUTION_ITEMS: Entry[] = [

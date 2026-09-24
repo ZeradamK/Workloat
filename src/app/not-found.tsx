@@ -13,9 +13,11 @@ import FooterSection from "@/components/FooterSection";
  */
 
 /* The footage. Drop the file at public/404/tv.mp4 (and optionally a
-   .webm beside it, plus a first-frame still as tv-poster.jpg). Until
-   then the act falls back to its ink ground and everything else on the
-   page is unaffected. */
+   .webm beside it, plus a first-frame still as tv-poster.jpg), then flip
+   HAS_FILM to true. Until then the act rests on its ink ground and asks
+   the server for nothing, so a missing file never shows up as failed
+   requests in production. */
+const HAS_FILM = false;
 const FILM = "/404/tv.mp4";
 const FILM_WEBM = "/404/tv.webm";
 const POSTER = "/404/tv-poster.jpg";
@@ -45,6 +47,7 @@ export default function NotFound() {
         <div className="relative mx-auto w-full max-w-[1860px] overflow-hidden">
           <div className="relative h-[clamp(520px,78vh,860px)] w-full bg-[#0a0a0a]">
             {/* the film, looping silently */}
+            {HAS_FILM && (
             <video
               className="absolute inset-0 h-full w-full object-cover"
               autoPlay
@@ -58,6 +61,7 @@ export default function NotFound() {
               <source src={FILM_WEBM} type="video/webm" />
               <source src={FILM} type="video/mp4" />
             </video>
+            )}
 
             {/* the wash: #eeeeee at 20% across the whole film */}
             <div
@@ -77,6 +81,7 @@ export default function NotFound() {
             />
 
             {/* the note on the television */}
+            {HAS_FILM && (
             <div
               className="pointer-events-none absolute -translate-x-1/2 -translate-y-1/2"
               style={{ left: TV.left, top: TV.top, width: TV.width, transform: `translate(-50%,-50%) ${TV.rotate}` }}
@@ -91,6 +96,7 @@ export default function NotFound() {
                 page not found
               </p>
             </div>
+            )}
 
             {/* the headline, set left over the film */}
             <div className="relative flex h-full items-center">

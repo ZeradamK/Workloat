@@ -46,7 +46,7 @@ const COPY: Record<State, { eyebrow: string; head: string; body: string }> = {
 
 export default function ConfirmedPage() {
   return (
-    <main className="bg-[#eeeeee]">
+    <main className="overflow-x-clip bg-[#eeeeee]">
       <NavDock skin="light" />
       <Suspense fallback={<div className="h-[70vh]" />}>
         <Confirmed />

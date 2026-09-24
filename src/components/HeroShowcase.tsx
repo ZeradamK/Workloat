@@ -184,7 +184,7 @@ function MobileHero() {
     >
       {/* stacked and centered: the headline, the wallet column, then the
           paragraph and the buttons */}
-      <motion.h1
+      <motion.h2
         {...up}
         className="text-[clamp(40px,11vw,56px)] font-medium leading-[0.98] tracking-[-2px] text-ink"
       >
@@ -193,7 +193,7 @@ function MobileHero() {
         every dollar your
         <br />
         agents spend
-      </motion.h1>
+      </motion.h2>
       {/* the wallet keeps its own left-set type inside the centered stack */}
       <motion.div {...up} className="mt-9 w-full max-w-[340px] text-left">
         <WalletSpendBlock />

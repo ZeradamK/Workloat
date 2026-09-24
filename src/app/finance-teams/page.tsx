@@ -113,7 +113,7 @@ const BANK_LOGOS = [
 
 export default function FinanceTeamsPage() {
   return (
-    <main className="bg-[#eeeeee]">
+    <main className="overflow-x-clip bg-[#eeeeee]">
       <NavDock forceDark />
 
       <BuiltFor />
