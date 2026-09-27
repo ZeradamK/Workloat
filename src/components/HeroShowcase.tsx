@@ -15,16 +15,25 @@ import { heroT } from "./introProgress";
  * surface once the hero is gone.
  */
 
-const HERO_DAILY = [
-  0, 85, 85, 210, 210, 340, 340, 495, 640, 640, 820, 980, 980, 1210, 1385,
-  1500, 1500, 1830, 2100, 2350,
-];
-const HERO_X_LABELS = ["Jul 01", "Jul 07", "Jul 13", "Jul 20"];
+/* the same series the Slack act's answer card draws: cumulative agent
+   spend from Sep 1 through today, day 9, landing on the $9,190 that card
+   reports as spent so far */
+const HERO_DAILY = [0, 1900, 3200, 3400, 5100, 6000, 7300, 8600, 9190];
+const HERO_X_LABELS = ["Sep 01", "Sep 04", "Sep 07", "Sep 09"];
 
-/* Yearly activity: thin bars, gray year, current month (July) in ink with
+/* Yearly activity: thin bars, gray year, current month (September) in ink with
    the lime dot beneath — the app's exact treatment. */
 const YEARLY = [0.5, 0.62, 0.42, 0.7, 0.55, 0.78, 1, 0.66, 0.58, 0.72, 0.48, 0.64];
-const CURRENT_MONTH = 6;
+const CURRENT_MONTH = 8;
+
+/* what renews next, at the figures the goal act and the sign-up panel
+   already carry for the same vendors; the header is their sum */
+const RENEWING = [
+  { name: "OpenAI", amount: 2500 },
+  { name: "Anthropic", amount: 4000 },
+  { name: "Stripe", amount: 600 },
+  { name: "AWS", amount: 850 },
+];
 
 const COL_W = 320; /* center column width (350 - 30), matches the dock */
 
@@ -370,9 +379,9 @@ function WalletStack({ open }: { open: boolean }) {
 function CardExpenses() {
   return (
     <div className="flex flex-1 flex-col bg-white p-3">
-      <span className="text-[11px] font-medium text-sub">Agent spend</span>
+      <span className="text-[11px] font-medium text-sub">Projected by Sep 30</span>
       <span className="font-numeral mt-1 text-[21px] font-semibold tracking-[-0.5px] text-ink">
-        {money(1240.6)}
+        {money(27900)}
       </span>
     </div>
   );
@@ -383,17 +392,15 @@ function PaymentDue() {
     <div className="flex w-full flex-col bg-white p-3">
       <span className="text-[11px] font-medium text-sub">Renewing soon</span>
       <span className="font-numeral mt-1 text-[21px] font-semibold tracking-[-0.5px] text-ink">
-        $120
+        {money(7950)}
       </span>
       <div className="mt-2 flex flex-col gap-1 pb-[10px]">
-        <div className="flex items-center justify-between">
-          <span className="text-[12px] text-ink">Adobe</span>
-          <span className="font-numeral text-[12px] text-ink">$49.99</span>
-        </div>
-        <div className="flex items-center justify-between">
-          <span className="text-[12px] text-ink">Spotify</span>
-          <span className="font-numeral text-[12px] text-ink">$11.99</span>
-        </div>
+        {RENEWING.map((r) => (
+          <div key={r.name} className="flex items-center justify-between">
+            <span className="text-[12px] text-ink">{r.name}</span>
+            <span className="font-numeral text-[12px] text-ink">{money(r.amount)}</span>
+          </div>
+        ))}
       </div>
       {/* white pill, the app's Pay Early treatment */}
       <button
@@ -439,10 +446,10 @@ function TotalSpending() {
     <div className="p-3" style={{ backgroundColor: "#0a0a0a" }}>
       <div className="flex items-center justify-between">
         <span className="text-[11px] font-medium text-white/60">
-          Total agent spend
+          Spent so far
         </span>
         <span className="flex items-center gap-1 bg-white px-2.5 py-1 text-[11px] font-semibold text-ink">
-          Jul 2026
+          Sep 2026
           <svg width="8" height="8" viewBox="0 0 16 16" fill="none" aria-hidden>
             <path
               d="M3 5.5 8 10.5l5-5"
@@ -455,7 +462,7 @@ function TotalSpending() {
         </span>
       </div>
       <p className="font-numeral mt-1 text-[22px] font-bold tracking-[-0.5px] text-white">
-        {money(2350)}
+        {money(9190)}
       </p>
       <InsightsChart
         daily={HERO_DAILY}
