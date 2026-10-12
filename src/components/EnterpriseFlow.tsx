@@ -138,34 +138,72 @@ function Build() {
 
 /* ---------- Launch: Sona in the chat ---------- */
 const ASK = "How much is left in marketing this month?";
-export function Launch({ run }: { run: boolean }) {
+const ANSWER = "Marketing has $6,200 left of $30,000 this month. Two invoices land Friday for $1,850.";
+
+/* `converse` (the sign up page's scene): the question is sent once typed,
+   and Sona answers it, the thread scrolling up as it grows; `onDone` fires
+   once her answer is in. Without it, the enterprise panel as designed. */
+export function Launch({ run, converse = false, onDone }: { run: boolean; converse?: boolean; onDone?: () => void }) {
   const [n, setN] = useState(0);
+  const [phase, setPhase] = useState<"ask" | "sent" | "dots" | "answered">("ask");
+  const done = useRef(onDone);
+  done.current = onDone;
   useEffect(() => {
+    setPhase("ask");
     if (!run) { setN(0); return; }
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { setN(ASK.length); return; }
-    let k = 0, t = 0;
-    const start = window.setTimeout(function tick() {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setN(ASK.length);
+      if (converse) { setPhase("answered"); done.current?.(); }
+      return;
+    }
+    const timers: number[] = [];
+    const later = (fn: () => void, ms: number) => timers.push(window.setTimeout(fn, ms));
+    let k = 0;
+    const tick = () => {
       k++; setN(k);
-      if (k < ASK.length) t = window.setTimeout(tick, 38 + Math.random() * 40);
-    }, 2300);
-    return () => { window.clearTimeout(start); window.clearTimeout(t); };
-  }, [run]);
+      if (k < ASK.length) later(tick, 38 + Math.random() * 40);
+      else if (converse) {
+        later(() => { setPhase("sent"); setN(0); }, 650);
+        later(() => setPhase("dots"), 1150);
+        later(() => setPhase("answered"), 2500);
+        later(() => done.current?.(), 2700);
+      }
+    };
+    later(tick, 2300);
+    return () => timers.forEach((t) => window.clearTimeout(t));
+  }, [run, converse]);
+  const sent = phase !== "ask";
   return (
-    <div className="ef-launch">
+    <div className={`ef-launch${converse ? " ef-launch--talk" : ""}`}>
       <div className="ef-glass">
-        <div className="ef-msg" style={{ animationDelay: ".2s" }}>
-          <span className="ef-ava" dangerouslySetInnerHTML={{ __html: SONA }} />
-          <div className="ef-bub">Hi, I&apos;m Sona, your finance Loat. Here&apos;s where October stands.</div>
-        </div>
-        <div className="ef-msg" style={{ animationDelay: ".9s" }}>
-          <span className="ef-ava" dangerouslySetInnerHTML={{ __html: SONA }} />
-          <div className="ef-bub">
-            Every team is inside its budget except procurement, at 91%.
-            <div className="ef-link">
-              <span className="ef-link__pic" />
-              <span><b>Budget review · October</b><small>Workloat ledger</small></span>
+        <div className="ef-thread">
+          <div className="ef-msg" style={{ animationDelay: ".2s" }}>
+            <span className="ef-ava" dangerouslySetInnerHTML={{ __html: SONA }} />
+            <div className="ef-bub">Hi, I&apos;m Sona, your finance Loat. Here&apos;s where October stands.</div>
+          </div>
+          <div className="ef-msg" style={{ animationDelay: ".9s" }}>
+            <span className="ef-ava" dangerouslySetInnerHTML={{ __html: SONA }} />
+            <div className="ef-bub">
+              Every team is inside its budget except procurement, at 91%.
+              <div className="ef-link">
+                <span className="ef-link__pic" />
+                <span><b>Budget review · October</b><small>Workloat ledger</small></span>
+              </div>
             </div>
           </div>
+          {converse && sent && <div className="ef-me">{ASK}</div>}
+          {converse && phase === "dots" && (
+            <div className="ef-msg ef-msg--now">
+              <span className="ef-ava" dangerouslySetInnerHTML={{ __html: SONA }} />
+              <div className="ef-bub ef-dots"><i /><i /><i /></div>
+            </div>
+          )}
+          {converse && phase === "answered" && (
+            <div className="ef-msg ef-msg--now">
+              <span className="ef-ava" dangerouslySetInnerHTML={{ __html: SONA }} />
+              <div className="ef-bub">{ANSWER}</div>
+            </div>
+          )}
         </div>
         <div className="ef-ask">
           <span>{n ? ASK.slice(0, n) : <em>Ask Sona anything…</em>}{n > 0 && n < ASK.length && <i className="ef-caret" />}</span>

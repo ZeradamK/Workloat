@@ -3,7 +3,8 @@
 
 .as { position: absolute; inset: 0; overflow: hidden; background: #e5e4e0; }
 .as-scene { position: absolute; inset: 0; display: flex; flex-direction: column; }
-.as-fit { position: relative; flex: 1; min-height: 0; margin-bottom: 110px; }
+.as-content { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; margin-bottom: 110px; }
+.as-fit { position: relative; flex: 1; min-height: 0; }
 .as-canvas { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
 
 /* grounds, from the sections the scenes come from */

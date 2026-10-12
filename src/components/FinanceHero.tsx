@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { motion } from "motion/react";
 import { roboto } from "./monoFont";
@@ -174,7 +174,43 @@ const STATUS = (
   </span></div>
 );
 
-export function Phone({ layout }: { layout: "desktop" | "mobile" }) {
+const REPLY = "Yes, please pay it. Thanks Sona.";
+
+/* the conversation, step by step: what is on screen at each step */
+type Beat = { dots?: boolean; m1?: boolean; m2?: boolean; card?: boolean; typed?: string; me?: boolean; receipt?: string; paid?: boolean };
+
+/* `play` (the sign up page's scene): the texts arrive one by one after
+   `delay` ms, you type and send the reply, and Sona confirms; `onDone`
+   fires once her last text is in. Without it, the finished conversation
+   (the finance hero). */
+export function Phone({ layout, play = false, delay = 0, onDone }: { layout: "desktop" | "mobile"; play?: boolean; delay?: number; onDone?: () => void }) {
+  const ALL: Beat = { m1: true, m2: true, card: true, me: true, receipt: "Read", paid: true };
+  const [b, setB] = useState<Beat>(play ? {} : ALL);
+  const done = useRef(onDone);
+  done.current = onDone;
+  useEffect(() => {
+    if (!play) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { setB(ALL); done.current?.(); return; }
+    const timers: number[] = [];
+    let t = delay;
+    const at = (ms: number, fn: () => void) => { t += ms; timers.push(window.setTimeout(fn, t)); };
+    at(0, () => setB({ dots: true }));
+    at(1100, () => setB({ m1: true }));
+    at(500, () => setB({ m1: true, dots: true }));
+    at(1000, () => setB({ m1: true, m2: true }));
+    at(450, () => setB({ m1: true, m2: true, card: true }));
+    at(1100, () => setB({ m1: true, m2: true, card: true, typed: "" }));
+    for (let k = 1; k <= REPLY.length; k++) at(40 + (REPLY[k - 1] === " " ? 50 : 0), () => setB({ m1: true, m2: true, card: true, typed: REPLY.slice(0, k) }));
+    at(450, () => setB({ m1: true, m2: true, card: true, me: true }));
+    at(450, () => setB({ m1: true, m2: true, card: true, me: true, receipt: "Delivered" }));
+    at(550, () => setB({ m1: true, m2: true, card: true, me: true, receipt: "Read" }));
+    at(500, () => setB({ m1: true, m2: true, card: true, me: true, receipt: "Read", dots: true }));
+    at(1200, () => setB(ALL));
+    at(300, () => done.current?.());
+    return () => timers.forEach((x) => window.clearTimeout(x));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [play, delay]);
+  const typing = b.typed !== undefined && b.typed.length > 0;
   return (
     <div className={`hs fh-phone fh-phone--${layout}`}>
       <div className="fh-phone__fit">
@@ -190,22 +226,31 @@ export function Phone({ layout }: { layout: "desktop" | "mobile" }) {
           </header>
           <div className="im-thread">
             <div className="im-day"><b>Today</b> 9:43 AM</div>
-            <div className="row them first"><div className="bubble">Vibe&apos;s October invoice came in at $4,800. Marketing has $6,200 left this month, so it fits.</div></div>
-            <div className="row them"><div className="bubble tail">Want me to pay it today?</div></div>
-            <div className="row them">
-              <div className="card">
-                <div className="card__top"><span className="card__cal"><b>OCT</b><span>20</span></span><div><strong>Vibe.co · $4,800.00</strong><small>Invoice VB-2041 · Marketing</small></div></div>
-                <div className="card__bottom">Payment queued · waiting for you</div>
+            {b.m1 && <div className="row them first"><div className={`bubble${b.m2 ? "" : " tail"}`}>Vibe&apos;s October invoice came in at $4,800. Marketing has $6,200 left this month, so it fits.</div></div>}
+            {b.m2 && <div className="row them"><div className={`bubble${b.card ? "" : " tail"}`}>Want me to pay it today?</div></div>}
+            {b.card && (
+              <div className="row them">
+                <div className="card">
+                  <div className="card__top"><span className="card__cal"><b>OCT</b><span>20</span></span><div><strong>Vibe.co · $4,800.00</strong><small>Invoice VB-2041 · Marketing</small></div></div>
+                  <div className="card__bottom">{play && b.paid ? "Paid · approved by you" : "Payment queued · waiting for you"}</div>
+                </div>
               </div>
-            </div>
-            <div className="row me first"><div className="bubble tail">Yes, please pay it. Thanks Sona.</div><div className="receipt"><b>Read</b> 9:44 AM</div></div>
-            <div className="row them first"><div className="bubble tail">Paid and matched to the invoice. Marketing has $1,400 left for October.</div></div>
+            )}
+            {b.me && (
+              <div className="row me first">
+                <div className="bubble tail">{REPLY}</div>
+                {b.receipt && <div className="receipt">{b.receipt === "Read" ? <><b>Read</b> 9:44 AM</> : "Delivered"}</div>}
+              </div>
+            )}
+            {b.dots && <div className="row them first"><div className="bubble typing"><i /><i /><i /></div></div>}
+            {b.paid && <div className="row them first"><div className="bubble tail">Paid and matched to the invoice. Marketing has $1,400 left for October.</div></div>}
           </div>
           <div className="im-input">
             <span className="im-plus"><svg viewBox="0 0 14 14"><path d="M7 1.5v11M1.5 7h11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg></span>
-            <span className="im-field">
-              <span className="im-text ph">iMessage</span>
+            <span className={`im-field${typing ? " has" : ""}`}>
+              <span className={`im-text${typing ? "" : " ph"}`}>{typing ? <>{b.typed}<span className="caret" /></> : "iMessage"}</span>
               <span className="im-mic"><svg viewBox="0 0 16 16"><rect x="5.5" y="1.5" width="5" height="8.5" rx="2.5" fill="none" stroke="currentColor" strokeWidth="1.5" /><path d="M3 7.5a5 5 0 0 0 10 0M8 12.5v2.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg></span>
+              <span className="im-send"><svg viewBox="0 0 14 14"><path d="M7 12V2.5M2.8 6.5 7 2.3l4.2 4.2" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
             </span>
             <span className="home-ind" />
           </div>

@@ -22,13 +22,19 @@ import "./AuthScenes.css";
  *   4. Sona by text (FinanceHero, the phone).
  *   5. A live record for a vendor (FinanceRows).
  *
- * A new scene every 4 seconds: each pops up (rising from 94% and 18px low)
- * and fades in over 2 seconds while the last fades out. With reduced motion
- * it rests on the first.
+ * Each scene pops up (rising from 94% and 18px low) and fades in over 2
+ * seconds while the last fades out, and holds for 4 seconds. The two that
+ * play a conversation (the chat, the texts) hold until it ends: the
+ * question is sent and Sona answers; the texts arrive, you reply, and she
+ * confirms. The texts scene brings its sky in first and the phone after.
+ * With reduced motion it rests on the first.
  * The panel only shows on large screens (the page hides it below 900px).
  */
 
-type Scene = { key: string; w: number; h: number; ground: string; dark?: boolean; cap: [string, string]; draw: () => React.ReactNode };
+/* `waits`: the scene plays a conversation and moves on once it ends
+   (`done`), not after STEP. `late`: the ground arrives first and the
+   content after it. */
+type Scene = { key: string; w: number; h: number; ground: string; dark?: boolean; waits?: boolean; late?: boolean; cap: [string, string]; draw: (done: () => void) => React.ReactNode };
 
 const SCENES: Scene[] = [
   {
@@ -42,14 +48,14 @@ const SCENES: Scene[] = [
     draw: () => <div className="fs as-fs"><Explorer /></div>,
   },
   {
-    key: "chat", w: 528, h: 607, ground: "as-g--video", dark: true,
+    key: "chat", w: 528, h: 607, ground: "as-g--video", dark: true, waits: true,
     cap: ["Ask in the app, and the answer comes back with the facts.", "Sona in the Workloat app"],
-    draw: () => <div className="ef-pic is-run as-ef"><Launch run /></div>,
+    draw: (done) => <div className="ef-pic is-run as-ef"><Launch run converse onDone={done} /></div>,
   },
   {
-    key: "text", w: 470, h: 930, ground: "as-g--sky", dark: true,
+    key: "text", w: 470, h: 930, ground: "as-g--sky", dark: true, waits: true, late: true,
     cap: ["Approve from your phone with one reply.", "Sona by text"],
-    draw: () => <div className="as-fh"><Phone layout="mobile" /></div>,
+    draw: (done) => <div className="as-fh"><Phone layout="mobile" play delay={LATE_MS} onDone={done} /></div>,
   },
   {
     key: "record", w: 640, h: 660, ground: "as-g--deep",
@@ -60,15 +66,29 @@ const SCENES: Scene[] = [
 
 /* a scene holds for 4 seconds, its arrival taking 2 of them */
 const STEP = 4000;
+/* a waiting scene moves on this long after its conversation ends */
+const AFTER = 1500;
+/* a late scene's content arrives this long after its ground */
+const LATE_MS = 1400;
 
 export default function AuthScenes() {
   const [at, setAt] = useState(0);
+  const [still, setStill] = useState(false);
+  useEffect(() => { setStill(window.matchMedia("(prefers-reduced-motion: reduce)").matches); }, []);
+  /* a plain scene moves on after STEP; a waiting one after its
+     conversation ends (with a long stop in case it never reports) */
+  const [finished, setFinished] = useState(-1);
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const id = window.setInterval(() => setAt((n) => (n + 1) % SCENES.length), STEP);
-    return () => window.clearInterval(id);
-  }, []);
+    if (still) return;
+    const s = SCENES[at];
+    const next = () => setAt((n) => (n + 1) % SCENES.length);
+    const id = s.waits
+      ? finished === at ? window.setTimeout(next, AFTER) : window.setTimeout(next, 30000)
+      : window.setTimeout(next, STEP);
+    return () => window.clearTimeout(id);
+  }, [at, finished, still]);
   const s = SCENES[at];
+  const done = () => setFinished(at);
   return (
     <div
       className={`as${s.dark ? " as--dark" : ""}`}
@@ -84,7 +104,14 @@ export default function AuthScenes() {
           exit={{ opacity: 0, scale: 1.02, transition: { duration: 1.2, ease: [0.4, 0, 0.6, 1] } }}
           transition={{ duration: 2, ease: [0.16, 1, 0.3, 1] }}
         >
-          <Fit w={s.w} h={s.h}>{s.draw()}</Fit>
+          <motion.div
+            className="as-content"
+            initial={s.late ? { opacity: 0, y: 26, scale: 0.97 } : false}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: s.late ? LATE_MS / 1000 - 0.5 : 0 }}
+          >
+            <Fit w={s.w} h={s.h}>{s.draw(done)}</Fit>
+          </motion.div>
           <p className="as-cap">
             <span>{s.cap[0]}</span>
             <span>{s.cap[1]}</span>

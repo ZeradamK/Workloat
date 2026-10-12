@@ -56,6 +56,18 @@
 .ef-link__pic { flex: none; width: 58px; height: 58px; border-radius: 4px; background: url(/landing/anywhere/0e999254fb.jpg) 40% 60% / 300%; }
 .ef-link b { display: block; font-weight: 500; }
 .ef-link small { font-size: 13px; color: rgba(255, 255, 255, .6); }
+/* the thread: as designed on the enterprise page; in the sign up scene it
+   is a column held above the input, scrolling up as it grows */
+.ef-thread { display: contents; }
+.ef-launch--talk .ef-thread { position: absolute; left: 0; right: 0; top: 0; bottom: 104px; display: flex; flex-direction: column; justify-content: flex-end; gap: 22px; overflow: hidden; padding-bottom: 6px; -webkit-mask-image: linear-gradient(transparent, #000 56px); mask-image: linear-gradient(transparent, #000 56px); }
+.ef-launch--talk .ef-msg:first-child { margin-top: 0; }
+.ef-launch--talk .ef-msg + .ef-msg { margin-top: 0; }
+.ef-me { align-self: flex-end; max-width: 300px; margin-right: 30px; padding: 12px 16px; border-radius: 14px; background: #fff; box-shadow: 0 0 0 1px rgba(10, 10, 10, .06); font-size: 15px; line-height: 1.45; animation: ef-pop .4s cubic-bezier(.2, .9, .3, 1.2) both; transform-origin: right bottom; }
+.ef-msg--now { animation: ef-pop .4s cubic-bezier(.2, .9, .3, 1.2) both; }
+.ef-dots { display: flex; gap: 5px; padding: 18px 18px; }
+.ef-dots i { width: 7px; height: 7px; border-radius: 50%; background: rgba(255, 255, 255, .7); animation: ef-blink 1.2s infinite ease-in-out; }
+.ef-dots i:nth-child(2) { animation-delay: .15s; } .ef-dots i:nth-child(3) { animation-delay: .3s; }
+@keyframes ef-blink { 0%, 60%, 100% { opacity: .35; transform: none; } 30% { opacity: 1; transform: translateY(-2px); } }
 .ef-ask { position: absolute; left: 22px; right: 22px; bottom: 26px; display: flex; align-items: center; gap: 10px; height: 60px; padding: 0 8px 0 22px; border-radius: 30px; background: #fff; box-shadow: 0 6px 20px rgba(0, 0, 0, .06); font-size: 17px; }
 .ef-ask > span:first-child { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ef-ask em { font-style: normal; color: #9a9a97; }
