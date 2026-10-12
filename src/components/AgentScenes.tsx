@@ -91,7 +91,7 @@ function Chip({ children, tone = "dark", className, style }: { children: React.R
 function Mark({ label }: { label: string }) {
   return (
     <div className="flex flex-col items-center gap-2">
-      <Image src="/payloat-mark.svg" alt="" width={30} height={30} className="h-[30px] w-auto" style={{ filter: "var(--sc-icon)" }} />
+      <Image src="/brand/workloat-wordmark-dark.png" alt="" width={936} height={111} className="h-[12px] w-auto" style={{ filter: "var(--sc-icon)" }} />
       <span className="text-[10px] font-medium tracking-[0.16em]" style={{ fontFamily: MONO, color: FG }}>
         {label}
       </span>
@@ -359,7 +359,7 @@ function Confirmations() {
         transition={{ duration: 0.4, delay: 1.9 }}
       >
         <Chip tone="green">3 OF 4 MATCHED</Chip>
-        <span className="text-[12px]" style={{ color: MUTED }}>One confirmation to chase. Payloat already asked the broker.</span>
+        <span className="text-[12px]" style={{ color: MUTED }}>One confirmation to chase. Workloat already asked the broker.</span>
       </motion.div>
     </div>
   );

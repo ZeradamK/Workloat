@@ -6,7 +6,7 @@ import { money } from "./money";
 
 /**
  * Web port of the iOS home's SubscriptionTrackerCard
- * (Payloat/Views/PurchaseTracker.swift): compact 296×260 mist card with a
+ * (Workloat/Views/PurchaseTracker.swift): compact 296×260 mist card with a
  * "Subscriptions" header, SPEND value, white action circle, and a short
  * wide cumulative chart. State-driven via props.
  */

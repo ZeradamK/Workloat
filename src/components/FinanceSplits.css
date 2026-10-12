@@ -1,0 +1,95 @@
+/* Two feature cards after the finance teams hero (FinanceSplits.tsx), on
+   Intercom's paired cards: a framed panel on a slightly deeper ground,
+   corner squares and a field of dots, the product on a 770 x 725 canvas
+   scaled to the column; then a title, a paragraph and a link. */
+
+.fs { padding: 0 0 clamp(80px, 7vw, 140px); color: #0a0a0a; }
+.fs--spaced { padding-top: clamp(56px, 6vw, 120px); }
+.fs-grid { display: grid; gap: clamp(48px, 5vw, 64px) 20px; width: min(1560px, calc(100% - clamp(32px, 18vw, 360px))); margin: 0 auto; }
+@media (min-width: 900px) { .fs-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 799px) { .fs-grid { width: calc(100% - 32px); } }
+
+.fs-card { min-width: 0; }
+.fs-panel { position: relative; overflow: hidden; background: #e5e4e0; }
+.fs-sq { position: absolute; z-index: 3; width: 10px; height: 10px; background: #cbc9c3; }
+.fs-sq--tl { left: 3%; top: 3.4%; } .fs-sq--tr { right: 3%; top: 3.4%; }
+.fs-sq--bl { left: 3%; bottom: 3.4%; } .fs-sq--br { right: 3%; bottom: 3.4%; }
+.fs-canvas { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+
+.fs-title { margin: clamp(18px, 1.6vw, 28px) 0 0; font-size: clamp(24px, 1.75vw, 33px); font-weight: 400; line-height: 1.15; letter-spacing: -0.035em; }
+/* the paragraph is the hero's (FinanceHero .fh-lede, itself the home
+   hero's): SF light, the same size, leading and tracking, in ink */
+.fs-body {
+  max-width: 62ch; margin: clamp(10px, .8vw, 14px) 0 0;
+  font-family: var(--font-ios); font-weight: 300;
+  font-size: clamp(13px, calc(1.35vw - 4px), 20px); line-height: 1.35; letter-spacing: -0.02em;
+  color: #0a0a0a;
+}
+@media (max-width: 799px) { .fs-body { font-size: 14px; } }
+.fs-body u { text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.fs-link { display: inline-block; margin-top: clamp(14px, 1.2vw, 22px); font-size: clamp(16px, 1.05vw, 19px); color: #0a0a0a; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 5px; }
+.fs-link:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 3px; }
+
+/* ---------- 1. the approval, with the evidence ---------- */
+.fs-dots { position: absolute; inset: 0; background-image: radial-gradient(#8f8d86 1.1px, transparent 1.6px); background-size: 13px 13px; }
+.fs-dots--map {
+  -webkit-mask-image: radial-gradient(60% 52% at 62% 46%, #000 0%, rgba(0, 0, 0, .55) 45%, transparent 78%);
+  mask-image: radial-gradient(60% 52% at 62% 46%, #000 0%, rgba(0, 0, 0, .55) 45%, transparent 78%);
+  opacity: .7;
+}
+.fs-bubble { position: absolute; padding: 20px 22px; border-radius: 22px; background: #fff; font-size: 17.5px; line-height: 1.58; letter-spacing: .005em; color: #1e1e1e; }
+.fs-bubble p { margin: 0; }
+.fs-bubble ul { margin: 0; padding-left: 20px; }
+.fs-bubble li + li { margin-top: 2px; }
+.fs-bubble--loat { left: 118px; top: 66px; width: 452px; }
+.fs-bubble--summary { left: 228px; top: 262px; width: 432px; background: #f7df8e; }
+.fs-bubble--person { left: 118px; top: 438px; width: 452px; }
+.fs-who { display: flex; align-items: center; gap: 9px; margin-bottom: 10px; font-size: 15.5px; font-weight: 600; letter-spacing: 0; }
+.fs-ava { display: block; flex: none; width: 24px; height: 24px; border-radius: 50%; overflow: hidden; object-fit: cover; }
+.fs-ava svg { display: block; width: 100%; height: 100%; }
+.fs-tag { display: grid; place-items: center; width: 22px; height: 16px; border-radius: 3px; background: #1e1e1e; color: #fff; font-size: 10px; font-weight: 700; }
+
+/* the step, as the ledger writes it (the product tour's Ledger rows) */
+.fs-ledger {
+  position: absolute; left: 92px; top: 606px; width: 586px; display: grid; grid-template-columns: 44px auto 1fr auto; align-items: center; gap: 12px;
+  padding: 14px 18px; border-radius: 6px; background: #fbfaf6; box-shadow: 0 0 0 1px rgba(0, 0, 0, .06);
+  font: 400 13px/1.2 var(--fs-mono); color: #1e1e1e;
+}
+.fs-ledger__t { color: #9a9a95; }
+.fs-ledger__who { display: flex; align-items: center; gap: 7px; }
+.fs-ledger__who .fs-ava { width: 20px; height: 20px; border-radius: 5px; }
+.fs-ledger__what { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.fs-ledger__tag { padding: 5px 8px; border-radius: 4px; background: #1e1e1e; color: #fff; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; }
+
+/* ---------- 2. budgets by team, with Sona's warning ---------- */
+.fs-win { position: absolute; left: 128px; top: 42px; width: 680px; height: 720px; overflow: hidden; border: 1px solid #d6d4ce; border-radius: 14px 0 0 0; background: #f3f2ef; }
+.fs-win__head { display: flex; align-items: center; gap: 14px; height: 66px; margin: 8px 0 0 8px; padding: 0 26px; border-radius: 10px 0 0 0; background: #fff; }
+.fs-win__head b { font-size: 21px; font-weight: 600; letter-spacing: -.01em; }
+.fs-win__icon { width: 16px; height: 13px; border: 2px solid #1e1e1e; border-left-width: 6px; border-radius: 2px; }
+.fs-win__bar { display: flex; align-items: center; gap: 14px; margin-left: 8px; padding: 0 22px 18px; background: #fff; }
+.fs-chip { display: inline-flex; align-items: center; gap: 8px; height: 34px; padding: 0 14px; border: 1px solid #e3e1dc; border-radius: 17px; font-size: 14.5px; color: #3a3a3a; }
+.fs-chip svg { width: 14px; height: 14px; color: #1e1e1e; }
+.fs-chip--sel { margin-left: auto; margin-right: 0; }
+.fs-chip--sel i { width: 10px; height: 10px; border-radius: 50%; background: #d4581a; }
+.fs-filter { font-size: 14.5px; font-weight: 600; }
+.fs-win__label { margin: 22px 0 14px 26px; font-size: 14px; font-weight: 600; color: #4a4a48; }
+.fs-map {
+  display: grid; gap: 4px; margin-left: 18px; height: 470px;
+  grid-template-columns: 1.15fr 1fr .9fr; grid-template-rows: 2.6fr 1fr;
+  grid-template-areas: "a b c" "e d f";
+  -webkit-mask-image: linear-gradient(#000 72%, transparent 98%); mask-image: linear-gradient(#000 72%, transparent 98%);
+}
+.fs-block { display: flex; flex-direction: column; gap: 3px; padding: 14px 14px; border-radius: 4px; }
+.fs-block b { margin-bottom: 4px; font-size: 14.5px; font-weight: 600; }
+.fs-block span { font: 400 10.5px/1.25 var(--fs-mono); letter-spacing: .06em; text-transform: uppercase; opacity: .85; }
+
+.fs-alert {
+  position: absolute; left: 40px; top: 458px; width: 560px; padding: 22px 24px; border-radius: 16px;
+  border: 2px solid transparent; font-size: 17.5px; line-height: 1.55; color: #1e1e1e;
+  background: linear-gradient(#fff, #fff) padding-box, linear-gradient(90deg, #f2a26b, #e3641f 55%, #d94f7a) border-box;
+  box-shadow: 0 18px 40px -20px rgba(30, 20, 10, .35), 0 0 0 6px rgba(255, 255, 255, .35);
+}
+.fs-alert p { margin: 0; }
+.fs-who--alert { font-size: 19px; }
+
+@media (prefers-reduced-motion: reduce) { .fs-card, .fs-bubble, .fs-alert, .fs-ledger { transition: none; } }

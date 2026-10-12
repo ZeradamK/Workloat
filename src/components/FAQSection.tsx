@@ -11,7 +11,7 @@ import { AnimatePresence, motion } from "motion/react";
 
 const ITEMS = [
   {
-    q: "What does Payloat Ledger record?",
+    q: "What does Workloat record?",
     a: "Everything your agents buy. Each purchase arrives with the task the agent was given, the cap it had, the merchant, the amount, and the receipt when it lands. Subscriptions carry their next charge date, orders and trips carry their expected date. It all lives in one ledger so nothing an agent did is a mystery.",
   },
   {
@@ -23,12 +23,12 @@ const ITEMS = [
     a: "No. Your data is used for one thing, showing your company what its agents did. We never sell it or share it with advertisers.",
   },
   {
-    q: "What does Payloat Ledger cost?",
-    a: "Payloat Ledger is free while in beta. Pricing will be per organization, with a free tier for a handful of agents and paid plans as your agents and their volume grow.",
+    q: "What does Workloat cost?",
+    a: "Workloat is free while in beta. Pricing will be per organization, with a free tier for a handful of agents and paid plans as your agents and their volume grow.",
   },
   {
     q: "When can I get it?",
-    a: "Payloat Ledger is in development. The web app and the agent API open first. Sign up and you will be the first to know.",
+    a: "Workloat is in development. The web app and the agent API open first. Sign up and you will be the first to know.",
   },
 ];
 

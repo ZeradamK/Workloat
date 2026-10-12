@@ -18,11 +18,12 @@ function confirmedHref(
   if (email) q.set("email", email.trim().toLowerCase());
   return `/signup/confirmed?${q.toString()}`;
 }
-import PurchaseTrackerCard from "@/components/tracker/PurchaseTrackerCard";
+import AuthScenes from "@/components/AuthScenes";
 
 /**
- * Cosmos-style split auth flow: white form column left, #EEEEEE showcase
- * right, one question per step. Sign up = email → password → full name,
+ * Cosmos-style split auth flow: white form column left, and on large
+ * screens five scenes from the site fading one into the next on the right
+ * (AuthScenes), one question per step. Sign up = email → password → full name,
  * then a Supabase auth user is created and the signup is recorded in
  * `website_signups` for launch emails. Login = email → password.
  */
@@ -30,39 +31,6 @@ import PurchaseTrackerCard from "@/components/tracker/PurchaseTrackerCard";
 type Step = "email" | "password" | "name";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-/* same demo series the hero's tracker card runs */
-const TRACKER_DAILY = [
-  0, 85, 85, 210, 210, 340, 340, 495, 640, 640, 820, 980, 980, 1210, 1385,
-  1500, 1500, 1830, 2100, 2350,
-];
-const TRACKER_X_LABELS = ["Jul 01", "Jul 07", "Jul 13", "Jul 20"];
-
-/* Nine vendors, three on screen at a time. Each slot steps by three, so
-   a slot keeps its own third of the list and two slots never show the
-   same name. `tile` is the square behind the logo, for the marks that
-   cannot sit on white. */
-const BARS = [
-  { name: "OpenAI", logo: "/logos/openai.svg", amount: "$2,500.00", note: "API usage this month", bg: "#546b41", dark: true },
-  { name: "Workday", logo: "/logos/workday.svg", amount: "$4,180.00", note: "Seats renewed, Ops agent", bg: "#24406e", dark: true, tile: "#0b2a5b" },
-  { name: "Ramp", logo: "/logos/ramp.svg", amount: "$960.00", note: "Card top-up this week", bg: "#d7e9a0", dark: false, tile: "#dfff3c" },
-  { name: "Stripe", logo: "/logos/stripe.png", amount: "$600.00", note: "Platform fees, monthly", bg: "#c5b3d3", dark: false },
-  { name: "WorkOS", logo: "/logos/workos.svg", amount: "$310.00", note: "Directory sync, per seat", bg: "#3d3d45", dark: true, tile: "#1e1e1e" },
-  { name: "AWS", logo: "/logos/aws.svg", amount: "$850.00", note: "Storage, Ops agent", bg: "#2e6fa0", dark: true },
-  { name: "Brex", logo: "/logos/brex.svg", amount: "$12,480.00", note: "14 charges matched", bg: "#2c2c2c", dark: true },
-  { name: "Vercel", logo: "/logos/vercel.svg", amount: "$350.00", note: "Hosting, Ops agent", bg: "#0a0a0a", dark: true },
-  { name: "Claude", logo: "/logos/claude.svg", amount: "$4,000.00", note: "Renews tomorrow", bg: "#eae2d6", dark: false },
-];
-
-/* where the three sit in the panel */
-const BAR_SLOTS = ["left-[14%] top-[26%]", "right-[10%] top-[42%]", "left-[20%] top-[58%]"];
-const BAR_MS = 1500;
-
-const CAPTIONS: Record<Step, [string, string] | null> = {
-  email: null,
-  password: null,
-  name: ["Your agents' purchases, receipts, and renewals in one place.", "Recorded in Payloat Ledger"],
-};
 
 export default function SignupPage() {
   const router = useRouter();
@@ -79,18 +47,9 @@ export default function SignupPage() {
     null,
   );
   const [consent, setConsent] = useState(false);
-  /* the panel's three notices. Each slot steps by three, so a slot keeps
-     its own third of the list; one turns over at a time, which reads as a
-     cascade rather than three cards blinking together. */
-  const [cursor, setCursor] = useState([0, 1, 2]);
+  /* the nav's Log-in lands here as /signup?mode=login */
   useEffect(() => {
-    let turn = 0;
-    const id = window.setInterval(() => {
-      const slot = turn % 3;
-      turn += 1;
-      setCursor((c) => c.map((v, i) => (i === slot ? (v + 3) % BARS.length : v)));
-    }, BAR_MS);
-    return () => window.clearInterval(id);
+    if (new URLSearchParams(window.location.search).get("mode") === "login") setMode("login");
   }, []);
   const [emailTaken, setEmailTaken] = useState(false);
   const checkSeq = useRef(0);
@@ -116,8 +75,8 @@ export default function SignupPage() {
       oauthHandled.current = true;
       let consented = false;
       try {
-        consented = localStorage.getItem("payloat.consent") === "1";
-        localStorage.removeItem("payloat.consent");
+        consented = localStorage.getItem("workloat.consent") === "1";
+        localStorage.removeItem("workloat.consent");
       } catch {}
       const u = session.user;
       if (u.email) {
@@ -168,7 +127,7 @@ export default function SignupPage() {
   const googleSignIn = async () => {
     if (mode === "signup" && !consent) return;
     try {
-      localStorage.setItem("payloat.consent", consent ? "1" : "0");
+      localStorage.setItem("workloat.consent", consent ? "1" : "0");
     } catch {}
     await supabase.auth.signInWithOAuth({
       provider: "google",
@@ -480,7 +439,7 @@ export default function SignupPage() {
                           >
                             Privacy Policy
                           </a>{" "}
-                          and to receive launch news and updates from Payloat.
+                          and to receive launch news and updates from Workloat.
                         </span>
                       </label>
                     )}
@@ -582,7 +541,7 @@ export default function SignupPage() {
                 {mode === "signup" && step === "name" && (
                   <p className="mt-4 text-center text-[12px] leading-[1.5] text-sub">
                     By signing up you agree to receive launch news and product
-                    updates from Payloat. You can unsubscribe at any time.
+                    updates from Workloat. You can unsubscribe at any time.
                   </p>
                 )}
               </form>
@@ -593,77 +552,20 @@ export default function SignupPage() {
 
         <div className="absolute bottom-9">
           <Image
-            src="/payloat-mark.svg"
-            alt="Payloat"
-            width={132}
-            height={26}
-            className="h-[22px] w-auto"
+            src="/brand/workloat-wordmark-dark.png"
+            alt="Workloat"
+            width={936}
+            height={111}
+            className="h-[15px] w-auto"
           />
         </div>
       </div>
 
-      {/* ---- Right: living shader showcase, one scene per step ---- */}
+      {/* ---- Right: five scenes from the site, fading one into the next
+          (AuthScenes); large screens only ---- */}
       <aside className="hidden p-[20px] min-[900px]:block">
-        <div className="relative h-full w-full overflow-hidden rounded-[10px] border border-solid border-white/10">
-        <GlareBackdrop />
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={step}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="absolute inset-0"
-          >
-            {step === "email" &&
-              BAR_SLOTS.map((pos, i) => {
-                const n = BARS[cursor[i] % BARS.length];
-                return (
-                  <div key={pos} className={`absolute ${pos}`}>
-                    <AnimatePresence mode="wait">
-                      <motion.div
-                        key={n.name}
-                        initial={{ opacity: 0, y: 14 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -14 }}
-                        transition={{ duration: 0.34, ease: [0.25, 0.6, 0.2, 1] }}
-                      >
-                        <NotifBar {...n} />
-                      </motion.div>
-                    </AnimatePresence>
-                  </div>
-                );
-              })}
-
-            {step === "password" && (
-              <div className="absolute left-1/2 top-[32%] flex h-[220px] w-[300px] -translate-x-1/2 items-center justify-center bg-white">
-                <LockIcon />
-              </div>
-            )}
-
-            {step === "name" && (
-              <div className="absolute left-1/2 top-[24%] w-[300px] -translate-x-1/2">
-                <PurchaseTrackerCard
-                  countUp
-                  tone="dark"
-                  purchases={42}
-                  spend={2350}
-                  purchasesChange={8}
-                  spendChange={14}
-                  daily={TRACKER_DAILY}
-                  xLabels={TRACKER_X_LABELS}
-                />
-              </div>
-            )}
-
-            {CAPTIONS[step] && (
-              <p className="absolute bottom-8 left-8 text-[12px] leading-[1.5]">
-                <span className="block text-ink">{CAPTIONS[step]![0]}</span>
-                <span className="block text-ink/50">{CAPTIONS[step]![1]}</span>
-              </p>
-            )}
-          </motion.div>
-        </AnimatePresence>
+        <div className="relative h-full w-full overflow-hidden rounded-[10px]">
+          <AuthScenes />
         </div>
       </aside>
     </main>
@@ -671,39 +573,6 @@ export default function SignupPage() {
 }
 
 /* ---------- pieces ---------- */
-
-/** The warm gradient still, with soft light roaming over it the way the
-    living shader moved. Two counter-drifting glare blobs on screen blend. */
-function GlareBackdrop() {
-  return (
-    <div
-      className="absolute inset-0"
-      style={{
-        background:
-          "linear-gradient(101deg, #f0e3c9 0%, #e7d0a6 16%, #dea75e 30%, #d4701f 41%, #c8421a 50%, #96300f 59%, #55190a 70%, #220a03 83%, #070201 100%)",
-      }}
-    >
-      <motion.div
-        className="pointer-events-none absolute left-0 top-0 h-[75%] w-[75%] mix-blend-screen blur-3xl"
-        style={{
-          background:
-            "radial-gradient(closest-side, rgba(255,241,214,0.45), rgba(255,170,90,0.16) 55%, transparent 72%)",
-        }}
-        animate={{ x: ["-15%", "70%", "45%", "-15%"], y: ["70%", "-10%", "55%", "70%"] }}
-        transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <motion.div
-        className="pointer-events-none absolute left-0 top-0 h-[55%] w-[55%] mix-blend-screen blur-3xl"
-        style={{
-          background:
-            "radial-gradient(closest-side, rgba(255,140,60,0.3), transparent 70%)",
-        }}
-        animate={{ x: ["85%", "5%", "60%", "85%"], y: ["5%", "65%", "85%", "5%"] }}
-        transition={{ duration: 21, repeat: Infinity, ease: "easeInOut" }}
-      />
-    </div>
-  );
-}
 
 /** Cosmos-style flower loader: still while idle, spins while working. */
 function DotSpinner({ spinning }: { spinning: boolean }) {
@@ -733,90 +602,6 @@ function DotSpinner({ spinning }: { spinning: boolean }) {
       })}
       <span className="absolute left-1/2 top-1/2 h-[7px] w-[7px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#0a0a0a]" />
     </motion.div>
-  );
-}
-
-function NotifBar({
-  name,
-  logo,
-  amount,
-  note,
-  bg,
-  dark,
-  tile,
-}: {
-  name: string;
-  logo: string;
-  amount: string;
-  note: string;
-  bg: string;
-  dark: boolean;
-  /** the square behind the logo, for marks that cannot sit on white */
-  tile?: string;
-}) {
-  return (
-    <div
-      className="flex w-max max-w-[min(420px,86%)] items-center gap-3 rounded-[18px] py-[6px] pl-[6px] pr-3"
-      style={{
-        backgroundColor: bg,
-        border: `1px solid ${dark ? "rgba(255,255,255,0.15)" : "rgba(10,10,10,0.12)"}`,
-      }}
-    >
-      <span
-        className="flex h-[43px] w-[43px] shrink-0 items-center justify-center rounded-[11px] border border-black/[0.12]"
-        style={{ backgroundColor: tile ?? "#ffffff" }}
-      >
-        <Image
-          src={logo}
-          alt={name}
-          width={54}
-          height={54}
-          className="h-[27px] w-[27px] rounded-[5px] object-contain"
-        />
-      </span>
-      <span className="min-w-0">
-        <span className={`block whitespace-nowrap text-[16px] font-semibold ${dark ? "text-white" : "text-ink"}`}>
-          {name}
-        </span>
-        <span className={`block whitespace-nowrap text-[13px] leading-snug ${dark ? "text-white/70" : "text-sub"}`}>
-          {note}
-        </span>
-      </span>
-      <span
-        className={`ml-5 whitespace-nowrap text-[17px] font-semibold tracking-[-0.43px] ${dark ? "text-white" : "text-ink"}`}
-      >
-        {amount}
-      </span>
-      <svg width="11" height="11" viewBox="0 0 16 16" fill="none" aria-hidden>
-        <path
-          d="m6 3.5 5 4.5-5 4.5"
-          stroke={dark ? "rgba(255,255,255,0.75)" : "#b3b1ac"}
-          strokeWidth="1.8"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    </div>
-  );
-}
-
-function LockIcon() {
-  return (
-    <svg
-      width="46"
-      height="46"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="#0a0a0a"
-      strokeWidth="1.6"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden
-    >
-      <rect x="4.5" y="10.5" width="15" height="10" rx="3" />
-      <path d="M8 10.5V7.8a4 4 0 0 1 8 0v2.7" />
-      <circle cx="12" cy="15.5" r="1.4" fill="#0a0a0a" stroke="none" />
-    </svg>
   );
 }
 

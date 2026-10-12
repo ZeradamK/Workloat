@@ -54,7 +54,7 @@ export default function TravelSection() {
           </Parallax>
         </motion.div>
         <p className="max-w-[250px] text-[17px] leading-[1.5] text-ink max-[899px]:mx-auto max-[899px]:text-center">
-          When an agent books a trip, Payloat Ledger records the task, the
+          When an agent books a trip, Workloat records the task, the
           cap, and every charge, so the budget makes it home with you.
         </p>
       </div>

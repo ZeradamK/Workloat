@@ -6,7 +6,7 @@ import { motion } from "motion/react";
 /**
  * The green stats-and-statement act from the finance teams page, shared
  * so the home page runs the same design: a band of three ruled columns
- * on the investing green, a full-width statement with the Payloat mark,
+ * on the investing green, a full-width statement with the Workloat mark,
  * then the green easing into the next section's ground along a smoothstep
  * fade so it lands with no seam.
  */
@@ -49,6 +49,7 @@ export default function StatsStatement({
   ground = GREEN,
   ink = "light",
   navSkin,
+  clearNav,
 }: {
   /** three columns: a short label above a large figure */
   stats: Stat[];
@@ -69,6 +70,10 @@ export default function StatsStatement({
   /** the skin the nav should wear over this band, when its ground's own
       luminance would put the bar on the wrong one */
   navSkin?: "light" | "dark";
+  /** the fade at the foot lets the nav go clear over it (it ends on a
+      dark ground the nav also runs clear over); its type turns where the
+      ground crosses mid grey */
+  clearNav?: boolean;
 }) {
   const dark = ink === "dark";
   const fg = dark ? "text-ink" : "text-white";
@@ -120,11 +125,11 @@ export default function StatsStatement({
           className={`relative grid gap-10 px-[clamp(24px,5.7vw,110px)] pb-[clamp(56px,8vw,160px)] pt-[clamp(24px,5vw,96px)] ${fg} min-[900px]:grid-cols-[clamp(120px,22%,444px)_1fr]`}
         >
           <Image
-            src="/payloat-mark.svg"
-            alt="Payloat"
-            width={56}
-            height={56}
-            className={`h-[clamp(36px,3vw,56px)] w-auto self-start ${dark ? "" : "invert"}`}
+            src="/brand/workloat-wordmark-dark.png"
+            alt="Workloat"
+            width={936}
+            height={111}
+            className={`h-[clamp(14px,1.2vw,20px)] w-auto self-start ${dark ? "" : "invert"}`}
           />
           <div className="max-w-[1000px]">
             <p className="text-[clamp(22px,2vw,38px)] leading-[1.15] tracking-[-1px]">
@@ -146,7 +151,11 @@ export default function StatsStatement({
       </div>
 
       {/* the eased fade into white */}
-      <div className="relative h-[clamp(260px,28vw,540px)]" style={{ background: image ? fadeOver(to) : fadeTo(to, ground) }} />
+      <div
+        className="relative h-[clamp(260px,28vw,540px)]"
+        style={{ background: image ? fadeOver(to) : fadeTo(to, ground) }}
+        {...(clearNav ? { "data-nav-clear": "", "data-nav-fade": dark ? "light-dark" : "dark-light", "data-nav-flip": "0.54" } : {})}
+      />
     </section>
   );
 }

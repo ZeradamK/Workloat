@@ -97,9 +97,9 @@ function DesktopAct() {
           {...up}
           className="relative z-10 px-6 text-center text-[clamp(32px,4.2vw,60px)] font-bold leading-[1.06] tracking-[-2px] text-ink"
         >
-          Ask @Payloat what
+          Ask @Sona where
           <br />
-          your agents spent.
+          the budget stands.
         </motion.h2>
 
         {/* the laptop spans the stage, so it scales with the viewport and
@@ -143,9 +143,9 @@ function PhoneAct() {
   return (
     <section className="bg-[#eeeeee] px-5 pb-16 pt-12 min-[900px]:hidden">
       <motion.h2 {...up} className="text-center text-[clamp(32px,9vw,44px)] font-bold leading-[1.06] tracking-[-1.5px] text-ink">
-        Ask @Payloat what
+        Ask @Sona where
         <br />
-        your agents spent.
+        the budget stands.
       </motion.h2>
       <motion.div {...up} transition={{ ...up.transition, delay: 0.1 }} className="mx-auto mt-10 w-full max-w-[380px]">
         <Phone />
@@ -175,11 +175,11 @@ function NotifBar({ icon, name, note, amount }: { icon: string; name: string; no
 }
 
 function Bar1() {
-  return <NotifBar icon="/icons/sales.png" name="This month" note="Graph and what to look at" amount="$27,900" />;
+  return <NotifBar icon="/icons/sales.png" name="Budget left" note="Procurement runs out Friday" amount="$180" />;
 }
 
 function Bar2() {
-  return <NotifBar icon="/icons/wallet.png" name="Every charge" note="Answered in seconds" amount="17 agents" />;
+  return <NotifBar icon="/icons/wallet.png" name="Every team" note="One running total" amount="6 teams" />;
 }
 
 /* ---------- devices ---------- */
@@ -215,7 +215,7 @@ function StudioDisplay({ stage, typed }: { stage: Stage; typed: number }) {
 }
 
 /* iPhone (titanium PhoneMock, sized to its column): Slack for iOS opens
-   on the DM with Payloat and the conversation runs while in view. */
+   on the DM with Workloat and the conversation runs while in view. */
 function Phone() {
   const ref = useRef<HTMLDivElement>(null);
   const [w, setW] = useState(340);
@@ -342,13 +342,13 @@ function Desktop({ stage, typed }: { stage: Stage; typed: number }) {
 
 /* ---------- the conversation sequence ---------- */
 
-const QUESTION = "@Payloat how much have our agents spent this month?";
-const QUESTION_DM = "How much have our agents spent this month?";
+const QUESTION = "@Sona how much of this month's budget is left?";
+const QUESTION_DM = "How much of this month's budget is left?";
 
 /* a person typing: uneven keystrokes, a longer pause after each phrase */
 function typingSchedule(text: string): number[] {
   const pauseAfter = new Set<number>();
-  for (const phrase of ["@Payloat", " how much have", " our agents spent"]) {
+  for (const phrase of ["@Sona", " how much of", " this month's budget"]) {
     const i = text.indexOf(phrase);
     if (i >= 0) pauseAfter.add(i + phrase.length);
   }
@@ -367,7 +367,7 @@ function typingSchedule(text: string): number[] {
 }
 const SCHEDULE = typingSchedule(QUESTION);
 
-/* 0 typing · 1 sent · 2 Payloat typing · 3 answer text · 4 the card fills
+/* 0 typing · 1 sent · 2 Workloat typing · 3 answer text · 4 the card fills
    in and the amounts appear · 5 the line draws · 6 projection + markers
    · 7 notes · 8 buttons (finished) */
 type Stage = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
@@ -395,7 +395,7 @@ function useConversation(active: boolean, reduced: boolean) {
       SCHEDULE.forEach((ms, i) => at(700 + ms, () => setTyped(i + 1)));
       const sent = 700 + SCHEDULE[SCHEDULE.length - 1] + 650;
       at(sent, () => setStage(1));
-      at(sent + 700, () => setStage(2)); /* Payloat is typing */
+      at(sent + 700, () => setStage(2)); /* Workloat is typing */
       at(sent + 2600, () => setStage(3)); /* the text reply lands */
       at(sent + 3900, () => setStage(4)); /* the card fills in: the scene zips out to show it */
       at(sent + 5800, () => setStage(5)); /* the line draws */
@@ -460,7 +460,7 @@ function SlackWindow({ layout, stage, typed }: { layout: Layout; stage: Stage; t
         )}
         <div className="flex h-[26px] flex-1 items-center gap-2 rounded-[6px] px-3 text-[12px]" style={{ backgroundColor: "rgba(0,0,0,0.06)", color: MUTED, maxWidth: phone ? undefined : 520 }}>
           <SlackIcon name="search-small" size={13} bold />
-          Search Payloat
+          Search Workloat
         </div>
         {!phone && (
           <span className="ml-auto flex h-[22px] w-[22px] items-center justify-center rounded-full text-[11px]" style={{ backgroundColor: "rgba(0,0,0,0.06)", color: MUTED }}>?</span>
@@ -472,7 +472,7 @@ function SlackWindow({ layout, stage, typed }: { layout: Layout; stage: Stage; t
         {!phone && (
           <div className="flex w-[68px] shrink-0 flex-col items-center gap-4 pt-4" style={{ backgroundColor: RAIL, borderRight: `1px solid ${LINE}` }}>
             <span className="flex h-[36px] w-[36px] items-center justify-center rounded-[9px] bg-white">
-              <Image src="/payloat-mark-tile.svg" alt="Payloat" width={36} height={36} className="h-[36px] w-[36px] rounded-[9px]" />
+              <Image src="/brand/workloat-app-tile.svg" alt="Workloat" width={36} height={36} className="h-[36px] w-[36px] rounded-[9px]" />
             </span>
             {(
               [
@@ -499,7 +499,7 @@ function SlackWindow({ layout, stage, typed }: { layout: Layout; stage: Stage; t
           <div className="flex w-[228px] shrink-0 flex-col" style={{ backgroundColor: SIDE, color: TEXT }}>
             <div className="flex h-[48px] items-center justify-between px-4" style={{ borderBottom: `1px solid ${LINE}` }}>
               <span className="flex items-center gap-1.5 text-[15px] font-bold">
-                Payloat
+                Workloat
                 <SlackIcon name="chevron-down" size={12} bold />
               </span>
               <span className="flex h-[26px] w-[26px] items-center justify-center rounded-full bg-[#1d1c1d] text-white">
@@ -518,10 +518,10 @@ function SlackWindow({ layout, stage, typed }: { layout: Layout; stage: Stage; t
                 <SideRow key={c} label={c} hash />
               ))}
               <SideHead>Direct messages</SideHead>
-              <SideRow label="Payloat" avatar="/payloat-mark-tile.svg" active />
+              <SideRow label="Sona" avatar="/brand/workloat-app-tile.svg" active />
               <SideRow label="Zeradam" avatar="/zeradam.jpg" you />
               <SideHead>Apps</SideHead>
-              <SideRow label="Payloat" avatar="/payloat-mark-tile.svg" />
+              <SideRow label="Workloat" avatar="/brand/workloat-app-tile.svg" />
             </div>
           </div>
         )}
@@ -537,10 +537,10 @@ function SlackWindow({ layout, stage, typed }: { layout: Layout; stage: Stage; t
                   <SlackIcon name="star-o" size={15} bold />
                 </span>
                 <span className="relative">
-                  <Image src="/payloat-mark-tile.svg" alt="" width={24} height={24} className="h-[24px] w-[24px] rounded-[6px]" />
+                  <Image src="/brand/workloat-app-tile.svg" alt="" width={24} height={24} className="h-[24px] w-[24px] rounded-[6px]" />
                   <span className="absolute -bottom-0.5 -right-0.5 h-[9px] w-[9px] rounded-full border-2 border-white bg-[#2bac76]" />
                 </span>
-                Payloat
+                Sona
               </span>
               <div className="flex items-center gap-2" style={{ color: MUTED }}>
                 <span className="flex h-[28px] items-center rounded-[6px]" style={{ border: `1px solid ${LINE}` }}>
@@ -582,13 +582,13 @@ function SlackWindow({ layout, stage, typed }: { layout: Layout; stage: Stage; t
             {/* the DM's intro: Slack's "this conversation is just between" block */}
             <div className="mb-4">
               <div className="flex items-end gap-4">
-                <Image src="/payloat-mark-tile.svg" alt="Payloat" width={96} height={96} className="h-[96px] w-[96px] rounded-[10px]" />
+                <Image src="/brand/workloat-app-tile.svg" alt="Workloat" width={96} height={96} className="h-[96px] w-[96px] rounded-[10px]" />
                 <div className="pb-1">
                   <p className="flex items-center gap-2 text-[18px] font-bold leading-[1.2]">
-                    Payloat
+                    Sona
                     <span className="h-[9px] w-[9px] rounded-full bg-[#2bac76]" />
                   </p>
-                  <p className="mt-0.5 text-[13px]" style={{ color: MUTED }}>Chief Financial Agent</p>
+                  <p className="mt-0.5 text-[13px]" style={{ color: MUTED }}>Financial manager Loat · Workloat</p>
                 </div>
               </div>
               <p className="mt-3 text-[14px] leading-[1.45]">
@@ -624,18 +624,18 @@ function SlackWindow({ layout, stage, typed }: { layout: Layout; stage: Stage; t
                     </p>
                     <p className="mt-0.5 text-[14px] leading-[1.4]">
                       <Mention />
-                      {QUESTION.slice("@Payloat".length)}
+                      {QUESTION.slice("@Sona".length)}
                     </p>
                   </div>
                 </motion.div>
               )}
             </AnimatePresence>
 
-            {/* Payloat typing */}
+            {/* Workloat typing */}
             <AnimatePresence initial={false}>
               {stage === 2 && (
                 <motion.div key="dots" {...rowIn} exit={{ opacity: 0, transition: { duration: 0.15 } }} className="mt-3 flex items-center gap-3">
-                  <Image src="/payloat-mark-tile.svg" alt="Payloat" width={36} height={36} className="h-[36px] w-[36px] shrink-0 rounded-[8px]" />
+                  <Image src="/brand/workloat-app-tile.svg" alt="Workloat" width={36} height={36} className="h-[36px] w-[36px] shrink-0 rounded-[8px]" />
                   <span className="flex items-center gap-1 rounded-[10px] px-3 py-2.5" style={{ backgroundColor: "#f4f4f4" }}>
                     {[0, 1, 2].map((i) => (
                       <motion.span
@@ -651,19 +651,19 @@ function SlackWindow({ layout, stage, typed }: { layout: Layout; stage: Stage; t
               )}
             </AnimatePresence>
 
-            {/* Payloat's answer */}
+            {/* Workloat's answer */}
             <AnimatePresence initial={false}>
               {stage >= 3 && (
                 <motion.div key="a" {...rowIn} className="mt-3 flex items-start gap-3">
-                  <Image src="/payloat-mark-tile.svg" alt="Payloat" width={36} height={36} className="h-[36px] w-[36px] shrink-0 rounded-[8px]" />
+                  <Image src="/brand/workloat-app-tile.svg" alt="Workloat" width={36} height={36} className="h-[36px] w-[36px] shrink-0 rounded-[8px]" />
                   <div className="min-w-0 flex-1">
                     <p className="text-[14px] leading-[1.2]">
-                      <span className="font-bold">Payloat</span>
+                      <span className="font-bold">Sona</span>
                       <span className="ml-1.5 rounded-[3px] px-1 py-px text-[9px] font-semibold uppercase tracking-[0.04em]" style={{ backgroundColor: "rgba(0,0,0,0.08)", color: MUTED }}>App</span>
                       <span className="ml-2 text-[11px]" style={{ color: MUTED }}>{clock.time}</span>
                     </p>
                     <p className="mt-0.5 text-[14px] leading-[1.4]">
-                      September so far across <span className="font-semibold">17 agents</span>.
+                      September so far: <span className="font-semibold">$9,190</span> of this month&apos;s budget is spent.
                     </p>
                     <AnimatePresence initial={false}>
                       {stage >= 4 && (
@@ -675,14 +675,14 @@ function SlackWindow({ layout, stage, typed }: { layout: Layout; stage: Stage; t
                     <AnimatePresence initial={false}>
                       {stage >= 7 && (
                         <motion.p key="notes" {...rowIn} className="mt-2.5 text-[14px] leading-[1.45]">
-                          By team: Procurement $4,120, Software &amp; seats $2,860, Ops $1,450, Travel $760. Two things to look at: Procurement went $16.50 over its cap at WebstaurantStore, and one Instacart receipt is still missing, 3 days old.
+                          By team: Procurement $4,120, Software &amp; seats $2,860, Ops $1,450, Travel $760. Heads up: Procurement has $180 left, and at this pace it runs out Friday. Want me to hold new Procurement orders over $100 for your OK?
                         </motion.p>
                       )}
                     </AnimatePresence>
                     <AnimatePresence initial={false}>
                       {stage >= 8 && (
                         <motion.div key="btns" {...rowIn} className="mt-2.5 flex flex-wrap items-center gap-2">
-                          {["Open in Payloat", "By agent", "Receipts"].map((b, i) => (
+                          {["Open in Workloat", "By team", "Budgets"].map((b, i) => (
                             <motion.span
                               key={b}
                               initial={{ opacity: 0, scale: 0.9 }}
@@ -724,10 +724,10 @@ function SlackWindow({ layout, stage, typed }: { layout: Layout; stage: Stage; t
               <p className="min-h-[36px] px-3 py-2 text-[14px]" style={{ color: stage === 0 && typed > 0 ? TEXT : MUTED }}>
                 {stage === 0 && typed > 0 ? (
                   <>
-                    {typing.startsWith("@Payloat") ? (
+                    {typing.startsWith("@Sona") ? (
                       <>
                         <Mention />
-                        {typing.slice("@Payloat".length)}
+                        {typing.slice("@Sona".length)}
                       </>
                     ) : (
                       typing
@@ -735,7 +735,7 @@ function SlackWindow({ layout, stage, typed }: { layout: Layout; stage: Stage; t
                     {!reduced && <span className="ml-px inline-block h-[14px] w-[2px] translate-y-[2px] animate-pulse bg-[#1d1c1d]" />}
                   </>
                 ) : (
-                  "Message Payloat"
+                  "Message Sona"
                 )}
               </p>
               <div className="flex items-center justify-between px-2.5 pb-2" style={{ color: MUTED }}>
@@ -771,7 +771,7 @@ function SlackWindow({ layout, stage, typed }: { layout: Layout; stage: Stage; t
 function Mention() {
   return (
     <span className="rounded-[3px] px-1 py-px font-medium text-[#1264a3]" style={{ backgroundColor: "rgba(29,155,209,0.12)" }}>
-      @Payloat
+      @Sona
     </span>
   );
 }
@@ -818,7 +818,7 @@ function SideRow({
   );
 }
 
-/* ---------- Slack for iOS, light mode, a DM with Payloat ----------
+/* ---------- Slack for iOS, light mode, a DM with Workloat ----------
    Mobbin ref screens/a38aa405: status bar; back, avatar with presence dot,
    name; canvas + headphones; the profile block (big avatar, name, title);
    the "very beginning of your direct message history" line; day labels
@@ -863,10 +863,10 @@ function SlackPhone({ active }: { active: boolean }) {
         <span className="flex items-center gap-3">
           <SlackIcon name="chevron-large-left" size={20} bold />
           <span className="relative">
-            <Image src="/payloat-mark-tile.svg" alt="Payloat" width={30} height={30} className="h-[30px] w-[30px] rounded-[7px]" />
+            <Image src="/brand/workloat-app-tile.svg" alt="Workloat" width={30} height={30} className="h-[30px] w-[30px] rounded-[7px]" />
             <span className="absolute -bottom-0.5 -right-0.5 h-[10px] w-[10px] rounded-full border-2 border-white bg-[#2bac76]" />
           </span>
-          <span className="text-[17px] font-bold">Payloat</span>
+          <span className="text-[17px] font-bold">Sona</span>
         </span>
         <span className="flex items-center gap-4">
           <SlackIcon name="file-text-post" size={22} bold />
@@ -877,11 +877,11 @@ function SlackPhone({ active }: { active: boolean }) {
       {/* conversation */}
       <div className="flex min-h-0 flex-1 flex-col justify-end overflow-hidden px-4">
         {/* profile block */}
-        <Image src="/payloat-mark-tile.svg" alt="Payloat" width={64} height={64} className="h-[64px] w-[64px] rounded-[14px]" />
-        <p className="mt-3 text-[22px] font-bold leading-tight">Payloat</p>
-        <p className="text-[15px]" style={{ color: IOS_MUTED }}>Chief Financial Agent</p>
+        <Image src="/brand/workloat-app-tile.svg" alt="Workloat" width={64} height={64} className="h-[64px] w-[64px] rounded-[14px]" />
+        <p className="mt-3 text-[22px] font-bold leading-tight">Sona</p>
+        <p className="text-[15px]" style={{ color: IOS_MUTED }}>Financial manager Loat · Workloat</p>
         <p className="mt-3 text-[15px] leading-[1.4]" style={{ color: IOS_MUTED }}>
-          This is the very beginning of your direct message history with <span style={{ color: IOS_BLUE }}>@Payloat</span>. Only the two of you are in this conversation.
+          This is the very beginning of your direct message history with <span style={{ color: IOS_BLUE }}>@Sona</span>. Only the two of you are in this conversation.
         </p>
 
         <div className="mt-4 flex items-center justify-between">
@@ -914,14 +914,14 @@ function SlackPhone({ active }: { active: boolean }) {
         <AnimatePresence initial={false}>
           {stage >= 3 && (
             <motion.div key="a" {...rowIn} className="mt-3 flex items-start gap-2.5">
-              <Image src="/payloat-mark-tile.svg" alt="Payloat" width={36} height={36} className="h-[36px] w-[36px] shrink-0 rounded-[8px]" />
+              <Image src="/brand/workloat-app-tile.svg" alt="Workloat" width={36} height={36} className="h-[36px] w-[36px] shrink-0 rounded-[8px]" />
               <div className="min-w-0 flex-1">
                 <p className="text-[15px] leading-[1.2]">
-                  <span className="font-bold">Payloat</span>
+                  <span className="font-bold">Sona</span>
                   <span className="ml-2 text-[12px]" style={{ color: IOS_MUTED }}>9:41</span>
                 </p>
                 <p className="mt-0.5 text-[15px] leading-[1.35]">
-                  September so far across <span className="font-semibold">17 agents</span>.
+                  September so far: <span className="font-semibold">$9,190</span> of this month&apos;s budget is spent.
                 </p>
                 <AnimatePresence initial={false}>
                   {stage >= 4 && (
@@ -933,14 +933,14 @@ function SlackPhone({ active }: { active: boolean }) {
                 <AnimatePresence initial={false}>
                   {stage >= 7 && (
                     <motion.p key="notes" {...rowIn} className="mt-2.5 text-[15px] leading-[1.45]">
-                      Two things to look at: Procurement went $16.50 over its cap at WebstaurantStore, and one Instacart receipt is still missing, 3 days old.
+                      Heads up: Procurement has $180 left, and at this pace it runs out Friday. Want me to hold new orders over $100 for your OK?
                     </motion.p>
                   )}
                 </AnimatePresence>
                 <AnimatePresence initial={false}>
                   {stage >= 8 && (
                     <motion.div key="btns" {...rowIn} className="mt-2.5 flex flex-wrap items-center gap-2">
-                      {["Open in Payloat", "By agent"].map((b, i) => (
+                      {["Open in Workloat", "By team"].map((b, i) => (
                         <motion.span key={b} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3, ease: EASE, delay: i * 0.08 }} className={`rounded-[8px] px-3.5 py-2 text-[13px] font-semibold ${i === 0 ? "bg-[#007a5a] text-white" : ""}`} style={i === 0 ? undefined : { border: `1px solid ${IOS_LINE}`, color: IOS_INK }}>
                           {b}
                         </motion.span>
@@ -959,8 +959,8 @@ function SlackPhone({ active }: { active: boolean }) {
         <AnimatePresence initial={false}>
           {stage === 2 && (
             <motion.div key="typing" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }} className="flex h-[26px] items-center gap-2 rounded-t-[10px] px-3 text-[12px]" style={{ backgroundColor: "#f4f4f4", color: IOS_MUTED }}>
-              <Image src="/payloat-mark-tile.svg" alt="" width={16} height={16} className="h-[16px] w-[16px] rounded-[4px]" />
-              <span className="font-semibold" style={{ color: IOS_INK }}>Payloat</span> is typing…
+              <Image src="/brand/workloat-app-tile.svg" alt="" width={16} height={16} className="h-[16px] w-[16px] rounded-[4px]" />
+              <span className="font-semibold" style={{ color: IOS_INK }}>Sona</span> is typing…
             </motion.div>
           )}
         </AnimatePresence>
@@ -979,7 +979,7 @@ function SlackPhone({ active }: { active: boolean }) {
                 {!reduced && <span className="ml-px inline-block h-[15px] w-[2px] translate-y-[3px] animate-pulse" style={{ backgroundColor: IOS_INK }} />}
               </>
             ) : (
-              "Message Payloat"
+              "Message Sona"
             )}
           </p>
           <motion.span
@@ -1111,7 +1111,7 @@ function SpendCard({ layout, stage, reduced }: { layout: Layout; stage: Stage; r
               {fmt(proj)}
               <Glyph d="M7 17 17 7M9 7h8v8" size={14} />
             </p>
-            <p className="font-numeral text-[11px] text-[#0a0a0a]/65">{phone ? "+$18,710 (204%)" : "+$18,710 (204%) · 17 agents"}</p>
+            <p className="font-numeral text-[11px] text-[#0a0a0a]/65">{phone ? "+$18,710 (204%)" : "+$18,710 (204%) · 6 teams"}</p>
           </motion.div>
         </motion.div>
 

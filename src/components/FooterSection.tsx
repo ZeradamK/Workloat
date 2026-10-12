@@ -9,16 +9,9 @@ import Link from "next/link";
 
 const COLS: { label: string; links: { label: string; href: string }[] }[] = [
   {
-    label: "Product",
-    links: [
-      { label: "Bank integration", href: "/integration" },
-      { label: "Investing with agents", href: "/product" },
-    ],
-  },
-  {
     label: "Features",
     links: [
-      { label: "Financial teams", href: "/finance-teams" },
+      { label: "Teams", href: "/finance-teams" },
       { label: "Enterprise", href: "/enterprise" },
     ],
   },
@@ -26,7 +19,6 @@ const COLS: { label: string; links: { label: string; href: string }[] }[] = [
     label: "Company",
     links: [
       { label: "Contact", href: "/contact" },
-      { label: "Security", href: "/security" },
       { label: "FAQ", href: "/#faq" },
       { label: "Privacy and data", href: "/privacy.html" },
     ],
@@ -36,7 +28,7 @@ const COLS: { label: string; links: { label: string; href: string }[] }[] = [
     links: [
       { label: "Sign up", href: "/signup" },
       { label: "LinkedIn", href: "https://www.linkedin.com/company/107224097/" },
-      { label: "Mail", href: "mailto:hello@payloat.com" },
+      { label: "Mail", href: "mailto:hello@workloat.com" },
     ],
   },
 ];
@@ -61,16 +53,16 @@ export default function FooterSection({ tone = "dark" }: { /** "light" sets whit
         {/* the mark, centered in its own cell */}
         <div className="flex justify-center py-[clamp(40px,4.5vw,72px)]">
           <Image
-            src={light ? "/payloat-mark-white.svg" : "/payloat-mark.svg"}
-            alt="Payloat"
-            width={622}
-            height={910}
-            className="h-[clamp(64px,6vw,90px)] w-auto"
+            src={light ? "/brand/workloat-wordmark-white.png" : "/brand/workloat-wordmark-dark.png"}
+            alt="Workloat"
+            width={936}
+            height={111}
+            className="h-[clamp(26px,2.4vw,38px)] w-auto"
           />
         </div>
 
         {/* four ruled columns */}
-        <div className={`grid border-t ${rail} min-[800px]:grid-cols-4`}>
+        <div className={`grid border-t ${rail} min-[800px]:grid-cols-3`}>
           {COLS.map((col, i) => (
             <div
               key={col.label}
@@ -106,7 +98,7 @@ export default function FooterSection({ tone = "dark" }: { /** "light" sets whit
 
         {/* the foot: note and copyright */}
         <div className={`flex flex-col gap-2 border-t px-6 py-6 ${rail} min-[800px]:flex-row min-[800px]:items-baseline min-[800px]:justify-between`}>
-          <p className={`text-[14px] ${ink}`}>© 2026 Payloat. All rights reserved.</p>
+          <p className={`text-[14px] ${ink}`}>© 2026 Workloat. All rights reserved.</p>
           <p className={`text-[13px] ${sub}`}>Product imagery and numbers shown are illustrative.</p>
         </div>
       </div>

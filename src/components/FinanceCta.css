@@ -1,0 +1,54 @@
+/* The finance teams page's closing call (FinanceCta.tsx), on Ada's square
+   field, in the page's content column: 24px squares on a 36px pitch, the tile centred on the section so
+   the lit squares (placed by column and row from the centre) and the
+   card land on the grid at every width. */
+
+.fcta {
+  --pitch: 36px; --sq: 24px;
+  position: relative; display: grid; place-items: center;
+  /* the same column as every section above it (FinanceRows, FinanceReach,
+     FinanceProcedures) */
+  width: min(1560px, calc(100% - clamp(32px, 18vw, 360px)));
+  height: calc(var(--pitch) * 23); margin: clamp(48px, 5vw, 96px) auto 0; overflow: hidden;
+}
+@media (max-width: 799px) { .fcta { width: calc(100% - 32px); } }
+.fcta-field {
+  position: absolute; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36'%3E%3Crect x='6' y='6' width='24' height='24' fill='%23dcdcd9'/%3E%3C/svg%3E");
+  background-size: var(--pitch) var(--pitch); background-position: center;
+}
+.fcta-field i {
+  position: absolute; width: var(--sq); height: var(--sq); background: var(--c);
+  left: calc(50% - var(--sq) / 2 + var(--x) * var(--pitch));
+  top: calc(50% - var(--sq) / 2 + var(--y) * var(--pitch));
+  animation: fcta-glow 6s ease-in-out var(--d) infinite;
+}
+@keyframes fcta-glow { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
+
+/* the card: 11 squares across and down, its edges in the gaps */
+.fcta-card {
+  position: relative; z-index: 1; display: flex; flex-direction: column; justify-content: space-between;
+  width: calc(var(--pitch) * 11); height: calc(var(--pitch) * 11); padding: 28px;
+  background: #0a0a0a; color: #fff;
+}
+.fcta-card h2 { margin: 0; max-width: 11ch; font-size: clamp(32px, 2.6vw, 42px); font-weight: 400; line-height: 1.04; letter-spacing: -0.035em; text-wrap: balance; }
+.fcta-btn {
+  display: inline-flex; align-items: center; gap: 16px; align-self: flex-start; height: 60px; padding: 0 6px 0 26px;
+  border-radius: 999px; background: #e9e2cf; color: #0a0a0a; font-size: 18px; letter-spacing: -0.01em; text-decoration: none;
+  transition: transform .15s ease;
+}
+.fcta-btn:hover { transform: scale(1.02); }
+.fcta-btn:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+.fcta-btn__arrow { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; background: #0a0a0a; color: #fff; transition: transform .2s ease; }
+.fcta-btn:hover .fcta-btn__arrow { transform: translateX(2px); }
+.fcta-btn__arrow svg { display: block; width: 17px; height: 17px; }
+
+@media (max-width: 599px) {
+  .fcta { --pitch: 28px; --sq: 18px; height: calc(var(--pitch) * 19); }
+  .fcta-field { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Crect x='5' y='5' width='18' height='18' fill='%23dcdcd9'/%3E%3C/svg%3E"); }
+  .fcta-card { width: calc(var(--pitch) * 11); height: calc(var(--pitch) * 11); padding: 22px; }
+  .fcta-card h2 { font-size: 28px; }
+  .fcta-btn { height: 52px; font-size: 16px; padding-left: 20px; }
+  .fcta-btn__arrow { width: 42px; height: 42px; }
+}
+@media (prefers-reduced-motion: reduce) { .fcta-field i { animation: none; } .fcta-btn, .fcta-btn__arrow { transition: none; } }

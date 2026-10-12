@@ -76,7 +76,7 @@ export default function ContactPage() {
             </p>
             <div className="mt-auto flex flex-wrap gap-2.5 pt-8">
               <a
-                href="mailto:hello@payloat.com"
+                href="mailto:hello@workloat.com"
                 className="inline-flex h-11 items-center rounded-full bg-[#0a0a0a] px-5 text-[13px] font-semibold tracking-[-0.5px] text-white transition-transform hover:scale-[1.03] active:scale-[0.97]"
               >
                 Email support
@@ -116,12 +116,12 @@ export default function ContactPage() {
               Sales
             </h2>
             <p className="mt-2 max-w-[380px] text-[15px] leading-[1.5] text-white/60">
-              Payloat Ledger for companies with many agents, many locations,
+              Workloat for companies with many agents, many locations,
               or both.
             </p>
             <div className="mt-auto pt-8">
               <a
-                href="mailto:hello@payloat.com?subject=Business%20sales"
+                href="mailto:hello@workloat.com?subject=Business%20sales"
                 className="inline-flex h-11 items-center rounded-full bg-white px-5 text-[13px] font-semibold tracking-[-0.5px] text-ink transition-transform hover:scale-[1.03] active:scale-[0.97]"
               >
                 Talk to sales
@@ -174,10 +174,10 @@ export default function ContactPage() {
         >
           Anything else? Write to{" "}
           <a
-            href="mailto:hello@payloat.com"
+            href="mailto:hello@workloat.com"
             className="font-medium text-ink transition-opacity hover:opacity-60"
           >
-            hello@payloat.com
+            hello@workloat.com
           </a>{" "}
           and it reaches a human.
         </motion.p>
@@ -192,9 +192,9 @@ const SECONDARY = [
   {
     id: "press",
     title: "Press",
-    copy: "Writing about Payloat Ledger? We are happy to talk.",
+    copy: "Writing about Workloat? We are happy to talk.",
     cta: "Email press",
-    href: "mailto:hello@payloat.com?subject=Press",
+    href: "mailto:hello@workloat.com?subject=Press",
     external: true,
   },
   {
@@ -208,7 +208,7 @@ const SECONDARY = [
   {
     id: "updates",
     title: "Launch updates",
-    copy: "Be first to know when Payloat Ledger opens.",
+    copy: "Be first to know when Workloat opens.",
     cta: "Sign up",
     href: "/signup",
     external: false,

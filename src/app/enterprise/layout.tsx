@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Enterprise — Payloat",
+  title: "Enterprise | Workloat",
   description:
-    "Payloat for enterprises: one ledger for every agent's spend across every team, bank, and card.",
+    "Workloat for enterprises: one ledger for every agent's spend across every team, bank, and card.",
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {

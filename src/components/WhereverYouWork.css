@@ -1,0 +1,233 @@
+/* Wherever your team works: the section from the design file of that
+   name, carried over as drawn. Every rule is scoped under .wtw so the
+   site's own styles and this section's never meet; the images live in
+   public/landing/anywhere; the fonts arrive from next/font as the
+   --wtw-* variables set on the wrapper. The ground is the site's #eeeeee
+   so it runs on from the Slack section, with the cards in white. */
+.wtw {
+  --page: #eeeeee;
+  --card: #ffffff;
+  --on-card: #000000;
+  --on-card-2: #1e1e1e;
+  --ui-ink: #1d1d1f;
+  --ui-ink-2: #5e5e62;
+  --ui-muted: #8e8e93;
+  --ui-line: #ececec;
+  --ui-soft: #f7f7f7;
+  --sans: var(--wtw-geist), "Geist", "Helvetica Neue", Helvetica, Arial, system-ui, sans-serif;
+  --mono: var(--wtw-mono), "Geist Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --slack: var(--wtw-lato), "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --bg: url(/landing/anywhere/0e999254fb.jpg);
+  --grad: url(/landing/anywhere/a6ccfa82f4.jpg);
+  box-sizing: border-box;
+}
+.wtw *, .wtw *::before, .wtw *::after { box-sizing: border-box; }
+.wtw { margin: 0; background: var(--page); font-family: var(--sans); -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+.wtw img { display: block; max-width: 100%; }
+/* the bare page the design was drawn on: browser defaults, not the site's */
+.wtw { color: #000; line-height: normal; letter-spacing: normal; }
+.wtw svg { display: inline; vertical-align: baseline; }
+.wtw .anywhere { padding: clamp(28px, 4.2vw, 62px) clamp(12px, 2.1vw, 28px); }
+/* columns may shrink below their content, so the section never pushes the page sideways on a phone */
+.wtw .wrap { max-width: 1660px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
+/* the copy and the three cards render at 70% of their drawn size; the Slack window, centred on its own, at 120% */
+.wtw .hero__copy, .wtw .trio { zoom: .7; }
+.wtw .card { background: var(--card); border-radius: 10px; color: var(--on-card); }
+.wtw .card h2, .wtw .card h3 { margin: 0; color: var(--on-card); font-weight: 500; letter-spacing: -0.02em; }
+.wtw .hero__copy > p, .wtw .tile > p { margin: 0; color: var(--on-card-2); }
+.wtw .link {
+  display: inline-flex; align-items: center; gap: 6px; width: fit-content;
+  color: var(--on-card); text-decoration: none; font-size: 16px; letter-spacing: -0.005em;
+  border-bottom: 1px solid rgba(0,0,0,.25); padding-bottom: 3px;
+  transition: border-color .2s ease, gap .2s ease;
+}
+.wtw .link svg { width: 12px; height: 12px; }
+.wtw .link:hover { border-color: #000; gap: 9px; }
+.wtw .link:focus-visible { outline: 2px solid #000; outline-offset: 4px; border-radius: 2px; }
+.wtw .hero { display: grid; grid-template-columns: minmax(220px, 0.62fr) 1.38fr; gap: 17px; padding: 17px; }
+.wtw .hero__copy { align-self: center; padding: 24px 12px 24px 4px; max-width: 470px; }
+.wtw .hero__copy h2 { font-size: clamp(26px, 2.3vw, 34px); line-height: 1.14; text-wrap: balance; }
+.wtw .hero__copy p { margin-top: 10px; font-size: clamp(18px, 1.55vw, 22px); line-height: 1.42; letter-spacing: -0.012em; }
+.wtw .hero__copy .link { margin-top: 30px; }
+.wtw .stage {
+  position: relative; border-radius: 7px; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  padding: 40px 24px; container-type: inline-size;
+  background: var(--bg) 50% 55% / cover no-repeat, #7ec3d6;
+  isolation: isolate;
+}
+.wtw .slack {
+  position: relative; z-index: 1; width: 640px; zoom: 1.2;
+  display: flex; flex-direction: column;
+  background: #fff; border-radius: 10px; overflow: hidden; font-family: var(--slack); color: #1d1c1d;
+}
+.wtw .slack__bar { flex: none; position: relative; height: 28px; display: grid; place-items: center; background: #3f0e40; }
+.wtw .slack__bar i { position: absolute; top: 50%; width: 10px; height: 10px; margin-top: -5px; border-radius: 50%; background: rgba(255,255,255,.22); }
+.wtw .slack__bar i:nth-child(1) { left: 12px; } .wtw .slack__bar i:nth-child(2) { left: 28px; } .wtw .slack__bar i:nth-child(3) { left: 44px; }
+.wtw .slack__search { width: 46%; height: 19px; border-radius: 6px; background: rgba(255,255,255,.16); display: flex; align-items: center; gap: 6px; padding: 0 9px; font-size: 11px; color: rgba(255,255,255,.82); }
+.wtw .slack__search svg { width: 10px; height: 10px; }
+.wtw .slack__chan { flex: none; display: flex; align-items: center; gap: 4px; height: 35px; padding: 0 14px 0 18px; border-bottom: 1px solid #e8e8e8; }
+.wtw .slack__chan b { font-size: 16px; font-weight: 900; letter-spacing: -0.005em; }
+.wtw .slack__chan .chev { width: 9px; height: 9px; color: #616061; margin-left: 2px; }
+.wtw .facepile { margin-left: auto; display: flex; align-items: center; padding: 2px 6px 2px 2px; border: 1px solid #dddddd; border-radius: 6px; font-size: 11px; font-weight: 700; color: #616061; }
+.wtw .facepile img, .wtw .facepile .ava--loat { width: 18px; height: 18px; border-radius: 4px; object-fit: cover; box-shadow: 0 0 0 1.5px #fff; }
+.wtw .facepile > * + * { margin-left: -4px; }
+.wtw .facepile .ava--loat svg { width: 10px; }
+.wtw .facepile span { margin-left: 6px !important; }
+.wtw .slack__feed { flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: flex-end; padding: 4px 0 2px; }
+.wtw .msg { display: grid; grid-template-columns: 32px 1fr; gap: 9px; padding: 3px 18px; }
+.wtw .ava { width: 32px; height: 32px; border-radius: 6px; object-fit: cover; }
+.wtw .ava--loat { display: grid; place-items: center; background: #0d0d0d; color: #fff; }
+.wtw .ava--loat svg { width: 18px; }
+.wtw .msg__head { display: flex; align-items: baseline; gap: 6px; line-height: 1.15; }
+.wtw .msg__name { font-size: 13px; font-weight: 900; }
+.wtw .msg__app { font-size: 8px; font-weight: 700; letter-spacing: .04em; color: #616061; background: #ededed; padding: 1px 3px; border-radius: 3px; position: relative; top: -1px; }
+.wtw .msg__time { font-size: 10px; color: #616061; }
+.wtw .msg__text { margin: 0; font-size: 13px; line-height: 1.38; }
+.wtw .mention { color: #1264a3; background: rgba(29,155,209,.1); border-radius: 3px; padding: 0 2px; }
+.wtw .msg__num { font-weight: 700; }
+.wtw .actions { display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap; }
+.wtw .sbtn { font: 700 11px/1 var(--slack); padding: 5px 9px; border-radius: 4px; border: 1px solid rgba(29,28,29,.3); background: #fff; color: #1d1c1d; }
+.wtw .sbtn--go { background: #007a5a; border-color: #007a5a; color: #fff; }
+.wtw .thread { display: inline-flex; align-items: center; gap: 6px; margin-top: 5px; font-size: 11px; }
+.wtw .thread img { width: 16px; height: 16px; border-radius: 4px; object-fit: cover; }
+.wtw .thread b { color: #1264a3; font-weight: 700; }
+.wtw .thread span { color: #616061; }
+.wtw .slack__compose { flex: none; margin: 6px 14px 10px; border: 1px solid #c9c9c9; border-radius: 8px; font-size: 13px; color: #8d8b8d; }
+.wtw .compose__fmt { display: flex; align-items: center; gap: 2px; padding: 5px 6px; background: #f8f8f8; border-bottom: 1px solid #ececec; border-radius: 8px 8px 0 0; }
+.wtw .compose__fmt span { width: 22px; height: 20px; display: grid; place-items: center; color: #8d8b8d; font: 700 11px/1 var(--slack); }
+.wtw .compose__fmt i { width: 1px; height: 14px; background: #dddddd; margin: 0 4px; }
+.wtw .compose__text { padding: 10px 12px 14px; }
+.wtw .compose__tools { display: flex; align-items: center; gap: 6px; padding: 0 6px 6px 8px; }
+.wtw .compose__tools > span:not(.send) { width: 20px; height: 20px; display: grid; place-items: center; color: #616061; font: 700 11px/1 var(--slack); }
+.wtw .compose__tools svg { width: 12px; height: 12px; }
+.wtw .slack__compose .plus { width: 20px; height: 20px; border-radius: 50%; background: #ededed; display: grid; place-items: center; color: #616061; }
+.wtw .slack__compose .plus svg, .wtw .slack__compose .send svg { width: 9px; height: 9px; }
+.wtw .slack__compose .send { margin-left: auto; width: 28px; height: 24px; border-radius: 4px; background: #007a5a; color: #fff; display: grid; place-items: center; }
+.wtw .slack__compose .send svg { width: 10px; height: 10px; }
+.wtw .ava--px { display: block; overflow: hidden; }
+.wtw .ava--px svg { display: block; width: 100%; height: 100%; }
+.wtw .facepile .ava--px { width: 18px; height: 18px; border-radius: 4px; box-shadow: 0 0 0 1.5px #fff; }
+.wtw .thread__n { color: #1264a3; font-weight: 700; }
+.wtw .trio { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.wtw .tile { padding: 24px; display: flex; flex-direction: column; }
+.wtw .tile h3 { font-size: 20px; line-height: 1.25; }
+.wtw .tile > .link { margin-bottom: 30px; }
+.wtw .tile > p { text-wrap: pretty; margin-top: 6px; font-size: 17px; line-height: 1.45; letter-spacing: -0.008em; max-width: 34ch; }
+.wtw .tile > .link { margin-top: 22px; }
+.wtw .shot {
+  position: relative; margin-top: auto; height: 480px; border-radius: 10px; overflow: hidden;
+  background: var(--grad) var(--pos, 50% 50%) / var(--zoom, 240%) no-repeat, #eaeef5;
+}
+.wtw .win {
+  position: absolute; left: 28px; top: 28px; right: -24px; bottom: -24px;
+  background: #fff; border-radius: 14px; overflow: hidden; color: var(--ui-ink);
+  box-shadow: 0 0 0 0.5px rgba(0,0,0,.12), 0 18px 40px -16px rgba(30,30,50,.3);
+}
+.wtw .chrome { position: relative; flex: none; height: 38px; display: flex; align-items: center; justify-content: center; background: #f8f8f8; border-bottom: 1px solid #ececec; font: 500 13px/1 var(--sans); color: #6e6e73; }
+.wtw .chrome i { position: absolute; top: 50%; width: 11px; height: 11px; margin-top: -5.5px; border-radius: 50%; background: #dedede; }
+.wtw .chrome i:nth-child(1) { left: 14px; } .wtw .chrome i:nth-child(2) { left: 32px; } .wtw .chrome i:nth-child(3) { left: 50px; }
+.wtw .win .chrome { justify-content: flex-end; padding-right: 40px; }
+/* the window runs 24px past the card edge, so content gets 24px extra on the right to stay fully in view */
+.wtw .win__body { padding: 22px 46px 22px 22px; font-size: 14px; line-height: 1.5; }
+.wtw .bubble { margin: 0 0 16px auto; width: fit-content; max-width: 82%; background: #f2f2f2; border-radius: 18px; padding: 10px 14px; font-size: 14px; line-height: 1.45; }
+.wtw .thought { display: inline-flex; align-items: center; gap: 6px; margin: 0 0 10px; font-size: 13px; color: var(--ui-muted); }
+.wtw .thought svg { width: 10px; height: 10px; }
+.wtw .prose { margin: 0 0 14px; color: var(--ui-ink); }
+.wtw .mini { width: 100%; border-collapse: collapse; font-size: 13px; }
+.wtw .mini th { text-align: left; font: 500 11px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ui-muted); padding: 0 0 8px; border-bottom: 1px solid var(--ui-line); }
+.wtw .mini td { padding: 9px 0; border-bottom: 1px solid #f3f3f3; }
+.wtw .mini td:last-child, .wtw .mini th:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+.wtw .bar { display: inline-block; vertical-align: middle; width: 56px; height: 4px; border-radius: 2px; background: #efefef; margin-left: 8px; overflow: hidden; }
+.wtw .bar i { display: block; height: 100%; background: #1d1d1f; }
+.wtw .bar i.hot { background: #f26a1b; }
+.wtw .gm { font-family: var(--wtw-roboto), "Roboto", Arial, sans-serif; color: #1f1f1f; }
+.wtw .gm svg { display: block; }
+.wtw .gm__bar { display: flex; align-items: center; gap: 4px; padding: 10px 38px 6px 14px; color: #444746; }
+.wtw .gm__bar .ic { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 50%; }
+.wtw .gm__bar .ic svg { width: 15px; height: 15px; }
+.wtw .gm__bar .sep { width: 1px; height: 16px; background: #e0e0e0; margin: 0 4px; }
+.wtw .gm__count { margin-left: auto; display: flex; align-items: center; gap: 6px; font-size: 12px; color: #444746; }
+.wtw .gm__count svg { width: 12px; height: 12px; color: #9aa0a6; }
+.wtw .gm__subj { display: flex; align-items: center; gap: 10px; padding: 10px 46px 18px 66px; }
+.wtw .gm__subj h4 { margin: 0; font-size: 19px; font-weight: 400; letter-spacing: 0; }
+.wtw .gm__label { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; color: #444746; background: #e8eaed; border-radius: 4px; padding: 2px 6px; }
+.wtw .gm__label b { font-weight: 400; color: #5f6368; }
+.wtw .gm__from { display: grid; grid-template-columns: 40px 1fr auto; gap: 12px; align-items: start; padding: 0 40px 0 14px; }
+.wtw .gm__ava { width: 40px; height: 40px; border-radius: 50%; overflow: hidden; display: block; }
+.wtw .gm__ava svg { width: 100%; height: 100%; }
+.wtw .gm__who { font-size: 14px; line-height: 1.35; padding-top: 2px; }
+.wtw .gm__who b { font-weight: 500; }
+.wtw .gm__who span { font-size: 12px; color: #5e5e5e; }
+.wtw .gm__to { display: inline-flex; align-items: center; gap: 3px; font-size: 12px; color: #5e5e5e; }
+.wtw .gm__to svg { width: 9px; height: 9px; }
+.wtw .gm__meta { display: flex; align-items: center; gap: 10px; padding-top: 4px; font-size: 12px; color: #5e5e5e; white-space: nowrap; }
+.wtw .gm__meta svg { width: 15px; height: 15px; color: #444746; }
+.wtw .gm__body { padding: 30px 46px 0 66px; font-size: 14px; line-height: 1.55; }
+.wtw .gm__body p { margin: 0 0 12px; }
+.wtw .gm__sig { margin-top: 18px; font-size: 13px; color: #5e5e5e; line-height: 1.45; }
+.wtw .gm__actions { display: flex; gap: 10px; padding: 24px 46px 12px 66px; }
+.wtw .gm__btn { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px 8px 13px; border: 1px solid #747775; border-radius: 18px; font-size: 13px; font-weight: 500; color: #444746; }
+.wtw .gm__btn svg { width: 15px; height: 15px; }
+@media (max-width: 1200px) { .wtw .gm__ago { display: none; } }
+.wtw .shot--stack { display: flex; flex-direction: column; justify-content: center; gap: 16px; padding: 30px 14% 30px 12%; }
+.wtw .glass {
+  position: relative; padding: 7px; border-radius: 22px;
+  background: rgba(255,255,255,.26);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.55), 0 14px 34px -16px rgba(40,30,60,.35);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+}
+.wtw .glass__in { position: relative; overflow: hidden; border-radius: 16px; background: rgba(250,250,250,.94); box-shadow: 0 1px 2px rgba(0,0,0,.05); color: var(--ui-ink); }
+.wtw .float {
+  position: absolute; z-index: 2; width: 54px; height: 54px; border-radius: 15px; background: #fff;
+  display: grid; place-items: center;
+  box-shadow: 0 0 0 1px rgba(0,0,0,.04), 0 10px 22px -10px rgba(30,30,50,.4);
+}
+.wtw .float img { width: 30px; height: 30px; object-fit: contain; }
+.wtw .ap-sum { padding: 18px 20px 14px; }
+.wtw .ap-eyebrow { margin: 0 0 6px; font: 500 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: #6f6f6f; }
+.wtw .ap-title { margin: 0; font-size: 21px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; }
+.wtw .ap-sub { margin: 4px 0 0; font-size: 15px; color: var(--ui-muted); }
+.wtw .ap-meta { display: flex; align-items: center; gap: 16px; margin-top: 12px; padding-top: 12px; border-top: 1px solid #e6e6e4; font-size: 13px; color: #5e5e62; }
+.wtw .ap-meta span { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.wtw .ap-meta svg { width: 15px; height: 15px; color: #8e8e93; }
+.wtw .ap-meta b { font-weight: 600; color: var(--ui-ink); }
+@media (min-width: 1001px) and (max-width: 1340px) { .wtw .ap-watch { display: none !important; } }
+.wtw .ap-go { margin-left: auto; font: 500 12px/1 var(--sans); color: #fff; background: #0d0d0d; border-radius: 8px; padding: 8px 12px; }
+.wtw .ap-mail { padding: 16px 20px 18px; font-size: 13.5px; }
+.wtw .ap-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.wtw .ap-row > span:first-child { width: 28px; color: #3a3a3c; }
+.wtw .chip2 { display: inline-flex; align-items: center; gap: 7px; padding: 3px 8px 3px 3px; border: 1px solid #d6d6d4; border-radius: 9px; background: #fff; font-size: 12.5px; color: var(--ui-ink); }
+.wtw .chip2 img, .wtw .chip2 .ava--px { width: 22px; height: 22px; border-radius: 6px; object-fit: cover; }
+.wtw .chip2 i { font-style: normal; color: #8e8e93; margin-left: 2px; }
+.wtw .ap-body { margin: 12px 0 0; padding-top: 12px; border-top: 1px solid #e6e6e4; line-height: 1.5; color: #232325; }
+/* where the stage can't hold it at 120%, the window fills it at its own size */
+@container (max-width: 767px) { .wtw .slack { zoom: 1; width: 100%; max-width: 640px; } }
+@media (max-width: 1000px) {
+  .wtw .hero { grid-template-columns: minmax(0, 1fr); }
+  .wtw .hero__copy { max-width: 640px; padding: 12px 4px 4px; }
+  .wtw .trio { grid-template-columns: minmax(0, 1fr); }
+  .wtw .shot { height: 420px; }
+}
+@media (max-width: 860px) {
+  .wtw .stage { padding: 32px 16px; }
+}
+@media (max-width: 640px) {
+  .wtw .hero__copy, .wtw .trio { zoom: 1; }
+  /* on phones each window sets its own height so nothing is clipped */
+  .wtw .shot { height: auto; padding: 16px; }
+  .wtw .win { position: relative; inset: auto; }
+  .wtw .shot--stack { padding: 34px 28px 44px 20px; }
+  .wtw .ap-watch { display: none !important; }
+  .wtw .float--side { top: auto !important; bottom: -30px; right: 22px !important; }
+  .wtw .gm__subj, .wtw .gm__body, .wtw .gm__actions { padding-left: 22px; }
+  .wtw .win .chrome { padding-right: 16px; }
+  .wtw .win__body { padding-right: 22px; }
+  .wtw .gm__bar, .wtw .gm__from, .wtw .gm__subj, .wtw .gm__body, .wtw .gm__actions { padding-right: 16px; }
+  .wtw .gm__meta { display: none; }
+}
+@media (max-width: 560px) {
+  .wtw .hero, .wtw .tile { padding: 16px; }
+  .wtw .stage { padding: 24px 12px; }
+}
+@media (prefers-reduced-motion: reduce) { .wtw .link { transition: none; } }

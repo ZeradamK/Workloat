@@ -1,0 +1,154 @@
+// ARCHIVED 2026-10-07: the finance teams page's opening act ("Built for
+// how your team spends", the Define / Connect / Report tab rail with the
+// agent scenes, and three ruled stats), replaced by FinanceHero. See
+// design-archive/README.md. Needs AgentScene, ArrowButton, AnimatePresence
+// and the page's FRAME, MONO, EASE, INK and up.
+
+import AgentScene, { type SceneKey } from "@/components/AgentScenes";
+
+/* ------------------------------------------------------------------ */
+/* 7. Built for how you spend                                          */
+/* ------------------------------------------------------------------ */
+
+const STEPS: { tab: string; title: string; body: string; scene: SceneKey }[] = [
+  {
+    tab: "Define",
+    title: "Define",
+    body: "Tell Payle what each agent may buy, from which vendors, and up to what amount. It turns that into caps it enforces on every charge.",
+    scene: "mandate",
+  },
+  {
+    tab: "Connect",
+    title: "Connect",
+    body: "Link the banks and cards your agents already spend on. Payle reads every charge as it lands and matches it to the agent and its task.",
+    scene: "confirmations",
+  },
+  {
+    tab: "Report",
+    title: "Report",
+    body: "Spend by agent, by vendor, by task, every day. At month end Payle drafts the close and your team signs off.",
+    scene: "reporting",
+  },
+];
+
+const SCENE_VARS = {
+  "--sc-fg": "#0a0a0a",
+  "--sc-muted": "rgba(10,10,10,0.6)",
+  "--sc-line": "rgba(10,10,10,0.3)",
+  "--sc-fill": "rgba(10,10,10,0.06)",
+  "--sc-track": "rgba(10,10,10,0.1)",
+  "--sc-chip-bg": "#ffffff",
+  "--sc-chip-border": "rgba(10,10,10,0.12)",
+  "--sc-chip-on-bg": "#0a0a0a",
+  "--sc-chip-on-fg": "#ffffff",
+  "--sc-card-bg": "#ffffff",
+  "--sc-card-fg": "#0a0a0a",
+  "--sc-card-muted": "#706e68",
+  "--sc-icon": "none",
+} as React.CSSProperties;
+
+const BUILT_STATS = [
+  { value: "0 min", label: "Of manual reconciliation each month" },
+  { value: "100%", label: "Of agent charges matched to the task that caused them" },
+  { value: "1", label: "Ledger across every bank, card, and agent" },
+];
+
+function BuiltFor() {
+  const [i, setI] = useState(0);
+  const step = STEPS[i];
+  return (
+    <section className="bg-[#eeeeee]">
+      <div className={FRAME}>
+        {/* the page opens here: room for the nav above the headline */}
+        <div className="relative px-[clamp(20px,2.5vw,48px)] pt-[clamp(140px,9vw,200px)]">
+          <div className="absolute bottom-0 left-[clamp(20px,2.5vw,48px)] top-[clamp(140px,9vw,190px)] hidden w-px bg-black/10 min-[800px]:block" />
+
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, ease: EASE, delay: 0.05 }}
+            className="mx-auto max-w-[1100px] text-center text-[clamp(34px,4vw,76px)] font-medium leading-[1.06] tracking-[-2.5px] text-ink"
+          >
+            Built for how your team spends
+            <br />
+            <span className="text-ink/45">
+              A financial manager for your budgets, vendors, and agents.
+            </span>
+          </motion.h1>
+
+          <div className="mt-[clamp(56px,6.5vw,124px)] grid gap-12 min-[1000px]:grid-cols-[minmax(0,420px)_1fr] min-[1000px]:gap-8">
+            {/* the tab rail */}
+            <div className="pl-[clamp(0px,1.6vw,30px)]">
+              <ul className="flex flex-col gap-[clamp(14px,1.2vw,22px)]">
+                {STEPS.map((s, k) => (
+                  <li key={s.tab} className="relative">
+                    {k === i && (
+                      <motion.span
+                        layoutId="builtMark"
+                        className="absolute top-1/2 h-[26px] w-[3px] -translate-y-1/2 bg-ink"
+                        style={{ left: "calc(-1 * clamp(1px,1.65vw,31px))" }}
+                      />
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => setI(k)}
+                      className={`${MONO} text-[clamp(11px,0.8vw,15px)] transition-colors`}
+                      style={{ color: k === i ? INK : "rgba(10,10,10,0.4)" }}
+                    >
+                      0{k + 1}&nbsp;&nbsp;{s.tab}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={step.title}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8, transition: { duration: 0.15 } }}
+                  transition={{ duration: 0.3, ease: EASE }}
+                  className="mt-[clamp(48px,5.8vw,112px)]"
+                >
+                  <h3 className="text-[clamp(22px,1.5vw,28px)] font-medium tracking-[-0.6px] text-ink">
+                    {step.title}
+                  </h3>
+                  <p className="mt-[clamp(24px,2.6vw,50px)] max-w-[330px] text-[clamp(15px,1vw,19px)] leading-[1.4] text-ink">
+                    {step.body}
+                  </p>
+                  <div className="mt-[clamp(28px,2.9vw,56px)]">
+                    <ArrowButton href="/product" tone="light">Explore the platform</ArrowButton>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            {/* the scene, in Amigo's fan graphic's place */}
+            <div className="flex items-center justify-center" style={SCENE_VARS}>
+              <div className="w-full max-w-[640px]">
+                <AgentScene scene={step.scene} />
+              </div>
+            </div>
+          </div>
+
+          {/* three ruled stats */}
+          <div className="mt-[clamp(72px,8vw,160px)] grid gap-10 pb-[clamp(72px,8vw,160px)] pl-[clamp(0px,1.6vw,30px)] min-[800px]:grid-cols-3 min-[800px]:gap-0">
+            {BUILT_STATS.map((s) => (
+              <motion.div
+                key={s.label}
+                {...up}
+                className="border-l border-black/10 pl-6 min-[800px]:pr-8"
+              >
+                <p className="font-numeral text-[clamp(30px,2.2vw,42px)] font-medium leading-none tracking-[-1.5px] text-ink">
+                  {s.value}
+                </p>
+                <p className="mt-3 max-w-[260px] text-[clamp(13px,0.85vw,16px)] leading-[1.4] text-sub">
+                  {s.label}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}

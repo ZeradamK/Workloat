@@ -50,6 +50,7 @@ export default function FlowHero({
   logos,
   first = false,
   tone = "light",
+  longTasks = false,
 }: {
   /** the headline, one entry per line */
   lines: string[];
@@ -68,8 +69,16 @@ export default function FlowHero({
   first?: boolean;
   /** "dark": the act on #0a0a0a with white type and rails */
   tone?: "light" | "dark";
+  /** list entries run long (a whole workflow per row): the list takes
+      the room the arrows leave and its type steps down to fit */
+  longTasks?: boolean;
 }) {
   const dark = tone === "dark";
+  /* the outer nodes step out under 700px, and with long entries also
+     while the card sits narrow beside the headline (1000 to 1439px) */
+  const ends = longTasks
+    ? "contents max-[699px]:hidden min-[1000px]:max-[1439px]:hidden"
+    : "hidden min-[700px]:contents";
   const ink = dark ? "text-white" : "text-ink";
   const rail = dark ? "border-white/10" : "border-black/[0.08]";
   const line = dark ? "bg-white/10" : "bg-black/[0.08]";
@@ -142,16 +151,16 @@ export default function FlowHero({
               <Cross pos="top-left" color={cross} />
               <Cross pos="bottom-right" color={cross} />
               <div className="absolute inset-y-0 left-[5.2%] right-[3.5%] flex items-center">
-                {/* the outer nodes step out under 700px so the card keeps
-                    the agent and the list */}
-                <span className="hidden min-[700px]:contents">
+                {/* the outer nodes step out when the card is narrow, so it
+                    keeps the agent and the list */}
+                <span className={ends}>
                   <Node label={from} kind="from" />
-                  <Arrow />
+                  <Arrow tight={longTasks} />
                 </span>
                 <Node label={agent} kind="agent" />
-                <Arrow />
+                <Arrow tight={longTasks} />
                 <div
-                  className="relative h-full w-[clamp(180px,26%,300px)] shrink-0 overflow-hidden"
+                  className={`relative h-full overflow-hidden ${longTasks ? "min-w-0 flex-[0_1_auto]" : "w-[clamp(180px,26%,300px)] shrink-0"}`}
                   style={{
                     maskImage:
                       "linear-gradient(to bottom, transparent, black 18%, black 82%, transparent)",
@@ -159,15 +168,17 @@ export default function FlowHero({
                       "linear-gradient(to bottom, transparent, black 18%, black 82%, transparent)",
                   }}
                 >
+                  {/* long entries: the list sits in flow, so the cell is as
+                      wide as its longest entry */}
                   <motion.ul
-                    className="absolute left-0 top-1/2 w-full"
+                    className={longTasks ? "relative top-1/2" : "absolute left-0 top-1/2 w-full"}
                     animate={{ y: -(active + 0.5) * TASK_H }}
                     transition={{ type: "spring", stiffness: 120, damping: 24 }}
                   >
                     {tasks.map((t, i) => (
                       <li
                         key={t}
-                        className="whitespace-nowrap text-[clamp(15px,1.4vw,27px)] tracking-[-0.4px] transition-colors duration-500"
+                        className={`whitespace-nowrap tracking-[-0.4px] transition-colors duration-500 ${longTasks ? "text-[clamp(12px,1.05vw,20px)]" : "text-[clamp(15px,1.4vw,27px)]"}`}
                         style={{
                           height: TASK_H,
                           lineHeight: `${TASK_H}px`,
@@ -179,8 +190,8 @@ export default function FlowHero({
                     ))}
                   </motion.ul>
                 </div>
-                <span className="hidden min-[700px]:contents">
-                  <Arrow />
+                <span className={ends}>
+                  <Arrow tight={longTasks} />
                   <Node label={to} kind="to" />
                 </span>
               </div>
@@ -236,15 +247,15 @@ function Node({ label, kind }: { label: string; kind: "from" | "agent" | "to" })
   return (
     <div className="flex shrink-0 items-center gap-2.5">
       {/* the sender has no mark, only its bold label; the agent wears
-          the Payloat mark */}
+          the Workloat mark */}
       {kind === "agent" && (
         <span className={`${size} flex items-center justify-center rounded-full bg-white`}>
           <Image
-            src="/payloat-mark.svg"
+            src="/brand/workloat-glyph-dark.svg"
             alt=""
             width={18}
             height={18}
-            className="h-[62%] w-auto"
+            className="h-[46%] w-auto"
           />
         </span>
       )}
@@ -270,9 +281,9 @@ function Node({ label, kind }: { label: string; kind: "from" | "agent" | "to" })
   );
 }
 
-function Arrow() {
+function Arrow({ tight = false }: { tight?: boolean }) {
   return (
-    <span className="mx-[clamp(10px,2.4vw,48px)] flex flex-1 items-center">
+    <span className={`flex flex-1 items-center ${tight ? "mx-[clamp(6px,1vw,20px)] min-w-[18px]" : "mx-[clamp(10px,2.4vw,48px)]"}`}>
       <span className="h-px flex-1 bg-white/25" />
       <svg width="8" height="8" viewBox="0 0 8 8" fill="none" aria-hidden>
         <path d="M1 4h6M4.5 1.5 7 4 4.5 6.5" stroke="rgba(255,255,255,0.45)" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />

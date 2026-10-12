@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* ---- Payloat brand tokens (matched to the iOS app) ---- */
+/* ---- Workloat brand tokens (matched to the iOS app) ---- */
 :root {
   /* iOS type: SF Pro on Apple devices, graceful fallbacks elsewhere.
      Defined as a real :root property so it resolves everywhere. */
@@ -75,3 +75,6 @@ canvas {
   font-family: ui-rounded, "SF Pro Rounded", var(--font-ios);
   font-variant-numeric: tabular-nums;
 }
+
+/* a text caret: on, then off, with no fade (HeroStory's composer, while idle) */
+@keyframes caret-blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }

@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="1000" height="1000" role="img" aria-label="Payloat">
-  <rect width="1000" height="1000" rx="90" ry="90" fill="#eeeeee"/>
-  <g transform="translate(281.5 180) scale(0.70330)" fill="#0a0a0a">
-    <path d="M0 0H220V220H0Z"/>
-    <path d="M220 220H622V620L432 810H235V910H40V620H411V420H220Z"/>
-  </g>
-</svg>

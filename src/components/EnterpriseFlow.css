@@ -1,0 +1,95 @@
+/* Build, launch, iterate (EnterpriseFlow.tsx), on Voiceflow's three panels:
+   each panel a 528 x 607 canvas scaled to its column. */
+
+.ef { width: min(1560px, calc(100% - clamp(32px, 18vw, 360px))); margin: 0 auto; padding: clamp(24px, 3vw, 56px) 0 clamp(80px, 7vw, 140px); color: #0a0a0a; }
+@media (max-width: 799px) { .ef { width: calc(100% - 32px); } }
+.ef-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(16px, 2vw, 32px); }
+@media (max-width: 899px) { .ef-grid { grid-template-columns: minmax(0, 1fr); gap: 48px; } }
+
+.ef-pic { position: relative; overflow: hidden; background-color: #e3e2de; }
+.ef-canvas { position: absolute; left: 0; top: 0; width: 528px; height: 607px; transform-origin: 0 0; font-family: var(--font-ios); color: #1e1e1e; }
+.ef-pic--build { background: url(/landing/anywhere/a6ccfa82f4.jpg) 0% 30% / 260% no-repeat; }
+.ef-pic--launch { background: url(/landing/hero/hero-bg-poster.jpg) 35% 50% / 300% no-repeat; }
+.ef-pic--iterate {
+  background-color: #e6e5e0;
+  background-image: repeating-radial-gradient(circle at 18% 62%, transparent 0 9px, rgba(10, 10, 10, .05) 9px 10px);
+}
+
+/* the caption */
+.ef-cap { display: flex; gap: 12px; margin: clamp(16px, 1.4vw, 24px) 0 0; font-family: var(--font-ios); font-weight: 300; font-size: clamp(14px, calc(1.35vw - 4px), 18px); line-height: 1.45; letter-spacing: -0.015em; color: #55534e; }
+.ef-cap b { font-weight: 600; color: #0a0a0a; }
+.ef-cap__ic { flex: none; width: 22px; height: 22px; margin-top: 1px; color: #0a0a0a; }
+.ef-cap__ic svg { display: block; width: 100%; height: 100%; }
+@media (max-width: 799px) { .ef-cap { font-size: 15px; } }
+
+/* ---------- Build ---------- */
+.ef-board { position: absolute; left: 0; top: 56px; width: 478px; height: 551px; border-radius: 0 12px 0 0; background: #fbfaf6; background-image: radial-gradient(rgba(10, 10, 10, .12) 1px, transparent 1.3px); background-size: 12px 12px; }
+.ef-board__bar { position: absolute; right: 16px; top: 14px; display: flex; gap: 6px; }
+.ef-btn { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 12px; border-radius: 6px; background: #1e1e1e; color: #fff; font-size: 12px; font-weight: 500; }
+.ef-btn svg { width: 12px; height: 12px; }
+.ef-btn--go { background: #e9e2cf; color: #0a0a0a; }
+.ef-wires { position: absolute; left: 0; top: 56px; width: 470px; height: 520px; overflow: visible; }
+.ef-wire { fill: none; stroke: #c9c6bc; stroke-width: 1.2; stroke-dasharray: 1; }
+.ef-node { position: absolute; padding: 10px 12px; border-radius: 6px; background: #fff; box-shadow: 0 0 0 1px rgba(10, 10, 10, .07), 0 8px 20px -14px rgba(10, 10, 10, .4); font-size: 12px; }
+.ef-node--stub { left: -14px; top: 136px; width: 72px; padding: 8px 10px; opacity: .55; }
+.ef-node--stub p { margin: 0 0 10px; white-space: nowrap; color: #55534e; }
+.ef-node--a { left: 186px; top: 118px; width: 246px; }
+.ef-node--b { left: 186px; top: 330px; width: 246px; }
+.ef-node__head { display: flex; align-items: center; gap: 6px; margin: 0 0 8px; font-size: 11px; color: #3a3a38; }
+.ef-node__head i { width: 6px; height: 6px; border-radius: 50%; background: #1e1e1e; }
+.ef-node__row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 0; border-top: 1px solid #efeee9; font-size: 12px; }
+.ef-node__row b { font-weight: 600; }
+.ef-model { padding: 2px 6px; border-radius: 4px; background: #f1efea; font: 500 9.5px/1.3 var(--ef-mono); letter-spacing: .04em; text-transform: uppercase; color: #55534e; }
+.ef-chips { display: flex; flex-wrap: wrap; gap: 10px; padding: 0 0 8px; font-size: 10.5px; color: #3a3a38; }
+.ef-chips span { display: inline-flex; align-items: center; gap: 4px; }
+.ef-chips img { width: 11px; height: 11px; object-fit: contain; }
+
+/* ---------- Launch ---------- */
+.ef-glass { position: absolute; left: 22px; top: 0; width: 484px; height: 547px; border-radius: 0 0 14px 14px; background: rgba(247, 247, 245, .9); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+.ef-msg { display: flex; gap: 12px; padding: 0 30px; }
+.ef-msg:first-child { margin-top: 130px; }
+.ef-msg + .ef-msg { margin-top: 24px; }
+.ef-ava { flex: none; width: 46px; height: 46px; border-radius: 50%; overflow: hidden; box-shadow: 0 0 0 3px #fff; }
+.ef-ava svg { display: block; width: 100%; height: 100%; }
+.ef-bub { max-width: 320px; padding: 14px 16px; border-radius: 14px; background: #2b2b2a; color: #fff; font-size: 15px; line-height: 1.45; }
+.ef-link { display: flex; align-items: center; gap: 12px; margin-top: 12px; padding: 8px; border: 1px solid rgba(255, 255, 255, .1); border-radius: 8px; background: rgba(255, 255, 255, .05); }
+.ef-link__pic { flex: none; width: 58px; height: 58px; border-radius: 4px; background: url(/landing/anywhere/0e999254fb.jpg) 40% 60% / 300%; }
+.ef-link b { display: block; font-weight: 500; }
+.ef-link small { font-size: 13px; color: rgba(255, 255, 255, .6); }
+.ef-ask { position: absolute; left: 22px; right: 22px; bottom: 26px; display: flex; align-items: center; gap: 10px; height: 60px; padding: 0 8px 0 22px; border-radius: 30px; background: #fff; box-shadow: 0 6px 20px rgba(0, 0, 0, .06); font-size: 17px; }
+.ef-ask > span:first-child { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ef-ask em { font-style: normal; color: #9a9a97; }
+.ef-caret { display: inline-block; width: 1.5px; height: 18px; margin-left: 1px; vertical-align: -3px; background: #1e1e1e; }
+.ef-mic { width: 18px; height: 18px; color: #6a6a66; }
+.ef-send { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: #ececea; color: #8a8a87; font-size: 18px; transition: background-color .25s ease, color .25s ease; }
+.ef-send.is-lit { background: #0a0a0a; color: #fff; }
+
+/* ---------- Iterate ---------- */
+.ef-chart { position: absolute; left: 74px; top: 86px; width: 480px; height: 420px; padding: 18px 20px; border-radius: 14px 0 0 14px; background: #fff; box-shadow: 0 0 0 1px rgba(10, 10, 10, .05); }
+.ef-chip { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; box-shadow: 0 0 0 1px #ecebe6; font-size: 15px; }
+.ef-chip svg { width: 16px; height: 16px; }
+.ef-plot { display: block; width: 440px; height: 220px; margin: 8px 0 0 -20px; overflow: visible; }
+.ef-axis { font-size: 17px; fill: #8a8a87; }
+.ef-gridline { stroke: #e8e7e2; stroke-dasharray: 3 4; }
+.ef-line { fill: none; stroke: #0a0a0a; stroke-width: 2; stroke-linejoin: round; stroke-dasharray: 1; }
+.ef-area { fill: rgba(10, 10, 10, .05); }
+.ef-stats { display: flex; justify-content: space-between; gap: 18px; margin-top: 16px; }
+.ef-stats small { display: block; margin-bottom: 8px; font-size: 13.5px; color: #55534e; white-space: nowrap; }
+.ef-stats b { font-size: 46px; font-weight: 500; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.ef-good { color: #1a7f37; }
+
+/* ---------- motion: plays each time a panel comes into view ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  .ef-pic:not(.is-run) .ef-node, .ef-pic:not(.is-run) .ef-msg, .ef-pic:not(.is-run) .ef-board { opacity: 0; }
+  .ef-pic:not(.is-run) .ef-wire, .ef-pic:not(.is-run) .ef-line { stroke-dashoffset: 1; }
+  .ef-pic.is-run .ef-board { animation: ef-rise .6s cubic-bezier(.25, .6, .2, 1) both; }
+  .ef-pic.is-run .ef-node { animation: ef-rise .55s cubic-bezier(.25, .6, .2, 1) both; }
+  .ef-pic.is-run .ef-wire { animation: ef-draw .8s ease-in-out .3s both; }
+  .ef-pic.is-run .ef-msg { animation: ef-pop .45s cubic-bezier(.2, .9, .3, 1.2) both; }
+  .ef-pic.is-run .ef-line { animation: ef-draw 1.4s ease-in-out .5s both; }
+  .ef-pic.is-run .ef-area { animation: ef-fade .6s ease 1.4s both; }
+}
+@keyframes ef-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes ef-pop { from { opacity: 0; transform: scale(.92) translateY(10px); transform-origin: left bottom; } to { opacity: 1; transform: none; } }
+@keyframes ef-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes ef-fade { from { opacity: 0; } to { opacity: 1; } }

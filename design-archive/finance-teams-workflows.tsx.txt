@@ -1,0 +1,328 @@
+// ARCHIVED 2026-10-07: the finance teams page's workflows carousel
+// ("Workflows built for finance teams.", Budgeting / Approvals / Month-end
+// close canvases with arrows and a note), with the page's shared helpers
+// it read, copied whole below it. See design-archive/README.md.
+// Imports it needs: useEffect, useRef, useState (react); Image
+// (next/image); Link (next/link); animate, motion, useMotionValue
+// (motion/react); InsightsChart (@/components/tracker/InsightsChart);
+// money (@/components/tracker/money).
+
+/* ------------------------------------------------------------------ */
+/* 4. Workflows carousel                                               */
+/* ------------------------------------------------------------------ */
+
+const WORKFLOWS = [
+  { label: "Budgeting", canvas: "mist" as const, figure: "budgets" as const },
+  { label: "Approvals", canvas: "ink" as const, figure: "approval" as const },
+  { label: "Month-end close", canvas: "green" as const, figure: "close" as const },
+  { label: "Vendor spend", canvas: "mist" as const, figure: "vendors" as const },
+  { label: "Forecasting", canvas: "ink" as const, figure: "forecast" as const },
+];
+
+const CARD_W = 452;
+const CARD_GAP = 22;
+
+function Workflows() {
+  const [index, setIndex] = useState(0);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  /* measured: the row's inner width, from which the card width (452px,
+     or narrower on small screens), the edge room (100px, less on small
+     screens), and how far the track may travel all follow. The first
+     card starts at the edge room; the last card ends at the same room
+     from the right, and the track stops there. */
+  const [m, setM] = useState({ card: CARD_W, pad: 100, travel: 0 });
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    const measure = () => {
+      const w = el.clientWidth;
+      const pad = Math.min(100, Math.max(20, w * 0.06));
+      const card = Math.min(CARD_W, w - 2 * pad);
+      const track = WORKFLOWS.length * card + (WORKFLOWS.length - 1) * CARD_GAP;
+      setM({ card, pad, travel: Math.max(0, track + 2 * pad - w) });
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  const step = m.card + CARD_GAP;
+  const max = WORKFLOWS.length - 1;
+  /* the track's x: the arrows animate it, a drag moves it live and then
+     snaps to the nearest card by position and fling, never past the
+     ends */
+  const x = useMotionValue(0);
+  const go = (i: number) => {
+    const next = Math.min(max, Math.max(0, i));
+    setIndex(next);
+    animate(x, -Math.min(next * step, m.travel), { type: "spring", stiffness: 140, damping: 26 });
+  };
+  const atEnd = index === max || index * step >= m.travel;
+  return (
+    <section className="overflow-hidden pb-[clamp(72px,7vw,140px)] pt-[clamp(40px,4.4vw,84px)]">
+      {/* the headline in a framed cell of the grid */}
+      <div className="px-6">
+        <div className="relative mx-auto max-w-[1200px] border-x border-black/[0.08]">
+          <Rule pos="top" />
+          <Cross pos="top-left" />
+          <motion.h2
+            {...up}
+            className="border-t border-black/[0.08] px-6 py-[clamp(40px,4.5vw,72px)] text-center text-[clamp(32px,3.3vw,64px)] font-medium leading-[1.05] tracking-[-2px] text-ink"
+          >
+            Workflows built for finance teams.
+          </motion.h2>
+        </div>
+      </div>
+
+      {/* the track on the ruled grid: cells with room between them, each
+          cell's edges running out to the two full-width rules above and
+          below; drag it or use the arrows */}
+      <div ref={wrapRef} className="relative border-y border-black/[0.08] py-6">
+        <motion.div
+          className="flex cursor-grab gap-[22px] active:cursor-grabbing"
+          style={{ x, paddingLeft: m.pad }}
+          drag="x"
+          dragConstraints={{ left: -m.travel, right: 0 }}
+          dragElastic={0.12}
+          dragMomentum={false}
+          onDragEnd={(_, info) => {
+            const fling = info.velocity.x;
+            const at = -x.get() / step;
+            const target =
+              Math.abs(fling) > 400 ? (fling < 0 ? Math.ceil(at) : Math.floor(at)) : Math.round(at);
+            go(target);
+          }}
+        >
+          {WORKFLOWS.map((w) => (
+            <WorkflowCard key={w.label} {...w} width={m.card} />
+          ))}
+        </motion.div>
+      </div>
+
+      <div className="mt-[clamp(40px,4.5vw,86px)] flex justify-center gap-[22px]">
+        <button
+          type="button"
+          aria-label="Previous"
+          onClick={() => go(index - 1)}
+          className="flex h-[34px] w-[34px] items-center justify-center border border-black/[0.12] bg-white text-ink transition-transform hover:scale-105 disabled:opacity-40"
+          disabled={index === 0}
+        >
+          <ArrowIcon dir="left" />
+        </button>
+        <button
+          type="button"
+          aria-label="Next"
+          onClick={() => go(index + 1)}
+          className="flex h-[34px] w-[34px] items-center justify-center border border-black/[0.12] bg-white text-ink transition-transform hover:scale-105 disabled:opacity-40"
+          disabled={atEnd}
+        >
+          <ArrowIcon dir="right" />
+        </button>
+      </div>
+      <p className="mt-[clamp(28px,2.8vw,54px)] px-6 text-center text-[clamp(15px,0.95vw,18px)] text-sub">
+        Run a workflow we have not listed? Payle learns the way your team
+        works.{" "}
+        <Link href="/contact" className="underline underline-offset-4">
+          Reach out.
+        </Link>
+      </p>
+    </section>
+  );
+}
+
+function ArrowIcon({ dir }: { dir: "left" | "right" }) {
+  return (
+    <svg
+      width="12"
+      height="12"
+      viewBox="0 0 16 16"
+      fill="none"
+      aria-hidden
+      style={{ transform: dir === "left" ? "rotate(180deg)" : undefined }}
+    >
+      <path d="M2.5 8h11m0 0L8.8 3.3M13.5 8l-4.7 4.7" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function WorkflowCard({
+  label,
+  canvas,
+  figure,
+  width,
+}: (typeof WORKFLOWS)[number] & { width: number }) {
+  const bg = canvas === "mist" ? "#eeeeee" : canvas === "ink" ? INK : GREEN;
+  const dark = canvas !== "mist";
+  return (
+    <div className="relative shrink-0" style={{ width, height: Math.round(width * (630 / 452)) }}>
+      {/* the cell's edges run out to the rules above and below */}
+      <span className="pointer-events-none absolute -bottom-6 -top-6 left-0 w-px bg-black/[0.08]" />
+      <span className="pointer-events-none absolute -bottom-6 -top-6 right-0 w-px bg-black/[0.08]" />
+      <div
+        className="relative h-full w-full overflow-hidden border border-black/[0.08]"
+        style={{ backgroundColor: bg }}
+      >
+      <div className="absolute inset-x-[36px] top-[44px]">
+        <Figure kind={figure} dark={dark} />
+      </div>
+      <span className="absolute left-1/2 top-1/2 flex h-[50px] -translate-x-1/2 -translate-y-1/2 items-center border border-[#0a0a0a] bg-white px-[26px] text-[18px] text-ink">
+        {label}
+      </span>
+      </div>
+    </div>
+  );
+}
+
+function Figure({
+  kind,
+  dark,
+}: {
+  kind: (typeof WORKFLOWS)[number]["figure"];
+  dark: boolean;
+}) {
+  const fg = dark ? "#ffffff" : INK;
+  const muted = dark ? "rgba(255,255,255,0.55)" : "rgba(10,10,10,0.5)";
+  const track = dark ? "rgba(255,255,255,0.14)" : "rgba(10,10,10,0.08)";
+  const card = dark ? "rgba(255,255,255,0.08)" : "#ffffff";
+  const line = dark ? "rgba(255,255,255,0.2)" : "rgba(10,10,10,0.12)";
+  if (kind === "budgets") {
+    const rows = [
+      ["Engineering agents", 0.72, 8400],
+      ["Growth agents", 0.41, 2150],
+      ["Support agents", 0.9, 3900],
+    ] as const;
+    return (
+      <div className="flex flex-col gap-4">
+        {rows.map(([name, pct, amt]) => (
+          <div key={name}>
+            <div className="flex items-center justify-between text-[13px]" style={{ color: fg }}>
+              <span>{name}</span>
+              <span className="font-numeral">{money(amt)}</span>
+            </div>
+            <div className="mt-2 h-[6px] border" style={{ backgroundColor: track, borderColor: line }}>
+              <motion.div
+                className="h-full"
+                style={{ backgroundColor: pct > 0.85 ? "#9fe870" : fg }}
+                initial={{ width: 0 }}
+                whileInView={{ width: `${pct * 100}%` }}
+                viewport={{ once: true }}
+                transition={{ duration: 1.1, ease: EASE }}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  if (kind === "approval") {
+    return (
+      <div className="border p-4" style={{ backgroundColor: card, borderColor: line }}>
+        <div className="flex items-center justify-between text-[12px]" style={{ color: muted }}>
+          <span>OpenAI · research agent</span>
+          <span>2:14 PM</span>
+        </div>
+        <p className="font-numeral mt-2 text-[26px] font-semibold tracking-[-1px]" style={{ color: fg }}>
+          {money(2500)}
+        </p>
+        <p className="mt-1 text-[13px]" style={{ color: muted }}>
+          Under the $3,000 monthly cap. Approved by Payle.
+        </p>
+        <div className="mt-3 flex gap-2">
+          <span className="border px-3 py-1 text-[12px] font-medium" style={{ backgroundColor: "#9fe870", color: INK, borderColor: line }}>
+            Approved
+          </span>
+          <span className="border px-3 py-1 text-[12px] font-medium" style={{ backgroundColor: track, color: fg, borderColor: line }}>
+            Task: Q3 market brief
+          </span>
+        </div>
+      </div>
+    );
+  }
+  if (kind === "close") {
+    const items = ["Receipts matched", "Charges categorized", "Caps reconciled", "Report sent"];
+    return (
+      <div className="flex flex-col gap-3">
+        {items.map((it, i) => (
+          <div key={it} className="flex items-center gap-3 text-[14px]" style={{ color: fg }}>
+            <span
+              className="flex h-5 w-5 items-center justify-center border"
+              style={{ backgroundColor: i < 3 ? "#9fe870" : track, borderColor: line }}
+            >
+              {i < 3 && (
+                <svg width="10" height="10" viewBox="0 0 16 16" fill="none" aria-hidden>
+                  <path d="M3 8.5 6.5 12 13 4.5" stroke={INK} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              )}
+            </span>
+            {it}
+          </div>
+        ))}
+      </div>
+    );
+  }
+  if (kind === "vendors") {
+    const v = [
+      ["/logos/openai.svg", "OpenAI", 4120],
+      ["/logos/aws.svg", "AWS", 2870],
+      ["/logos/stripe.svg", "Stripe", 610],
+    ] as const;
+    return (
+      <div className="flex flex-col gap-2.5">
+        {v.map(([src, name, amt]) => (
+          <div key={name} className="flex items-center gap-3 border px-3 py-2.5" style={{ backgroundColor: card, borderColor: line }}>
+            <span className="flex h-8 w-8 items-center justify-center border border-black/[0.12] bg-white">
+              <Image src={src} alt={name} width={18} height={18} className="h-[18px] w-[18px]" />
+            </span>
+            <span className="flex-1 text-[13px]" style={{ color: fg }}>{name}</span>
+            <span className="font-numeral text-[13px]" style={{ color: fg }}>{money(amt)}</span>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  return (
+    <div className="border p-4" style={{ backgroundColor: card, borderColor: line }}>
+      <p className="text-[12px]" style={{ color: muted }}>Projected agent spend, July</p>
+      <p className="font-numeral mt-1 text-[24px] font-semibold tracking-[-1px]" style={{ color: fg }}>
+        {money(2350)}
+      </p>
+      <InsightsChart daily={DAILY} xLabels={X_LABELS} tone={dark ? "dark" : "light"} className="mt-2 h-[110px]" />
+    </div>
+  );
+}
+
+
+/* ---- the page helpers it read ---- */
+
+const EASE = [0.25, 0.6, 0.2, 1] as const;
+const GREEN = "#163300";
+const INK = "#0a0a0a";
+
+const up = {
+  initial: { opacity: 0, y: 40 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, margin: "-80px" },
+  transition: { duration: 0.55, ease: EASE },
+} as const;
+
+/* the site's ruled grid: a rule running 24px past a frame, and the
+   crosshair where a rule meets a rail */
+function Rule({ pos }: { pos: "top" | "bottom" }) {
+  return <span className={`pointer-events-none absolute -left-6 -right-6 h-px bg-black/[0.08] ${pos === "top" ? "-top-px" : "-bottom-px"}`} />;
+}
+function Cross({ pos }: { pos: "top-left" | "bottom-right" }) {
+  const at = pos === "top-left" ? "-left-[7px] -top-[7px]" : "-bottom-[7px] -right-[7px]";
+  return (
+    <span className={`pointer-events-none absolute z-10 h-[13px] w-[13px] ${at}`} aria-hidden>
+      <span className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-black/40" />
+      <span className="absolute left-0 top-1/2 h-px w-full -translate-y-1/2 bg-black/40" />
+    </span>
+  );
+}
+
+const DAILY = [
+  0, 85, 85, 210, 210, 340, 340, 495, 640, 640, 820, 980, 980, 1210, 1385,
+  1500, 1500, 1830, 2100, 2350,
+];
+const X_LABELS = ["Jul 01", "Jul 07", "Jul 13", "Jul 20"];
+

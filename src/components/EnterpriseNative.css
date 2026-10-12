@@ -1,0 +1,75 @@
+/* Loats native to the enterprise (EnterpriseNative.tsx), on Vercel's
+   "Build agents on infrastructure that thinks like them". */
+
+.en { width: min(1560px, calc(100% - clamp(32px, 18vw, 360px))); margin: 0 auto; padding: clamp(24px, 3vw, 56px) 0 clamp(80px, 7vw, 140px); color: #0a0a0a; }
+@media (max-width: 799px) { .en { width: calc(100% - 32px); } }
+/* opening the page: room for the nav above */
+.en--lead { padding-top: clamp(170px, 14vw, 210px); }
+
+.en-head { max-width: 980px; }
+.en-title { margin: 0; font-size: clamp(36px, 4.4vw, 80px); font-weight: 400; line-height: 1.02; letter-spacing: -0.045em; text-wrap: balance; }
+/* the paragraph is the hero's (HeroShowcase) */
+.en-body {
+  max-width: 620px; margin: clamp(18px, 1.8vw, 30px) 0 0;
+  font-family: var(--font-ios); font-weight: 300;
+  font-size: clamp(13px, calc(1.35vw - 4px), 20px); line-height: 1.35; letter-spacing: -0.02em; color: #0a0a0a;
+}
+@media (max-width: 799px) { .en-body { font-size: 14px; } }
+
+.en-row { display: grid; grid-template-columns: minmax(0, 1fr) clamp(240px, 22vw, 380px); gap: clamp(24px, 3vw, 64px); align-items: center; margin-top: clamp(36px, 3.6vw, 64px); }
+.en-stage { position: relative; overflow: hidden; }
+.en-stage--mobile { display: none; }
+@media (max-width: 899px) {
+  .en-row { grid-template-columns: minmax(0, 1fr); }
+  .en-stage--desktop { display: none; }
+  .en-stage--mobile { display: block; }
+}
+.en-canvas { position: absolute; left: 0; top: 0; transform-origin: 0 0; font-family: var(--font-ios); color: #1e1e1e; }
+
+/* everything that changes with the company fades in */
+.en-fade { animation: en-in .6s ease both; }
+@keyframes en-in { from { opacity: 0; } to { opacity: 1; } }
+
+/* the faded document, the company's mark on a tile at its corner */
+.en-doc {
+  position: absolute; left: 0; top: 96px; width: 560px; height: 504px; padding: 150px 76px 0;
+  border: 1px solid #e3e3e1; border-bottom: 0; border-radius: 10px 10px 0 0; background: #fbfbfa;
+  -webkit-mask-image: linear-gradient(#000 55%, transparent); mask-image: linear-gradient(#000 55%, transparent);
+}
+.en-tile {
+  position: absolute; z-index: 1; left: 76px; top: 62px; display: grid; place-items: center; width: 96px; height: 96px; overflow: hidden;
+  border-radius: 14px; background: #fff; box-shadow: 0 0 0 1px rgba(10, 10, 10, .08), 0 14px 30px -14px rgba(10, 10, 10, .4);
+}
+.en-tile img { width: 64%; height: 64%; object-fit: contain; }
+.en-tile--fill img { width: 100%; height: 100%; object-fit: cover; }
+.en-doc__title { margin: 0; font-size: 40px; font-weight: 600; letter-spacing: -0.03em; color: #d6d6d3; }
+
+/* the Loat chat */
+.en-chat { position: absolute; display: flex; flex-direction: column; border: 1px solid #e3e3e1; border-bottom: 0; border-radius: 10px 10px 0 0; background: #fff; -webkit-mask-image: linear-gradient(#000 78%, transparent); mask-image: linear-gradient(#000 78%, transparent); }
+.en-chat--desktop { left: 494px; top: 0; width: 684px; height: 600px; }
+.en-chat--mobile { left: 0; top: 0; width: 680px; height: 600px; }
+.en-chat__top { display: flex; align-items: center; justify-content: space-between; height: 66px; padding: 0 24px; font-size: 18px; color: #3a3a38; }
+.en-chat__top i { font-style: normal; margin-left: 6px; color: #8a8a87; }
+.en-chat__ic { display: flex; gap: 22px; }
+.en-chat__ic svg { width: 21px; height: 21px; }
+.en-chat__body { padding: 14px 28px 0; }
+.en-ava { display: grid; place-items: center; width: 58px; height: 58px; border-radius: 50%; box-shadow: 0 0 0 1px #e3e3e1; }
+.en-ava svg { width: 26px; height: 19px; }
+.en-chat__body h3 { margin: 22px 0 22px; font-size: 25px; font-weight: 600; letter-spacing: -0.02em; }
+.en-asks { margin: 0 0 30px; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 22px; }
+.en-asks li { display: flex; align-items: center; gap: 14px; font-size: 18px; letter-spacing: -0.01em; }
+.en-asks svg { flex: none; width: 22px; height: 22px; }
+.en-compose { height: 210px; padding: 12px; border: 1px solid #ececea; border-radius: 22px; }
+.en-compose__chips { display: flex; gap: 10px; }
+.en-chip { display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 16px; border: 1px solid #ececea; border-radius: 19px; font-size: 15.5px; color: #3a3a38; }
+.en-chip svg { width: 17px; height: 17px; }
+.en-chip--at { width: 38px; padding: 0; justify-content: center; font-size: 17px; }
+.en-compose p { margin: 18px 0 0 2px; font-size: 15px; color: #b5b5b2; }
+
+/* the right column */
+.en-line { min-height: 4.6em; margin: 0; font-size: clamp(24px, 1.95vw, 36px); font-weight: 400; line-height: 1.14; letter-spacing: -0.035em; }
+.en-name { color: #8f8f8c; }
+.en-flabel { margin: clamp(32px, 3.4vw, 60px) 0 12px; font: 400 13px/1 var(--en-mono); letter-spacing: .02em; color: #6a6a66; }
+.en-features { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 14px; font: 500 14px/1 var(--en-mono); letter-spacing: .06em; text-transform: uppercase; }
+
+@media (prefers-reduced-motion: reduce) { .en-fade { animation: none; } }

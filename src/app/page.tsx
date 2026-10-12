@@ -1,14 +1,16 @@
 import NavDock from "@/components/NavDock";
 import HeroShowcase from "@/components/HeroShowcase";
 import GoalSection from "@/components/GoalSection";
+import HeroTabs from "@/components/HeroTabs";
 import StatsStatement from "@/components/StatsStatement";
-import FlowHero from "@/components/FlowHero";
-import MarketsSection from "@/components/MarketsSection";
-import SecuritySection from "@/components/SecuritySection";
 import SlackSection from "@/components/SlackSection";
-import AgentPromptSection, { AgentLogoStrip } from "@/components/AgentPromptSection";
+import WhereverYouWork from "@/components/WhereverYouWork";
+import AgentPromptSection from "@/components/AgentPromptSection";
 import FAQSection from "@/components/FAQSection";
-import { Compatible, Pricing } from "@/components/EnterpriseBlocks";
+import { Compatible } from "@/components/EnterpriseBlocks";
+import FinanceSplits from "@/components/FinanceSplits";
+import IntegrationHead from "@/components/IntegrationHead";
+import EnterpriseNative from "@/components/EnterpriseNative";
 import FooterSection from "@/components/FooterSection";
 
 export default function Home() {
@@ -25,90 +27,54 @@ export default function Home() {
           notifications; releases once everything is solid. */}
       <GoalSection />
 
+      {/* the product tour: chat, inbox, approvals and the record, in tabs */}
+      <HeroTabs />
+
+      {/* How Loats work: four cards wired to the brick grid around the tile */}
+
       {/* the green stats and statement act, shared with the finance
           teams page, easing into black toward the agent act */}
       <StatsStatement
         stats={[
-          { label: "Payloat watches agent purchases", value: "24/7" },
-          { label: "To match a charge to the task behind it", value: "<1s" },
-          { label: "Receipts you chase down by hand", value: "0" },
+          { label: "Your financial manager Loat watches every account", value: "24/7" },
+          { label: "Place for every team's spending", value: "1" },
+          { label: "Budgets that run out without a warning", value: "0" },
         ]}
-        quote="Agents do not announce what they buy. Payloat Ledger records every purchase the moment it lands, with the task behind it, so you know what was bought and why before the receipt arrives."
-        name="Payloat Ledger"
-        role="One ledger for every agent's spend"
+        quote="Every team spends a little every day, and nobody adds it up until the month closes. I keep the running total for the whole company, tell you before a budget runs low, and ask before anything goes over."
+        name="Sona"
+        role="Financial manager Loat on Workloat"
         to="#0a0a0a"
         ground="#eeeeee"
         ink="dark"
+        clearNav
       />
 
-      {/* Agent act on black: the prompt card with the gradient shine,
-          vendor logos, and the render band. (Track everything is parked;
+      {/* Agent act on black: the prompt card with the gradient shine. (Track everything is parked;
           TrackSection.tsx stays in the repo.) */}
       <AgentPromptSection />
-
-      {/* the act's logo strip, on the same black */}
-      <div style={{ backgroundColor: "#0a0a0a" }}>
-        <AgentLogoStrip />
-      </div>
 
       {/* Slack act on white: the laptop's base tucks under the next
           section */}
       <SlackSection />
 
-      {/* the flow hero, shared with the finance teams page, with the
-          ledger's own copy; on white, over the Slack act's foot */}
-      <div className="relative z-10">
-        <FlowHero
-          tone="dark"
-          lines={["One ledger", "for every", "dollar your", "agents", "spend."]}
-          body="Payloat records every agent purchase the moment it lands, matches it to the task behind it, and keeps every bank and card in one place."
-          cta={{ label: "Get started", href: "/signup" }}
-          tasks={[
-            "API credits",
-            "Flight bookings",
-            "Grocery reorders",
-            "Cloud hosting",
-            "Ad spend",
-            "Subscription renewals",
-            "Research tools",
-            "Stock orders",
-            "Receipt matching",
-            "Refund tracking",
-            "Spend by task",
-            "Budget caps",
-            "Card issuing",
-            "Vendor payments",
-            "Travel expenses",
-            "Software seats",
-            "Data purchases",
-            "Overspend alerts",
-            "Monthly summaries",
-            "Bank sync",
-          ]}
-          from="You"
-          agent="Payloat"
-          to="Your agents"
-          trustedLabel="Works with the banks and cards you already use"
-          logos={[
-            { src: "/logos/banks/chase.jpg", alt: "Chase", tile: true },
-            { src: "/logos/banks/mercury.png", alt: "Mercury", tile: true },
-            { src: "/logos/brex.svg", alt: "Brex" },
-            { src: "/logos/banks/capitalone.svg", alt: "Capital One" },
-            { src: "/logos/banks/citi.png", alt: "Citi" },
-            { src: "/logos/banks/wellsfargo.png", alt: "Wells Fargo", tile: true },
-          ]}
-        />
-      </div>
+      {/* Wherever your team works: the Slack window, then the web app,
+          email and meetings cards */}
+      <WhereverYouWork />
 
-      {/* the compatibility grid and the plans, shared with the enterprise page */}
+      {/* a head on Ada's anatomy (the tools Sona works in), then the two
+          cards from the finance teams page: approvals with the evidence,
+          and budgets by team */}
+      <IntegrationHead />
+      <FinanceSplits />
+
+      {/* Loats built into the infrastructure an enterprise already runs,
+          on Vercel's "infrastructure that thinks like them" */}
+      <EnterpriseNative />
+
+      {/* the compatibility grid, shared with the enterprise page. The plans
+          (Pricing, in EnterpriseBlocks) are off the home page and wait for
+          the pricing page. */}
       <Compatible />
-      <Pricing />
-
-      {/* Markets closer: shader card + white $0 on black */}
-      <MarketsSection />
-
-      {/* Security trio: live clock, alert toasts, lock toggle */}
-      <SecuritySection />
 
       {/* FAQ accordion */}
 

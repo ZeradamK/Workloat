@@ -1,0 +1,72 @@
+/* The enterprise page's cards (OwnYourLoats.tsx), on Zaro's: the site's
+   paper card (#fbfaf6, a hairline, 6px corners), one wide card and two
+   below in a three column grid. */
+
+.oy { width: min(1560px, calc(100% - clamp(32px, 18vw, 360px))); margin: 0 auto; padding: clamp(56px, 6vw, 120px) 0 clamp(48px, 5vw, 96px); color: #0a0a0a; }
+@media (max-width: 799px) { .oy { width: calc(100% - 32px); } }
+/* opening the page: room for the nav above */
+.oy--lead { padding-top: clamp(108px, 9vw, 160px); }
+
+.oy-card { display: flex; flex-direction: column; overflow: hidden; border-radius: 6px; background: #fbfaf6; box-shadow: 0 0 0 1px rgba(10, 10, 10, .08); }
+.oy-card--wide { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); min-height: clamp(380px, 29vw, 460px); }
+@media (max-width: 999px) { .oy-card--wide { grid-template-columns: minmax(0, 1fr); } }
+.oy-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(16px, 2vw, 32px); margin-top: clamp(16px, 2.4vw, 40px); }
+.oy-row .oy-card { min-height: clamp(520px, 38vw, 610px); }
+@media (max-width: 999px) { .oy-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+@media (max-width: 699px) { .oy-row { grid-template-columns: minmax(0, 1fr); } }
+
+/* the text side */
+.oy-text { display: flex; flex-direction: column; padding: clamp(24px, 2.4vw, 44px) clamp(24px, 2.4vw, 40px) clamp(22px, 2vw, 34px); }
+.oy-card--wide .oy-text { padding-top: clamp(32px, 3vw, 52px); }
+.oy-label { margin: 0 0 clamp(16px, 1.6vw, 28px); font: 400 12.5px/1 var(--oy-mono); letter-spacing: .22em; text-transform: uppercase; color: #55534e; }
+.oy-label span { margin-left: 1.1em; }
+.oy-title { margin: 0; font-size: clamp(20px, 1.4vw, 25px); font-weight: 500; line-height: 1.18; letter-spacing: -0.025em; }
+.oy-title--lg { font-size: clamp(26px, 2.1vw, 38px); line-height: 1.12; letter-spacing: -0.035em; }
+/* the paragraph is the hero's (HeroShowcase), a step down for the small cards */
+.oy-body {
+  max-width: 44em; margin: clamp(12px, 1.2vw, 20px) 0 0;
+  font-family: var(--font-ios); font-weight: 300;
+  font-size: clamp(13px, calc(1.35vw - 4px), 18px); line-height: 1.45; letter-spacing: -0.015em; color: #2a2a28;
+}
+@media (max-width: 799px) { .oy-body { font-size: 14px; } }
+.oy-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: auto; padding-top: clamp(28px, 3vw, 48px); font-size: clamp(14px, .95vw, 16.5px); color: #55534e; text-decoration: none; }
+.oy-foot svg { width: 16px; height: 16px; flex: none; transition: transform .2s ease; }
+.oy-foot:hover { color: #0a0a0a; }
+.oy-foot:hover svg { transform: translate(2px, -2px); }
+.oy-foot:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 3px; }
+
+/* the pictures */
+.oy-pic { position: relative; overflow: hidden; }
+.oy-row .oy-pic { flex: none; height: clamp(250px, 19vw, 320px); }
+.oy-ghost { position: absolute; margin: 0; font-weight: 500; letter-spacing: -0.06em; line-height: .86; color: #c9c4b4; pointer-events: none; }
+
+/* 1. the tools on a ruled field round "Own your Loats." */
+.oy-pic--field { min-height: 340px; }
+.oy-pic--field .oy-ghost { inset: 0; display: grid; place-content: center; text-align: center; font-size: clamp(64px, 6.4vw, 118px); z-index: 1; }
+.oy-tile { position: absolute; display: grid; place-items: center; border: 1px solid #e4e1d8; }
+.oy-tile img { height: auto; max-height: 70%; object-fit: contain; }
+.oy-tick { position: absolute; width: 6px; height: 6px; background: #d6d2c6; }
+.oy-tick--tl { left: -4px; top: -4px; } .oy-tick--tr { right: -4px; top: -4px; } .oy-tick--bl { left: -4px; bottom: -4px; } .oy-tick--br { right: -4px; bottom: -4px; }
+.oy-wtile { display: grid; place-items: center; width: 100%; height: 100%; background: #1a1a1a; background-image: radial-gradient(rgba(255, 255, 255, .14) 1px, transparent 1.4px); background-size: 6px 6px; }
+.oy-wtile svg { width: 46%; height: auto; }
+@media (max-width: 999px) { .oy-pic--field { height: 340px; } }
+
+/* 2. a pixel lock over "Nothing leaves your walls" */
+.oy-pic--ghost .oy-ghost--sm { inset: 18px 18px auto; display: grid; grid-template-columns: 1fr 1fr; gap: 0 .2em; font-size: clamp(54px, 4.3vw, 76px); color: #e6e3db; }
+.oy-pic--ghost .oy-ghost--sm span:nth-child(even) { text-align: right; }
+.oy-lock { position: absolute; left: 50%; top: 52%; width: clamp(112px, 9vw, 150px); height: auto; transform: translate(-50%, -50%); filter: drop-shadow(0 10px 18px rgba(40, 110, 170, .25)); }
+
+/* 3. the Loats, on a dark ground with a dot field */
+.oy-pic--dark { display: flex; align-items: center; justify-content: space-evenly; padding: 0 6%; background: #4a4441; background-image: radial-gradient(rgba(255, 255, 255, .06) 1px, transparent 1.4px); background-size: 9px 9px; }
+.oy-px { display: block; width: clamp(64px, 5.6vw, 96px); height: clamp(64px, 5.6vw, 96px); image-rendering: pixelated; filter: drop-shadow(0 8px 14px rgba(0, 0, 0, .35)); }
+.oy-px svg { display: block; width: 100%; height: 100%; }
+.oy-px--w svg { height: auto; margin-top: 18%; }
+
+@media (prefers-reduced-motion: reduce) { .oy-foot svg { transition: none; } }
+
+/* on a phone the field is narrow: the tiles shrink in place so they keep
+   their room round the words */
+@media (max-width: 699px) {
+  .oy-tile { transform: scale(.62); }
+  .oy-pic--field .oy-ghost { font-size: 64px; }
+}

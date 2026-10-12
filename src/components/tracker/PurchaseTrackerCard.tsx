@@ -7,7 +7,7 @@ import { money } from "./money";
 
 /**
  * Web port of the iOS home's PurchaseTrackerCard
- * (Payloat/Views/PurchaseTracker.swift): mist card r32, two-tone
+ * (Workloat/Views/PurchaseTracker.swift): mist card r32, two-tone
  * "Purchase / Tracker" title with staggered slide-in, white action circle,
  * lime + white stat cards with change pills, hatched cumulative chart,
  * SEE ALL INSIGHTS link. State-driven: every value arrives via props.

@@ -1,0 +1,11 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Security | Workloat",
+  description:
+    "How Workloat protects your organization and your agents' purchase data.",
+};
+
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return children;
+}

@@ -2,17 +2,17 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://payloat.com"),
-  title: "Payloat - Agent's spending managed better",
+  metadataBase: new URL("https://workloat.com"),
+  title: "Workloat",
   description:
-    "The ledger AI agents write to and company owners read: every purchase with the task it was given, the cap, the receipt, and what happened after.",
+    "Workloat gives you AI workers called Loats. Each Loat has its own email address and a human owner, and asks for your OK before it writes to anyone else.",
   openGraph: {
     type: "website",
-    siteName: "Payloat Ledger",
-    url: "https://payloat.com",
-    title: "Payloat - Agent's spending managed better",
+    siteName: "Workloat",
+    url: "https://workloat.com",
+    title: "Workloat",
     description:
-      "Every purchase your agents make, with the task behind it, the cap it had, and the receipt when it lands.",
+      "AI workers with their own email address, a human owner and approvals. Give your work to a Loat. It answers to you.",
   },
   /* The tab icon carries its own ground, so it reads on either browser
      chrome: the black tile by default, which is also what Google shows
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     icon: [
       { url: "/icon.png", type: "image/png", sizes: "192x192" },
       {
-        url: "/icon-dark-mode.png",
+        url: "/brand/icon-light-tile.png",
         type: "image/png",
         sizes: "192x192",
         media: "(prefers-color-scheme: dark)",
@@ -33,9 +33,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Payloat - Agent's spending managed better",
+    title: "Workloat",
     description:
-      "Every purchase your agents make, with the task behind it, the cap it had, and the receipt when it lands.",
+      "AI workers with their own email address, a human owner and approvals. Give your work to a Loat. It answers to you.",
   },
 };
 

@@ -20,7 +20,7 @@ import {
  */
 
 const HEADLINE =
-  "Agents buy quietly all day. Payloat Ledger shows you every purchase, with the task behind it, before the receipt lands.";
+  "Your financial manager Loat keeps every dollar your company spends in one place, and tells you before a budget runs low.";
 const WORDS = HEADLINE.split(" ");
 /* words ink over this progress window */
 const WORDS_FROM = 0.06;
@@ -29,61 +29,50 @@ const WORDS_SPAN = 0.56;
 const NOTIFS = [
   {
     name: "OpenAI",
-    bg: "#546b41",
-    dark: true,
     logo: "/logos/openai.svg",
     amount: "$2,500.00",
-    note: "API usage this month",
+    note: "AI tools budget, 80% used",
     at: 0.12,
   },
   {
     name: "Stripe",
-    bg: "#c5b3d3",
-    dark: false,
     logo: "/logos/stripe.png",
     amount: "$600.00",
-    note: "Platform fees, monthly",
+    note: "Paid on time, inside budget",
     at: 0.26,
   },
   {
     name: "Vercel",
-    bg: "#0a0a0a",
-    dark: true,
     logo: "/logos/vercel.svg",
     amount: "$350.00",
-    note: "Hosting, Ops agent",
+    note: "Hosting budget, $150 left",
     at: 0.4,
   },
   {
     name: "Claude",
-    bg: "#eae2d6",
-    dark: false,
     logo: "/logos/claude.svg",
     amount: "$4,000.00",
-    note: "Renews tomorrow",
+    note: "Renews tomorrow, you approved",
     at: 0.54,
   },
   {
     name: "AWS",
-    bg: "#2e6fa0",
-    dark: true,
     logo: "/logos/aws.svg",
     amount: "$850.00",
-    note: "Storage, Ops agent",
+    note: "Cloud budget running low",
     at: 0.68,
   },
   {
     name: "Brex",
-    bg: "#2c2c2c",
-    dark: true,
     logo: "/logos/brex.svg",
     amount: "$12,480.00",
-    note: "14 charges matched",
+    note: "All 14 charges accounted for",
     at: 0.82,
   },
 ] as const;
-/* each notice carries its own ground (`bg`) and, on the dark grounds,
-   white type and arrow (`dark`) */
+/* every notice is the same bar: black, edge and all, as the Sign up
+   buttons (SignupButton), 6px corners (the ledger card's), white type,
+   only the logo changing. Each bar is as wide as its own row, centred. */
 
 export default function GoalSection() {
   const ref = useRef<HTMLDivElement>(null);
@@ -119,7 +108,7 @@ export default function GoalSection() {
             charge slides up in while the previous fades out. Above 1400px
             the bar grows to 1.2x, easing between the two sizes with a
             little overshoot as the viewport crosses the line */}
-        <div className="absolute inset-x-0 bottom-[calc(100%+80px)] z-0 mx-auto h-[55px] w-[min(320px,calc(100vw-48px))] origin-bottom transition-[scale] duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] min-[1400px]:scale-[1.2]">
+        <div className="absolute inset-x-0 bottom-[calc(100%+80px)] z-0 mx-auto h-[55px] w-[min(420px,calc(100vw-48px))] origin-bottom transition-[scale] duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] min-[1400px]:scale-[1.2]">
           {NOTIFS.map((n, i) => {
             const arrived = i < stage;
             const passed = i < stage - 1;
@@ -135,8 +124,7 @@ export default function GoalSection() {
                       : { opacity: 0, y: 34 }
                 }
                 transition={{ type: "spring", stiffness: 320, damping: 26 }}
-                className="absolute inset-x-0 top-0 flex items-center gap-3 rounded-[18px] py-[6px] pl-[6px] pr-2.5"
-                style={{ backgroundColor: n.bg, border: `1px solid ${n.dark ? "rgba(255,255,255,0.15)" : "rgba(10,10,10,0.12)"}` }}
+                className="absolute inset-x-0 top-0 mx-auto flex w-fit max-w-full items-center gap-3 rounded-[6px] bg-black py-[6px] pl-[6px] pr-3 shadow-[0_0_0_1px_#000]"
               >
                 <NotifInner n={n} />
               </motion.div>
@@ -197,7 +185,7 @@ function GoalCross({ pos }: { pos: "top-left" | "bottom-right" }) {
 function NotifInner({ n }: { n: (typeof NOTIFS)[number] }) {
   return (
     <>
-      <span className="flex h-[43px] w-[43px] shrink-0 items-center justify-center rounded-[11px] border border-black/[0.12] bg-white">
+      <span className="flex h-[43px] w-[43px] shrink-0 items-center justify-center rounded-[4px] border border-black/[0.08] bg-white">
         <Image
           src={n.logo}
           alt={n.name}
@@ -207,14 +195,14 @@ function NotifInner({ n }: { n: (typeof NOTIFS)[number] }) {
         />
       </span>
       <span className="min-w-0 flex-1">
-        <span className={`block text-[16px] font-semibold ${n.dark ? "text-white" : "text-ink"}`}>
+        <span className="block text-[16px] font-semibold text-white">
           {n.name}
         </span>
-        <span className={`block text-[13px] leading-snug ${n.dark ? "text-white/70" : "text-sub"}`}>
+        <span className="block truncate whitespace-nowrap text-[13px] leading-snug text-white/70">
           {n.note}
         </span>
       </span>
-      <span className={`text-[17px] font-semibold tracking-[-0.43px] ${n.dark ? "text-white" : "text-ink"}`}>
+      <span className="ml-3 shrink-0 whitespace-nowrap text-[17px] font-semibold tracking-[-0.43px] text-white">
         {n.amount}
       </span>
       <svg
@@ -223,7 +211,7 @@ function NotifInner({ n }: { n: (typeof NOTIFS)[number] }) {
         viewBox="0 0 16 16"
         fill="none"
         aria-hidden
-        className={`shrink-0 ${n.dark ? "text-white" : "text-sub"}`}
+        className="shrink-0 text-white/70"
       >
         <path
           d="m5.5 3 5 5-5 5"

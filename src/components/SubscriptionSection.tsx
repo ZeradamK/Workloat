@@ -271,7 +271,7 @@ export default function SubscriptionSection() {
         </div>
       </div>
 
-      {/* ---- Row 2: the Payloat card, canvas left ---- */}
+      {/* ---- Row 2: the Workloat card, canvas left ---- */}
       <div ref={row2Ref} className="mt-[40px] grid grid-cols-12 items-center gap-6">
         <div className="order-2 col-span-12 min-[900px]:order-1 min-[900px]:col-span-7">
           {/* the black box slides up... */}
@@ -283,7 +283,7 @@ export default function SubscriptionSection() {
           >
             {/* the canvas now wears the card's blue gradient */}
             <Image
-              src="/payloat-card-gradient.png"
+              src="/card-gradient.png"
               alt=""
               fill
               sizes="900px"
@@ -345,7 +345,7 @@ export default function SubscriptionSection() {
                   </span>
                 </div>
                 <span className="absolute bottom-3.5 left-4 text-[38px] font-bold leading-none tracking-[-1.5px] text-white">
-                  Payloat
+                  Workloat
                 </span>
               </div>
             </motion.div>

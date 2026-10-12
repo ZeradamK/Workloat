@@ -1,0 +1,216 @@
+/* How Loats work: four cards wired to a brick grid around the Workloat
+   tile. Ported from the "Workloat · How Loats work" design. On desktop
+   every size is the design's times --k (0.7, or 0.62 on a short screen),
+   so the heading and all four cards fit one screen under the nav. Text
+   never goes under 10px, the tool labels under 8px. Tablets and phones
+   stack and scroll, so they keep the design's full size. The section
+   sits on the site's own #eeeeee ground; the label's notch takes it. */
+
+.how {
+  --k: 0.7;
+  --page: #eeeeee;
+  --panel: #e3e3e1;
+  --card: #f3f3f2;
+  --surface: #ffffff;
+  --ink: #1e1e1e;
+  --ink-2: #555555;
+  --muted: #7a7a78;
+  --line: #dcdcda;
+  --block: #d0d0cd;
+  --block-hot: #a6a6a2;
+  --dot: #bdbdba;
+  --wire: #a3a3a0;
+  --accent: #f26a1b;
+  background: var(--page);
+  color: var(--ink);
+  padding: clamp(calc(48px * var(--k)), calc(7vw * var(--k)), calc(96px * var(--k))) clamp(calc(12px * var(--k)), calc(3vw * var(--k)), calc(40px * var(--k))) clamp(calc(48px * var(--k)), calc(6vw * var(--k)), calc(80px * var(--k)));
+  -webkit-font-smoothing: antialiased;
+}
+
+.head { text-align: center; margin: 0 auto clamp(calc(40px * var(--k)), calc(6vw * var(--k)), calc(84px * var(--k))); max-width: calc(860px * var(--k)); }
+.eyebrow {
+  display: inline-block; margin: 0 0 calc(28px * var(--k)); padding: calc(9px * var(--k)) calc(13px * var(--k));
+  font-size: max(10px, calc(12px * var(--k))); font-weight: 500; line-height: 1; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: calc(6px * var(--k));
+}
+.title {
+  margin: 0; font-weight: 500; letter-spacing: -0.035em; line-height: 1.04;
+  font-size: max(10px, clamp(calc(34px * var(--k)), calc(5.2vw * var(--k)), calc(60px * var(--k)))); text-wrap: balance;
+}
+.title span { display: block; color: var(--ink-2); }
+
+/* ----- panel ----- */
+.panel {
+  position: relative; max-width: calc(1600px * var(--k)); margin: 0 auto;
+  background: var(--panel); border-radius: calc(28px * var(--k)); padding: calc(16px * var(--k));
+  display: grid; gap: calc(16px * var(--k));
+  grid-template-columns: minmax(calc(300px * var(--k)), calc(400px * var(--k))) minmax(0, 1fr) minmax(calc(300px * var(--k)), calc(400px * var(--k)));
+  grid-template-areas: "c1 core c3" "c2 core c4";
+}
+.c1 { grid-area: c1; }
+.c2 { grid-area: c2; }
+.c3 { grid-area: c3; }
+.c4 { grid-area: c4; }
+
+.card {
+  position: relative; z-index: 1; background: var(--card); border-radius: calc(20px * var(--k));
+  padding: calc(30px * var(--k)) calc(30px * var(--k)) 0; min-height: calc(368px * var(--k)); overflow: hidden;
+  display: flex; flex-direction: column; gap: calc(22px * var(--k));
+}
+.cardTitle { margin: 0 0 calc(6px * var(--k)); font-size: max(10px, calc(20px * var(--k))); font-weight: 500; letter-spacing: -0.01em; }
+.cardText { margin: 0; font-size: max(10px, calc(18px * var(--k))); line-height: 1.38; color: var(--muted); letter-spacing: -0.005em; max-width: 30ch; }
+.cardBody { margin-top: auto; }
+
+/* card 1: connected apps */
+.apps { list-style: none; margin: 0 0 calc(30px * var(--k)); padding: 0; display: grid; grid-template-columns: repeat(6, 1fr); gap: calc(8px * var(--k)); }
+.app { display: flex; flex-direction: column; align-items: center; gap: calc(8px * var(--k)); }
+.appTile {
+  width: 100%; aspect-ratio: 1; display: grid; place-items: center; color: var(--ink);
+  background: var(--surface); border-radius: calc(12px * var(--k));
+  box-shadow: 0 1px 0 rgba(0,0,0,.04), 0 0 0 1px rgba(0,0,0,.04);
+  transition: transform .2s ease;
+}
+.appTile { overflow: hidden; }
+/* each logo in a 1.2x box (the pixel icons were 24px), held to its own
+   proportions; the Slack mark's white square gets rounded corners */
+.appLogo { display: block; width: calc(28.8px * var(--k)); height: calc(28.8px * var(--k)); object-fit: contain; }
+.appLogoGround { border-radius: 22%; }
+.app:hover .appTile { transform: translateY(calc(-2px * var(--k))); }
+.appLabel { font-size: max(8px, calc(10px * var(--k))); line-height: 1; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+
+/* card 2: ask */
+.bleed { margin: auto calc(-30px * var(--k)) 0 0; background: var(--surface); border-radius: calc(14px * var(--k)) 0 0 0; padding: calc(20px * var(--k)) calc(22px * var(--k)) calc(24px * var(--k)); }
+.askBubble {
+  margin: 0 0 calc(16px * var(--k)) auto; width: fit-content; max-width: 88%;
+  background: #efefee; border-radius: calc(16px * var(--k)); padding: calc(10px * var(--k)) calc(14px * var(--k)); font-size: max(10px, calc(14px * var(--k))); line-height: 1.4;
+}
+.askBubble b { font-weight: 500; }
+.askMeta { margin: 0 0 calc(8px * var(--k)); font-size: max(10px, calc(11px * var(--k))); line-height: 1; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.askAnswer { margin: 0; font-size: max(10px, calc(14px * var(--k))); line-height: 1.5; color: var(--ink); }
+
+/* card 3: delegate */
+.composer {
+  margin: 0 0 calc(30px * var(--k)); background: var(--surface); border-radius: calc(16px * var(--k)); padding: calc(18px * var(--k)) calc(18px * var(--k)) calc(14px * var(--k));
+  display: flex; flex-direction: column; gap: calc(14px * var(--k)); min-height: calc(148px * var(--k));
+}
+.composerText { margin: 0; font-size: max(10px, calc(15px * var(--k))); line-height: 1.5; color: var(--ink); min-height: 4.5em; }
+.mention { background: #efefee; border-radius: calc(6px * var(--k)); padding: 1px calc(6px * var(--k)); font-weight: 500; }
+.caret { display: inline-block; width: calc(1.5px * var(--k)); height: 1.05em; margin-left: 1px; vertical-align: calc(-2px * var(--k)); background: var(--ink); animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+.send svg { width: calc(16px * var(--k)); height: calc(16px * var(--k)); }
+.send {
+  align-self: flex-end; width: calc(40px * var(--k)); height: calc(40px * var(--k)); border: 0; border-radius: calc(10px * var(--k));
+  background: #000; color: #fff; display: grid; place-items: center;
+}
+
+/* card 4: approve */
+.mailcard { padding: calc(18px * var(--k)) calc(22px * var(--k)) calc(22px * var(--k)); }
+.mailTag { margin: 0 0 calc(14px * var(--k)); font-size: max(10px, calc(11px * var(--k))); font-weight: 500; line-height: 1; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.mailRow { margin: 0 0 calc(6px * var(--k)); font-size: max(10px, calc(13px * var(--k))); color: var(--muted); }
+.mailRow b { color: var(--ink); font-weight: 500; }
+.mailBody { margin: calc(12px * var(--k)) 0 calc(16px * var(--k)); font-size: max(10px, calc(14px * var(--k))); line-height: 1.5; padding-top: calc(12px * var(--k)); border-top: 1px solid #ededec; }
+.mailActions { display: flex; gap: calc(8px * var(--k)); }
+.btn { font-size: max(10px, calc(13px * var(--k))); font-weight: 500; line-height: 1; border-radius: calc(9px * var(--k)); padding: calc(10px * var(--k)) calc(14px * var(--k)); border: 1px solid transparent; }
+.btnDark { background: #000; color: #fff; }
+.btnGhost { background: transparent; color: var(--ink); border-color: var(--line); }
+
+/* ----- core: brick grid and the tile ----- */
+.core { grid-area: core; position: relative; display: grid; place-items: center; min-height: calc(560px * var(--k)); container-type: inline-size; }
+.grid {
+  --n: 17;
+  --p: min(calc(34px * var(--k)), calc((100cqw - 24px) / var(--n)));
+  position: relative; display: grid;
+  grid-template-columns: repeat(var(--n), var(--p));
+  grid-auto-rows: var(--p);
+}
+.cell { display: grid; place-items: center; }
+.b::before { content: ""; width: 78%; height: 78%; border-radius: 18%; background: var(--block); }
+.d::before { content: ""; width: 20%; height: 20%; border-radius: 50%; background: var(--dot); }
+.b.end::before { background: var(--ink); }
+.b.pulse::before { animation: brick 5.6s ease-in-out infinite; animation-delay: var(--delay); }
+@keyframes brick { 0%, 70%, 100% { background: var(--block); } 80% { background: var(--block-hot); } }
+
+.glow {
+  position: absolute; inset: 0; margin: auto; width: 62%; aspect-ratio: 1; border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(242,106,27,.16), rgba(242,106,27,.06) 55%, transparent);
+  pointer-events: none;
+}
+.tile {
+  position: absolute; inset: 0; margin: auto; width: var(--tile, calc(104px * var(--k))); height: var(--tile, calc(104px * var(--k)));
+  border-radius: 24%; overflow: hidden; background: #000;
+  box-shadow: 0 calc(10px * var(--k)) calc(30px * var(--k)) rgba(0,0,0,.18), 0 calc(2px * var(--k)) calc(6px * var(--k)) rgba(0,0,0,.12);
+}
+.tile::after { content: ""; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 0 1px rgba(255,255,255,.12); pointer-events: none; }
+
+.wires { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; overflow: visible; }
+.wires :global(path) { fill: none; stroke: var(--wire); stroke-width: 1.2; stroke-dasharray: 4 4; }
+.wires :global(.port) { fill: var(--wire); }
+.wires :global(.spark) { fill: var(--accent); }
+
+.label {
+  position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); z-index: 3;
+  background: var(--page); padding: calc(12px * var(--k)) calc(18px * var(--k)) 0; border-radius: calc(12px * var(--k)) calc(12px * var(--k)) 0 0;
+  font-size: max(10px, clamp(calc(13px * var(--k)), calc(1.4vw * var(--k)), calc(18px * var(--k)))); font-weight: 500; line-height: 1; letter-spacing: .12em; text-transform: uppercase; color: #8c8c88;
+  white-space: nowrap;
+}
+
+/* ----- responsive ----- */
+/* a shorter laptop screen takes it a step smaller, so it still fits */
+@media (min-width: 1181px) and (max-height: 860px) {
+  .how { --k: 0.62; }
+}
+@media (max-width: 1180px) {
+  .how { --k: 1; }
+  .panel { grid-template-columns: 1fr 1fr; grid-template-areas: "core core" "c1 c3" "c2 c4"; padding-bottom: calc(56px * var(--k)); }
+  .wires { display: none; }
+  .b.end::before { background: var(--block); }
+  .core { min-height: 0; padding: calc(28px * var(--k)) 0 calc(12px * var(--k)); }
+}
+@media (max-width: 720px) {
+  .panel { grid-template-columns: 1fr; grid-template-areas: "core" "c1" "c2" "c3" "c4"; border-radius: calc(22px * var(--k)); padding: calc(10px * var(--k)) calc(10px * var(--k)) calc(52px * var(--k)); gap: calc(10px * var(--k)); }
+  .card { min-height: 0; padding: calc(24px * var(--k)) calc(22px * var(--k)) 0; }
+  .cardText { font-size: max(10px, calc(16px * var(--k))); }
+  .bleed { margin: auto calc(-22px * var(--k)) 0 0; }
+  .apps, .composer { margin-bottom: calc(22px * var(--k)); }
+  .apps { gap: calc(6px * var(--k)); }
+}
+/* bare: the four cards alone, for the product tour's tab, on the tab's
+   own backdrop. On a wide stage they sit in a centred two by two, each 600 wide,
+   and the tab sizes the panel to its stage and scales it to fit. At 760
+   and under they stack in reading order at full size, and the stage
+   scrolls them. */
+.how.bare { --k: 1; width: 100%; height: 100%; min-width: 1288px; padding: 0; background: transparent; }
+.bare .panel {
+  grid-template-columns: repeat(2, calc(600px * var(--k)));
+  grid-template-rows: repeat(2, auto);
+  grid-template-areas: "c1 c3" "c2 c4";
+  justify-content: center; align-content: center; gap: calc(24px * var(--k));
+  height: 100%; max-width: none; border-radius: 0; padding: calc(32px * var(--k));
+  background: transparent;
+}
+/* each card takes the ledger's paper (tab 4, .paper in
+   hero-tabs.generated.css): warm white, a faint hairline, 6px corners */
+.bare .card {
+  min-height: calc(368px * var(--k)); padding: calc(30px * var(--k)) calc(30px * var(--k)) 0;
+  border-radius: 6px; background: #fbfaf6; box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06);
+}
+.bare .cardText { font-size: max(10px, calc(18px * var(--k))); max-width: none; }
+.bare .bleed { margin: auto calc(-30px * var(--k)) 0 0; }
+.bare .apps, .bare .composer { margin-bottom: calc(30px * var(--k)); }
+@media (max-width: 760px) {
+  .how.bare { min-width: 0; height: auto; min-height: 100%; }
+  .bare .panel {
+    grid-template-columns: minmax(0, 1fr); grid-template-areas: "c1" "c2" "c3" "c4";
+    align-content: start; gap: 10px; min-height: 100%; height: auto; padding: 10px;
+  }
+  .bare .card { min-height: 0; padding: 22px 20px 0; gap: 18px; }
+  .bare .cardText { font-size: 15px; }
+  .bare .bleed { margin: auto -20px 0 0; }
+  .bare .apps, .bare .composer { margin-bottom: 20px; }
+  .bare .apps { gap: 6px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .b.pulse::before, .caret { animation: none; }
+  .wires :global(.spark) { display: none; }
+}

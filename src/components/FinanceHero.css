@@ -1,0 +1,100 @@
+/* The finance teams page's hero (FinanceHero.tsx), on Intercom's
+   omnichannel hero: centred copy, then a panel on a painted sky with the
+   mailbox and the phone overlapping on a fixed canvas, scaled to fit. */
+
+.fh { overflow: hidden; color: #0a0a0a; }
+
+/* ---------- the copy ---------- */
+.fh-copy { display: flex; flex-direction: column; align-items: center; padding: clamp(128px, 10vw, 196px) 24px 0; text-align: center; }
+.fh-title { margin: 0; font-size: clamp(42px, 6.2vw, 112px); font-weight: 400; line-height: .98; letter-spacing: -0.055em; text-wrap: balance; }
+/* the paragraph under the headline is the home hero's, to the letter
+   (HeroShowcase: light, clamp(13px, 1.35vw - 4px, 20px), 1.35, -0.02em,
+   ink; 14px on a phone) */
+.fh-lede {
+  max-width: 640px; margin: clamp(20px, 1.8vw, 32px) auto 0;
+  font-family: var(--font-ios); font-weight: 300;
+  font-size: clamp(13px, calc(1.35vw - 4px), 20px); line-height: 1.35; letter-spacing: -0.02em;
+  color: #0a0a0a; text-wrap: pretty;
+}
+@media (max-width: 799px) { .fh-lede { max-width: 520px; font-size: 14px; } }
+.fh-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: clamp(24px, 2vw, 36px); }
+.fh-btn { display: inline-flex; align-items: center; height: 52px; padding: 0 20px; border: 1px solid #0a0a0a; border-radius: 4px; font-size: 18px; color: #0a0a0a; text-decoration: none; transition: background-color .15s ease, color .15s ease; }
+.fh-btn:hover { background: rgba(10, 10, 10, .05); }
+.fh-btn--go { background: #000; color: #fff; }
+.fh-btn--go:hover { background: #1e1e1e; }
+.fh-btn:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 3px; }
+
+/* ---------- the panel ---------- */
+.fh-stage-wrap { position: relative; width: min(1560px, calc(100% - clamp(32px, 18vw, 360px))); margin: clamp(48px, 4.2vw, 80px) auto clamp(64px, 6vw, 112px); }
+.fh-stage { overflow: hidden; border-radius: 6px; background: url(/landing/anywhere/0e999254fb.jpg) 50% 40% / cover no-repeat, #9fc8d6; }
+.fh-tick { position: absolute; width: 8px; height: 8px; background: #0a0a0a; }
+.fh-tick--tl { left: -26px; top: -26px; } .fh-tick--tr { right: -26px; top: -26px; }
+.fh-tick--bl { left: -26px; bottom: -26px; } .fh-tick--br { right: -26px; bottom: -26px; }
+@media (max-width: 799px) { .fh-stage-wrap { width: calc(100% - 32px); } .fh-tick { display: none; } }
+.fh-canvas { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+.fh-px, .fh-px svg { display: block; width: 100%; height: 100%; }
+
+/* ---------- Sona's mailbox, a Gmail-style window ---------- */
+.fh-mail {
+  position: absolute; left: 150px; top: 90px; width: 1160px; height: 862px; overflow: hidden;
+  display: flex; flex-direction: column; border-radius: 14px; background: #fff; color: #1f1f1f;
+  font-family: var(--fh-roboto), Roboto, Arial, sans-serif; font-size: 14px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, .06), 0 24px 60px -28px rgba(20, 20, 30, .4);
+}
+.fh-mail__top { flex: none; display: flex; align-items: center; gap: 16px; height: 68px; padding: 0 20px; }
+.fh-mail__menu { display: flex; flex-direction: column; gap: 4px; width: 20px; }
+.fh-mail__menu i { height: 2px; border-radius: 1px; background: #444746; }
+.fh-mail__logo { width: 30px; height: auto; }
+.fh-mail__brand { margin-left: -8px; font-size: 22px; font-weight: 400; color: #444746; }
+.fh-mail__search { display: flex; align-items: center; gap: 14px; width: 640px; height: 48px; margin-left: 70px; padding: 0 18px; border-radius: 24px; background: #eaf1fb; color: #444746; font-size: 16px; }
+.fh-mail__search svg { width: 20px; height: 20px; }
+.fh-mail__icons { display: flex; align-items: center; gap: 18px; margin-left: auto; color: #444746; }
+.fh-mail__icons svg { width: 22px; height: 22px; }
+.fh-mail__ava { display: block; width: 36px; height: 36px; border-radius: 50%; overflow: hidden; }
+
+.fh-mail__body { flex: 1; min-height: 0; display: grid; grid-template-columns: 236px 1fr; }
+.fh-mail__side { display: flex; flex-direction: column; padding: 6px 14px 0 8px; }
+.fh-mail__compose { display: inline-flex; align-items: center; gap: 12px; align-self: flex-start; height: 56px; margin: 2px 0 16px 8px; padding: 0 24px 0 18px; border-radius: 16px; background: #c2e7ff; font-size: 15px; font-weight: 500; }
+.fh-mail__compose svg { width: 20px; height: 20px; }
+.fh-mail__nav { display: flex; align-items: center; height: 34px; padding: 0 16px 0 26px; border-radius: 0 17px 17px 0; font-size: 14px; }
+.fh-mail__nav.is-on { background: #d3e3fd; font-weight: 700; }
+.fh-mail__nav b { margin-left: auto; font-size: 12.5px; }
+
+.fh-mail__read { min-width: 0; padding: 0 34px 0 8px; overflow: hidden; }
+.fh-mail__tools { display: flex; align-items: center; height: 48px; color: #444746; font-size: 18px; }
+.fh-mail__count { margin-left: auto; font-size: 13px; }
+.fh-mail__subject { display: flex; align-items: center; gap: 10px; margin: 6px 0 20px 56px; font-size: 24px; font-weight: 400; }
+.fh-mail__subject span { padding: 2px 6px; border-radius: 4px; background: #e8eaed; font-size: 12px; color: #444746; }
+
+.fh-msg { display: grid; grid-template-columns: 40px 1fr; gap: 16px; padding-bottom: 18px; margin-bottom: 18px; border-bottom: 1px solid #eceff1; }
+.fh-msg__ava { display: block; width: 40px; height: 40px; border-radius: 50%; overflow: hidden; }
+.fh-msg__ava--ini { display: grid; place-items: center; background: #e4e2da; color: #55534e; font-size: 14px; font-weight: 600; }
+.fh-msg__head { display: flex; align-items: baseline; gap: 6px; }
+.fh-msg__head b { font-size: 14.5px; font-weight: 700; }
+.fh-msg__head small { font-size: 12.5px; color: #5e5e5e; }
+.fh-msg__head time { margin-left: auto; font-size: 12.5px; color: #5e5e5e; }
+.fh-msg__to { margin: 2px 0 12px; font-size: 12.5px; color: #5e5e5e; }
+.fh-msg p { max-width: 74ch; margin: 0 0 10px; font-size: 14.5px; line-height: 1.55; }
+.fh-msg .fh-msg__sig { color: #444746; }
+.fh-attach { display: inline-flex; align-items: center; gap: 10px; padding: 9px 14px; border: 1px solid #dadce0; border-radius: 8px; font-size: 13px; }
+.fh-attach span { padding: 2px 4px; border-radius: 3px; background: #d93025; color: #fff; font-size: 9.5px; font-weight: 700; }
+
+.fh-help { max-width: 500px; margin: 4px 0 0 56px; padding: 18px 22px; border-radius: 14px; background: #f3f3f2; }
+.fh-help b { font-size: 17px; font-weight: 600; }
+.fh-help p { margin: 6px 0 0; font-size: 14.5px; }
+.fh-help u { color: #0b57d0; text-underline-offset: 3px; }
+.fh-powered { margin: 16px 0 16px 56px; font-size: 12px; color: #5e5e5e; }
+.fh-powered b { font-weight: 600; color: #1f1f1f; }
+.fh-mail__reply { display: flex; gap: 10px; margin-left: 56px; }
+.fh-mail__reply span { padding: 8px 18px; border: 1px solid #747775; border-radius: 18px; font-size: 13.5px; font-weight: 500; color: #444746; }
+
+/* ---------- your phone, in the meeting card's frosted frame ---------- */
+.fh-phone {
+  position: absolute; width: 394px; height: 828px; padding: 12px; border-radius: 63px;
+  background: rgba(255, 255, 255, .3); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .6), 0 30px 60px -30px rgba(20, 20, 30, .45);
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+}
+.fh-phone--desktop { left: 1070px; top: 130px; }
+.fh-phone--mobile { left: 38px; top: 51px; }
+.fh-phone__fit { width: 402px; height: 874px; transform: scale(.92); transform-origin: 0 0; }
+.fh-phone .im-thread { justify-content: flex-end; }

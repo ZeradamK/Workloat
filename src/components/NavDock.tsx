@@ -2,21 +2,23 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
+import BrickMorph from "./BrickMorph";
+import { mono } from "./monoFont";
 
 /**
  * The nav, on the Mews anatomy: one full-bleed row flush to the top of
- * every page. The Payloat mark and its wordmark float left a step in
+ * every page. The Workloat mark and its wordmark float left a step in
  * from the page's content rail, the items sit centred on the screen, and
- * Sign up floats right as a black pill. Items are plain until hovered,
+ * Log-in and Sign up float right. Items are plain until hovered,
  * when a box appears behind the item and its panel drops 10px below the
  * bar. The bar rides above every section on every page.
  *
  * It is opaque on every ground, never glass: white with black type over
- * a light section, and pure black with white type and a white Sign up
- * pill over a dark one.
+ * a light section, and pure black with white type over a dark one. Sign
+ * up is black on both; once the hero's own sign up button scrolls away,
+ * it widens and the brick tile from that button fades in at its left.
  * The liquid-glass bar that read its ground is parked at
  * design-archive/NavDock-liquid-glass-bar.tsx.txt.
  */
@@ -34,6 +36,14 @@ const BARS = [
 
 /* one row, flush to the top of the page */
 const BAR_H = 76;
+/* the hover menu's card, after Ada's */
+const CARD_W = 880;
+/* menus whose pages are plain arrow links (no pictures) sit in a narrower
+   card */
+const ARROW_MENUS: Partial<Record<string, true>> = { Contact: true };
+const ARROW_CARD_W = 560;
+/* the foot line parting and knitting back */
+const LINE_EASE = { duration: 0.42, ease: [0.65, 0, 0.25, 1] } as const;
 const COMPACT_H = 64;
 /* the logo steps this far in past the page's own content rail; the
    items ignore it and centre on the screen instead */
@@ -49,14 +59,14 @@ const GRID_LIGHT = "#bebebe";  /* #eeeeee, 20% toward black */
 /* the two grounds the bar can sit over, and the skin it takes on each:
    #eeeeee with black type, or pure black with white type. The dark skin
    sits just below the black sections it rides over, so a grid line at
-   its foot is what draws the bar's bottom edge. Sign up
-   is the hero's split button, an arrow block against a body, reversed
-   on the dark skin so it still reads there. */
+   its foot is what draws the bar's bottom edge. Sign up is black on
+   both skins; Log-in takes the skin's link greys. The menu panel's own
+   button keeps the split arrow block, reversed on the dark skin. */
 type Ground = "light" | "dark";
 const SKIN: Record<Ground, {
   bg: string; fg: string; dim: string; rule: string; hover: string;
-  arrow: string; arrowFg: string; cta: string; ctaFg: string; mark: string; line: string;
-  panelRule: string;
+  login: string; loginHover: string; line: string; panelRule: string;
+  arrow: string; arrowFg: string; cta: string; ctaFg: string;
 }> = {
   light: {
     bg: "#eeeeee",
@@ -64,13 +74,13 @@ const SKIN: Record<Ground, {
     dim: "rgba(10,10,10,0.6)",
     rule: "rgba(10,10,10,0.12)",
     hover: "rgba(10,10,10,0.05)",
-    /* Sign up is the hero's Get started for free: an #0a0a0a arrow
-       block against an #1e1e1e body */
+    login: "rgba(10,10,10,0.6)",
+    loginHover: "#0a0a0a",
+    /* the menu panel's button: an #0a0a0a arrow block against an #1e1e1e body */
     arrow: "#0a0a0a",
     arrowFg: "#ffffff",
     cta: "#1e1e1e",
     ctaFg: "#ffffff",
-    mark: "/payloat-mark.svg",
     line: GRID_LIGHT,
     panelRule: "rgba(10,10,10,0.1)",
   },
@@ -80,12 +90,13 @@ const SKIN: Record<Ground, {
     dim: "rgba(255,255,255,0.65)",
     rule: "rgba(255,255,255,0.16)",
     hover: "rgba(255,255,255,0.1)",
-    /* the same button reversed, so it still reads on the black bar */
+    login: "#bdbdbd",
+    loginHover: "#ffffff",
+    /* the same button reversed, so it still reads on the black panel */
     arrow: "#eeeeee",
     arrowFg: "#0a0a0a",
     cta: "#ffffff",
     ctaFg: "#0a0a0a",
-    mark: "/payloat-mark-white.svg",
     line: GRID_DARK,
     panelRule: "rgba(255,255,255,0.14)",
   },
@@ -105,18 +116,22 @@ const PANEL_ORDER: Record<PanelKey, true> = {
 
 /** What each menu holds: an entry per page, each with the line that
     says what it is, the way Swap and Intercom set their menus out. */
-type Entry = { label: string; href: string; blurb: string };
+type Entry = { label: string; href: string; blurb: string; img?: string; pos?: string };
 
 const PRODUCT_ITEMS: Entry[] = [
   {
     label: "Bank Integration",
     href: "/integration",
     blurb: "Every account and card your agents draw from, in one ledger.",
+    img: "/landing/anywhere/a6ccfa82f4.jpg",
+    pos: "70% 20%",
   },
   {
     label: "Investing with agents",
     href: "/product",
     blurb: "Caps, approvals and receipts for the money agents move.",
+    img: "/landing/hero/hero-bg-poster.jpg",
+    pos: "40% 70%",
   },
 ];
 
@@ -124,17 +139,16 @@ const SOLUTION_ITEMS: Entry[] = [
   {
     label: "Financial teams",
     href: "/finance-teams",
-    blurb: "Payle reads every charge and decides before the money moves.",
+    blurb: "Sona reads every charge and checks with you before the money moves.",
+    img: "/landing/hero/hero-bg-poster.jpg",
+    pos: "70% 60%",
   },
   {
     label: "Enterprise",
     href: "/enterprise",
     blurb: "Controls, audit and scale for companies running many agents.",
-  },
-  {
-    label: "Security",
-    href: "/security",
-    blurb: "Where the ledger holds your data, and who can reach it.",
+    img: "/landing/anywhere/0e999254fb.jpg",
+    pos: "30% 60%",
   },
 ];
 
@@ -143,21 +157,15 @@ const CONTACT_ITEMS: Entry[] = [
     label: "Support",
     href: "/contact#support",
     blurb: "A person reads every message.",
+    img: "/landing/anywhere/0e999254fb.jpg",
+    pos: "50% 30%",
   },
   {
     label: "Sales",
     href: "/contact#sales",
     blurb: "For companies with many agents, many locations, or both.",
-  },
-  {
-    label: "Press",
-    href: "/contact#press",
-    blurb: "Writing about Payloat Ledger? We are happy to talk.",
-  },
-  {
-    label: "Help center",
-    href: "/#faq",
-    blurb: "Short answers to the questions we hear most.",
+    img: "/landing/hero/hero-bg-poster.jpg",
+    pos: "20% 80%",
   },
 ];
 
@@ -168,44 +176,35 @@ const PRICING_ITEMS = [
   { title: "Enterprise", price: "Custom" },
 ];
 
-/** The panel's right-hand column: one thing worth doing per menu. */
-const FEATURED: Record<PanelKey, { eyebrow: string; head: string; body: string; cta: string; href: string }> = {
-  Product: {
-    eyebrow: "Start here",
-    head: "Give your first agent a card.",
-    body: "Create an agent, set its cap, and every purchase it makes lands in the ledger with the task behind it.",
-    cta: "Sign up",
-    href: "/signup",
-  },
-  Features: {
-    eyebrow: "See it on your own spend",
-    head: "Bring us a month of agent charges.",
-    body: "We will read them back to you with the task, the cap and the receipt against each one.",
-    cta: "Book a demo",
-    href: "/contact#sales",
-  },
-  Pricing: {
-    eyebrow: "Start free",
-    head: "Nothing to pay until agents spend.",
-    body: "Every plan records the same ledger. What changes is how many agents write to it.",
-    cta: "Sign up",
-    href: "/signup",
-  },
-  Contact: {
-    eyebrow: "Before you write",
-    head: "The questions we hear most.",
-    body: "What the ledger records, how purchases reach it, what it costs, and when you can have it.",
-    cta: "Read the FAQ",
-    href: "/#faq",
-  },
+/** The menu's right-hand side, after Ada's: short link columns under
+    grey heads (an arrow marks a link that leaves the page). */
+type SideLink = { label: string; href: string; out?: boolean };
+const SIDE: Record<PanelKey, { head: string; links: SideLink[] }[]> = {
+  Product: [
+    { head: "Learn", links: [{ label: "How a Loat works", href: "/#how-loats-work" }, { label: "FAQ", href: "/#faq" }] },
+    { head: "Get started", links: [{ label: "Sign up", href: "/signup" }, { label: "Book a demo", href: "/contact#sales" }] },
+  ],
+  Features: [
+    { head: "Get started", links: [{ label: "Book a demo", href: "/contact#sales" }, { label: "Sign up", href: "/signup" }] },
+  ],
+  Pricing: [
+    { head: "Get started", links: [{ label: "Sign up", href: "/signup" }] },
+  ],
+  Contact: [
+    { head: "Follow", links: [{ label: "LinkedIn", href: "https://www.linkedin.com", out: true }, { label: "Mail", href: "mailto:hello@workloat.com", out: true }] },
+  ],
 };
 
 /* Pricing is LOCKED for now: fully built (panel, items, collapsed tree)
    but hidden from every screen size. Flip to true to restore it. */
 const SHOW_PRICING = false;
 
+/* Product is off the bar (and the phone menu) for now; its panel and
+   pages stay. Flip to true to bring it back. */
+const SHOW_PRODUCT = false;
+
 const NAV = (Object.keys(PANEL_ORDER) as PanelKey[]).filter(
-  (k) => SHOW_PRICING || k !== "Pricing",
+  (k) => (SHOW_PRICING || k !== "Pricing") && (SHOW_PRODUCT || k !== "Product"),
 );
 
 /** main nav items with a page of their own */
@@ -237,6 +236,19 @@ export default function NavDock({ skin: pinned, ..._props }: {
   const router = useRouter();
   const [active, setActive] = useState<PanelKey | null>(null);
   const [hovered, setHovered] = useState<PanelKey | null>(null);
+  /* where the card opens: centred on the hovered item, held inside the
+     screen. `at` is the item's centre, where the bar's foot line breaks
+     from. */
+  const [card, setCard] = useState({ left: 0, w: CARD_W, at: 0 });
+  const placeCard = (el: HTMLElement, key: string) => {
+    const frame = headerRef.current?.getBoundingClientRect();
+    if (!frame) return;
+    const r = el.getBoundingClientRect();
+    const w = Math.min(ARROW_MENUS[key] ? ARROW_CARD_W : CARD_W, window.innerWidth - 32);
+    const at = r.left + r.width / 2;
+    const left = Math.max(16, Math.min(at - w / 2, window.innerWidth - w - 16));
+    setCard({ left: left - frame.left, w, at: at - frame.left });
+  };
 
   /* ---- the ground under the bar, sampled on scroll. The bar spans the
      full width, so a section that is black under one part of the row and
@@ -249,6 +261,14 @@ export default function NavDock({ skin: pinned, ..._props }: {
   const [logoGround, setLogoGround] = useState<Ground>("light");
   const [itemsGround, setItemsGround] = useState<Ground>("light");
   const [ctaGround, setCtaGround] = useState<Ground>("light");
+  /* over a band marked data-nav-clear (the home page's black agent act
+     and the fades into and out of it) the bar drops its ground and its
+     foot line, so the band runs on under it unbroken */
+  const [clear, setClear] = useState(false);
+  /* past the hero: its own sign up button (marked data-hero-cta) has gone
+     up behind the bar. A page without one counts once it has scrolled
+     most of a screen. */
+  const [pastHero, setPastHero] = useState(false);
   useEffect(() => {
     const header = headerRef.current;
     const lum = (c: string): number | null => {
@@ -269,6 +289,16 @@ export default function NavDock({ skin: pinned, ..._props }: {
     const read = (x: number, y: number): Ground | null => {
       const stack = document.elementsFromPoint(x, y).filter((el) => !header?.contains(el));
       const top = stack[0] as HTMLElement | undefined;
+      /* a fade names its two ends and where it turns ("light-dark" at
+         0.54): its colours are mixed in CSS, so reading them would answer
+         wrongly, and with the bar clear over it the type must turn exactly
+         where the ground does */
+      const fade = top?.closest<HTMLElement>("[data-nav-fade]");
+      if (fade) {
+        const [from, to] = (fade.dataset.navFade ?? "light-dark").split("-") as [Ground, Ground];
+        const r = fade.getBoundingClientRect();
+        return (y - r.top) / r.height < Number(fade.dataset.navFlip ?? 0.5) ? from : to;
+      }
       /* a section can name the skin it wants the bar to wear over it, for
          grounds whose luminance reads the wrong way: the green statement
          band is dark but wants the light bar. Asked before any colour is
@@ -311,6 +341,14 @@ export default function NavDock({ skin: pinned, ..._props }: {
       if (gi !== null) setItemsGround((c) => (c === gi ? c : gi));
       const gc = read(mid('[data-cell="cta"]', 0.92), y);
       if (gc !== null) setCtaGround((c) => (c === gc ? c : gc));
+      const under = document.elementsFromPoint(window.innerWidth / 2, y).find((el) => !header?.contains(el));
+      const cl = !!under?.closest("[data-nav-clear]");
+      setClear((c) => (c === cl ? c : cl));
+      const heroCtas = [...document.querySelectorAll<HTMLElement>("[data-hero-cta]")].filter((e) => e.offsetWidth > 0);
+      const past = heroCtas.length
+        ? heroCtas.every((e) => e.getBoundingClientRect().bottom < barH.current)
+        : window.scrollY > window.innerHeight * 0.6;
+      setPastHero((c) => (c === past ? c : past));
     };
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(sample);
@@ -376,6 +414,8 @@ export default function NavDock({ skin: pinned, ..._props }: {
   }, []);
 
   const highlight = hovered ?? active;
+  /* the menu card is black on both skins, so it always takes the dark ink */
+  const M = SKIN.dark;
   const H = collapsed ? COMPACT_H : BAR_H;
   barH.current = H;
 
@@ -383,17 +423,29 @@ export default function NavDock({ skin: pinned, ..._props }: {
     <header
       ref={headerRef}
       className={`fixed inset-x-0 top-0 ${TONE}`}
-      style={{ height: H, zIndex: 9999, backgroundColor: S.bg, color: S.fg }}
+      style={{ height: H, zIndex: 9999, backgroundColor: clear && !menuOpen ? "transparent" : S.bg, color: S.fg }}
       onMouseLeave={() => {
         setHovered(null);
         setActive(null);
       }}
     >
-      <span
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-px"
-        style={{ backgroundColor: S.line }}
-        aria-hidden
-      />
+      {/* the foot line, in two halves. While a menu is open they part from
+          the item's centre to just past the card's edges, small ticks
+          marking the break; they knit back when it closes */}
+      {(() => {
+        const open = !!active && !collapsed;
+        const gapL = open ? card.left - 14 : card.at;
+        const gapR = open ? card.left + card.w + 14 : card.at;
+        const line = { backgroundColor: S.line };
+        return (
+          <span className="pointer-events-none absolute inset-x-0 bottom-0 h-px transition-opacity duration-200" style={{ opacity: clear && !menuOpen ? 0 : 1 }} aria-hidden>
+            <motion.span className="absolute left-0 top-0 h-px" style={line} initial={false} animate={{ width: Math.max(0, gapL) }} transition={LINE_EASE} />
+            <motion.span className="absolute right-0 top-0 h-px" style={{ ...line, left: undefined }} initial={false} animate={{ left: gapR }} transition={LINE_EASE} />
+            <motion.span className="absolute top-[-3px] h-[7px] w-px" style={{ backgroundColor: S.fg }} initial={false} animate={{ left: gapL, opacity: open ? 0.45 : 0 }} transition={LINE_EASE} />
+            <motion.span className="absolute top-[-3px] h-[7px] w-px" style={{ backgroundColor: S.fg }} initial={false} animate={{ left: gapR, opacity: open ? 0.45 : 0 }} transition={LINE_EASE} />
+          </span>
+        );
+      })()}
 
       <div className={`relative ${FRAME}`}>
         {/* ---- the full bar ---- */}
@@ -409,7 +461,7 @@ export default function NavDock({ skin: pinned, ..._props }: {
               <Link
                 href="/"
                 data-cell="logo"
-                aria-label="Payloat home"
+                aria-label="Workloat home"
                 className="flex shrink-0 items-center gap-[11px] transition-opacity hover:opacity-80"
                 style={{ marginLeft: LOGO_PAD }}
               >
@@ -428,11 +480,15 @@ export default function NavDock({ skin: pinned, ..._props }: {
                     key={item}
                     type="button"
                     data-item={item}
-                    onMouseEnter={() => {
+                    onMouseEnter={(ev) => {
+                      placeCard(ev.currentTarget, item);
                       setHovered(item);
                       setActive(item);
                     }}
-                    onFocus={() => setHovered(item)}
+                    onFocus={(ev) => {
+                      placeCard(ev.currentTarget, item);
+                      setHovered(item);
+                    }}
                     onClick={() => {
                       const route = PAGE_ROUTES[item];
                       if (route) {
@@ -444,16 +500,17 @@ export default function NavDock({ skin: pinned, ..._props }: {
                     }}
                     aria-expanded={active === item}
                     aria-haspopup="true"
-                    className="relative flex h-10 items-center gap-1.5 whitespace-nowrap px-[clamp(10px,1.1vw,18px)] text-[16px] font-medium tracking-[-0.2px]"
+                    className={`${mono.className} relative flex h-10 items-center gap-1.5 whitespace-nowrap px-[clamp(10px,1.1vw,18px)] text-[11px] font-medium uppercase leading-none tracking-[0.08em] transition-colors duration-150`}
+                    style={{ color: highlight === item ? S.bg : undefined }}
                   >
-                    {/* the box, only while open: a 10px block in the same
-                        tint the menu's own entries take on hover */}
+                    {/* the open item, after Ada's: a full pill in the
+                        bar's ink, the label reversed out of it */}
                     <AnimatePresence>
                       {highlight === item && (
                         <motion.span
                           layoutId="navHoverBox"
                           className="absolute inset-0"
-                          style={{ backgroundColor: S.hover, borderRadius: 10 }}
+                          style={{ backgroundColor: S.fg, borderRadius: 999 }}
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           exit={{ opacity: 0, transition: { duration: 0.12 } }}
@@ -486,110 +543,113 @@ export default function NavDock({ skin: pinned, ..._props }: {
               </nav>
 
               <div className="ml-auto flex shrink-0 items-center pl-6" data-cell="cta">
-                <Link
-                  href="/signup"
-                  className="inline-flex h-[42px] items-stretch text-[14px] font-semibold tracking-[-0.3px] transition-transform hover:scale-[1.02] active:scale-[0.98]"
-                >
-                  <span
-                    className={`flex w-[42px] items-center justify-center ${TONE}`}
-                    style={{ backgroundColor: S.arrow }}
-                  >
-                    <svg width="11" height="11" viewBox="0 0 16 16" fill="none" aria-hidden>
-                      <path d="M5 2.5 10.5 8 5 13.5" stroke={S.arrowFg} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </span>
-                  <span
-                    className={`flex items-center px-5 ${TONE}`}
-                    style={{ backgroundColor: S.cta, color: S.ctaFg }}
-                  >
-                    Sign up
-                  </span>
-                </Link>
+                <NavAuth skin={S} pastHero={pastHero} />
               </div>
             </div>
 
-            {/* the menu: the bar's own colour carried on down the full
-                width, opening by growing rather than dropping a card */}
+            {/* the menu, after Ada's: a black card centred under the
+                hovered item, 8px below its pill, crossing the bar's foot
+                line (which breaks around it). Pages as picture cards on the
+                left (a thumbnail, the title, one line), short link columns
+                on the right. The card's wrapper overlaps the bar, so the
+                pointer never leaves the header on its way down. */}
             <AnimatePresence>
               {active && (
                 <motion.div
                   key="navPanel"
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.28, ease: [0.25, 0.6, 0.2, 1] }}
-                  className="absolute inset-x-0 overflow-hidden"
-                  style={{ top: BAR_H, backgroundColor: S.bg, color: S.fg }}
+                  initial={{ opacity: 0, y: -6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6, transition: { duration: 0.12 } }}
+                  transition={{ duration: 0.22, ease: [0.25, 0.6, 0.2, 1] }}
+                  className="absolute pt-1"
+                  style={{ top: BAR_H - 14, left: card.left, width: card.w }}
                 >
-                  <span
-                    className="pointer-events-none absolute inset-x-0 bottom-0 h-px"
-                    style={{ backgroundColor: S.line }}
-                    aria-hidden
-                  />
-                  <div className={`${INNER} pb-[clamp(28px,3vw,52px)] pt-[clamp(22px,2.4vw,40px)]`}>
-                    <div className="grid gap-[clamp(24px,3vw,56px)] min-[1100px]:grid-cols-[1.35fr_1fr]">
-                      <div>
-                        <p className="font-numeral text-[11px] uppercase tracking-[1.8px]" style={{ color: S.dim }}>
-                          {active}
-                        </p>
-                        <ul className="mt-[clamp(12px,1.2vw,20px)] grid gap-1 min-[760px]:grid-cols-2">
-                          {ENTRIES[active].map((e) => (
-                            <li key={e.label}>
-                              <Link
-                                href={e.href}
-                                onClick={() => setActive(null)}
-                                className="group block rounded-[10px] p-3 transition-colors"
-                                style={{ color: S.fg }}
-                                onMouseEnter={(ev) => {
-                                  ev.currentTarget.style.backgroundColor = S.hover;
-                                }}
-                                onMouseLeave={(ev) => {
-                                  ev.currentTarget.style.backgroundColor = "transparent";
-                                }}
-                              >
-                                <span className="min-w-0">
-                                  <span className="block text-[15px] font-semibold tracking-[-0.3px]">
-                                    {e.label}
-                                  </span>
-                                  <span className="mt-0.5 block text-[13px] leading-[1.45]" style={{ color: S.dim }}>
-                                    {e.blurb}
-                                  </span>
-                                </span>
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-
-                      {/* the one thing worth doing from this menu */}
-                      <div
-                        className="rounded-[10px] p-[clamp(18px,1.8vw,30px)]"
-                        style={{ border: `1px solid ${S.panelRule}`, backgroundColor: S.hover }}
-                      >
-                        <p className="font-numeral text-[11px] uppercase tracking-[1.8px]" style={{ color: S.dim }}>
-                          {FEATURED[active].eyebrow}
-                        </p>
-                        <p className="mt-2.5 text-[clamp(18px,1.5vw,24px)] font-medium leading-[1.2] tracking-[-0.6px]">
-                          {FEATURED[active].head}
-                        </p>
-                        <p className="mt-2.5 max-w-[46ch] text-[13px] leading-[1.5]" style={{ color: S.dim }}>
-                          {FEATURED[active].body}
-                        </p>
-                        <Link
-                          href={FEATURED[active].href}
-                          onClick={() => setActive(null)}
-                          className="mt-5 inline-flex h-[42px] items-stretch text-[13px] font-semibold tracking-[-0.3px] transition-transform hover:scale-[1.02]"
-                        >
-                          <span className="flex w-[42px] items-center justify-center" style={{ backgroundColor: S.arrow }}>
-                            <svg width="11" height="11" viewBox="0 0 16 16" fill="none" aria-hidden>
-                              <path d="M5 2.5 10.5 8 5 13.5" stroke={S.arrowFg} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                  <div
+                    className="grid gap-x-[clamp(16px,2vw,36px)] rounded-[5px] p-2.5 min-[860px]:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]"
+                    style={{
+                      backgroundColor: "#0a0a0a",
+                      color: M.fg,
+                      boxShadow: "0 0 0 1px rgba(255,255,255,0.08), 0 24px 60px -24px rgba(10,10,10,0.55)",
+                    }}
+                  >
+                    <ul className="flex flex-col gap-1">
+                      {ENTRIES[active].map((e) => ARROW_MENUS[active] ? (
+                        /* an arrow link: the arrow at the left nudges right
+                           on hover and eases back when the pointer leaves */
+                        <li key={e.label}>
+                          <Link
+                            href={e.href}
+                            onClick={() => setActive(null)}
+                            className="group flex items-start gap-3 rounded-[4px] px-3 py-3 transition-colors"
+                            style={{ color: M.fg }}
+                            onMouseEnter={(ev) => { ev.currentTarget.style.backgroundColor = M.hover; }}
+                            onMouseLeave={(ev) => { ev.currentTarget.style.backgroundColor = "transparent"; }}
+                          >
+                            <svg
+                              className="mt-[5px] shrink-0 transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:translate-x-[5px] group-focus-visible:translate-x-[5px] motion-reduce:transition-none"
+                              width="14" height="14" viewBox="0 0 340.034 340.034" aria-hidden
+                            >
+                              <polygon fill="currentColor" points="222.814,52.783 200.902,74.686 280.748,154.528 0,154.528 0,185.513 280.748,185.513 200.902,265.353 222.814,287.252 340.034,170.023" />
                             </svg>
-                          </span>
-                          <span className="flex items-center px-5" style={{ backgroundColor: S.cta, color: S.ctaFg }}>
-                            {FEATURED[active].cta}
-                          </span>
-                        </Link>
-                      </div>
+                            <span className="min-w-0">
+                              <span className="block text-[16px] font-medium tracking-[-0.3px]">{e.label}</span>
+                              <span className="mt-1 block text-[13.5px] leading-[1.35]" style={{ color: M.dim }}>
+                                {e.blurb}
+                              </span>
+                            </span>
+                          </Link>
+                        </li>
+                      ) : (
+                        <li key={e.label}>
+                          <Link
+                            href={e.href}
+                            onClick={() => setActive(null)}
+                            className="flex items-center gap-4 rounded-[4px] p-1.5 pr-3 transition-colors"
+                            style={{ color: M.fg }}
+                            onMouseEnter={(ev) => { ev.currentTarget.style.backgroundColor = M.hover; }}
+                            onMouseLeave={(ev) => { ev.currentTarget.style.backgroundColor = "transparent"; }}
+                          >
+                            <span
+                              className="block h-[84px] w-[84px] shrink-0 rounded-[4px] bg-cover"
+                              style={{ backgroundImage: e.img ? `url(${e.img})` : undefined, backgroundPosition: e.pos ?? "center", backgroundColor: M.hover }}
+                              aria-hidden
+                            />
+                            <span className="min-w-0">
+                              <span className="block text-[16px] font-medium tracking-[-0.3px]">{e.label}</span>
+                              <span className="mt-1 block text-[13.5px] leading-[1.35]" style={{ color: M.dim }}>
+                                {e.blurb}
+                              </span>
+                            </span>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                    <div className="grid grid-cols-2 gap-x-6 px-3 pb-3 pt-3 min-[860px]:px-1">
+                      {SIDE[active].map((g) => (
+                        <div key={g.head}>
+                          <p className="text-[15px]" style={{ color: M.dim }}>{g.head}</p>
+                          <ul className="mt-2.5 flex flex-col gap-2">
+                            {g.links.map((l) => (
+                              <li key={l.label}>
+                                <Link
+                                  href={l.href}
+                                  onClick={() => setActive(null)}
+                                  className="inline-flex items-center gap-1 text-[16px] tracking-[-0.2px] hover:underline hover:underline-offset-4"
+                                  style={{ color: M.fg }}
+                                  {...(l.out ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                                >
+                                  {l.label}
+                                  {l.out && (
+                                    <svg width="11" height="11" viewBox="0 0 16 16" fill="none" aria-hidden>
+                                      <path d="M4.5 11.5 11.5 4.5M5.5 4.5h6v6" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+                                    </svg>
+                                  )}
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </motion.div>
@@ -606,7 +666,7 @@ export default function NavDock({ skin: pinned, ..._props }: {
           >
             <Link
               href="/"
-              aria-label="Payloat home"
+              aria-label="Workloat home"
               className="flex items-center gap-[11px] transition-opacity hover:opacity-80"
             >
               <Lockup skin={S} />
@@ -775,19 +835,7 @@ export default function NavDock({ skin: pinned, ..._props }: {
                     ))}
 
                     <div className="mt-3 border-t pt-4" style={{ borderColor: S.rule }}>
-                      <Link
-                        href="/signup"
-                        className="flex h-11 w-full items-stretch text-[15px] font-semibold tracking-[-0.5px]"
-                      >
-                        <span className="flex w-11 items-center justify-center" style={{ backgroundColor: S.arrow }}>
-                          <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden>
-                            <path d="M5 2.5 10.5 8 5 13.5" stroke={S.arrowFg} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                          </svg>
-                        </span>
-                        <span className="flex flex-1 items-center justify-center" style={{ backgroundColor: S.cta, color: S.ctaFg }}>
-                          Sign up
-                        </span>
-                      </Link>
+                      <NavAuth skin={S} pastHero={pastHero} wide onNavigate={() => setMenuOpen(false)} />
                     </div>
                   </motion.div>
                 )}
@@ -800,29 +848,83 @@ export default function NavDock({ skin: pinned, ..._props }: {
   );
 }
 
-/* The mark and its wordmark, one component so the full bar and the
-   compact one render exactly the same lockup. 26px semibold with the
-   tracking pulled in sets the wordmark's cap height at about 55% of the
-   mark's, the ratio the mark-plus-name lockups on Vercel, Linear,
-   Cursor and Aboard all sit at. */
+/* Log-in and Sign up, from the Workloat nav auth design: Geist Mono
+   labels, uppercase at 11px. Sign up is #000000 with an #333333 border,
+   30px tall, 5px radius, on either skin. Once the hero is passed it
+   widens and the hero button's brick tile fades in at its left, starting
+   its walk through W O R K L O A T. The focus ring takes the skin's ink
+   so it shows on the light bar too. */
+const EASE = [0.25, 0.6, 0.2, 1] as const;
+
+function NavAuth({ skin, pastHero, wide = false, onNavigate }: {
+  skin: (typeof SKIN)[Ground];
+  pastHero: boolean;
+  /** the compact menu's foot: Sign up fills the row */
+  wide?: boolean;
+  onNavigate?: () => void;
+}) {
+  return (
+    <div
+      className={`${mono.className} flex items-center gap-[14px] text-[11px] uppercase leading-none ${wide ? "w-full" : ""}`}
+      style={{ "--l": skin.login, "--lh": skin.loginHover, "--ring": skin.fg } as React.CSSProperties}
+    >
+      <Link
+        href="/signup?mode=login"
+        onClick={onNavigate}
+        className="whitespace-nowrap rounded-[2px] font-normal tracking-[0.06em] text-[var(--l)] transition-colors duration-[180ms] ease-out hover:text-[var(--lh)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lh)]"
+      >
+        Log-in
+      </Link>
+      <Link
+        href="/signup"
+        onClick={onNavigate}
+        className={`inline-flex h-[30px] items-center whitespace-nowrap rounded-[5px] border border-solid border-[#333333] bg-[#000000] pr-[13px] font-medium tracking-[0.08em] text-[#ffffff] transition-[background-color,border-color,transform] duration-[180ms] ease-out [-webkit-tap-highlight-color:transparent] hover:border-[#555555] hover:bg-[#0e0e0e] active:translate-y-px focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ring)] ${wide ? "flex-1 justify-center" : ""}`}
+      >
+        {/* the lead-in: 13px of padding before the hero, then room for
+            the 22px tile and its gap after it */}
+        <motion.span
+          aria-hidden
+          className="relative h-full shrink-0 overflow-hidden"
+          initial={false}
+          animate={{ width: pastHero ? 33 : 13 }}
+          transition={{ duration: 0.5, ease: EASE }}
+        >
+          <AnimatePresence>
+            {pastHero && (
+              <motion.span
+                key="tile"
+                className="absolute left-[3px] top-[3px] h-[22px] w-[22px] overflow-hidden rounded-[3px] bg-[#000000] after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.14)] after:content-['']"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1, transition: { duration: 0.35, ease: EASE, delay: 0.18 } }}
+                exit={{ opacity: 0, scale: 0.8, transition: { duration: 0.18, ease: EASE } }}
+              >
+                <BrickMorph size={22} fill={0.78} theme="dark" />
+              </motion.span>
+            )}
+          </AnimatePresence>
+        </motion.span>
+        Sign up
+      </Link>
+    </div>
+  );
+}
+
+/* The WORKLOAT wordmark alone, one component so the full bar and the
+   compact one render exactly the same lockup. It is drawn as a mask over
+   a filled box so it takes the skin's ink and flips with the bar in the
+   same 200ms. */
 function Lockup({ skin }: { skin: (typeof SKIN)[Ground] }) {
   return (
-    <>
-      <Image
-        src={skin.mark}
-        alt=""
-        width={622}
-        height={910}
-        priority
-        className="h-[34px] w-auto"
-      />
-      <span
-        className={`text-[26px] font-semibold leading-none tracking-[-0.6px] ${TONE}`}
-        style={{ color: skin.fg }}
-      >
-        payloat
-      </span>
-    </>
+    <span
+      role="img"
+      aria-label="Workloat"
+      className={`block h-[20px] w-[169px] shrink-0 ${TONE}`}
+      style={{
+        backgroundColor: skin.fg,
+        WebkitMask: "url(/brand/workloat-wordmark.png) center / contain no-repeat",
+        mask: "url(/brand/workloat-wordmark.png) center / contain no-repeat",
+      }}
+    />
   );
 }
 

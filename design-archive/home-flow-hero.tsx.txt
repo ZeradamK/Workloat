@@ -1,0 +1,59 @@
+/* Home page act: "One Loat for every task your team repeats."
+   Archived 2026-10-06, taken off the home page (it sat after the
+   Wherever your team works section, before the compatibility grid).
+   The FlowHero component itself stays in src/components (the finance
+   teams page uses it); this is only the home page's copy and list.
+   To bring it back: add the import below to src/app/page.tsx and paste
+   the JSX where it sat.
+*/
+
+import FlowHero from "@/components/FlowHero";
+
+      {/* the flow hero, shared with the finance teams page, with the
+          Loats' own copy; on white, over the Slack act's foot */}
+      <div className="relative z-10">
+        <FlowHero
+          tone="dark"
+          lines={["One Loat", "for every", "task your", "team", "repeats."]}
+          body="Hand a Loat the work you do every week. It reads your mail and files, drafts the emails, books the meetings and reports back. Nothing leaves until you approve it."
+          cta={{ label: "Get started", href: "/signup" }}
+          tasks={[
+            "Hiring",
+            "Interview scheduling and screening",
+            "Candidate follow-ups",
+            "Contract review and renewal tracking",
+            "Invoice processing",
+            "Month-end close follow-ups",
+            "Spend and budget monitoring",
+            "Travel and event logistics",
+            "Meeting invites",
+            "Post-meeting follow-up",
+            "Rescheduling",
+            "Calendar holds",
+            "Email drafts",
+            "Reply tracking",
+            "Reminder emails",
+            "Stand-up summaries",
+            "Status updates",
+            "Report summaries",
+            "Document reviews",
+            "Spreadsheet answers",
+            "Deck feedback",
+            "Research briefs",
+            "Gathering answers",
+          ]}
+          longTasks
+          from="You"
+          agent="Your Loat"
+          to="Back to you"
+          trustedLabel="Works with the banks and cards you already use"
+          logos={[
+            { src: "/logos/banks/chase.jpg", alt: "Chase", tile: true },
+            { src: "/logos/banks/mercury.png", alt: "Mercury", tile: true },
+            { src: "/logos/brex.svg", alt: "Brex" },
+            { src: "/logos/banks/capitalone.svg", alt: "Capital One" },
+            { src: "/logos/banks/citi.png", alt: "Citi" },
+            { src: "/logos/banks/wellsfargo.png", alt: "Wells Fargo", tile: true },
+          ]}
+        />
+      </div>

@@ -1,0 +1,95 @@
+/* The finance teams page's Procedures section (FinanceProcedures.tsx), on
+   Intercom's "trained to understand your business deeply": copy, then a
+   wide panel on a deeper ground, the procedure card and Sona's chat on a
+   1560 x 990 canvas scaled to the panel (the chat alone on a phone, 440 x
+   760). Faint policy text sits at the section's edges. */
+
+.fp { position: relative; overflow: hidden; padding: clamp(64px, 6vw, 120px) 0 clamp(40px, 4vw, 80px); color: #0a0a0a; }
+.fp-wrap { position: relative; z-index: 1; width: min(1560px, calc(100% - clamp(32px, 18vw, 360px))); margin: 0 auto; }
+@media (max-width: 799px) { .fp-wrap { width: calc(100% - 32px); } }
+
+/* faint typewritten policy at the edges */
+.fp-policy { position: absolute; pointer-events: none; font: 400 13px/1.6 var(--fp-mono); letter-spacing: .08em; text-transform: uppercase; color: #0a0a0a; opacity: .07; overflow: hidden; }
+.fp-policy--top { right: 0; top: 0; width: 30%; height: clamp(220px, 20vw, 380px); -webkit-mask-image: linear-gradient(90deg, transparent, #000 40%); mask-image: linear-gradient(90deg, transparent, #000 40%); }
+.fp-policy--side { left: 0; top: 46%; width: clamp(0px, 9vw - 40px, 140px); height: 40%; }
+@media (max-width: 899px) { .fp-policy--top { display: none; } }
+
+.fp-copy { position: relative; max-width: 860px; margin-bottom: clamp(32px, 3.2vw, 60px); }
+.fp-title { margin: 0 0 clamp(16px, 1.4vw, 26px); font-size: clamp(30px, 2.6vw, 50px); font-weight: 400; line-height: 1.05; letter-spacing: -0.035em; text-wrap: balance; }
+/* the paragraph is the hero's (FinanceHero .fh-lede) */
+.fp-body {
+  max-width: 48em; margin: 0 0 1em;
+  font-family: var(--font-ios); font-weight: 300;
+  font-size: clamp(13px, calc(1.35vw - 4px), 20px); line-height: 1.35; letter-spacing: -0.02em; color: #0a0a0a;
+}
+@media (max-width: 799px) { .fp-body { font-size: 14px; } }
+.fp-body u { text-decoration-thickness: 1px; text-underline-offset: 3px; }
+
+/* the panel */
+.fp-panel { position: relative; overflow: hidden; background: #e7e6e2; }
+.fp-panel--mobile { display: none; }
+@media (max-width: 799px) { .fp-panel--desktop { display: none; } .fp-panel--mobile { display: block; } }
+.fp-sq { position: absolute; z-index: 3; width: 9px; height: 9px; background: #cbc9c3; }
+.fp-sq--tl { left: 0; top: 0; } .fp-sq--tr { right: 0; top: 0; } .fp-sq--bl { left: 0; bottom: 0; } .fp-sq--br { right: 0; bottom: 0; }
+.fp-canvas { position: absolute; left: 0; top: 0; transform-origin: 0 0; font-family: var(--font-ios); color: #1e1e1e; }
+
+/* the procedure card, the site's paper card */
+.fp-proc { position: absolute; left: 140px; top: 120px; width: 1060px; height: 680px; border-radius: 6px; background: #fbfaf6; box-shadow: 0 0 0 1px rgba(0, 0, 0, .06), 0 30px 60px -36px rgba(0, 0, 0, .35); }
+.fp-proc__head { padding: 30px 32px 20px; border-bottom: 1px dashed #e3e1da; font-size: 27px; font-weight: 600; letter-spacing: -.02em; }
+.fp-proc__body { padding: 8px 32px 0 40px; }
+.fp-step { display: grid; grid-template-columns: 40px 1fr; align-items: start; margin-top: 22px; }
+.fp-step p { margin: 0; font-size: 18.5px; line-height: 2; letter-spacing: .005em; }
+.fp-step--faded { margin-top: 6px; -webkit-mask-image: linear-gradient(#000 0%, #000 100%); }
+.fp-step--faded p { color: #3a3a38; }
+.fp-step--faded p::first-line { color: #b9b8b3; }
+.fp-n, .fp-l { padding-top: 6px; font: 400 14px/1.6 var(--fp-mono); color: #9a9893; }
+.fp-sub { margin: 40px 0 0 40px; font-size: 23px; font-weight: 600; letter-spacing: -.015em; }
+.fp-chip { display: inline-flex; align-items: center; gap: 6px; margin-right: 8px; padding: 0 8px; border-radius: 6px; background: #f1efea; font-size: 18px; line-height: 1.7; vertical-align: 1px; }
+.fp-chip svg { width: 17px; height: 17px; }
+.fp-chip b { font-weight: 600; }
+.fp-chip i { margin-left: 4px; font-style: normal; color: #6a6a66; }
+.fp-branch { display: flex; flex-direction: column; }
+.fp-if { display: flex; align-items: center; gap: 10px; padding-top: 4px; font: 500 15px/1 var(--fp-mono); }
+.fp-if__ic { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 6px; background: #ebe7f7; color: #4a3d8f; font-size: 16px; }
+.fp-if i { font-style: normal; color: #6a6a66; }
+.fp-code { display: flex; align-items: center; gap: 8px; margin: 18px 0 14px 40px; padding: 16px 18px; border: 1px solid #e6e4dd; border-radius: 10px; background: #f6f5f1; font: 400 16.5px/1 var(--fp-mono); }
+.fp-code .v { color: #6a52b8; }
+.fp-code .k { color: #2f6fd6; }
+.fp-code__ic { display: grid; place-items: center; width: 28px; height: 28px; margin-left: auto; border-radius: 50%; background: #fff; box-shadow: 0 0 0 1px #e3e1da; font-size: 13px; font-weight: 700; }
+.fp-sub-step { display: grid; grid-template-columns: 40px 1fr; margin-left: 40px; }
+.fp-sub-step p { margin: 0; font-size: 18.5px; line-height: 2.1; }
+.fp-else { margin-top: 8px; }
+.fp-else + .fp-sub-step { margin-top: 4px; }
+.fp-use { display: inline-flex; align-items: center; gap: 4px; margin-left: 6px; padding: 0 10px; border-radius: 6px; background: #f1efea; font-weight: 500; }
+.fp-use span { font-weight: 400; color: #9a9893; }
+.fp-caret { display: inline-block; width: 1.5px; height: 20px; background: #1e1e1e; animation: fp-blink 1s steps(1) infinite; }
+@keyframes fp-blink { 50% { opacity: 0; } }
+
+/* the connector picker, open on step A */
+.fp-menu { position: absolute; left: 470px; top: 500px; width: 420px; padding: 8px; border-radius: 6px; background: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .08), 0 28px 56px -26px rgba(0, 0, 0, .45); }
+.fp-opt, .fp-menu__foot { position: relative; display: flex; align-items: center; gap: 14px; height: 46px; padding: 0 14px; border-radius: 6px; font-size: 18px; color: #2a2a28; }
+.fp-opt.is-on { background: #f3f2ef; font-weight: 500; color: #0a0a0a; }
+.fp-opt--fade { opacity: .45; }
+.fp-menu__foot { margin: 6px -8px -8px; padding: 0 22px; height: 52px; border-top: 1px solid #ecebe6; border-radius: 0; }
+.fp-opt__ic { display: grid; place-items: center; flex: none; width: 26px; height: 26px; color: #1e1e1e; font-size: 20px; }
+.fp-opt__ic img, .fp-opt__ic svg { display: block; width: 20px; height: 20px; object-fit: contain; }
+.fp-hand { position: absolute; left: 116px; top: 18px; width: 32px; height: 32px; filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .25)); }
+
+/* Sona's chat, the app's light theme */
+.fp-chat { position: absolute; display: flex; flex-direction: column; overflow: hidden; border-radius: 14px; background: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .07), 0 30px 60px -30px rgba(0, 0, 0, .45); }
+.fp-chat--desktop { left: 1100px; top: 286px; width: 410px; height: 680px; }
+.fp-chat--mobile { left: 20px; top: 30px; width: 400px; height: 700px; }
+.fp-chat__head { display: flex; align-items: center; gap: 10px; flex: none; height: 66px; padding: 0 20px; border-bottom: 1px solid #efefef; }
+.fp-chat__head b { font-size: 24px; font-weight: 600; letter-spacing: -.02em; }
+.fp-chat__back { font-size: 28px; line-height: 1; color: #1e1e1e; }
+.fp-chat__ava { display: block; width: 28px; height: 28px; border-radius: 50%; overflow: hidden; }
+.fp-chat__ava svg { display: block; width: 100%; height: 100%; }
+.fp-chat__icons { margin-left: auto; font-size: 18px; letter-spacing: 1px; color: #3a3a38; }
+.fp-chat__icons i { margin-left: 16px; font-style: normal; font-size: 24px; }
+.fp-chat__thread { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; gap: 14px; padding: 16px 18px 18px; }
+.fp-b { max-width: 86%; padding: 13px 17px; border-radius: 22px; font-size: 16px; line-height: 1.42; }
+.fp-b--them { align-self: flex-start; background: #f2f2f0; color: #1e1e1e; }
+.fp-b--me { align-self: flex-end; background: #0a0a0a; color: #fff; }
+.fp-chat__meta { font-size: 13px; color: #8a8a87; }
+
+@media (prefers-reduced-motion: reduce) { .fp-caret { animation: none; } }

@@ -133,8 +133,7 @@ export default function IntroZoom() {
             style={{ x: pX, opacity: pO }}
             className="w-[85%] max-w-[300px] text-pretty text-[17px] leading-[1.3] text-white"
           >
-            Every purchase, subscription, order, and receipt your agents
-            record, in one ledger
+            Loats are AI workers with their own email address. Ask in chat or by email; they do the work and check with you before anything leaves.
           </motion.p>
         </div>
 

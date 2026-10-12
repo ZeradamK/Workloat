@@ -1,43 +1,20 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
+import { useEffect, useRef } from "react";
 import { motion, useMotionValueEvent, useScroll } from "motion/react";
-import InsightsChart from "./tracker/InsightsChart";
-import { money } from "./tracker/money";
+import HeroStory from "./HeroStory";
+import SignupButton from "./SignupButton";
 import { heroT } from "./introProgress";
 
 /**
- * The hero: one still screen on #eeeeee. The headline sits left, the
- * wallet + spending column (iOS Card tab anatomy) sits center. The act
- * writes heroT as it scrolls out so the nav dock moves to its light
- * surface once the hero is gone.
+ * The hero, in two blocks on #eeeeee. A short top block under the nav:
+ * the headline left, the paragraph and the buttons right. Then the big
+ * panel: a short story about one task (HeroStory), you typing it to a
+ * Loat, his inbox and then his texts, over a looping video ground
+ * (HeroVideo), in the ledger card's 6px corners. The act writes heroT as
+ * it scrolls out so the nav dock moves to its light surface once the hero
+ * is gone.
  */
-
-/* the same series the Slack act's answer card draws: cumulative agent
-   spend from Sep 1 through today, day 9, landing on the $9,190 that card
-   reports as spent so far */
-const HERO_DAILY = [0, 1900, 3200, 3400, 5100, 6000, 7300, 8600, 9190];
-const HERO_X_LABELS = ["Sep 01", "Sep 04", "Sep 07", "Sep 09"];
-
-/* Yearly activity: thin bars, gray year, current month (September) in ink with
-   the lime dot beneath — the app's exact treatment. */
-const YEARLY = [0.5, 0.62, 0.42, 0.7, 0.55, 0.78, 1, 0.66, 0.58, 0.72, 0.48, 0.64];
-const CURRENT_MONTH = 8;
-
-/* what renews next, at the figures the goal act and the sign-up panel
-   already carry for the same vendors; the header is their sum */
-const RENEWING = [
-  { name: "OpenAI", amount: 2500 },
-  { name: "Anthropic", amount: 4000 },
-  { name: "Stripe", amount: 600 },
-  { name: "AWS", amount: 850 },
-];
-
-const COL_W = 320; /* center column width (350 - 30), matches the dock */
-
-/* the ground, shared with the goal act that follows */
 
 export default function HeroShowcase() {
   const ref = useRef<HTMLDivElement>(null);
@@ -66,97 +43,56 @@ export default function HeroShowcase() {
   return (
     <>
       <MobileHero />
-      {/* on white: the headline, paragraph, and buttons in a column on the
-          left, in the enterprise hero's type; the wallet column right */}
-      <div
-        ref={ref}
-        className="relative hidden min-h-screen bg-[#eeeeee] min-[800px]:block"
-      >
-        {/* three columns: the headline left, the wallet column centered
-            under the dock, the paragraph and buttons right */}
-        <div className="grid min-h-screen grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-[clamp(24px,3vw,60px)] px-[clamp(20px,2.7vw,52px)] pb-10 pt-[100px]">
+      <div ref={ref} className="relative hidden bg-[#eeeeee] px-[clamp(20px,2.7vw,52px)] pb-[clamp(24px,3vw,48px)] pt-[100px] min-[800px]:block">
+        {/* the top block: headline left, paragraph and buttons right */}
+        <div className="grid grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] items-end gap-[clamp(24px,4vw,88px)] pt-[clamp(24px,3.4vw,64px)]">
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, ease: [0.25, 0.6, 0.2, 1], delay: 0.05 }}
-            className="text-[clamp(40px,4.4vw,96px)] font-medium leading-[0.98] tracking-[-3px] text-ink"
+            className="text-[clamp(34px,3.5vw,68px)] font-medium leading-[1.02] tracking-[-2px] text-ink [text-wrap:balance]"
           >
-            Payloat lets you
-            <br />
-            manage every
-            <br />
-            dollar your
-            <br />
-            agents spend
+            Get a team of AI workers that runs your everyday tasks on autopilot.
           </motion.h1>
-
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: [0.25, 0.6, 0.2, 1], delay: 0.1 }}
-            className="w-full"
-            style={{ width: COL_W }}
-          >
-            <WalletSpendBlock />
-          </motion.div>
-
-          <div className="justify-self-end">
+          <div className="justify-self-end pb-[6px]">
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.55, ease: [0.25, 0.6, 0.2, 1], delay: 0.12 }}
-              className="max-w-[440px] text-[clamp(18px,1.5vw,28px)] leading-[1.6] text-ink"
+              className="max-w-[440px] text-[clamp(13px,calc(1.35vw-4px),20px)] font-light leading-[1.35] tracking-[-0.02em] text-ink"
             >
-              Every purchase, subscription, order, and receipt your agents
-              record, in one ledger
+              Loats are AI workers with their own email address. Ask in chat or by email; they do the work and check with you before anything leaves.
             </motion.p>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.55, ease: [0.25, 0.6, 0.2, 1], delay: 0.18 }}
-              className="mt-[clamp(28px,3vw,56px)] flex flex-wrap items-center gap-x-8 gap-y-5"
+              data-hero-cta
+              className="mt-[clamp(20px,2.2vw,36px)] flex flex-wrap items-center gap-x-8 gap-y-5"
             >
-              <HeroButtons />
+              <SignupButton />
             </motion.div>
           </div>
         </div>
+        {/* the big block: Workloat's input at work, on the looping ground.
+            data-nav-skin keeps the nav on its light bar over the video, which
+            reads dark */}
+        <motion.div
+          data-nav-skin="light"
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.65, ease: [0.25, 0.6, 0.2, 1], delay: 0.22 }}
+          className="mt-[clamp(32px,4vw,64px)] flex h-[clamp(460px,46vw,680px)] items-center justify-center relative overflow-hidden rounded-[6px] bg-[#1b2433]"
+        >
+          <HeroVideo />
+          <HeroStory layout="desktop" />
+        </motion.div>
       </div>
     </>
   );
 }
 
-/* the hero's two calls: the split button, an #0a0a0a arrow block against
-   an #1e1e1e body the way the site's dark buttons are built, and the
-   text link with an arrow */
-function HeroButtons() {
-  return (
-    <>
-      <Link
-        href="/signup"
-        className="inline-flex h-11 items-stretch text-[13px] font-semibold tracking-[-0.5px] transition-transform hover:scale-[1.02] active:scale-[0.98]"
-      >
-        <span className="flex w-11 items-center justify-center bg-[#0a0a0a]">
-          <svg width="11" height="11" viewBox="0 0 16 16" fill="none" aria-hidden>
-            <path d="M5 2.5 10.5 8 5 13.5" stroke="#ffffff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </span>
-        <span className="flex items-center bg-[#1e1e1e] px-5 text-white">Get started for free</span>
-      </Link>
-      <Link
-        href="/product"
-        className="group inline-flex items-center gap-2 border-b-2 border-black/25 pb-0.5 text-[13px] font-semibold tracking-[-0.5px] text-ink transition-colors hover:border-ink"
-      >
-        See how it works
-        <svg width="11" height="11" viewBox="0 0 16 16" fill="none" aria-hidden className="transition-transform duration-200 ease-out group-hover:translate-x-[3px]">
-          <path d="M2.5 8h11m0 0L8.8 3.3M13.5 8l-4.7 4.7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      </Link>
-    </>
-  );
-}
-
-/* ---- Mobile hero (<800px): headline then the wallet act and the
-        spending tiles, on the same ground. ---- */
+/* ---- Mobile hero (<800px): the same two blocks, stacked. ---- */
 
 function MobileHero() {
   const ref = useRef<HTMLDivElement>(null);
@@ -191,285 +127,57 @@ function MobileHero() {
       ref={ref}
       className="flex flex-col items-center bg-[#eeeeee] px-6 pb-20 pt-[120px] text-center min-[800px]:hidden"
     >
-      {/* stacked and centered: the headline, the wallet column, then the
-          paragraph and the buttons */}
+      {/* stacked: the headline, the paragraph and buttons, then the panel */}
       <motion.h2
         {...up}
-        className="text-[clamp(40px,11vw,56px)] font-medium leading-[0.98] tracking-[-2px] text-ink"
+        className="text-[clamp(32px,9vw,46px)] font-medium leading-[1.04] tracking-[-1.5px] text-ink [text-wrap:balance]"
       >
-        Payloat lets you manage
-        <br />
-        every dollar your
-        <br />
-        agents spend
+        Get a team of AI workers that runs your everyday tasks on autopilot.
       </motion.h2>
-      {/* the wallet keeps its own left-set type inside the centered stack */}
-      <motion.div {...up} className="mt-9 w-full max-w-[340px] text-left">
-        <WalletSpendBlock />
-      </motion.div>
       <motion.p
         {...up}
-        className="mt-9 max-w-[520px] text-[18px] leading-[1.55] text-ink"
+        className="mt-7 max-w-[520px] text-[14px] font-light leading-[1.35] tracking-[-0.02em] text-ink"
       >
-        Every purchase, subscription, order, and receipt your agents record,
-        in one ledger
+        Loats are AI workers with their own email address. Ask in chat or by email; they do the work and check with you before anything leaves.
       </motion.p>
-      <motion.div {...up} className="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-5">
-        <HeroButtons />
+      <motion.div {...up} data-hero-cta className="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-5">
+        <SignupButton />
+      </motion.div>
+      <motion.div {...up} data-nav-skin="light" className="relative mt-10 flex h-[560px] w-full items-center justify-center overflow-hidden rounded-[6px] bg-[#1b2433]">
+        <HeroVideo />
+        <HeroStory layout="mobile" />
       </motion.div>
     </div>
   );
 }
 
-/* ---- The iOS Card tab column: wallet sheet, then Card Expenses +
-        Yearly activity stacked left with Payment due full-height right,
-        then Total spending — the app's exact anatomy ---- */
-
-/* the grid's small crosshair where a rule meets a rail */
-function GridCross({ pos }: { pos: "top-left" | "bottom-right" }) {
-  const at = pos === "top-left" ? "-left-[7px] -top-[7px]" : "-bottom-[7px] -right-[7px]";
-  return (
-    <span className={`pointer-events-none absolute z-10 h-[13px] w-[13px] ${at}`} aria-hidden>
-      <span className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-black/40" />
-      <span className="absolute left-0 top-1/2 h-px w-full -translate-y-1/2 bg-black/40" />
-    </span>
-  );
-}
-
-function WalletSpendBlock() {
-  return (
-    <div className="flex w-full flex-col gap-2.5">
-      <WalletStack open />
-      {/* the spend tiles and the total, on the site's ruled grid: one
-          framed block, cells sharing hairlines, rules running past the
-          frame with crosshairs at two corners */}
-      <div className="relative mt-1.5 border border-black/[0.12]">
-        <span className="pointer-events-none absolute -left-6 -right-6 -top-px h-px bg-black/[0.12]" />
-        <span className="pointer-events-none absolute -bottom-px -left-6 -right-6 h-px bg-black/[0.12]" />
-        <GridCross pos="top-left" />
-        <GridCross pos="bottom-right" />
-        <div className="grid grid-cols-2">
-          <div className="flex flex-col">
-            <CardExpenses />
-            <YearlyActivity />
-          </div>
-          <div className="flex border-l border-black/[0.12]">
-            <PaymentDue />
-          </div>
-        </div>
-        <div className="border-t border-black/[0.12]">
-          <TotalSpending />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function Visa({ tone = "gray" }: { tone?: "gray" | "ink" | "white" }) {
-  return (
-    <span
-      className="text-[11px] font-extrabold italic tracking-[-0.5px]"
-      style={{
-        color: tone === "white" ? "#ffffff" : "#0a0a0a",
-        opacity: tone === "gray" ? 0.35 : 0.95,
-      }}
-    >
-      VISA
-    </span>
-  );
-}
-
-/* the iOS card-stack motion: open card = 187pt hero, closed = 60pt strip,
-   ease(0.3, 0.9, 0.3, 1) x 0.7s */
-const STACK_EASE = { duration: 0.7, ease: [0.3, 0.9, 0.3, 1] } as const;
-const CARD_OPEN = 187;
-const CARD_CLOSED = 60;
-const CYCLE_MS = 1800;
-
-function WalletStack({ open }: { open: boolean }) {
-  /* loop: each card takes its turn fully open, constantly */
-  const [active, setActive] = useState(0);
+/* The hero panel's ground: hero-bg.mp4, a 15.2s loop whose last 1.5s
+   crossfade into its opening, so it plays round without a seam. It loads
+   and plays only while its panel is on screen (the hidden layout's copy
+   never fetches), and holds its first frame for reduced motion. */
+function HeroVideo() {
+  const ref = useRef<HTMLVideoElement>(null);
   useEffect(() => {
-    if (!open) return;
-    const id = setInterval(() => setActive((a) => (a + 1) % 3), CYCLE_MS);
-    return () => clearInterval(id);
-  }, [open]);
-
-  /* the middle card folds a touch shorter so its art shows no white edge */
-  const h = (i: number) =>
-    open && active === i ? CARD_OPEN : i === 1 ? 52 : CARD_CLOSED;
-  const lit = (i: number) => open && active === i;
-
+    const v = ref.current;
+    if (!v || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const io = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) v.play().catch(() => {});
+      else v.pause();
+    });
+    io.observe(v);
+    return () => io.disconnect();
+  }, []);
   return (
-    <div>
-      {/* card 1: Apple Pay — number top-left, VISA top-right, logo
-          bottom-left (the Payloat logotype position) */}
-      <motion.div
-        className="relative overflow-hidden rounded-[14px]"
-        style={{ backgroundColor: "#f5f5f4" }}
-        initial={false}
-        animate={{ height: h(0) }}
-        transition={STACK_EASE}
-      >
-        <div className="flex items-center justify-between px-4 pt-4">
-          <span className="font-numeral text-[11px] text-ink">•••• 1458</span>
-          <Visa />
-        </div>
-        {/* engraved on the card, trimmed to the glyph and placed with the
-            Payloat logotype's exact padding (left 16 / bottom 14 when open);
-            top-anchored so the fold's upward clip covers it mechanically */}
-        <div className="absolute left-4 top-[133px]">
-          <Image
-            src="/apple-pay-trim.png"
-            alt="Apple Pay"
-            width={97}
-            height={40}
-            className="h-[40px] w-auto mix-blend-multiply"
-          />
-        </div>
-      </motion.div>
-      {/* card 2: Apple Card — number top-left, WHITE VISA top-right */}
-      <motion.div
-        className="relative mt-2 overflow-hidden rounded-[14px] bg-white"
-        initial={false}
-        animate={{ height: h(1) }}
-        transition={STACK_EASE}
-      >
-        {/* top-anchored art: the Apple icon sits framed in the top-left
-            corner when folded, full card face when open */}
-        <div className="absolute inset-0">
-          <Image
-            src="/apple-card-crop.png"
-            alt="Apple Card"
-            fill
-            sizes="320px"
-            className="scale-[1.04] object-cover"
-            style={{ objectPosition: "50% -8px" }}
-          />
-        </div>
-        <div className="absolute inset-x-0 top-0 flex items-center justify-end px-4 pt-4">
-          <Visa tone="white" />
-        </div>
-      </motion.div>
-      {/* card 3: Payloat */}
-      <motion.div
-        className="relative mt-2 overflow-hidden rounded-[14px]"
-        style={{ backgroundColor: "#0a0a0a" }}
-        initial={false}
-        animate={{ height: h(2) }}
-        transition={STACK_EASE}
-      >
-        <div className="relative flex items-center justify-between px-4 pt-4">
-          <span className="font-numeral text-[11px] text-white">•••• 3346</span>
-          <Visa tone="white" />
-        </div>
-        <motion.span
-          className="absolute bottom-3.5 left-4 text-[38px] font-bold leading-none tracking-[-1.5px] text-white"
-          initial={false}
-          animate={{ opacity: lit(2) ? 1 : 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          Payloat
-        </motion.span>
-      </motion.div>
-    </div>
-  );
-}
-
-function CardExpenses() {
-  return (
-    <div className="flex flex-1 flex-col bg-white p-3">
-      <span className="text-[11px] font-medium text-sub">Projected by Sep 30</span>
-      <span className="font-numeral mt-1 text-[21px] font-semibold tracking-[-0.5px] text-ink">
-        {money(27900)}
-      </span>
-    </div>
-  );
-}
-
-function PaymentDue() {
-  return (
-    <div className="flex w-full flex-col bg-white p-3">
-      <span className="text-[11px] font-medium text-sub">Renewing soon</span>
-      <span className="font-numeral mt-1 text-[21px] font-semibold tracking-[-0.5px] text-ink">
-        {money(7950)}
-      </span>
-      <div className="mt-2 flex flex-col gap-1 pb-[10px]">
-        {RENEWING.map((r) => (
-          <div key={r.name} className="flex items-center justify-between">
-            <span className="text-[12px] text-ink">{r.name}</span>
-            <span className="font-numeral text-[12px] text-ink">{money(r.amount)}</span>
-          </div>
-        ))}
-      </div>
-      {/* white pill, the app's Pay Early treatment */}
-      <button
-        type="button"
-        className="mt-auto h-9 w-full border border-black/[0.12] bg-mist text-[12px] font-semibold text-ink"
-      >
-        See plans
-      </button>
-    </div>
-  );
-}
-
-function YearlyActivity() {
-  return (
-    <div className="flex flex-1 flex-col border-t border-black/[0.12] bg-white p-3">
-      <span className="text-[11px] font-medium text-sub">Yearly activity</span>
-      <div className="mt-2 flex flex-1 items-end justify-between">
-        {YEARLY.map((v, i) => (
-          <div key={i} className="flex h-full flex-col items-center justify-end gap-[3px]">
-            <div
-              className="w-[5px] rounded-full"
-              style={{
-                height: `${v * 82}%`,
-                backgroundColor: i === CURRENT_MONTH ? "#0a0a0a" : "#dcdcda",
-              }}
-            />
-            <div
-              className="h-[5px] w-[5px] rounded-full"
-              style={{
-                backgroundColor:
-                  i === CURRENT_MONTH ? "#d9f268" : "transparent",
-              }}
-            />
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function TotalSpending() {
-  return (
-    <div className="p-3" style={{ backgroundColor: "#0a0a0a" }}>
-      <div className="flex items-center justify-between">
-        <span className="text-[11px] font-medium text-white/60">
-          Spent so far
-        </span>
-        <span className="flex items-center gap-1 bg-white px-2.5 py-1 text-[11px] font-semibold text-ink">
-          Sep 2026
-          <svg width="8" height="8" viewBox="0 0 16 16" fill="none" aria-hidden>
-            <path
-              d="M3 5.5 8 10.5l5-5"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </span>
-      </div>
-      <p className="font-numeral mt-1 text-[22px] font-bold tracking-[-0.5px] text-white">
-        {money(9190)}
-      </p>
-      <InsightsChart
-        daily={HERO_DAILY}
-        xLabels={HERO_X_LABELS}
-        tone="dark"
-        className="mt-1.5 h-[128px]"
-      />
-    </div>
+    <video
+      ref={ref}
+      className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+      src="/landing/hero/hero-bg.mp4"
+      poster="/landing/hero/hero-bg-poster.jpg"
+      muted
+      loop
+      playsInline
+      preload="none"
+      aria-hidden
+    />
   );
 }

@@ -30,17 +30,17 @@ const COPY: Record<State, { eyebrow: string; head: string; body: string }> = {
   live: {
     eyebrow: "You're in",
     head: "You're signed up.",
-    body: "Your place is recorded. We will write to you the moment Payloat Ledger opens, with everything you need to connect your first agent.",
+    body: "Your place is recorded. We will write to you the moment Workloat opens, with everything you need to connect your first agent.",
   },
   confirm: {
     eyebrow: "One step left",
     head: "Check your inbox.",
-    body: "Your place is recorded. Open the link we just sent to confirm the address, and we will write to you the moment Payloat Ledger opens.",
+    body: "Your place is recorded. Open the link we just sent to confirm the address, and we will write to you the moment Workloat opens.",
   },
   login: {
     eyebrow: "Welcome back",
     head: "You're signed in.",
-    body: "Your place is recorded. We will write to you the moment Payloat Ledger opens, with everything you need to connect your first agent.",
+    body: "Your place is recorded. We will write to you the moment Workloat opens, with everything you need to connect your first agent.",
   },
 };
 

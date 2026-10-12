@@ -1,0 +1,126 @@
+/* The finance teams page's last section (FinanceReach.tsx), on Intercom's
+   "integrates with your entire tech stack" anatomy: copy on the left, a
+   square panel on a grey grain ground on the right, its contents on an
+   880 x 880 canvas scaled to the column. The cards are the site's paper
+   card: #fbfaf6, a hairline, 6px corners. */
+
+.frc { padding: clamp(64px, 6vw, 120px) 0 clamp(40px, 4vw, 80px); color: #0a0a0a; }
+.frc-wrap {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(32px, 3vw, 56px); align-items: start;
+  width: min(1560px, calc(100% - clamp(32px, 18vw, 360px))); margin: 0 auto;
+}
+@media (max-width: 899px) { .frc-wrap { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 799px) { .frc-wrap { width: calc(100% - 32px); } }
+
+.frc-title { margin: 0 0 clamp(16px, 1.4vw, 26px); font-size: clamp(30px, 2.6vw, 50px); font-weight: 400; line-height: 1.05; letter-spacing: -0.035em; text-wrap: balance; }
+/* the paragraph is the hero's (FinanceHero .fh-lede) */
+.frc-body {
+  max-width: 44em; margin: 0 0 1.1em;
+  font-family: var(--font-ios); font-weight: 300;
+  font-size: clamp(13px, calc(1.35vw - 4px), 20px); line-height: 1.35; letter-spacing: -0.02em; color: #0a0a0a;
+}
+@media (max-width: 799px) { .frc-body { font-size: 14px; } }
+.frc-body u, .frc-body a { color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.frc-body a:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 2px; }
+
+/* ---------- the panel, on a grey grain ---------- */
+.frc-stage {
+  position: relative; overflow: hidden;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+    radial-gradient(60% 50% at 78% 18%, rgba(255, 255, 255, .55), transparent 70%),
+    radial-gradient(70% 60% at 22% 88%, rgba(255, 255, 255, .45), transparent 70%),
+    linear-gradient(135deg, #8d8d8b 0%, #a9a9a7 45%, #7d7d7b 100%);
+}
+.frc-sq { position: absolute; z-index: 3; width: 8px; height: 8px; background: #d9d8d4; }
+.frc-sq--tl { left: 0; top: 0; } .frc-sq--tr { right: 0; top: 0; } .frc-sq--bl { left: 0; bottom: 0; } .frc-sq--br { right: 0; bottom: 0; }
+.frc-canvas { position: absolute; left: 0; top: 0; width: 880px; height: 880px; transform-origin: 0 0; font-family: var(--font-ios); color: #1e1e1e; }
+
+/* the task card */
+.frc-task { position: absolute; left: 70px; top: 96px; width: 740px; height: 330px; padding: 30px 34px; border-radius: 6px; background: #fbfaf6; box-shadow: 0 0 0 1px rgba(0, 0, 0, .06), 0 24px 50px -30px rgba(0, 0, 0, .45); }
+.frc-line { display: flex; align-items: baseline; gap: 14px; font-size: 22px; letter-spacing: -.01em; }
+.frc-line b { font-weight: 500; }
+.frc-n { width: 22px; font: 400 15px/1 var(--frc-mono); color: #8a8a87; }
+.frc-from { font-weight: 500; }
+.frc-field { display: inline-flex; align-items: baseline; gap: 3px; }
+.frc-caret { display: inline-block; width: 1.5px; height: 22px; align-self: center; background: #1e1e1e; animation: frc-blink 1s steps(1) infinite; }
+@keyframes frc-blink { 50% { opacity: 0; } }
+.frc-ph { color: #9a9a97; }
+.frc-typed { color: #1e1e1e; }
+.frc-line--dim { margin-top: 64px; opacity: .55; }
+.frc-line--3 { margin-top: 120px; opacity: .2; }
+
+/* the menu */
+.frc-menu { position: absolute; left: 150px; top: 160px; width: 600px; padding: 10px; border-radius: 6px; background: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .08), 0 30px 60px -28px rgba(0, 0, 0, .45); }
+.frc-opt, .frc-menu__foot { display: flex; align-items: center; gap: 16px; height: 62px; margin-bottom: 10px; padding: 0 16px; border-radius: 6px; font-size: 21px; letter-spacing: -.01em; color: #6a6a68; transition: background-color .35s ease, color .35s ease; }
+.frc-opt.is-on { background: #f3f2ef; color: #0a0a0a; font-weight: 500; }
+.frc-menu__foot { margin: 6px -10px -10px; padding: 0 26px; height: 70px; border-top: 1px solid #ecebe6; border-radius: 0; color: #1e1e1e; }
+.frc-opt__ic { display: grid; place-items: center; flex: none; width: 34px; height: 34px; border-radius: 8px; background: #f3f2ef; color: #1e1e1e; font-size: 22px; }
+.frc-opt__ic img, .frc-opt__ic svg { display: block; width: 22px; height: 22px; object-fit: contain; }
+.frc-hand { position: absolute; right: 70px; top: 26px; width: 34px; height: 34px; transition: transform .5s cubic-bezier(.65, 0, .25, 1); filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .25)); }
+
+/* the channel cards, one at a time */
+.frc-cards { position: absolute; left: 250px; top: 590px; width: 560px; height: 252px; }
+.frc-card {
+  position: absolute; inset: 0; padding: 20px 22px; border-radius: 6px; background: #fbfaf6;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, .06), 0 24px 50px -26px rgba(0, 0, 0, .5);
+  opacity: 0; transform: translateY(14px) scale(.98); transition: opacity .55s ease, transform .55s cubic-bezier(.25, .6, .2, 1);
+}
+.frc-card.is-on { opacity: 1; transform: none; }
+.frc-px { display: block; flex: none; width: 30px; height: 30px; border-radius: 50%; overflow: hidden; }
+.frc-px svg { display: block; width: 100%; height: 100%; }
+
+.frc-mail__top { display: flex; align-items: center; gap: 10px; padding-bottom: 12px; border-bottom: 1px solid #ecebe4; font-size: 15px; }
+.frc-mail__top img { width: 22px; height: auto; }
+.frc-mail__top span { margin-left: auto; font-size: 13px; color: #8a8a87; }
+.frc-mail__row { display: flex; gap: 12px; padding: 14px 0 12px; }
+.frc-mail__row b { display: block; margin-bottom: 4px; font-size: 15.5px; font-weight: 600; }
+.frc-mail__row p { margin: 0; font-size: 15px; line-height: 1.45; color: #3a3a38; }
+.frc-mail__reply { display: flex; align-items: center; gap: 12px; margin-left: 42px; }
+.frc-mail__reply span { padding: 6px 14px; border-radius: 6px; background: #1e1e1e; color: #fff; font-size: 14px; font-weight: 600; }
+.frc-mail__reply em { font: 400 12px/1 var(--frc-mono); letter-spacing: .04em; color: #6a6a66; font-style: normal; text-transform: uppercase; }
+
+.frc-sms { display: flex; flex-direction: column; gap: 10px; }
+.frc-sms__who { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; font-size: 14.5px; font-weight: 600; }
+.frc-sms__who .frc-px { width: 26px; height: 26px; }
+.frc-bub { align-self: flex-start; max-width: 78%; padding: 10px 15px; border-radius: 19px; background: #e9e9eb; font-size: 16px; line-height: 1.35; }
+.frc-bub--me { align-self: flex-end; background: #0a84ff; color: #fff; }
+
+.frc-desk { position: absolute; inset: 0; overflow: hidden; border-radius: 6px; }
+.frc-desk__bar { display: flex; align-items: center; gap: 6px; height: 34px; padding: 0 14px; border-bottom: 1px solid #ecebe4; font-size: 12.5px; color: #8a8a87; }
+.frc-desk__bar i { width: 10px; height: 10px; border-radius: 50%; background: #d9d8d3; }
+.frc-desk__bar span { margin-left: 10px; }
+.frc-desk__body { display: flex; height: calc(100% - 34px); }
+.frc-desk__rail { display: flex; flex-direction: column; align-items: center; gap: 12px; width: 58px; padding-top: 14px; border-right: 1px solid #ecebe4; background: #fff; }
+.frc-desk__rail svg { width: 24px; height: 18px; }
+.frc-desk__rail i { width: 26px; height: 26px; border-radius: 8px; background: #f0efeb; }
+.frc-desk__rail i.is-on { background: #e0e0e0; }
+.frc-desk__main { flex: 1; display: grid; place-items: center; padding: 0 22px; background: #fff; }
+.frc-pill { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 12px 12px 18px; border: 1px solid #e6e6e6; border-radius: 26px; box-shadow: 0 6px 20px rgba(0, 0, 0, .06); font-size: 15px; line-height: 1.35; }
+.frc-pill__send { display: grid; place-items: center; flex: none; width: 34px; height: 34px; margin-left: auto; border-radius: 50%; background: #1e1e1e; color: #fff; font-size: 16px; }
+
+.frc-phone { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; padding-top: 14px; border-radius: 6px; overflow: hidden; background: linear-gradient(160deg, #cfd9e0, #e8e4dc); }
+.frc-phone__time { font-size: 44px; font-weight: 300; letter-spacing: -.02em; color: #fff; text-shadow: 0 1px 6px rgba(0, 0, 0, .18); }
+.frc-note { width: 86%; margin-top: 10px; padding: 12px 14px; border-radius: 18px; background: rgba(255, 255, 255, .85); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+.frc-note__head { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.frc-note__head .frc-px { width: 20px; height: 20px; border-radius: 5px; }
+.frc-note__head span { margin-left: auto; color: #8a8a87; }
+.frc-note p { margin: 6px 0 10px; font-size: 14px; line-height: 1.35; }
+.frc-note__btns { display: flex; gap: 8px; }
+.frc-note__btns span { flex: 1; padding: 7px 0; border-radius: 10px; background: rgba(0, 0, 0, .06); text-align: center; font-size: 13.5px; font-weight: 600; }
+.frc-note__btns .is-go { background: #1e1e1e; color: #fff; }
+
+.frc-all__head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 8px; font-size: 16px; }
+.frc-all__head span { font: 400 12px/1 var(--frc-mono); letter-spacing: .06em; text-transform: uppercase; color: #8a8a87; }
+.frc-loat { display: flex; align-items: center; gap: 12px; padding: 9px 0; border-top: 1px solid #ecebe4; }
+.frc-loat b { display: block; font-size: 15px; font-weight: 600; }
+.frc-loat small { font-size: 13px; color: #6a6a66; }
+.frc-loat em { margin-left: auto; padding: 4px 8px; border-radius: 4px; border: 1px solid #d9d8d0; background: #fff; font: 400 11px/1 var(--frc-mono); letter-spacing: .06em; text-transform: uppercase; color: #6a6a66; font-style: normal; }
+.frc-loat em.is-done { border-color: #1e1e1e; background: #1e1e1e; color: #fff; }
+.frc-loat em.is-wait { border-style: dashed; color: #9a6700; }
+.frc-ini { display: grid; place-items: center; flex: none; width: 30px; height: 30px; border-radius: 50%; background: #1e1e1e; color: #fff; font-size: 13px; font-weight: 600; }
+
+@media (prefers-reduced-motion: reduce) {
+  .frc-card, .frc-hand, .frc-opt { transition: none; }
+  .frc-caret { animation: none; }
+}

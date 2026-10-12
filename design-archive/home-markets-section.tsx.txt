@@ -1,0 +1,8 @@
+// ARCHIVED 2026-10-06: the home page's Markets closer ("Get answers from
+// your agents fast"), taken off src/app/page.tsx. See design-archive/README.md.
+// The component itself is unchanged in src/components/MarketsSection.tsx.
+
+import MarketsSection from "@/components/MarketsSection";
+
+      {/* Markets closer: shader card + white $0 on black */}
+      <MarketsSection />

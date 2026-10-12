@@ -1,0 +1,145 @@
+/* Hero tabs: the product tour from the "Workloat · Hero tabs" design.
+   hero-tabs.generated.css carries the design's own styles (tab bar,
+   stage, backdrops, and the Inbox, Approvals and Record mocks) scoped
+   under .wht. This file adds two things the design asked for:
+
+   1. the bare page the design was drawn on, so the site's base styles
+      (body colour, line height, Tailwind's block svg) don't reach in;
+   2. tab 1, rebuilt from the Workloat web app itself (Loat-OS: the Rail
+      and the chat sidebar in frame.tsx, the home in page.tsx, the pill
+      input in composer.tsx) in its light theme, at the web app's own
+      sizes. Its outer size is 1180 x 740 at 14px corners; the stage
+      scales it to fit. */
+
+.wht { line-height: normal; letter-spacing: normal; }
+.wht svg { display: inline; vertical-align: baseline; }
+
+/* ---------- tab 1: the web app's home ---------- */
+.wht .wa {
+  /* Loat-OS light tokens (globals.css, :root[data-theme="light"]), with
+     the three grounds set for the site: the chat white, the sidebar
+     #eeeeee, the narrow strip white */
+  --wa-sheet: #ffffff;
+  --wa-side: #eeeeee;
+  --wa-rail: #ffffff;
+  --wa-field: #ffffff;
+  --wa-ink: #1a1a1a;
+  --wa-paper: #1e1e1e;
+  --wa-sub: #5f5f5f;
+  --wa-faint: #8f8f8f;
+  --wa-hint: #9a9a9a;
+  --wa-tint-2: #e2e2e2;
+  --wa-rule: #e6e6e6;
+  --wa-rule-2: #d6d6d6;
+  --wa-warn: #9a6700;
+  --wa-lift: 0 6px 20px rgba(0, 0, 0, 0.06);
+  --wa-font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", "Segoe UI", Roboto, Arial, sans-serif;
+  width: 1180px; height: 740px; flex: none; border-radius: 14px; overflow: hidden;
+  display: flex; background: var(--wa-rail); color: var(--wa-ink);
+  font-family: var(--wa-font); font-size: 13px; -webkit-font-smoothing: antialiased;
+}
+.wht .wa svg { display: block; }
+
+/* the strip: 64px, the W, the places, the divider, the dashboard, you */
+.wht .wa-rail { width: 64px; flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px 0; background: var(--wa-rail); }
+.wht .wa-logo { display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; margin-bottom: 8px; color: var(--wa-ink); }
+.wht .wa-tile { position: relative; display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 12px; color: var(--wa-ink); }
+.wht .wa-tile.on { background: var(--wa-tint-2); }
+.wht .wa-badge { position: absolute; right: 5px; top: 5px; width: 8px; height: 8px; border-radius: 50%; background: var(--wa-warn); }
+.wht .wa-sep { width: 28px; height: 1px; margin: 6px 0; background: var(--wa-rule-2); }
+.wht .wa-avatar { margin-top: auto; display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; background: var(--wa-paper); color: var(--wa-sheet); font-size: 12.5px; font-weight: 600; }
+
+/* the chat sidebar: rounded on its left so the strip shows in the curve */
+.wht .wa-side { width: 260px; flex: none; display: flex; flex-direction: column; border-radius: 20px 0 0 20px; border-right: 0.8px solid var(--wa-rule); background: var(--wa-side); }
+.wht .wa-side__top { display: flex; align-items: center; gap: 4px; height: 56px; padding: 0 8px 0 16px; }
+.wht .wa-side__top b { margin-right: auto; font-size: 19px; font-weight: 600; letter-spacing: -0.3px; color: var(--wa-ink); }
+.wht .wa-btn { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 8px; color: var(--wa-ink); }
+.wht .wa-nav { display: flex; flex-direction: column; gap: 2px; padding: 4px 8px 0; }
+.wht .wa-row { display: flex; align-items: center; gap: 12px; height: 40px; padding: 0 10px; border-radius: 8px; font-size: 14.5px; color: var(--wa-ink); }
+.wht .wa-row.on { background: var(--wa-tint-2); }
+.wht .wa-row__icon { display: flex; justify-content: center; width: 22px; color: var(--wa-ink); }
+.wht .wa-you { display: flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: var(--wa-paper); color: var(--wa-sheet); }
+.wht .wa-recents { display: flex; align-items: center; gap: 4px; padding: 20px 8px 0; }
+.wht .wa-recents p { flex: 1; margin: 0; padding: 0 10px; font-size: 13.5px; color: var(--wa-faint); }
+.wht .wa-filter { display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 6px; color: var(--wa-faint); }
+.wht .wa-list { padding: 0 8px 12px; }
+.wht .wa-chat { display: flex; align-items: center; gap: 8px; height: 38px; padding: 0 10px; border-radius: 8px; }
+.wht .wa-chat span { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: 14.5px; color: var(--wa-ink); }
+.wht .wa-chat i { flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--wa-warn); }
+
+/* the home: the wordmark and the pill input, centred a touch above the middle */
+.wht .wa-main { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; padding: 0 20px 51px; background: var(--wa-sheet); }
+.wht .wa-home { width: 100%; max-width: 680px; margin: 0 auto; }
+.wht .wa-wordmark { display: block; height: 30px; width: auto; margin: 0 auto 36px; user-select: none; }
+.wht .wa-pill { display: flex; align-items: flex-end; gap: 4px; padding: 8px; border: 1px solid var(--wa-rule); border-radius: 29px; background: var(--wa-field); box-shadow: var(--wa-lift); }
+.wht .wa-clip { display: flex; align-items: center; justify-content: center; flex: none; width: 40px; height: 40px; border-radius: 50%; color: var(--wa-ink); }
+.wht .wa-text { flex: 1; min-width: 0; min-height: 40px; padding: 8px 6px; font-size: 16px; line-height: 24px; color: var(--wa-hint); }
+.wht .wa-text.typed { color: var(--wa-ink); }
+.wht .wa-caret { display: inline-block; width: 1.5px; height: 18px; margin-left: 1px; vertical-align: -3px; background: var(--wa-ink); animation: wht-blink 1s steps(1) infinite; }
+.wht .wa-right { display: flex; align-items: center; gap: 6px; flex: none; height: 40px; padding-left: 4px; }
+.wht .wa-loat { position: relative; display: flex; align-items: center; height: 36px; padding: 0 28px 0 12px; border-radius: 999px; font-size: 14px; font-weight: 500; color: var(--wa-ink); }
+.wht .wa-loat svg { position: absolute; right: 10px; color: var(--wa-sub); }
+.wht .wa-voice, .wht .wa-send { display: flex; align-items: center; justify-content: center; flex: none; width: 40px; height: 40px; border-radius: 50%; color: var(--wa-sheet); }
+.wht .wa-voice { background: var(--wa-paper); }
+/* send stays faint until there is something to send, as in the app */
+.wht .wa-send { background: rgba(30, 30, 30, 0.25); }
+.wht .wa-send.ready { background: var(--wa-paper); }
+.wht .wa-hint { min-height: 18px; margin-top: 8px; }
+
+@media (prefers-reduced-motion: reduce) { .wht .wa-caret { animation: none; } }
+
+/* ---------- on the site's ground ----------
+   The section sits on #eeeeee with the pages around it. The tab boxes are
+   white with black labels, boxed in the same rule as the ruled headline
+   cell above (GoalSection: black at 8%). The open tab turns #eeeeee, full
+   black, and carries the progress line; the others are dimmed until
+   hovered. The image box keeps the design's own frame (#e3e3e1); its top
+   edge is the tab row's bottom rule. */
+.wht { --page: #eeeeee; --tab-rule: rgba(0, 0, 0, 0.08); }
+.wht .tabs { background: #ffffff; border-color: var(--tab-rule); border-bottom: 1px solid var(--tab-rule); }
+.wht .tab { color: rgba(0, 0, 0, 0.5); border-left-color: var(--tab-rule); }
+.wht .tab:hover { color: rgba(0, 0, 0, 0.8); }
+.wht .tab[aria-selected="true"] { color: #000000; background: #eeeeee; }
+.wht .tab__bar { background: #000000; }
+.wht .tab:focus-visible { outline-color: #000000; }
+.wht .stage { border-top: 0; height: clamp(540px, 76vh, 780px); }
+@media (max-width: 760px) { .wht .stage { height: 500px; } }
+
+/* the Alfred note takes the meeting card's glass from the Wherever you
+   work section (WhereverYouWork.css .glass / .glass__in): a frosted 7px
+   frame with a white hairline round a near-white card, no drop shadow */
+.wht .note {
+  padding: 7px; border-radius: 22px;
+  background: rgba(255, 255, 255, 0.26);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.55);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+}
+.wht .note__in { position: relative; overflow: hidden; padding: 16px 18px 14px; border-radius: 16px; background: rgba(250, 250, 250, 0.94); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); }
+
+/* the slider (760 and under): each tab keeps its name on one line, at
+   least 64% of the bar wide and wider when its name needs it */
+@media (max-width: 760px) {
+  .wht .tabs { grid-auto-columns: minmax(64%, max-content); }
+  .wht .tab { white-space: nowrap; }
+}
+
+/* the app window in tab 1 sits in the meeting card's glass from the
+   Wherever you work section (WhereverYouWork.css .glass / .glass__in): a
+   frosted 7px frame at 22px corners round the window at 16px, no shadow */
+.wht .wglass {
+  display: flex; padding: 7px; border-radius: 22px;
+  background: rgba(255, 255, 255, 0.26);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.55);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+}
+.wht .wglass .wa { border-radius: 16px; }
+
+/* tabs 2 and 3 take the ledger tab's backdrop: the sky, framed the same
+   way. The inbox window takes the ledger's paper (.paper): warm white, a
+   faint hairline, 6px corners, its list on the same ground with the
+   ledger's rules */
+.wht .mailapp { border-radius: 6px; background: #fbfaf6; box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06); }
+.wht .ml { background: #fbfaf6; border-right-color: #ecebe4; }
+.wht .ml__item { border-top-color: #ecebe4; }
+.wht .msgx { border-bottom-color: #ecebe4; }
+.wht #panel-inbox, .wht #panel-review { background-image: var(--sky); background-position: 20% 85%; background-size: 160%; }

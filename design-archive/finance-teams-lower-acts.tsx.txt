@@ -1,0 +1,590 @@
+// ARCHIVED 2026-10-07: the finance teams page's lower acts, taken off the
+// page together: the Payle playbook on black (Live budgets, Approvals in
+// Slack, Supervised close), security and integrations, Set up in days
+// with the bank strip, the three guides, and the closing CTA card. See
+// design-archive/README.md. They lean on the page's EASE, GREEN, INK, up,
+// FRAME, INNER, MONO, CAPS, Rule, Cross, DAILY, X_LABELS, ArrowButton,
+// InsightsChart and money, which stay in src/app/finance-teams/page.tsx
+// while anything there still uses them.
+
+/* ------------------------------------------------------------------ */
+/* 5. The playbook (black)                                             */
+/* ------------------------------------------------------------------ */
+
+const PLAYS = [
+  {
+    tab: "Live budgets",
+    title: "Live budgets",
+    body: "Every team's budget updates the moment an agent charges a card. Payle knows what is left, what is committed, and what is about to renew.",
+    ask: "@Payle how much of the growth budget is left this month?",
+    reply: "$1,850 of $4,000. Three agents spent $2,150, mostly on ad tooling. Two renewals land Friday for $420 total.",
+    bar: 0.54,
+  },
+  {
+    tab: "Approvals in Slack",
+    title: "Approvals in Slack",
+    body: "Charges under a cap clear on their own. Anything over it waits for one tap from the person who owns the budget, right where the team already works.",
+    ask: "@Payle approve the $2,500 OpenAI charge for the research agent.",
+    reply: "Approved. It is logged against Q3 market brief. The research agent has $500 of cap left this month.",
+    bar: 0.83,
+  },
+  {
+    tab: "Supervised close",
+    title: "Supervised close",
+    body: "Payle matches receipts, categorizes every charge, and drafts the month-end report. Your team reviews it instead of building it.",
+    ask: "@Payle where is the July close?",
+    reply: "Ready for review. 142 charges matched, 2 need a receipt from the support agent. The draft report is in the ledger.",
+    bar: 0.98,
+  },
+];
+
+/* the crosshair in white, for the exchange card on black */
+function PlayCross({ pos }: { pos: "top-left" | "bottom-right" }) {
+  const at = pos === "top-left" ? "-left-[7px] -top-[7px]" : "-bottom-[7px] -right-[7px]";
+  return (
+    <span className={`pointer-events-none absolute z-10 h-[13px] w-[13px] ${at}`} aria-hidden>
+      <span className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-white/60" />
+      <span className="absolute left-0 top-1/2 h-px w-full -translate-y-1/2 bg-white/60" />
+    </span>
+  );
+}
+
+function Playbook() {
+  const [i, setI] = useState(0);
+  const play = PLAYS[i];
+  return (
+    <section className="text-white" style={{ backgroundColor: INK }}>
+      <div className={`${FRAME} border-white/10`}>
+        <div className="relative px-[clamp(20px,2.5vw,48px)]">
+          {/* Amigo's long vertical rule at x 78 */}
+          <div className="absolute bottom-0 left-[clamp(20px,2.5vw,48px)] top-[clamp(120px,9vw,172px)] hidden w-px bg-white/15 min-[800px]:block" />
+
+          <div className="pl-[clamp(0px,1.6vw,30px)] pt-[clamp(120px,9.5vw,182px)]">
+            <motion.h2
+              {...up}
+              className="max-w-[1000px] text-[clamp(34px,3.9vw,74px)] font-medium leading-[1.06] tracking-[-2.5px]"
+            >
+              The Payle playbook
+              <br />
+              <span className="text-white/50">
+                A financial manager trained on how the best finance teams
+                actually run.
+              </span>
+            </motion.h2>
+            <motion.div {...up} className="mt-[clamp(48px,6vw,116px)]">
+              <ArrowButton href="/product" tone="inverse">
+                Explore the platform
+              </ArrowButton>
+            </motion.div>
+
+            {/* tabs, mono caps with the active bar on the rule */}
+            <ul className="mt-[clamp(80px,11vw,214px)] flex flex-col gap-[clamp(18px,1.9vw,36px)]">
+              {PLAYS.map((p, k) => (
+                <li key={p.tab} className="relative">
+                  {k === i && (
+                    <motion.span
+                      layoutId="playbookMark"
+                      className="absolute top-1/2 h-[26px] w-[3px] -translate-y-1/2 bg-white"
+                      style={{ left: "calc(-1 * clamp(1px,1.65vw,31px))" }}
+                    />
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => setI(k)}
+                    className={`${MONO} text-[clamp(11px,0.8vw,15px)] transition-colors`}
+                    style={{ color: k === i ? "#ffffff" : "rgba(255,255,255,0.4)" }}
+                  >
+                    0{k + 1}&nbsp;&nbsp;{p.tab}
+                  </button>
+                </li>
+              ))}
+            </ul>
+
+            {/* the sub-block: title at Amigo's x 250, copy, and the Slack exchange */}
+            <div className="grid gap-10 pb-[clamp(96px,10vw,190px)] pt-[clamp(72px,7.5vw,146px)] min-[1000px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] min-[1000px]:pl-[clamp(40px,7.4vw,144px)]">
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={play.title}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10, transition: { duration: 0.15 } }}
+                  transition={{ duration: 0.35, ease: EASE }}
+                >
+                  <h3 className="text-[clamp(32px,2.9vw,56px)] font-medium leading-none tracking-[-1.5px]">
+                    {play.title}
+                  </h3>
+                  <p className="mt-[clamp(24px,2.4vw,46px)] max-w-[520px] text-[clamp(16px,1vw,19px)] leading-[1.45] text-white/70">
+                    {play.body}
+                  </p>
+                </motion.div>
+              </AnimatePresence>
+
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={play.ask}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10, transition: { duration: 0.15 } }}
+                  transition={{ duration: 0.35, ease: EASE, delay: 0.05 }}
+                  className="relative max-w-[560px] border border-white/25 text-white"
+                  style={{ backgroundColor: INK }}
+                >
+                  {/* the grid's rules and crosshairs, in white */}
+                  <span className="pointer-events-none absolute -left-6 -right-6 -top-px h-px bg-white/25" />
+                  <span className="pointer-events-none absolute -bottom-px -left-6 -right-6 h-px bg-white/25" />
+                  <PlayCross pos="top-left" />
+                  <PlayCross pos="bottom-right" />
+                  <div className="flex items-start gap-3 p-5">
+                    <Image
+                      src="/zeradam.jpg"
+                      alt=""
+                      width={32}
+                      height={32}
+                      className="mt-0.5 h-8 w-8 shrink-0 border border-white/25 object-cover"
+                    />
+                    <div>
+                      <p className="text-[13px] font-semibold">Zeradam</p>
+                      <p className="mt-0.5 text-[15px] leading-[1.4]">{play.ask}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 border-t border-white/25 p-5">
+                    <Image
+                      src="/brand/workloat-app-tile.svg"
+                      alt=""
+                      width={32}
+                      height={32}
+                      className="mt-0.5 h-8 w-8 shrink-0 border border-white/25"
+                    />
+                    <div className="flex-1">
+                      <p className="text-[13px] font-semibold">
+                        Payle <span className="ml-1 border border-white/25 px-1.5 py-px text-[10px] font-medium text-white/70">APP</span>
+                      </p>
+                      <p className="mt-0.5 text-[15px] leading-[1.4]">{play.reply}</p>
+                      <div className="mt-3 h-[6px] border border-white/25">
+                        <motion.div
+                          className="h-full"
+                          style={{ backgroundColor: "#ffffff" }}
+                          initial={{ width: 0 }}
+                          animate={{ width: `${play.bar * 100}%` }}
+                          transition={{ duration: 0.9, ease: EASE, delay: 0.2 }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* 6. Security and integrations (black)                                */
+/* ------------------------------------------------------------------ */
+
+const INTEGRATIONS = [
+  { src: "/logos/stripe.svg", alt: "Stripe" },
+  { src: "/logos/brex.svg", alt: "Brex" },
+  { src: "/logos/aws.svg", alt: "AWS" },
+  { src: "/logos/vercel.svg", alt: "Vercel" },
+  { src: "/logos/openai.svg", alt: "OpenAI" },
+  { src: "/logos/claude.svg", alt: "Claude" },
+];
+
+function Security() {
+  return (
+    <section className="text-white" style={{ backgroundColor: INK }}>
+      <div className={`${FRAME} border-white/10`}>
+        <div className={`${INNER} pt-[clamp(72px,7vw,136px)]`}>
+          <div className="grid gap-8 pb-[clamp(48px,5vw,96px)] min-[900px]:grid-cols-[minmax(0,720px)_1fr] min-[900px]:items-end">
+            <motion.h2
+              {...up}
+              className="text-[clamp(30px,2.9vw,56px)] font-medium leading-[1.06] tracking-[-1.8px]"
+            >
+              Enterprise-grade security meets seamless integration.
+            </motion.h2>
+            <motion.p {...up} className="max-w-[520px] text-[clamp(15px,1vw,19px)] leading-[1.45] text-white/60">
+              Payle reads your banks and cards through Plaid and Teller, never
+              holds your credentials, and every action it takes is logged to
+              the ledger with the task it was given.
+            </motion.p>
+          </div>
+        </div>
+        <div className="border-t border-white/15">
+          <div className={`${INNER} grid grid-cols-3 min-[800px]:grid-cols-6`}>
+            {INTEGRATIONS.map((l) => (
+              <div key={l.alt} className="flex h-[clamp(72px,5.6vw,108px)] items-center justify-center">
+                <Image
+                  src={l.src}
+                  alt={l.alt}
+                  width={120}
+                  height={36}
+                  className="h-[clamp(18px,1.4vw,26px)] w-auto opacity-80 brightness-0 invert"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+
+/* ------------------------------------------------------------------ */
+/* 9. Set up in days                                                   */
+/* ------------------------------------------------------------------ */
+
+const SETUP = [
+  ["Connect your banks", "Plaid or Teller, in minutes. Every agent card shows up in one ledger."],
+  ["Set caps and budgets", "Per agent, per vendor, per team. Payle enforces them from the first charge."],
+  ["Invite Payle to Slack", "Approvals, questions, and the month-end draft, where the team already is."],
+];
+
+function SetUp() {
+  return (
+    <section className="overflow-x-clip bg-[#eeeeee]">
+      <div className={FRAME}>
+        <div className={`${INNER} pt-[clamp(72px,7.5vw,146px)]`}>
+          <div className="grid gap-12 pb-[clamp(56px,6vw,116px)] min-[1000px]:grid-cols-[minmax(0,560px)_1fr] min-[1000px]:gap-[clamp(40px,4vw,80px)]">
+            <div>
+              <motion.h2
+                {...up}
+                className="text-[clamp(30px,2.9vw,56px)] font-medium leading-[1.06] tracking-[-1.8px] text-ink"
+              >
+                Set up in days, not quarters.
+              </motion.h2>
+              <motion.p {...up} className="mt-[clamp(28px,2.6vw,50px)] max-w-[440px] text-[clamp(15px,1vw,19px)] leading-[1.45] text-ink">
+                Payle runs on the Workloat infrastructure your agents already
+                spend through. There is no data migration, and nothing to
+                install on the agents themselves.
+              </motion.p>
+              <motion.div {...up} className="mt-[clamp(24px,2.4vw,46px)]">
+                <ArrowButton href="/integration" tone="light">See the integration</ArrowButton>
+              </motion.div>
+            </div>
+            <motion.div
+              {...up}
+              className="relative border border-black/[0.08] text-white"
+              style={{ backgroundColor: GREEN, minHeight: "clamp(360px,37.5vw,720px)" }}
+            >
+              <Rule pos="top" />
+              <Rule pos="bottom" />
+              <Cross pos="top-left" />
+              <Cross pos="bottom-right" />
+              {/* the steps as ruled rows; the card grows with them, the
+                  min height keeps Amigo's 1120x720 proportion */}
+              <ol className="flex h-full flex-col">
+                {SETUP.map(([t, b], k) => (
+                  <li key={t} className="flex flex-1 gap-[clamp(16px,1.5vw,28px)] border-t border-white/20 px-[clamp(24px,2.5vw,48px)] py-[clamp(20px,2.2vw,40px)] first:border-t-0">
+                    <span className={`${MONO} pt-1.5 text-white/60`}>0{k + 1}</span>
+                    <div>
+                      <p className="text-[clamp(20px,1.6vw,30px)] font-medium tracking-[-0.8px]">{t}</p>
+                      <p className="mt-2 max-w-[420px] text-[clamp(14px,0.95vw,18px)] leading-[1.4] text-white/70">{b}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </motion.div>
+          </div>
+          <p className={`${MONO} pb-[clamp(16px,1.6vw,30px)] text-ink`}>Runs on the banks you already use</p>
+        </div>
+        <div className="border-y border-black/[0.08]">
+          <div className={`${INNER} grid grid-cols-2 min-[800px]:grid-cols-4`}>
+            {[
+              { src: "/logos/banks/chase.jpg", alt: "Chase" },
+              { src: "/logos/banks/citi.png", alt: "Citi" },
+              { src: "/logos/banks/wellsfargo.png", alt: "Wells Fargo" },
+              { src: "/logos/banks/mercury.png", alt: "Mercury" },
+            ].map((l) => (
+              <div key={l.alt} className="flex h-[clamp(72px,5.6vw,108px)] items-center justify-center border-l border-black/[0.08] first:border-l-0">
+                <Image src={l.src} alt={l.alt} width={140} height={40} className="h-[clamp(20px,1.6vw,30px)] w-auto opacity-70 grayscale" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* 10. Guides                                                          */
+/* ------------------------------------------------------------------ */
+
+const GUIDES: {
+  tag: string;
+  title: string;
+  sub: string;
+  photo?: string;
+  ui: "approve" | "cap" | "close";
+}[] = [
+  {
+    tag: "Playbook",
+    title: "Why agent spend needs a manager, not a dashboard",
+    sub: "Dashboards show you what happened. Payle decides what happens next, inside the caps you set.",
+    photo: "/guides/chart.jpg",
+    ui: "approve",
+  },
+  {
+    tag: "How to",
+    title: "Setting caps that agents actually respect",
+    sub: "Per vendor, per task, per month. The three caps every finance team should set on day one.",
+    photo: "/guides/coin.jpg",
+    ui: "cap",
+  },
+  {
+    tag: "Close",
+    title: "Closing the month when agents did the buying",
+    sub: "Receipts, categories, and the report, drafted by Payle before your team opens the books.",
+    ui: "close",
+  },
+];
+
+/* Mercury's cover anatomy: a photo (or flat gray) ground with a white UI
+   card floating low in the frame and bleeding off its bottom edge */
+function GuideCover({ g }: { g: (typeof GUIDES)[number] }) {
+  const onPhoto = Boolean(g.photo);
+  return (
+    <div
+      className="relative overflow-hidden border border-black/[0.08]"
+      style={{ aspectRatio: "558 / 740", backgroundColor: "#eeeeee" }}
+    >
+      {g.photo && (
+        <Image
+          src={g.photo}
+          alt=""
+          fill
+          sizes="(min-width: 900px) 33vw, 100vw"
+          className="object-cover"
+        />
+      )}
+      <span
+        className={`${CAPS} absolute left-[26px] top-[26px] rounded-[6px] px-4 py-2.5 text-[11px] font-medium backdrop-blur-md`}
+        style={{
+          backgroundColor: onPhoto ? "rgba(10,10,10,0.45)" : INK,
+          color: "#ffffff",
+        }}
+      >
+        {g.tag}
+      </span>
+
+      {/* the UI card, inset like Mercury's and clipped at the foot, on the
+          ruled grid: square, hairline edge, rules running past it and
+          crosshairs at two corners */}
+      <div className="absolute inset-x-[clamp(20px,11%,60px)] top-[clamp(120px,32%,236px)] border border-black/[0.12] bg-white p-[clamp(20px,6.5%,36px)] text-ink shadow-[0_24px_60px_rgba(10,10,10,0.25)]">
+        <span className={`pointer-events-none absolute -left-6 -right-6 -top-px h-px ${onPhoto ? "bg-white/30" : "bg-black/[0.08]"}`} />
+        <span className={`pointer-events-none absolute -bottom-px -left-6 -right-6 h-px ${onPhoto ? "bg-white/30" : "bg-black/[0.08]"}`} />
+        <CoverCross pos="top-left" light={onPhoto} />
+        <CoverCross pos="bottom-right" light={onPhoto} />
+        <UiCard kind={g.ui} />
+      </div>
+    </div>
+  );
+}
+
+/* the crosshair on a cover: white over a photo, dark over gray */
+function CoverCross({ pos, light }: { pos: "top-left" | "bottom-right"; light: boolean }) {
+  const at = pos === "top-left" ? "-left-[7px] -top-[7px]" : "-bottom-[7px] -right-[7px]";
+  const c = light ? "bg-white/70" : "bg-black/40";
+  return (
+    <span className={`pointer-events-none absolute z-10 h-[13px] w-[13px] ${at}`} aria-hidden>
+      <span className={`absolute left-1/2 top-0 h-full w-px -translate-x-1/2 ${c}`} />
+      <span className={`absolute left-0 top-1/2 h-px w-full -translate-y-1/2 ${c}`} />
+    </span>
+  );
+}
+
+function UiCard({ kind }: { kind: "approve" | "cap" | "close" }) {
+  if (kind === "approve") {
+    return (
+      <>
+        <p className="text-[clamp(14px,1.1vw,18px)] font-medium tracking-[-0.3px]">Approve a charge</p>
+        <p className="font-numeral mt-3 text-[clamp(28px,2.6vw,44px)] font-medium leading-none tracking-[-1.5px]">
+          <span className="mr-1 align-top text-[0.55em] text-sub">$</span>2,500.00
+        </p>
+        <div className="mt-3 h-px bg-black/10" />
+        <Field label="Agent" value="Research agent" sub="OpenAI · $500 of cap left" />
+        <Field label="Task" value="Q3 market brief" sub="Requested 2:14 PM" />
+        <div className="mt-5 flex gap-2.5">
+          <span className="flex h-10 flex-1 items-center justify-center rounded-full bg-mist text-[13px] font-medium">Back</span>
+          <span className="flex h-10 flex-1 items-center justify-center rounded-full text-[13px] font-medium text-white" style={{ backgroundColor: INK }}>Approve</span>
+        </div>
+      </>
+    );
+  }
+  if (kind === "cap") {
+    return (
+      <>
+        <p className="text-[clamp(14px,1.1vw,18px)] font-medium tracking-[-0.3px]">Set a monthly cap</p>
+        <p className="font-numeral mt-3 text-[clamp(28px,2.6vw,44px)] font-medium leading-none tracking-[-1.5px]">
+          <span className="mr-1 align-top text-[0.55em] text-sub">$</span>3,000.00
+        </p>
+        <div className="mt-3 h-px bg-black/10" />
+        <Field label="Applies to" value="Research agent" sub="OpenAI, Anthropic" />
+        <Field label="Alert at" value="80% of cap" sub="$2,400.00" />
+        <div className="mt-5 flex items-center justify-between">
+          <span className="text-[13px]">Block charges over the cap</span>
+          <span className="relative h-6 w-11 rounded-full" style={{ backgroundColor: "#9fe870" }}>
+            <span className="absolute right-0.5 top-0.5 h-5 w-5 rounded-full bg-white" />
+          </span>
+        </div>
+      </>
+    );
+  }
+  return (
+    <>
+      <p className="text-[clamp(14px,1.1vw,18px)] font-medium tracking-[-0.3px]">Close July</p>
+      <p className="font-numeral mt-3 text-[clamp(28px,2.6vw,44px)] font-medium leading-none tracking-[-1.5px]">
+        <span className="mr-1 align-top text-[0.55em] text-sub">$</span>2,350.00
+      </p>
+      <div className="mt-3 h-px bg-black/10" />
+      <ul className="mt-4 flex flex-col gap-3 text-[13px]">
+        {[
+          ["142 charges matched to a task", true],
+          ["Categories set by Payle", true],
+          ["2 receipts still missing", false],
+        ].map(([t, done]) => (
+          <li key={String(t)} className="flex items-center gap-2.5">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full" style={{ backgroundColor: done ? "#9fe870" : "#eeeeee" }}>
+              {done && (
+                <svg width="10" height="10" viewBox="0 0 16 16" fill="none" aria-hidden>
+                  <path d="M3 8.5 6.5 12 13 4.5" stroke={INK} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              )}
+            </span>
+            {t}
+          </li>
+        ))}
+      </ul>
+      <div className="mt-5 flex gap-2.5">
+        <span className="flex h-10 flex-1 items-center justify-center rounded-full bg-mist text-[13px] font-medium">Review</span>
+        <span className="flex h-10 flex-1 items-center justify-center rounded-full text-[13px] font-medium text-white" style={{ backgroundColor: INK }}>Send report</span>
+      </div>
+    </>
+  );
+}
+
+function Field({ label, value, sub }: { label: string; value: string; sub: string }) {
+  return (
+    <div className="mt-4">
+      <p className="text-[11px] text-sub">{label}</p>
+      <div className="mt-1.5 flex items-center justify-between border border-black/10 px-3 py-2.5">
+        <div>
+          <p className="text-[13px] font-medium leading-tight">{value}</p>
+          <p className="mt-0.5 text-[11px] text-sub">{sub}</p>
+        </div>
+        <svg width="10" height="10" viewBox="0 0 16 16" fill="none" aria-hidden>
+          <path d="M3 5.5 8 10.5l5-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </div>
+    </div>
+  );
+}
+
+function Guides() {
+  return (
+    <section className="overflow-x-clip bg-[#eeeeee]">
+      <div className={`${FRAME} border-t border-black/[0.08]`}>
+        {/* the section on the ruled grid: a framed column, the head as a
+            cell, the filters as a ruled row, the three guides as cells */}
+        <div className={`${INNER} py-[clamp(56px,6vw,116px)]`}>
+          {/* the column is a share of the viewport, 1600px at 1920, so it
+              keeps its proportion as the screen narrows; the guides go
+              vertical under 800px */}
+          <div className="relative mx-auto w-[min(1600px,84vw)] border-x border-black/[0.08]">
+            <Rule pos="top" />
+            <Rule pos="bottom" />
+            <Cross pos="top-left" />
+            <Cross pos="bottom-right" />
+            <div className="border-y border-black/[0.08] px-6 py-[clamp(40px,4.5vw,72px)]">
+              <motion.h2
+                {...up}
+                className="text-center text-[clamp(34px,3.75vw,72px)] font-medium leading-[1.05] tracking-[-2.5px] text-ink"
+              >
+                Guides for finance teams.
+              </motion.h2>
+              <motion.p {...up} className="mx-auto mt-[clamp(20px,2vw,38px)] max-w-[600px] text-center text-[clamp(16px,1.15vw,22px)] leading-[1.4] text-ink">
+                How teams plan, approve, and close when agents are doing the
+                buying.
+              </motion.p>
+            </div>
+            <div className="grid grid-cols-4 border-b border-black/[0.08] text-[clamp(13px,0.95vw,18px)]">
+              {["All guides", "Playbooks", "How to", "Close"].map((f, i) => (
+                <span key={f} className={`flex h-12 items-center justify-center border-l border-black/[0.08] first:border-l-0 ${i === 0 ? "bg-white text-ink" : "text-sub"}`}>
+                  {f}
+                </span>
+              ))}
+            </div>
+          <div className="grid min-[800px]:grid-cols-3">
+            {GUIDES.map((g, k) => (
+              <motion.article
+                key={g.title}
+                {...up}
+                transition={{ ...up.transition, delay: k * 0.08 }}
+                className="border-t border-black/[0.08] p-[clamp(16px,1.6vw,31px)] min-[800px]:border-l min-[800px]:border-t-0 min-[800px]:first:border-l-0"
+              >
+                <GuideCover g={g} />
+                <h3 className="mt-[clamp(28px,2.9vw,56px)] text-[clamp(22px,1.65vw,32px)] font-medium leading-[1.15] tracking-[-0.8px] text-ink">
+                  {g.title}
+                </h3>
+                <p className="mt-[clamp(20px,2.2vw,42px)] text-[clamp(14px,0.95vw,18px)] leading-[1.45] text-ink/70">{g.sub}</p>
+                <p className="mt-[clamp(16px,1.7vw,32px)] flex items-center gap-2.5 text-[clamp(13px,0.85vw,16px)] text-sub">
+                  <Image
+                    src="/brand/workloat-app-tile.svg"
+                    alt=""
+                    width={24}
+                    height={24}
+                    className="h-6 w-6 rounded-full"
+                  />
+                  Workloat team
+                </p>
+              </motion.article>
+            ))}
+          </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* 11. CTA card                                                        */
+/* ------------------------------------------------------------------ */
+
+function Cta() {
+  return (
+    <section style={{ backgroundColor: GREEN }}>
+      {/* on the green so it runs straight into the footer; the card is
+          green too, with white type and a white pill */}
+      <div className={`${FRAME} border-white/10`}>
+        <div className="px-[clamp(20px,10.4vw,200px)] pb-[clamp(40px,3.3vw,64px)] pt-[clamp(40px,3.6vw,70px)]">
+          <motion.div
+            {...up}
+            className="flex flex-col items-center justify-center rounded-[34px] px-6 text-center text-white"
+            style={{ backgroundColor: GREEN, minHeight: "clamp(360px,33vw,640px)" }}
+          >
+            <h2 className="max-w-[820px] text-[clamp(30px,3vw,58px)] font-medium leading-[1.08] tracking-[-1.8px]" style={{ textWrap: "balance" }}>
+              The financial manager your agents report to.
+            </h2>
+            <div className="mt-[clamp(28px,3vw,58px)]">
+              <ArrowButton href="/contact" tone="pale">
+                Book a demo
+              </ArrowButton>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Shared                                                              */
+/* ------------------------------------------------------------------ */
+
+
