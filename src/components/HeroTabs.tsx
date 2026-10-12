@@ -16,8 +16,10 @@ import "./HeroTabs.css";
  * Tab 1 is the Workloat web app's home, rebuilt from the app's own code
  * (Rail, chat sidebar, wordmark, pill input) in its light theme, with a
  * typewriter cycling requests through the input. Tabs 2 to 4 (Inbox,
- * Approvals, Record) keep the design's own styles. Every view is a
- * picture: aria-hidden and not interactive.
+ * Approvals, Record) keep the design's own styles. At 500 and under,
+ * tabs 1 and 2 swap the scaled desktop views for phone layouts drawn at
+ * true size (AppPhone, InboxPhone). Every view is a picture: aria-hidden
+ * and not interactive.
  */
 
 const DWELL = 8000;
@@ -117,6 +119,95 @@ function AppHome({ typed }: { typed: string | null }) {
           <div className="wa-hint" />
         </div>
       </main>
+    </div>
+  );
+}
+
+const ALFRED = NOTE_HTML.match(/<svg[\s\S]*?<\/svg>/)?.[0] ?? "";
+const Px = ({ className }: { className: string }) => <span className={className} dangerouslySetInnerHTML={{ __html: ALFRED }} />;
+
+/** Tab 1 on a phone (500 and under): the same home laid out for an
+ *  iPhone, at true size. The menu, the open Loat and a new chat on top,
+ *  Alfred's note as a banner, the wordmark, and the composer held to the
+ *  bottom with the request wrapping over its lines and the buttons below. */
+function AppPhone({ typed }: { typed: string | null }) {
+  return (
+    <div className="wph">
+      <div className="wph-bar">
+        <span className="wph-btn">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden><path d="M4 8.5h16M4 15.5h10" /></svg>
+        </span>
+        <b className="wph-title">Alfred<svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden><path d="m4 6 4 4 4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg></b>
+        <span className="wph-btn"><Ico name="new" size={19} /></span>
+      </div>
+      <div className="wph-body">
+        <div className="wph-note">
+          <div className="wph-note__head"><Px className="wph-px" /><b>Alfred</b><span>by email · now</span></div>
+          <p>Priya confirmed Tuesday at 2 PM. I sent the invite with a Meet link and added her CV to your notes.</p>
+        </div>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img className="wph-wordmark" src="/landing/tabs/app-wordmark-dark.png" alt="" width={150} height={24} />
+      </div>
+      <div className="wph-pill">
+        <span className={`wph-text ${typed !== null ? "typed" : ""}`}>
+          {typed !== null ? <>{typed}<span className="wa-caret" /></> : "Ask Alfred anything"}
+        </span>
+        <div className="wph-row">
+          <span className="wph-clip">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden><path d="M12 5v14M5 12h14" /></svg>
+          </span>
+          <span className="wph-voice">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+              {[[3, 6], [7, 12], [11, 18], [15, 12], [19, 6]].map(([x, h]) => <rect key={x} x={x} y={12 - h / 2} width="2" height={h} rx="1" />)}
+            </svg>
+          </span>
+          <span className={`wph-send ${typed ? "ready" : ""}`}>
+            <svg width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden><path d="M8 13V3M4 7l4-4 4 4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** Tab 2 on a phone: Alfred's inbox opened on the thread, as a mail app
+ *  shows it on an iPhone, on the ledger's paper. */
+function InboxPhone() {
+  return (
+    <div className="wph wph--mail">
+      <div className="wph-bar">
+        <span className="wph-back">
+          <svg width="12" height="20" viewBox="0 0 12 20" fill="none" aria-hidden><path d="M10 2 2 10l8 8" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          Inbox
+        </span>
+        <span className="wph-box"><Px className="wph-px wph-px--round" /><span><b>Alfred</b><small>alfred_workloat@workloat.com</small></span></span>
+      </div>
+      <div className="wph-mail">
+        <h4>Re: Technical screen next week</h4>
+        <div className="wph-msg">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/landing/anywhere/ddd827596c.jpg" alt="" />
+          <div>
+            <div className="wph-who"><b>Zeradam</b><span>9:02 AM</span></div>
+            <div className="wph-to">to Alfred</div>
+            <p>Alfred, can you set up a technical screen with Priya next week? Send me the invite to approve before it goes out.</p>
+          </div>
+        </div>
+        <div className="wph-msg">
+          <Px className="wph-px wph-px--round wph-px--40" />
+          <div>
+            <div className="wph-who"><b>Alfred</b><span>9:41 AM</span></div>
+            <div className="wph-to">to Zeradam, Priya</div>
+            <p>Priya picked Tuesday at 2 PM, and it works for your calendar too. I&apos;ve added a Google Meet link.</p>
+            <div className="wph-invite">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/landing/anywhere/b232e3d48a.png" alt="" />
+              <div><b>Technical screen with Priya</b><span>Tue, Oct 13 · 2:00 to 2:45 PM</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="wph-reply">Reply to Alfred</div>
     </div>
   );
 }
@@ -253,9 +344,11 @@ export default function HeroTabs() {
                 <div className="wglass"><AppHome typed={typed} /></div>
                 <div style={{ display: "contents" }} dangerouslySetInnerHTML={{ __html: NOTE_HTML }} />
               </div>
+              <div className="wph-wrap" aria-hidden><AppPhone typed={typed} /></div>
             </div>
             <div className={`panel ${current === 1 ? "is-on" : ""}`} id="panel-inbox" role="tabpanel" aria-labelledby="tab-inbox">
               <div className="fit" aria-hidden style={fitStyle(1)} dangerouslySetInnerHTML={{ __html: INBOX_HTML }} />
+              <div className="wph-wrap" aria-hidden><InboxPhone /></div>
             </div>
             <div className={`panel ${current === 2 ? "is-on" : ""}`} id="panel-review" role="tabpanel" aria-labelledby="tab-review">
               <div

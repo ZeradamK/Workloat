@@ -143,3 +143,93 @@
 .wht .ml__item { border-top-color: #ecebe4; }
 .wht .msgx { border-bottom-color: #ecebe4; }
 .wht #panel-inbox, .wht #panel-review { background-image: var(--sky); background-position: 20% 85%; background-size: 160%; }
+
+/* ---------- phones (500 and under): tabs 1 and 2 as phone screens ----------
+   The scaled desktop views drop out and a phone layout takes their place,
+   drawn at true size in the same glass frame: the app's light tokens, 16px
+   type in the composer, 14 to 15px in the content. The stage grows to hold
+   a phone sized screen, and every backdrop covers the whole stage. */
+.wht .wph-wrap { display: none; }
+.wht .wph {
+  --wa-ink: #1a1a1a; --wa-paper: #1e1e1e; --wa-sub: #5f5f5f; --wa-faint: #8f8f8f; --wa-hint: #9a9a9a; --wa-rule: #e6e6e6;
+  --wa-font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", "Segoe UI", Roboto, Arial, sans-serif;
+  display: flex; flex-direction: column; width: 100%; height: 100%; overflow: hidden;
+  border-radius: 26px; background: #ffffff; color: var(--wa-ink);
+  font-family: var(--wa-font); -webkit-font-smoothing: antialiased; text-align: left;
+}
+.wht .wph svg { display: block; }
+
+/* the top bar */
+.wht .wph-bar { flex: none; display: flex; align-items: center; justify-content: space-between; height: 54px; padding: 0 10px; }
+.wht .wph-btn { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; color: var(--wa-ink); }
+.wht .wph-title { display: flex; align-items: center; gap: 5px; font-size: 17px; font-weight: 600; letter-spacing: -0.2px; }
+.wht .wph-title svg { color: var(--wa-sub); }
+
+/* the body: Alfred's banner on top, the wordmark in the space left */
+.wht .wph-body { flex: 1; min-height: 0; display: flex; flex-direction: column; align-items: center; padding: 6px 12px 0; }
+.wht .wph-note {
+  align-self: stretch; padding: 12px 14px; border-radius: 18px;
+  background: #f4f4f4; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.04);
+}
+.wht .wph-note__head { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.wht .wph-note__head b { font-size: 14px; font-weight: 600; }
+.wht .wph-note__head span:last-child { margin-left: auto; font: 400 11.5px/1 var(--wht-mono), ui-monospace, monospace; color: #8e8e8e; }
+.wht .wph-note p { margin: 0; font-size: 14px; line-height: 1.4; color: #333333; }
+.wht .wph-px { display: block; flex: none; width: 24px; height: 24px; border-radius: 6px; overflow: hidden; }
+.wht .wph-px svg { width: 100%; height: 100%; }
+.wht .wph-px--round { border-radius: 50%; }
+.wht .wph-px--40 { width: 40px; height: 40px; }
+.wht .wph-wordmark { display: block; height: 24px; width: auto; margin: auto 0; user-select: none; }
+
+/* the composer: the request wraps over the top, the buttons sit below */
+.wht .wph-pill {
+  flex: none; margin: 0 10px 12px; padding: 12px 10px 8px 16px;
+  border: 1px solid var(--wa-rule); border-radius: 26px; background: #ffffff; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+}
+.wht .wph-text { display: block; min-height: 24px; max-height: 72px; overflow: hidden; font-size: 16px; line-height: 24px; color: var(--wa-hint); overflow-wrap: anywhere; }
+.wht .wph-text.typed { color: var(--wa-ink); }
+.wht .wph-row { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+.wht .wph-clip { display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; margin-left: -8px; margin-right: auto; border-radius: 50%; border: 1px solid var(--wa-rule); color: var(--wa-ink); }
+.wht .wph-voice, .wht .wph-send { display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; color: #ffffff; }
+.wht .wph-voice { background: var(--wa-paper); }
+.wht .wph-send { background: rgba(30, 30, 30, 0.25); }
+.wht .wph-send.ready { background: var(--wa-paper); }
+
+/* tab 2: the thread, on the ledger's paper */
+.wht .wph--mail { background: #fbfaf6; }
+.wht .wph--mail .wph-bar { border-bottom: 1px solid #ecebe4; padding: 0 12px 0 8px; }
+.wht .wph-back { display: flex; align-items: center; gap: 4px; font-size: 16px; color: var(--wa-ink); }
+.wht .wph-box { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.wht .wph-box > span:last-child { display: flex; flex-direction: column; min-width: 0; text-align: right; }
+.wht .wph-box b { font-size: 14px; font-weight: 600; }
+.wht .wph-box small { font-size: 11px; color: var(--wa-faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wht .wph-box .wph-px { order: 2; width: 30px; height: 30px; }
+.wht .wph-mail { flex: 1; min-height: 0; overflow: hidden; padding: 14px 16px 0; }
+.wht .wph-mail h4 { margin: 0 0 6px; font-size: 19px; font-weight: 600; line-height: 1.25; letter-spacing: -0.3px; color: var(--wa-ink); }
+.wht .wph-msg { display: flex; gap: 10px; padding: 14px 0; border-bottom: 1px solid #ecebe4; }
+.wht .wph-msg > img { flex: none; width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+.wht .wph-msg > div { flex: 1; min-width: 0; }
+.wht .wph-who { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.wht .wph-who b { font-size: 15px; font-weight: 600; }
+.wht .wph-who span { font-size: 12px; color: var(--wa-faint); }
+.wht .wph-to { margin-top: 1px; font-size: 12.5px; color: var(--wa-faint); }
+.wht .wph-msg p { margin: 6px 0 0; font-size: 14.5px; line-height: 1.45; color: #2a2a2a; }
+.wht .wph-invite { display: flex; align-items: center; gap: 10px; margin-top: 10px; padding: 10px 12px; border: 1px solid #e3e2da; border-radius: 10px; background: #ffffff; }
+.wht .wph-invite img { flex: none; width: 26px; height: 26px; }
+.wht .wph-invite div { display: flex; flex-direction: column; min-width: 0; }
+.wht .wph-invite b { font-size: 13.5px; font-weight: 600; }
+.wht .wph-invite span { font-size: 12px; color: var(--wa-sub); }
+.wht .wph-reply { flex: none; margin: 10px 12px 12px; padding: 12px 16px; border: 1px solid #e3e2da; border-radius: 22px; background: #ffffff; font-size: 15px; color: var(--wa-hint); }
+
+@media (max-width: 500px) {
+  .wht .stage { height: 640px; }
+  .wht #panel-chat > .fit, .wht #panel-inbox > .fit { display: none; }
+  .wht .wph-wrap {
+    display: flex; width: min(calc(100% - 32px), 390px); height: calc(100% - 40px);
+    padding: 6px; border-radius: 32px;
+    background: rgba(255, 255, 255, 0.26); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.55);
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    pointer-events: none; user-select: none;
+  }
+  .wht #panel-chat, .wht #panel-inbox, .wht #panel-review { background-size: cover; background-position: 50% 70%; }
+}

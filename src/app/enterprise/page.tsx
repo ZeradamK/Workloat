@@ -13,7 +13,8 @@ import EnterpriseFlow from "@/components/EnterpriseFlow";
  *   2. Build, launch, iterate (EnterpriseFlow), on Voiceflow's panels.
  *   3. Own your Loats (OwnYourLoats), on Zaro's cards: your model, your
  *      infrastructure, your data.
- *   4. Footer.
+ *   4. Footer, light: white ground, black type, the black mark and
+ *      dark rules.
  *
  * Taken off on 2026-10-09: the hero ("Every agent, one ledger", in
  * design-archive/enterprise-hero.tsx.txt), the black Stages act (in
@@ -28,8 +29,8 @@ export default function EnterprisePage() {
       <EnterpriseNative lead />
       <EnterpriseFlow />
       <OwnYourLoats />
-      <div style={{ backgroundColor: "#0a0a0a" }}>
-        <FooterSection tone="light" />
+      <div style={{ backgroundColor: "#ffffff" }}>
+        <FooterSection tone="dark" />
       </div>
     </main>
   );
