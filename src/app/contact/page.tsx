@@ -76,7 +76,7 @@ export default function ContactPage() {
             </p>
             <div className="mt-auto flex flex-wrap gap-2.5 pt-8">
               <a
-                href="mailto:hello@workloat.com"
+                href="mailto:zeradamkifle@workloat.com"
                 className="inline-flex h-11 items-center rounded-full bg-[#0a0a0a] px-5 text-[13px] font-semibold tracking-[-0.5px] text-white transition-transform hover:scale-[1.03] active:scale-[0.97]"
               >
                 Email support
@@ -121,7 +121,7 @@ export default function ContactPage() {
             </p>
             <div className="mt-auto pt-8">
               <a
-                href="mailto:hello@workloat.com?subject=Business%20sales"
+                href="mailto:zeradamkifle@workloat.com?subject=Business%20sales"
                 className="inline-flex h-11 items-center rounded-full bg-white px-5 text-[13px] font-semibold tracking-[-0.5px] text-ink transition-transform hover:scale-[1.03] active:scale-[0.97]"
               >
                 Talk to sales
@@ -174,10 +174,10 @@ export default function ContactPage() {
         >
           Anything else? Write to{" "}
           <a
-            href="mailto:hello@workloat.com"
+            href="mailto:zeradamkifle@workloat.com"
             className="font-medium text-ink transition-opacity hover:opacity-60"
           >
-            hello@workloat.com
+            zeradamkifle@workloat.com
           </a>{" "}
           and it reaches a human.
         </motion.p>
@@ -194,7 +194,7 @@ const SECONDARY = [
     title: "Press",
     copy: "Writing about Workloat? We are happy to talk.",
     cta: "Email press",
-    href: "mailto:hello@workloat.com?subject=Press",
+    href: "mailto:zeradamkifle@workloat.com?subject=Press",
     external: true,
   },
   {

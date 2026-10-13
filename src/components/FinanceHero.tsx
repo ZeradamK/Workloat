@@ -143,7 +143,7 @@ function Mailbox() {
           <div className="fh-msg">
             <span className="fh-msg__ava"><Px who="Sona" /></span>
             <div>
-              <div className="fh-msg__head"><b>Sona from Workloat</b><small>&lt;sona_workloat@workloat.com&gt;</small><time>9:03 AM</time></div>
+              <div className="fh-msg__head"><b>Sona from Workloat</b><small>&lt;sona_workloat@loat.workloat.com&gt;</small><time>9:03 AM</time></div>
               <div className="fh-msg__to">to Vibe.co</div>
               <p>Hi Vibe team,</p>
               <p>Thanks for sending invoice VB-2041. It matches the October order, and it fits the marketing budget for this month.</p>

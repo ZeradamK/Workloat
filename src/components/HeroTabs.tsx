@@ -299,7 +299,7 @@ function InboxPhone() {
           <svg width="12" height="20" viewBox="0 0 12 20" fill="none" aria-hidden><path d="M10 2 2 10l8 8" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" /></svg>
           Inbox
         </span>
-        <span className="wph-box"><Px className="wph-px wph-px--round" /><span><b>Alfred</b><small>alfred_workloat@workloat.com</small></span></span>
+        <span className="wph-box"><Px className="wph-px wph-px--round" /><span><b>Alfred</b><small>alfred_workloat@loat.workloat.com</small></span></span>
       </div>
       <div className="wph-mail">
         <h4>Re: Technical screen next week</h4>

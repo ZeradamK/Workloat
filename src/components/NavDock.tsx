@@ -191,7 +191,7 @@ const SIDE: Record<PanelKey, { head: string; links: SideLink[] }[]> = {
     { head: "Get started", links: [{ label: "Sign up", href: "/signup" }] },
   ],
   Contact: [
-    { head: "Follow", links: [{ label: "LinkedIn", href: "https://www.linkedin.com", out: true }, { label: "Mail", href: "mailto:hello@workloat.com", out: true }] },
+    { head: "Follow", links: [{ label: "LinkedIn", href: "https://www.linkedin.com", out: true }, { label: "Mail", href: "mailto:zeradamkifle@workloat.com", out: true }] },
   ],
 };
 

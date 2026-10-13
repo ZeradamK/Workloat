@@ -28,7 +28,7 @@ const COLS: { label: string; links: { label: string; href: string }[] }[] = [
     links: [
       { label: "Sign up", href: "/signup" },
       { label: "LinkedIn", href: "https://www.linkedin.com/company/107224097/" },
-      { label: "Mail", href: "mailto:hello@workloat.com" },
+      { label: "Mail", href: "mailto:zeradamkifle@workloat.com" },
     ],
   },
 ];

@@ -85,7 +85,7 @@ type Story = {
 const STORIES: Story[] = [
   {
     loat: "Alfred",
-    addr: "alfred_workloat@workloat.com",
+    addr: "alfred_workloat@loat.workloat.com",
     task: "Schedule a technical screen with Priya next week.",
     subject: "Technical screen next week",
     first: { from: "Alfred", loat: true, to: "to Priya Shah", time: "9:12 AM", body: "Hi Priya, thanks for your time so far. Zeradam would like a 45 minute technical screen with you next week. Would Tuesday at 2 PM, Wednesday at 11 AM or Thursday at 3 PM work?", sig: "Alfred, for Zeradam" },
@@ -105,14 +105,14 @@ const STORIES: Story[] = [
         { do: "wait", ms: 1500 },
         { do: "me", text: "Yes, please send it. Thanks." },
         { do: "dots", ms: 1300 },
-        { do: "them", text: "Sent from alfred_workloat@workloat.com. I'll text you if she reschedules." },
+        { do: "them", text: "Sent from alfred_workloat@loat.workloat.com. I'll text you if she reschedules." },
         { do: "done" },
       ],
     },
   },
   {
     loat: "Sona",
-    addr: "sona_workloat@workloat.com",
+    addr: "sona_workloat@loat.workloat.com",
     subject: "Invoice NW-2041 for October",
     first: { from: "Northwind Media", ini: "NM", to: "to Sona", time: "8:55 AM", body: "Hi, please find attached invoice NW-2041 for October campaign services, $4,800.00, due October 20.", sig: "Accounts, Northwind Media" },
     next: { from: "Sona", loat: true, to: "to Northwind Media", time: "9:03 AM", body: "Thanks, received. It matches the October order, and payment is queued for approval today.", sig: "Sona, for Workloat Finance" },
@@ -159,7 +159,7 @@ const STORIES: Story[] = [
   },
   {
     loat: "Alfred",
-    addr: "alfred_workloat@workloat.com",
+    addr: "alfred_workloat@loat.workloat.com",
     task: "Check which vendor contracts renew automatically this month.",
     subject: "Your annual plan renews November 1",
     first: { from: "Brightline Analytics", ini: "BA", to: "to Alfred", time: "8:30 AM", body: "Your annual plan renews automatically on November 1 at $18,000. To change or cancel, let us know before October 17.", sig: "Brightline Billing" },
@@ -176,7 +176,7 @@ const STORIES: Story[] = [
         fields: [["To", "Brightline Billing"], ["Plan", "Annual · $18,000"], ["Notice due", "Oct 17"]],
         primary: "Approve and send",
         secondary: "Edit",
-        approved: "Sent from alfred_workloat@workloat.com · 10:06 AM",
+        approved: "Sent from alfred_workloat@loat.workloat.com · 10:06 AM",
       },
       steps: [
         { do: "dots", ms: 1300 },
@@ -710,7 +710,7 @@ export default function HeroStory({ layout }: { layout: "desktop" | "mobile" }) 
               <header className="ap-top">
                 <span className="ap-back">{BACK}Inbox</span>
                 <h4>{STORIES[2].chat.title}</h4>
-                <span className="ap-from"><span className="ap-ava ap-ava--xs"><LoatPx loat="Alfred" /></span>Alfred · alfred_workloat@workloat.com</span>
+                <span className="ap-from"><span className="ap-ava ap-ava--xs"><LoatPx loat="Alfred" /></span>Alfred · alfred_workloat@loat.workloat.com</span>
               </header>
               <div className="ap-thread" data-thread />
               <div className="ap-compose">
