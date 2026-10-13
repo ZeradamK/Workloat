@@ -149,7 +149,7 @@ const STORIES: Story[] = [
         { do: "dots", ms: 1200 },
         { do: "them", text: "Paid and matched to invoice NW-2041. Marketing has $1,400 left for October." },
         { do: "wait", ms: 900 },
-        { do: "other", who: "Jenny", img: "/landing/anywhere/bb8f97ba52.jpg", text: "Thanks @Sona. I'll update the campaign tracker." },
+        { do: "other", who: "Lena", img: "/landing/anywhere/bb8f97ba52.jpg", text: "Thanks @Sona. I'll update the campaign tracker." },
         { do: "wait", ms: 900 },
         { do: "me", text: "Thanks Sona. Please flag anything over $2,000 before month end." },
         { do: "dots", ms: 1200 },

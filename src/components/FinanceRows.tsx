@@ -179,7 +179,7 @@ export function Record() {
 
       <div className="fr-panel">
         <div className="fr-panel__tabs"><b>Details</b><span>Sona</span><i>✕</i></div>
-        <div className="fr-panel__kv"><span>Owner</span><b><i className="fr-panel__face" />Jenny</b></div>
+        <div className="fr-panel__kv"><span>Owner</span><b><i className="fr-panel__face" />Lena</b></div>
         <div className="fr-panel__kv"><span>Team</span><b>Marketing</b></div>
         <div className="fr-panel__row">Contract <em>Monthly · renews Nov 1</em><i>›</i></div>
         <div className="fr-panel__row">Budget <em>$1,400 left</em><i>›</i></div>
