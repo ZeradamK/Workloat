@@ -5,6 +5,20 @@ import Image from "next/image";
 import { animate, AnimatePresence, motion, useInView, useReducedMotion } from "motion/react";
 import PhoneMock, { screenWidth as phoneScreenWidth } from "./PhoneMock";
 import { SlackIcon, type SlackIconName } from "./slackIcons";
+import { WHEREVER_HTML } from "./wherever-you-work.html";
+
+/* Sona's face: the pixel cat she wears everywhere on the site */
+const SONA = WHEREVER_HTML.match(/<svg(?:(?!<\/svg>)[\s\S])*#f28c28[\s\S]*?<\/svg>/)?.[0] ?? "";
+function SonaFace({ size, radius, className = "" }: { size: number; radius: number; className?: string }) {
+  return (
+    <span
+      aria-hidden
+      className={`block shrink-0 overflow-hidden [&>svg]:block [&>svg]:h-full [&>svg]:w-full ${className}`}
+      style={{ width: size, height: size, borderRadius: radius }}
+      dangerouslySetInnerHTML={{ __html: SONA }}
+    />
+  );
+}
 
 /**
  * Slack act. A white stage, inset 100px from the viewport edges,
@@ -518,7 +532,7 @@ function SlackWindow({ layout, stage, typed }: { layout: Layout; stage: Stage; t
                 <SideRow key={c} label={c} hash />
               ))}
               <SideHead>Direct messages</SideHead>
-              <SideRow label="Sona" avatar="/brand/workloat-app-tile.svg" active />
+              <SideRow label="Sona" face active />
               <SideRow label="Zeradam" avatar="/zeradam.jpg" you />
               <SideHead>Apps</SideHead>
               <SideRow label="Workloat" avatar="/brand/workloat-app-tile.svg" />
@@ -537,7 +551,7 @@ function SlackWindow({ layout, stage, typed }: { layout: Layout; stage: Stage; t
                   <SlackIcon name="star-o" size={15} bold />
                 </span>
                 <span className="relative">
-                  <Image src="/brand/workloat-app-tile.svg" alt="" width={24} height={24} className="h-[24px] w-[24px] rounded-[6px]" />
+                  <SonaFace size={24} radius={6} />
                   <span className="absolute -bottom-0.5 -right-0.5 h-[9px] w-[9px] rounded-full border-2 border-white bg-[#2bac76]" />
                 </span>
                 Sona
@@ -582,7 +596,7 @@ function SlackWindow({ layout, stage, typed }: { layout: Layout; stage: Stage; t
             {/* the DM's intro: Slack's "this conversation is just between" block */}
             <div className="mb-4">
               <div className="flex items-end gap-4">
-                <Image src="/brand/workloat-app-tile.svg" alt="Workloat" width={96} height={96} className="h-[96px] w-[96px] rounded-[10px]" />
+                <SonaFace size={96} radius={10} />
                 <div className="pb-1">
                   <p className="flex items-center gap-2 text-[18px] font-bold leading-[1.2]">
                     Sona
@@ -635,7 +649,7 @@ function SlackWindow({ layout, stage, typed }: { layout: Layout; stage: Stage; t
             <AnimatePresence initial={false}>
               {stage === 2 && (
                 <motion.div key="dots" {...rowIn} exit={{ opacity: 0, transition: { duration: 0.15 } }} className="mt-3 flex items-center gap-3">
-                  <Image src="/brand/workloat-app-tile.svg" alt="Workloat" width={36} height={36} className="h-[36px] w-[36px] shrink-0 rounded-[8px]" />
+                  <SonaFace size={36} radius={8} />
                   <span className="flex items-center gap-1 rounded-[10px] px-3 py-2.5" style={{ backgroundColor: "#f4f4f4" }}>
                     {[0, 1, 2].map((i) => (
                       <motion.span
@@ -655,7 +669,7 @@ function SlackWindow({ layout, stage, typed }: { layout: Layout; stage: Stage; t
             <AnimatePresence initial={false}>
               {stage >= 3 && (
                 <motion.div key="a" {...rowIn} className="mt-3 flex items-start gap-3">
-                  <Image src="/brand/workloat-app-tile.svg" alt="Workloat" width={36} height={36} className="h-[36px] w-[36px] shrink-0 rounded-[8px]" />
+                  <SonaFace size={36} radius={8} />
                   <div className="min-w-0 flex-1">
                     <p className="text-[14px] leading-[1.2]">
                       <span className="font-bold">Sona</span>
@@ -790,6 +804,7 @@ function SideRow({
   hash,
   active,
   avatar,
+  face,
   initial,
   icon,
   you,
@@ -798,6 +813,8 @@ function SideRow({
   hash?: boolean;
   active?: boolean;
   avatar?: string;
+  /** Sona's pixel cat in place of an avatar image */
+  face?: boolean;
   initial?: string;
   icon?: SlackIconName;
   you?: boolean;
@@ -811,6 +828,7 @@ function SideRow({
       )}
       {icon && <SlackIcon name={icon} size={17} bold />}
       {avatar && <Image src={avatar} alt="" width={20} height={20} className="h-[20px] w-[20px] rounded-[4px] object-cover" />}
+      {face && <SonaFace size={20} radius={4} />}
       {initial && <span className="flex h-[20px] w-[20px] items-center justify-center rounded-[4px] bg-[#bcd1f7] text-[10px] font-semibold text-[#1d1c1d]">{initial}</span>}
       <span className="truncate">{label}</span>
       {you && <span className="text-[12px] opacity-60">you</span>}
@@ -863,7 +881,7 @@ function SlackPhone({ active }: { active: boolean }) {
         <span className="flex items-center gap-3">
           <SlackIcon name="chevron-large-left" size={20} bold />
           <span className="relative">
-            <Image src="/brand/workloat-app-tile.svg" alt="Workloat" width={30} height={30} className="h-[30px] w-[30px] rounded-[7px]" />
+            <SonaFace size={30} radius={7} />
             <span className="absolute -bottom-0.5 -right-0.5 h-[10px] w-[10px] rounded-full border-2 border-white bg-[#2bac76]" />
           </span>
           <span className="text-[17px] font-bold">Sona</span>
@@ -877,7 +895,7 @@ function SlackPhone({ active }: { active: boolean }) {
       {/* conversation */}
       <div className="flex min-h-0 flex-1 flex-col justify-end overflow-hidden px-4">
         {/* profile block */}
-        <Image src="/brand/workloat-app-tile.svg" alt="Workloat" width={64} height={64} className="h-[64px] w-[64px] rounded-[14px]" />
+        <SonaFace size={64} radius={14} />
         <p className="mt-3 text-[22px] font-bold leading-tight">Sona</p>
         <p className="text-[15px]" style={{ color: IOS_MUTED }}>Financial manager Loat · Workloat</p>
         <p className="mt-3 text-[15px] leading-[1.4]" style={{ color: IOS_MUTED }}>
@@ -914,7 +932,7 @@ function SlackPhone({ active }: { active: boolean }) {
         <AnimatePresence initial={false}>
           {stage >= 3 && (
             <motion.div key="a" {...rowIn} className="mt-3 flex items-start gap-2.5">
-              <Image src="/brand/workloat-app-tile.svg" alt="Workloat" width={36} height={36} className="h-[36px] w-[36px] shrink-0 rounded-[8px]" />
+              <SonaFace size={36} radius={8} />
               <div className="min-w-0 flex-1">
                 <p className="text-[15px] leading-[1.2]">
                   <span className="font-bold">Sona</span>
@@ -959,7 +977,7 @@ function SlackPhone({ active }: { active: boolean }) {
         <AnimatePresence initial={false}>
           {stage === 2 && (
             <motion.div key="typing" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }} className="flex h-[26px] items-center gap-2 rounded-t-[10px] px-3 text-[12px]" style={{ backgroundColor: "#f4f4f4", color: IOS_MUTED }}>
-              <Image src="/brand/workloat-app-tile.svg" alt="" width={16} height={16} className="h-[16px] w-[16px] rounded-[4px]" />
+              <SonaFace size={16} radius={4} />
               <span className="font-semibold" style={{ color: IOS_INK }}>Sona</span> is typing…
             </motion.div>
           )}
