@@ -231,5 +231,146 @@
     -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
     pointer-events: none; user-select: none;
   }
-  .wht #panel-chat, .wht #panel-inbox, .wht #panel-review { background-size: cover; background-position: 50% 70%; }
+  .wht #panel-chat, .wht #panel-inbox, .wht #panel-review, .wht #panel-record { background-size: cover; background-position: 50% 70%; }
+}
+
+/* ---------- tab 1's conversation ----------
+   Once the request is sent the home fades out and the chat page fades in:
+   the request on the right in a grey bubble, then Alfred (his pixel face,
+   his name) thinking in three dots, then his answer, its pieces rising in
+   one after another. Alfred's note steps aside while the chat is open. */
+.wht .wa-main { position: relative; }
+.wht .wa-home { transition: opacity .35s ease; }
+.wht .wa-conv {
+  position: absolute; inset: 0; display: flex; flex-direction: column; padding: 0 20px 20px;
+  opacity: 0; visibility: hidden; transition: opacity .35s ease, visibility 0s linear .35s;
+}
+.wht .wa-main.is-chat .wa-home { opacity: 0; }
+.wht .wa-main.is-chat .wa-conv { opacity: 1; visibility: visible; transition: opacity .35s ease .1s; }
+.wht .wa-thread { flex: 1; min-height: 0; overflow: hidden; width: 100%; max-width: 680px; margin: 0 auto; padding: 40px 0 16px; }
+.wht .wa-conv .wa-pill { width: 100%; max-width: 680px; margin: 0 auto; }
+.wht .wa-notes { transition: opacity .35s ease; }
+.wht .wa-notes.is-off { opacity: 0; }
+.wht .wa-chat.on { background: var(--wa-tint-2); }
+.wht .wa-chat--new { animation: wht-rise .4s ease both; }
+
+.wht .wt { display: flex; flex-direction: column; gap: 26px; font-family: var(--wa-font); color: var(--wa-ink); }
+.wht .wt-me {
+  align-self: flex-end; max-width: 72%; padding: 10px 16px; border-radius: 20px;
+  background: #f1f1f1; font-size: 16px; line-height: 1.5;
+  animation: wht-rise .4s cubic-bezier(.2, .7, .2, 1) both;
+}
+.wht .wt-them { display: flex; gap: 12px; align-items: flex-start; animation: wht-rise .4s cubic-bezier(.2, .7, .2, 1) both; }
+.wht .wt-ava { display: block; flex: none; width: 30px; height: 30px; border-radius: 50%; overflow: hidden; }
+.wht .wt-ava svg { width: 100%; height: 100%; }
+.wht .wt-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.wht .wt-name { font-size: 14px; font-weight: 600; line-height: 30px; }
+.wht .wt-dots { display: flex; gap: 5px; height: 24px; align-items: center; }
+.wht .wt-dots i { width: 7px; height: 7px; border-radius: 50%; background: #9a9a9a; animation: wht-dot 1.1s ease-in-out infinite; }
+.wht .wt-dots i:nth-child(2) { animation-delay: .15s; }
+.wht .wt-dots i:nth-child(3) { animation-delay: .3s; }
+
+/* Alfred's answer */
+.wht .ar { display: flex; flex-direction: column; gap: 14px; }
+.wht .ar > * { animation: wht-rise .5s cubic-bezier(.2, .7, .2, 1) both; }
+.wht .ar > :nth-child(2) { animation-delay: .35s; }
+.wht .ar > :nth-child(3) { animation-delay: .7s; }
+.wht .ar > :nth-child(4) { animation-delay: 1.05s; }
+.wht .ar > :nth-child(5) { animation-delay: 1.4s; }
+.wht .ar-p { margin: 0; font-size: 16px; line-height: 1.55; }
+.wht .ar-card { border: 1px solid var(--wa-rule); border-radius: 14px; background: #ffffff; overflow: hidden; }
+.wht .ar-head { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--wa-rule); }
+.wht .ar-head img { flex: none; width: 30px; height: 30px; }
+.wht .ar-head div, .wht .ar-file div, .wht .ar-person div { display: flex; flex-direction: column; min-width: 0; }
+.wht .ar-head b, .wht .ar-file b { font-size: 15px; font-weight: 600; }
+.wht .ar-head div span, .wht .ar-file div span { font-size: 13px; color: var(--wa-sub); }
+.wht .ar-rows { display: flex; flex-direction: column; padding: 6px 16px; }
+.wht .ar-rows div { display: flex; gap: 12px; padding: 7px 0; font-size: 14px; }
+.wht .ar-rows span { width: 76px; flex: none; color: var(--wa-faint); }
+.wht .ar-rows b { font-weight: 500; }
+.wht .ar-btns { display: flex; flex-wrap: wrap; gap: 8px; }
+.wht .ar-btns span { display: inline-flex; align-items: center; height: 36px; padding: 0 16px; border-radius: 999px; border: 1px solid #dcdcdc; font-size: 14px; font-weight: 500; }
+.wht .ar-btns .go { border-color: var(--wa-paper); background: var(--wa-paper); color: #ffffff; }
+.wht .ar-file { align-self: flex-start; display: flex; align-items: center; gap: 12px; padding: 10px 16px 10px 10px; border: 1px solid var(--wa-rule); border-radius: 12px; background: #ffffff; }
+.wht .ar-pdf { display: grid; place-items: center; flex: none; width: 34px; height: 38px; border-radius: 6px; background: #e5484d; color: #ffffff; font-size: 10.5px; font-weight: 700; letter-spacing: .04em; }
+.wht .ar-list { margin: 0; padding-left: 20px; list-style: disc; font-size: 15.5px; line-height: 1.6; }
+.wht .ar-flag { display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; border: 1px solid #efdfae; border-radius: 12px; background: #fdf6e3; }
+.wht .ar-flag b { font-size: 14px; font-weight: 600; color: #7a5200; }
+.wht .ar-flag span { font-size: 14px; line-height: 1.45; color: #5c4a1f; }
+.wht .ar-people { display: flex; flex-direction: column; }
+.wht .ar-person { display: flex; align-items: center; gap: 12px; padding: 10px 16px; }
+.wht .ar-person + .ar-person { border-top: 1px solid var(--wa-rule); }
+.wht .ar-ini { display: grid; place-items: center; flex: none; width: 32px; height: 32px; border-radius: 50%; font-size: 12px; font-weight: 600; color: #333333; }
+.wht .ar-person div { flex: 1; }
+.wht .ar-person b { font-size: 14.5px; font-weight: 600; }
+.wht .ar-person div span { font-size: 13px; color: var(--wa-sub); }
+.wht .ar-person em { flex: none; font-style: normal; font-size: 12.5px; color: var(--wa-faint); }
+
+/* on the phone: the home and the chat share the body, the chat held to
+   the bottom with its top fading under the bar as it grows */
+.wht .wph-body { position: relative; padding: 0; }
+.wht .wph-home { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; padding: 6px 12px 0; transition: opacity .35s ease; }
+.wht .wph-conv {
+  position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden; padding: 0 14px 14px;
+  opacity: 0; transition: opacity .35s ease;
+  -webkit-mask-image: linear-gradient(transparent, #000 40px); mask-image: linear-gradient(transparent, #000 40px);
+}
+.wht .wph-body.is-chat .wph-home { opacity: 0; }
+.wht .wph-body.is-chat .wph-conv { opacity: 1; transition-delay: .1s; }
+.wht .wph .wt { gap: 18px; }
+.wht .wph .wt-me { max-width: 82%; padding: 9px 14px; font-size: 15px; line-height: 1.45; }
+.wht .wph .wt-them { gap: 10px; }
+.wht .wph .wt-ava { width: 26px; height: 26px; }
+.wht .wph .wt-name { line-height: 26px; font-size: 13.5px; }
+.wht .wph .ar { gap: 10px; }
+.wht .wph .ar-p { font-size: 15px; line-height: 1.45; }
+.wht .wph .ar-head { padding: 10px 12px; gap: 10px; }
+.wht .wph .ar-head img { width: 26px; height: 26px; }
+.wht .wph .ar-head b, .wht .wph .ar-file b { font-size: 14px; }
+.wht .wph .ar-head div span, .wht .wph .ar-file div span { font-size: 12px; }
+.wht .wph .ar-rows { padding: 4px 12px; }
+.wht .wph .ar-rows div { padding: 5px 0; font-size: 13px; }
+.wht .wph .ar-rows span { width: 64px; }
+.wht .wph .ar-btns span { height: 32px; padding: 0 13px; font-size: 13px; }
+.wht .wph .ar-list { font-size: 14px; line-height: 1.5; padding-left: 18px; }
+.wht .wph .ar-flag { padding: 10px 12px; }
+.wht .wph .ar-flag b, .wht .wph .ar-flag span { font-size: 13px; }
+.wht .wph .ar-file { padding: 8px 12px 8px 8px; }
+.wht .wph .ar-pdf { width: 28px; height: 32px; font-size: 9.5px; }
+.wht .wph .ar-person { padding: 7px 12px; gap: 10px; }
+.wht .wph .ar-ini { width: 28px; height: 28px; font-size: 11px; }
+.wht .wph .ar-person b { font-size: 13.5px; }
+.wht .wph .ar-person div span, .wht .wph .ar-person em { font-size: 12px; }
+
+@keyframes wht-rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes wht-dot { 0%, 60%, 100% { opacity: .3; transform: none; } 30% { opacity: 1; transform: translateY(-3px); } }
+@media (prefers-reduced-motion: reduce) {
+  .wht .wt-me, .wht .wt-them, .wht .ar > *, .wht .wa-chat--new, .wht .wt-dots i { animation: none; }
+}
+@keyframes wht-blink { 50% { opacity: 0; } }
+
+/* ---------- phones: tab 4's ledger at true size ----------
+   No scaling: the paper fills the stage less a margin, and scrolls inside
+   its own box with the Ledger heading held at the top. Each entry takes
+   two lines: who, the time and the tag above, the action below. */
+@media (max-width: 500px) {
+  .wht #panel-record > .fit {
+    zoom: 1 !important;
+    width: calc(100% - 32px); max-height: calc(100% - 40px);
+    overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none;
+    pointer-events: auto; border-radius: 6px; background: #fbfaf6; box-shadow: 0 0 0 1px rgba(0, 0, 0, .06);
+  }
+  .wht #panel-record > .fit::-webkit-scrollbar { display: none; }
+  .wht #panel-record .paper { width: 100%; box-shadow: none; overflow: visible; }
+  .wht #panel-record .paper__head { position: sticky; top: 0; z-index: 1; padding: 16px 16px 12px; }
+  .wht #panel-record .paper__head b { font-size: 19px; }
+  .wht #panel-record .paper__head span { font-size: 11px; }
+  .wht #panel-record .lg {
+    grid-template-columns: auto 1fr auto; grid-template-areas: "who t tag" "txt txt txt";
+    height: auto; gap: 8px 10px; padding: 13px 16px; font-size: 13px;
+  }
+  .wht #panel-record .lg .who { grid-area: who; font-weight: 600; }
+  .wht #panel-record .lg .t { grid-area: t; font-size: 12px; }
+  .wht #panel-record .lg > span:nth-child(3) { grid-area: txt; font-size: 14px; line-height: 1.45; }
+  .wht #panel-record .lg .tag { grid-area: tag; font-size: 10px; padding: 4px 7px; }
 }

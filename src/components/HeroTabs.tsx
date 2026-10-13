@@ -9,20 +9,35 @@ import "./HeroTabs.css";
 
 /**
  * The product tour from the "Workloat · Hero tabs" design: four tabs over
- * one stage, each a view of Workloat on its own backdrop. The tabs
- * advance every 8 seconds with a progress line, pause while the pointer
- * is on the stage, and switch on click or with the arrow keys.
+ * one stage, each a view of Workloat on its own backdrop. A tab counts
+ * down only once its images have loaded and the section is on screen:
+ * tab 1 moves on once its request has been sent and Alfred's answer has
+ * rested, the others
+ * after 8 seconds, each with a progress line of that length. They pause
+ * while the pointer is on the stage and switch on click or with the
+ * arrow keys.
  *
  * Tab 1 is the Workloat web app's home, rebuilt from the app's own code
  * (Rail, chat sidebar, wordmark, pill input) in its light theme, with a
  * typewriter cycling requests through the input. Tabs 2 to 4 (Inbox,
  * Approvals, Record) keep the design's own styles. At 500 and under,
  * tabs 1 and 2 swap the scaled desktop views for phone layouts drawn at
- * true size (AppPhone, InboxPhone). Every view is a picture: aria-hidden
+ * true size (AppPhone, InboxPhone), and tab 4's ledger is drawn at true
+ * size too, its rows on two lines, scrolling in its own box. Every view is a picture: aria-hidden
  * and not interactive.
  */
 
 const DWELL = 8000;
+/* tab 1's conversation, in ms: the pause before the request types, the
+   beat before it sends, the chat page settling before Alfred thinks, his
+   thinking, and how long his answer rests before the tab moves on */
+const LEAD = 600;
+const SEND = 500;
+const SETTLE = 700;
+const THINK = 1400;
+const REST = 4200;
+const AFTER = 600;
+const wait = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
 const TABS = [
   { id: "chat", label: "Chat with your Loats", w: 1194, h: 754 },
@@ -55,8 +70,122 @@ function Ico({ name, size }: { name: "chat" | "approvals" | "bot" | "people" | "
   }
 }
 
-/** Tab 1: the web app's home, as the app draws it (light theme). */
-function AppHome({ typed }: { typed: string | null }) {
+const ALFRED = NOTE_HTML.match(/<svg[\s\S]*?<\/svg>/)?.[0] ?? "";
+const Px = ({ className }: { className: string }) => <span className={className} dangerouslySetInnerHTML={{ __html: ALFRED }} />;
+
+/* tab 1's conversation: the home with the request typing (step 0), sent
+   and on the chat page (1), Alfred thinking (2), Alfred's answer (3) */
+type Conv = { typed: string | null; step: number; li: number };
+
+/* each request's chat title in Recents once it is sent */
+const TITLES = ["Technical screen with Priya", "Q3 contract summary", "Candidate follow ups"];
+
+/** Alfred's answer to each request: a line of text, then the pieces he
+ *  made, rising in one after another. The names, dates and figures are
+ *  examples. */
+function Reply({ li }: { li: number }) {
+  if (li === 0) return (
+    <div className="ar">
+      <p className="ar-p">Priya is free Tuesday at 2 PM and Wednesday at 11 AM. Tuesday works for your calendar too, so I drafted the invite.</p>
+      <div className="ar-card">
+        <div className="ar-head">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/landing/anywhere/b232e3d48a.png" alt="" />
+          <div><b>Technical screen with Priya</b><span>Tue, Oct 13 · 2:00 to 2:45 PM</span></div>
+        </div>
+        <div className="ar-rows">
+          <div><span>Guests</span><b>Priya, Zeradam</b></div>
+          <div><span>Where</span><b>Google Meet</b></div>
+          <div><span>Attached</span><b>Priya&apos;s CV and the role brief</b></div>
+        </div>
+      </div>
+      <div className="ar-btns"><span className="go">Approve and send</span><span>Pick another time</span></div>
+    </div>
+  );
+  if (li === 1) return (
+    <div className="ar">
+      <p className="ar-p">I read the Q3 vendor contract Daniel Davis sent this morning. Here is what matters.</p>
+      <div className="ar-file"><span className="ar-pdf">PDF</span><div><b>Q3 vendor contract.pdf</b><span>14 pages · from Daniel Davis</span></div></div>
+      <ul className="ar-list">
+        <li>$48,000 a year, billed every quarter</li>
+        <li>Payment due 30 days after each invoice</li>
+        <li>Either side can end it with 60 days notice</li>
+      </ul>
+      <div className="ar-flag"><b>Renews automatically</b><span>Section 9.2 renews it for a year on Jan 1 unless you cancel by Dec 1.</span></div>
+      <div className="ar-btns"><span className="go">Remind me on Nov 20</span><span>Draft a cancellation</span></div>
+    </div>
+  );
+  return (
+    <div className="ar">
+      <p className="ar-p">Four candidates haven&apos;t replied in three days. I drafted a short follow up for each, in your tone.</p>
+      <div className="ar-card ar-people">
+        {[
+          ["DO", "Daniel Okafor", "Backend engineer", "Thu", "#e6e1f5"],
+          ["SL", "Sara Lindqvist", "Product designer", "Thu", "#dff0e6"],
+          ["TB", "Tom Becker", "Data analyst", "Fri", "#f6e6d8"],
+          ["AH", "Amira Haddad", "Frontend engineer", "Fri", "#dde9f6"],
+        ].map(([ini, name, role, day, bg]) => (
+          <div key={name} className="ar-person">
+            <span className="ar-ini" style={{ background: bg }}>{ini}</span>
+            <div><b>{name}</b><span>{role}</span></div>
+            <em>Last email {day}</em>
+          </div>
+        ))}
+      </div>
+      <div className="ar-btns"><span className="go">Send all 4</span><span>Review drafts</span></div>
+    </div>
+  );
+}
+
+/** The chat page: your request on the right, then Alfred, thinking and
+ *  then answering. */
+function Thread({ conv }: { conv: Conv }) {
+  return (
+    <div className="wt">
+      <div className="wt-me">{LINES[conv.li]}</div>
+      {conv.step >= 2 && (
+        <div className="wt-them">
+          <Px className="wt-ava" />
+          <div className="wt-body">
+            <b className="wt-name">Alfred</b>
+            {conv.step === 2 ? <span className="wt-dots" aria-hidden><i /><i /><i /></span> : <Reply li={conv.li} />}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* the web app's pill input */
+function Pill({ typed }: { typed: string | null }) {
+  return (
+    <div className="wa-pill">
+      <span className="wa-clip">
+        <svg width="25" height="25" viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M4.666,19.63a6.765,6.765,0,0,1-.148-9.713l6.8-6.8a4.845,4.845,0,1,1,6.852,6.851l-6.8,6.8a2.992,2.992,0,0,1-4.132,0,2.927,2.927,0,0,1,0-4.133L12.673,7.2a1,1,0,0,1,1.414,1.414L8.65,14.049a.925.925,0,0,0,0,1.3.945.945,0,0,0,1.3,0l6.8-6.8a2.845,2.845,0,0,0-4.023-4.023l-6.8,6.8a4.766,4.766,0,0,0,.1,6.843,4.93,4.93,0,0,0,6.807-.273l7.984-7.984a1,1,0,1,1,1.414,1.414l-7.984,7.984A7.122,7.122,0,0,1,9.223,21.4,6.607,6.607,0,0,1,4.666,19.63Z" /></svg>
+      </span>
+      <span className={`wa-text ${typed !== null ? "typed" : ""}`}>
+        {typed !== null ? <>{typed}<span className="wa-caret" /></> : PLACEHOLDER}
+      </span>
+      <span className="wa-right">
+        <span className="wa-loat">Alfred<svg width="11" height="11" viewBox="0 0 16 16" fill="none" aria-hidden><path d="m4 6 4 4 4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
+        <span className="wa-voice">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+            {[[3, 6], [7, 12], [11, 18], [15, 12], [19, 6]].map(([x, h]) => <rect key={x} x={x} y={12 - h / 2} width="2" height={h} rx="1" />)}
+          </svg>
+        </span>
+        <span className={`wa-send ${typed ? "ready" : ""}`}>
+          <svg width="22" height="22" viewBox="0 0 16 16" fill="none" aria-hidden><path d="M8 13V3M4 7l4-4 4 4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
+        </span>
+      </span>
+    </div>
+  );
+}
+
+/** Tab 1: the web app as the app draws it (light theme). The home with
+ *  the request typing in the pill; once sent, the chat page, with the
+ *  chat on top of Recents and the pill held to the bottom. */
+function AppHome({ conv }: { conv: Conv }) {
+  const chat = conv.step > 0;
   return (
     <div className="wa">
       <nav className="wa-rail">
@@ -80,7 +209,7 @@ function AppHome({ typed }: { typed: string | null }) {
           <span className="wa-btn"><Ico name="panel" size={18} /></span>
         </div>
         <div className="wa-nav">
-          <div className="wa-row on"><span className="wa-row__icon"><Ico name="new" size={17} /></span>New chat</div>
+          <div className={`wa-row ${chat ? "" : "on"}`}><span className="wa-row__icon"><Ico name="new" size={17} /></span>New chat</div>
           <div className="wa-row"><span className="wa-you"><Ico name="bot" size={14} /></span>Your Loat</div>
         </div>
         <div className="wa-recents">
@@ -88,49 +217,36 @@ function AppHome({ typed }: { typed: string | null }) {
           <span className="wa-filter"><Ico name="filter" size={15} /></span>
         </div>
         <div className="wa-list">
+          {chat && <div className="wa-chat on wa-chat--new"><span>{TITLES[conv.li]}</span></div>}
           <div className="wa-chat"><span>Technical screen next week</span><i /></div>
           <div className="wa-chat"><span>Vendor contract renewals</span></div>
         </div>
       </aside>
 
-      <main className="wa-main">
+      <main className={`wa-main ${chat ? "is-chat" : ""}`}>
         <div className="wa-home">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img className="wa-wordmark" src="/landing/tabs/app-wordmark-dark.png" alt="" width={186} height={30} />
-          <div className="wa-pill">
-            <span className="wa-clip">
-              <svg width="25" height="25" viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M4.666,19.63a6.765,6.765,0,0,1-.148-9.713l6.8-6.8a4.845,4.845,0,1,1,6.852,6.851l-6.8,6.8a2.992,2.992,0,0,1-4.132,0,2.927,2.927,0,0,1,0-4.133L12.673,7.2a1,1,0,0,1,1.414,1.414L8.65,14.049a.925.925,0,0,0,0,1.3.945.945,0,0,0,1.3,0l6.8-6.8a2.845,2.845,0,0,0-4.023-4.023l-6.8,6.8a4.766,4.766,0,0,0,.1,6.843,4.93,4.93,0,0,0,6.807-.273l7.984-7.984a1,1,0,1,1,1.414,1.414l-7.984,7.984A7.122,7.122,0,0,1,9.223,21.4,6.607,6.607,0,0,1,4.666,19.63Z" /></svg>
-            </span>
-            <span className={`wa-text ${typed !== null ? "typed" : ""}`}>
-              {typed !== null ? <>{typed}<span className="wa-caret" /></> : PLACEHOLDER}
-            </span>
-            <span className="wa-right">
-              <span className="wa-loat">Alfred<svg width="11" height="11" viewBox="0 0 16 16" fill="none" aria-hidden><path d="m4 6 4 4 4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
-              <span className="wa-voice">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-                  {[[3, 6], [7, 12], [11, 18], [15, 12], [19, 6]].map(([x, h]) => <rect key={x} x={x} y={12 - h / 2} width="2" height={h} rx="1" />)}
-                </svg>
-              </span>
-              <span className={`wa-send ${typed ? "ready" : ""}`}>
-                <svg width="22" height="22" viewBox="0 0 16 16" fill="none" aria-hidden><path d="M8 13V3M4 7l4-4 4 4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
-              </span>
-            </span>
-          </div>
+          <Pill typed={chat ? null : conv.typed} />
           <div className="wa-hint" />
+        </div>
+        <div className="wa-conv">
+          <div className="wa-thread">{chat && <Thread conv={conv} />}</div>
+          <Pill typed={null} />
         </div>
       </main>
     </div>
   );
 }
 
-const ALFRED = NOTE_HTML.match(/<svg[\s\S]*?<\/svg>/)?.[0] ?? "";
-const Px = ({ className }: { className: string }) => <span className={className} dangerouslySetInnerHTML={{ __html: ALFRED }} />;
-
-/** Tab 1 on a phone (500 and under): the same home laid out for an
- *  iPhone, at true size. The menu, the open Loat and a new chat on top,
- *  Alfred's note as a banner, the wordmark, and the composer held to the
- *  bottom with the request wrapping over its lines and the buttons below. */
-function AppPhone({ typed }: { typed: string | null }) {
+/** Tab 1 on a phone (500 and under): the same app laid out for an iPhone,
+ *  at true size. The menu, the open Loat and a new chat on top; on the
+ *  home, Alfred's note as a banner and the wordmark, then once sent, the
+ *  chat; the composer held to the bottom with the request wrapping over
+ *  its lines and the buttons below. */
+function AppPhone({ conv }: { conv: Conv }) {
+  const chat = conv.step > 0;
+  const typed = chat ? null : conv.typed;
   return (
     <div className="wph">
       <div className="wph-bar">
@@ -140,13 +256,16 @@ function AppPhone({ typed }: { typed: string | null }) {
         <b className="wph-title">Alfred<svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden><path d="m4 6 4 4 4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg></b>
         <span className="wph-btn"><Ico name="new" size={19} /></span>
       </div>
-      <div className="wph-body">
-        <div className="wph-note">
-          <div className="wph-note__head"><Px className="wph-px" /><b>Alfred</b><span>by email · now</span></div>
-          <p>Priya confirmed Tuesday at 2 PM. I sent the invite with a Meet link and added her CV to your notes.</p>
+      <div className={`wph-body ${chat ? "is-chat" : ""}`}>
+        <div className="wph-home">
+          <div className="wph-note">
+            <div className="wph-note__head"><Px className="wph-px" /><b>Alfred</b><span>by email · now</span></div>
+            <p>Priya confirmed Tuesday at 2 PM. I sent the invite with a Meet link and added her CV to your notes.</p>
+          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img className="wph-wordmark" src="/landing/tabs/app-wordmark-dark.png" alt="" width={150} height={24} />
         </div>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img className="wph-wordmark" src="/landing/tabs/app-wordmark-dark.png" alt="" width={150} height={24} />
+        <div className="wph-conv">{chat && <Thread conv={conv} />}</div>
       </div>
       <div className="wph-pill">
         <span className={`wph-text ${typed !== null ? "typed" : ""}`}>
@@ -219,8 +338,14 @@ export default function HeroTabs() {
   const [cycle, setCycle] = useState(0);
   const [zoom, setZoom] = useState<number[]>(() => TABS.map(() => 1));
   const [box, setBox] = useState({ W: 0, H: 0, narrow: false });
-  const [typed, setTyped] = useState<string | null>(null);
+  const [conv, setConv] = useState<Conv>({ typed: null, step: 0, li: 0 });
   const [reduced, setReduced] = useState(false);
+  const [inView, setInView] = useState(false);
+  /* a tab counts down only once its pictures and backdrop have loaded */
+  const [loaded, setLoaded] = useState<boolean[]>(() => TABS.map(() => false));
+  /* tab 1 moves on when Alfred's answer has rested, not on a clock */
+  const [chat, setChat] = useState({ run: 0, ms: DWELL, done: false });
+  const line = useRef(0);
   const stage = useRef<HTMLDivElement>(null);
   const section = useRef<HTMLElement>(null);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -242,41 +367,88 @@ export default function HeroTabs() {
     return () => ro.disconnect();
   }, []);
 
-  /* advance every DWELL unless paused, hidden or reduced motion */
+  const ready = loaded[current];
+  const live = ready && inView && !paused;
+
+  /* the section on screen: nothing counts down while it is scrolled away */
   useEffect(() => {
-    if (reduced || paused) return;
-    const id = window.setTimeout(() => setCurrent((c) => (c + 1) % TABS.length), DWELL);
+    const io = new IntersectionObserver(([e]) => setInView(e.isIntersecting), { threshold: 0.1 });
+    if (section.current) io.observe(section.current);
+    return () => io.disconnect();
+  }, []);
+
+  /* wait for the open tab's images and backdrop (8 seconds at most) */
+  useEffect(() => {
+    if (ready) return;
+    const panel = document.getElementById(`panel-${TABS[current].id}`);
+    if (!panel) return;
+    let alive = true;
+    const urls = Array.from(panel.querySelectorAll("img"), (im) => im.currentSrc || im.src).filter(Boolean);
+    const bg = getComputedStyle(panel).backgroundImage.match(/url\("?([^")]+)"?\)/)?.[1];
+    if (bg) urls.push(bg);
+    const one = (src: string) => new Promise<void>((r) => {
+      const im = new Image();
+      im.onload = im.onerror = () => r();
+      im.src = src;
+      if (im.complete) r();
+    });
+    Promise.race([Promise.all(urls.map(one)), wait(8000)]).then(() => {
+      if (alive) setLoaded((l) => l.map((v, j) => (j === current ? true : v)));
+    });
+    return () => { alive = false; };
+  }, [current, ready]);
+
+  /* advance: tab 1 once its request has typed and rested, the others
+     DWELL after they load; never while paused, off screen or reduced */
+  useEffect(() => {
+    if (reduced || !live) return;
+    if (current === 0 && !chat.done) return;
+    const id = window.setTimeout(() => setCurrent((c) => (c + 1) % TABS.length), current === 0 ? AFTER : DWELL);
     return () => window.clearTimeout(id);
-  }, [current, paused, reduced, cycle]);
+  }, [current, live, reduced, cycle, chat.done]);
   useEffect(() => {
     const onVis = () => setPaused(document.hidden);
     document.addEventListener("visibilitychange", onVis);
     return () => document.removeEventListener("visibilitychange", onVis);
   }, []);
 
-  /* the typewriter in tab 1's input, only while the section is on screen */
+  /* tab 1's conversation: each visit types the next request from empty,
+     sends it, opens the chat page, and has Alfred think and answer; his
+     answer rests, then the tab moves on. The progress line is given that
+     same length. It starts once the tab has loaded and is on screen,
+     and starts over if the section scrolls away mid request. */
+  const chatOn = current === 0 && !reduced && ready && inView;
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    let alive = true, visible = false, running = false;
-    const wait = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
-    const play = async () => {
-      if (running) return;
-      running = true;
-      await wait(900);
-      for (let li = 0; alive && visible; li = (li + 1) % LINES.length) {
-        const text = LINES[li];
-        for (let k = 0; k <= text.length && alive; k++) { setTyped(text.slice(0, k)); await wait(32 + Math.random() * 30); }
-        await wait(1800);
-        for (let k = text.length; k >= 0 && alive; k -= 4) { setTyped(text.slice(0, k)); await wait(10); }
-        setTyped(null);
-        await wait(900);
+    if (!chatOn) return;
+    let alive = true;
+    const text = LINES[line.current];
+    const gaps = Array.from(text, () => 32 + Math.random() * 30);
+    const li = line.current;
+    setChat((c) => ({ run: c.run + 1, ms: LEAD + gaps.reduce((a, b) => a + b, 0) + SEND + SETTLE + THINK + REST + AFTER, done: false }));
+    setConv({ typed: "", step: 0, li });
+    (async () => {
+      await wait(LEAD);
+      for (let k = 1; k <= text.length; k++) {
+        if (!alive) return;
+        setConv({ typed: text.slice(0, k), step: 0, li });
+        await wait(gaps[k - 1]);
       }
-      running = false;
-    };
-    const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (visible) play(); }, { threshold: 0.1 });
-    if (section.current) io.observe(section.current);
-    return () => { alive = false; io.disconnect(); };
-  }, []);
+      await wait(SEND);
+      if (!alive) return;
+      setConv({ typed: null, step: 1, li }); // sent: the chat page opens on the request
+      await wait(SETTLE);
+      if (!alive) return;
+      setConv({ typed: null, step: 2, li }); // Alfred thinks
+      await wait(THINK);
+      if (!alive) return;
+      setConv({ typed: null, step: 3, li }); // and answers
+      await wait(REST);
+      if (!alive) return;
+      line.current = (line.current + 1) % LINES.length;
+      setChat((c) => ({ ...c, done: true }));
+    })();
+    return () => { alive = false; setConv((c) => ({ typed: null, step: 0, li: c.li })); setChat((c) => ({ ...c, done: false })); };
+  }, [chatOn, cycle]);
 
   /* where the tabs are a slider (760 and under), bring the open one into
      view, sideways only, so the page itself never jumps */
@@ -313,7 +485,7 @@ export default function HeroTabs() {
     >
       <section ref={section} id="how-loats-work" className="hero-tabs" aria-label="Workloat product tour">
         <div className="frame">
-          <div className={`tabs ${paused ? "is-paused" : ""}`} role="tablist" aria-label="Product views">
+          <div className={`tabs ${live ? "" : "is-paused"}`} role="tablist" aria-label="Product views">
             {TABS.map((t, i) => (
               <button
                 key={t.id}
@@ -332,19 +504,26 @@ export default function HeroTabs() {
                 }}
               >
                 {/* keyed on the active tab, so the progress line restarts each time it turns */}
-                {!reduced && <span className="tab__bar" key={current === i ? `on-${current}-${cycle}` : "off"} />}
+                {!reduced && (
+                  <span
+                    className="tab__bar"
+                    key={current === i ? `on-${current}-${i === 0 ? chat.run : cycle}` : "off"}
+                    style={i === 0 ? { animationDuration: `${chat.ms}ms` } : undefined}
+                  />
+                )}
                 {t.label}
               </button>
             ))}
           </div>
 
-          <div className="stage" ref={stage} onMouseEnter={() => setPaused(true)} onMouseLeave={() => { setPaused(false); setCycle((c) => c + 1); }}>
+          <div className="stage" ref={stage} onMouseEnter={() => setPaused(true)} onMouseLeave={() => { setPaused(false); if (current !== 0) setCycle((c) => c + 1); }}>
             <div className={`panel ${current === 0 ? "is-on" : ""}`} id="panel-chat" role="tabpanel" aria-labelledby="tab-chat">
               <div className="fit" aria-hidden style={fitStyle(0)}>
-                <div className="wglass"><AppHome typed={typed} /></div>
-                <div style={{ display: "contents" }} dangerouslySetInnerHTML={{ __html: NOTE_HTML }} />
+                <div className="wglass"><AppHome conv={conv} /></div>
+                {/* Alfred's note belongs to the home; it steps aside for the chat */}
+                <div className={`wa-notes ${conv.step > 0 ? "is-off" : ""}`} dangerouslySetInnerHTML={{ __html: NOTE_HTML }} />
               </div>
-              <div className="wph-wrap" aria-hidden><AppPhone typed={typed} /></div>
+              <div className="wph-wrap" aria-hidden><AppPhone conv={conv} /></div>
             </div>
             <div className={`panel ${current === 1 ? "is-on" : ""}`} id="panel-inbox" role="tabpanel" aria-labelledby="tab-inbox">
               <div className="fit" aria-hidden style={fitStyle(1)} dangerouslySetInnerHTML={{ __html: INBOX_HTML }} />
@@ -362,7 +541,14 @@ export default function HeroTabs() {
               </div>
             </div>
             <div className={`panel ${current === 3 ? "is-on" : ""}`} id="panel-record" role="tabpanel" aria-labelledby="tab-record">
-              <div className="fit" aria-hidden style={fitStyle(3)} dangerouslySetInnerHTML={{ __html: RECORD_HTML }} />
+              <div
+                className="fit"
+                aria-hidden
+                style={fitStyle(3)}
+                // on a phone the ledger scrolls in its box; reading it holds the tab
+                onScroll={() => setCycle((c) => c + 1)}
+                dangerouslySetInnerHTML={{ __html: RECORD_HTML }}
+              />
             </div>
           </div>
         </div>
